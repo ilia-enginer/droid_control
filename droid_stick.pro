@@ -4,7 +4,7 @@ TARGET = droid_stick
 #VERSION = "0.1.4"
 #DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
-QT += quick quickcontrols2 bluetooth
+QT += quick quickcontrols2 bluetooth core positioning widgets
 
 SOURCES += \
 #    btscaner.cpp \
@@ -15,11 +15,14 @@ SOURCES += \
     mainmodel.cpp
 
 RESOURCES += \
+    Resurs.qrc \
     gallery.qml \
     pages/BluetoothScanner.qml \
     DeviceScanerPage.qml \
     pages/SenderPage.qml \
     pages/SettingsPage.qml \
+    pages/SettingFootPage.qml \
+    pages/firmware_update.qml \
     pages/ServicePage.qml \
     qmldir \
     pages/ScrollablePage.qml \
@@ -85,6 +88,8 @@ DISTFILES += \
     android/res/values/libs.xml \
     android/res/values/libs.xml \
     pages/BluetoothScanner.qml \
+    pages/SettingFootPage.qml \
+    pages/firmware_update.qml
 
 
 HEADERS += \

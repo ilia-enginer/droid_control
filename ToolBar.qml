@@ -50,4 +50,5 @@
 
 import QtQuick.Controls
 
-ToolBar {}
+ToolBar {
+}

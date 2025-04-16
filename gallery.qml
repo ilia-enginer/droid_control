@@ -53,7 +53,6 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import Qt.labs.settings
 
-
 import "." as App
 
 ApplicationWindow {
@@ -61,7 +60,7 @@ ApplicationWindow {
     width: 360
     height: 520
     visible: true
-    title: "Droid Stick v.0.1.5"
+    title: "Droid Stick v.1.0"
 
     required property var builtInStyles
 
@@ -160,6 +159,7 @@ ApplicationWindow {
         height: window.height
         interactive: stackView.depth === 1
 
+
         ListView {
             id: listView
 
@@ -176,18 +176,50 @@ ApplicationWindow {
                     stackView.push(model.source)
                     drawer.close()
                 }
+             }
+
+                model: ListModel {
+                    ListElement { title: "Джойстик"; source: "qrc:/pages/joystick/Joystick.qml" }
+                    ListElement { title: "Настройка серв"; source: "qrc:/pages/SettingFootPage.qml" }
+                    ListElement { title: "Обновление прошивки"; source: "qrc:/pages/firmware_update.qml" }
+             //       ListElement { title: "Терминал"; source: "qrc:/pages/SenderPage.qml" }
+             //       ListElement { title: "Сервис"; source: "qrc:/pages/ServicePage.qml" }
+             //       ListElement { title: "Настройки"; source: "qrc:/pages/SettingsPage.qml" }
+                }
+
+
+                Button {
+                    id: admin
+                 //   anchors.top: listView.bottom
+                    width: Math.min(window.width, window.height) / 3 * 2
+                    height: 100
+                    anchors.bottom: listView.bottom
+                    opacity: 0.0
+                   // visible: false
+                    enabled: true
+
+                    onClicked: {
+                        mainModel.adiminTapCount = 0;
+                    }
+                }
             }
 
-            model: ListModel {
-                ListElement { title: "Терминал"; source: "qrc:/pages/SenderPage.qml" }
-                ListElement { title: "Сервис"; source: "qrc:/pages/ServicePage.qml" }
-                ListElement { title: "Настройки"; source: "qrc:/pages/SettingsPage.qml" }
-                ListElement { title: "Джойстик"; source: "qrc:/pages/joystick/Joystick.qml" }
+            Component.onCompleted: {
+                mainModel.onAdminTapCountChanged.connect(adminModeChanged)
             }
 
-            ScrollIndicator.vertical: ScrollIndicator { }
+            function adminModeChanged(){
+                if (mainModel.adiminTapCount === 4) {
+                    listView.model.append({ title: "Терминал", source: "qrc:/pages/SenderPage.qml" })
+                    listView.model.append({ title: "Настройки", source: "qrc:/pages/SettingsPage.qml" })
+                }
+                else if (mainModel.adiminTapCount === 2) {
+                    listView.model.append({ title: "Сервис", source: "qrc:/pages/ServicePage.qml" })
+                }
+            }
+
+//            ScrollIndicator.vertical: ScrollIndicator { }
         }
-    }
 
     StackView {
         id: stackView
@@ -205,9 +237,6 @@ ApplicationWindow {
                 fillMode: Image.PreserveAspectFit
                 source: "images/play_store_512.png"
             }
-
-
-
         }
     }
 
@@ -255,7 +284,7 @@ ApplicationWindow {
             }
 
             Label {
-                text: "Restart required"
+                text: "Необходима перезагрузка"
                 color: "#e41e25"
                 opacity: styleBox.currentIndex !== styleBox.styleIndex ? 1.0 : 0.0
                 horizontalAlignment: Label.AlignHCenter
@@ -273,7 +302,7 @@ ApplicationWindow {
         x: (window.width - width) / 2
         y: window.height / 6
         width: Math.min(window.width, window.height) / 3 * 2
-        contentHeight: aboutColumn.height
+    //    contentHeight: aboutColumn.height
     }
 
     DeviceScanerPage {

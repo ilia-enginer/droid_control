@@ -94,13 +94,14 @@ DeviceInfo::getCoreConfig() const
 
     QStringList out;
 
+    if (device.coreConfigurations() &  QBluetoothDeviceInfo::BaseRateCoreConfiguration) {
+        out.append("BR");
+    }
+
     if (device.coreConfigurations() &  QBluetoothDeviceInfo::LowEnergyCoreConfiguration) {
         out.append("LE");
     }
 
-    if (device.coreConfigurations() &  QBluetoothDeviceInfo::BaseRateCoreConfiguration) {
-        out.append("BR");
-    }
 
     if (device.coreConfigurations() &  QBluetoothDeviceInfo::BaseRateAndLowEnergyCoreConfiguration) {
         out.append("BRLE");

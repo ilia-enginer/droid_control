@@ -1,0 +1,10 @@
+<uses-permission
+
+    android:name="INTERNET"
+    android:name="ACCESS_NETWORK_STATE"
+    android:name="WRITE_EXTERNAL_STORAGE"
+    android:name="BLUETOOTH_ADMIN"
+    android:name="BLUETOOTH"
+    android:name="BLUETOOTH_CONNECT"
+    android:name="BLUETOOTH_SCAN"
+    android:name="neverForLocation" />

@@ -57,6 +57,8 @@
 #include "device.h"
 #include "mainmodel.h"
 
+
+
 int main(int argc, char *argv[])
 {
     QGuiApplication::setApplicationName("Gallery");
@@ -73,24 +75,32 @@ int main(int argc, char *argv[])
     // If this is the first time we're running the application,
     // we need to set a style in the settings so that the QML
     // can find it in the list of built-in styles.
+    ///////////////////settings.value("style").toString();
+    /// //////////////
     const QString styleInSettings = settings.value("style").toString();
     if (styleInSettings.isEmpty())
         settings.setValue(QLatin1String("style"), QQuickStyle::name());
 
     QQmlApplicationEngine engine;
 
-    QStringList builtInStyles = { QLatin1String("Basic"), QLatin1String("Fusion"),
-                                  QLatin1String("Imagine"), QLatin1String("Material"), QLatin1String("Universal") };
+    QStringList builtInStyles = { QLatin1String("Fusion"), QLatin1String("Basic"), QLatin1String("Imagine"),
+                                QLatin1String("Material"), QLatin1String("Universal")};
 #if defined(Q_OS_MACOS)
     builtInStyles << QLatin1String("macOS");
 #elif defined(Q_OS_WINDOWS)
     builtInStyles << QLatin1String("Windows");
 #endif
 
+
     MainModel model;
     Device d(&model);
     engine.rootContext()->setContextProperty("device", &d);
     engine.rootContext()->setContextProperty("mainModel", &model);
+
+    model.setDevice(&d);
+
+    //QObject::connect(&app, QGuiApplication::applicationStateChanged, );
+//    QObject::connect(&app, SIGNAL(applicationStateChanged(Qt::ApplicationState state)), &d, SLOT(stateChanged()));
 
     engine.setInitialProperties({{ "builtInStyles", builtInStyles }});
     engine.load(QUrl("qrc:/gallery.qml"));

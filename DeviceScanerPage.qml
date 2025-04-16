@@ -18,11 +18,13 @@ Dialog {
 
         Label {
             id: devicesDialogStatus
-            text: ""
+            text: "Для поиска Bluetooth устройств\nнеобходимо, в настройках приложения,\nразрешить определять\n местоположение."
+            font.pixelSize: 15
             anchors.left: devicesDialog.Left
             anchors.right: devicesDialog.Right
+
             wrapMode: Text.WordWrap
-            horizontalAlignment: Text.AlignHCenter
+            horizontalAlignment: Text.left
             verticalAlignment: Text.AlignVCenter
 
             Component.onCompleted: {
@@ -50,7 +52,7 @@ Dialog {
                    MouseArea {
                        anchors.fill: parent
                        onClicked: {
-                           device.connectToDevice(modelData.deviceAddress);
+                           device.connectToDevice(modelData.deviceAddress,modelData.deviceName);
                        }
                    }
 

@@ -68,8 +68,13 @@
 //#include "serviceinfo.h"
 //#include "characteristicinfo.h"
 
+
+
 QT_FORWARD_DECLARE_CLASS (QBluetoothDeviceInfo)
 QT_FORWARD_DECLARE_CLASS (QBluetoothServiceInfo)
+
+void delay( int millisecondsToWait );
+
 
 class Device: public QObject
 {
@@ -99,14 +104,25 @@ public:
     bool getNeedWrap();
     void setNeedWrap(bool value);
 
+
 public slots:
     void startDeviceDiscovery();
-    void connectToDevice(const QString &uuid);
+    void connectToDevice(const QString &uuid, const QString &name);
     void disconnectFromDevice();
+    void sendUpdate(QByteArray msg);
     void sendMessage (QString msg);
     void sendMessageAndWrap (QString msg);
+    void sendMessageAndWrapS (QString msg);
+    void sendMessageAndWrap (quint8 code, QString msg);
+    void sendparstxlog (quint8 code);
 
     void onJoysticActivity(quint8 mode, float azimut, float amplitude, float level);
+    void get_check(void);
+
+    void onGetCurReal(void);
+    uint_least32_t crc32(const QByteArray &buf, qint32 format_buf);
+
+    QString getLastConnectedDevice(void);
 
 private slots:
     // QBluetoothDeviceDiscoveryAgent related
@@ -130,6 +146,8 @@ Q_SIGNALS:
     void randomAddressChanged();
     void socketDataRecieved(QString msg);
     void log(QString type, QString msg);
+    void logServis(QString type, QString msg);
+    void logJoy(QString type, QString msg);
 
     void searchInProgress();
     void searchFinished();
@@ -152,10 +170,21 @@ private:
     MainModel *mainModel_ = nullptr;
     bool needWrap_ = false;
     QString lastConnectedDevice_;
+    QString nameDevice_;
 
     QByteArray wrapData(QByteArray input);
 
-    qint16 crc16(const QByteArray &arr);
+    quint16 crc16(const QByteArray &arr);
+
+
+    bool setVreal = false;
+
+    quint8 max_rx_size = 25;
+
+    QByteArray Temp = 0;
+    quint8 startByteIndex = 0;
+    bool statys = false;
+    bool split = false;
 
 };
 
