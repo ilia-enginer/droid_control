@@ -57,6 +57,8 @@
 #include "device.h"
 #include "mainmodel.h"
 
+#include "appmanager.h"
+
 
 
 int main(int argc, char *argv[])
@@ -91,16 +93,20 @@ int main(int argc, char *argv[])
     builtInStyles << QLatin1String("Windows");
 #endif
 
+    AppManager appManager;
+
 
     MainModel model;
     Device d(&model);
+
     engine.rootContext()->setContextProperty("device", &d);
     engine.rootContext()->setContextProperty("mainModel", &model);
 
-    model.setDevice(&d);
+    appManager.setModel(&model);
+    appManager.setDevice(&d);
+    QObject::connect(&app, &QGuiApplication::applicationStateChanged, &appManager, &AppManager::onApplicationStateChanged);
 
-    //QObject::connect(&app, QGuiApplication::applicationStateChanged, );
-//    QObject::connect(&app, SIGNAL(applicationStateChanged(Qt::ApplicationState state)), &d, SLOT(stateChanged()));
+    model.setDevice(&d);
 
     engine.setInitialProperties({{ "builtInStyles", builtInStyles }});
     engine.load(QUrl("qrc:/gallery.qml"));

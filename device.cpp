@@ -68,6 +68,9 @@
 #include <QTime>
 #include <QCoreApplication>
 #include <QGeoCoordinate>
+#include <QSettings>
+#include <QtBluetooth/qbluetoothserviceinfo.h>
+#include <QBluetoothUuid>
 
 
 void delay( int millisecondsToWait )
@@ -92,7 +95,7 @@ Device::Device(MainModel *mainModel) : mainModel_(mainModel)
     connect(discoveryAgent, &QBluetoothDeviceDiscoveryAgent::finished, this, &Device::deviceScanFinished);
     //! [les-devicediscovery-1]
 
-    setUpdate("Поиск");
+     if(rendering_flag)  setUpdate("Поиск");
 }
 
 Device::~Device()
@@ -109,46 +112,17 @@ Device::~Device()
 
 void Device::startDeviceDiscovery()
 {
-    QBluetoothLocalDevice device;
-    QGeoCoordinate geo;
-
-    if(!geo.isValid())
-    {
-        setUpdate("Геолокация не поддерживается платформой.\nПоиск bt устройств невозможен.");
- //       return;
-    }
-
-    if(!device.isValid())
-    {
-        setUpdate("Bluetooth не поддерживается платформой.");
-        return;
-    }
-
-
-    if( device.hostMode() == QBluetoothLocalDevice::HostPoweredOff)// Bluetooth is not enabled
-    {
-        device.powerOn();// Call to open the local Bluetooth device
-        setUpdate("Включение Bluetooth");
-        emit searchInProgress();
-        delay(1000);
-
-        qint32 count = 0;
-        while(count++ < 8)
-        {
-            if(device.hostMode() != QBluetoothLocalDevice::HostPoweredOff)      count = 8;
-            delay(700);
-        }
-    }
+    if(!blt_on())   return;
 
     qDeleteAll(devices);
     devices.clear();
-    emit devicesUpdated();
+    if(rendering_flag)   emit devicesUpdated();
 
 //    devices.append(new DeviceInfo("asfdf", "asdfsdf"));
 //    devices.append(new DeviceInfo("asfdf1", "asdfsdf2"));
 //    devices.append(new DeviceInfo("asfdf12", "asdfsdf23"));
 
-    setUpdate("Сканирование устройств ...");
+     if(rendering_flag)  setUpdate("Сканирование устройств ...");
     //! [les-devicediscovery-2]
 //    discoveryAgent->start(QBluetoothDeviceDiscoveryAgent::LowEnergyMethod);
     discoveryAgent->start(QBluetoothDeviceDiscoveryAgent::ClassicMethod);
@@ -158,7 +132,7 @@ void Device::startDeviceDiscovery()
     if (discoveryAgent->isActive()) {
         m_deviceScanState = true;
         Q_EMIT stateChanged();
-        emit searchInProgress();
+         if(rendering_flag)  emit searchInProgress();
     }
 }
 
@@ -173,7 +147,7 @@ void Device::addDevice(const QBluetoothDeviceInfo &info)
         if(info.name() != empty)
         {
             devices.append(new DeviceInfo(QBluetoothDeviceInfo(info)));
-            emit devicesUpdated();
+             if(rendering_flag)  emit devicesUpdated();
         }
 
 //    }
@@ -190,16 +164,16 @@ void Device::deviceScanFinished()
 //        }
 //    }
 
-    emit devicesUpdated();
+     if(rendering_flag)  emit devicesUpdated();
     m_deviceScanState = false;
-    emit stateChanged();
+     if(rendering_flag)  emit stateChanged();
     if (devices.isEmpty()) {
-        setUpdate("Устройства не найдены");
+         if(rendering_flag)  setUpdate("Устройства не найдены");
     } else {
-        setUpdate("Сканирование завершено");
+         if(rendering_flag)  setUpdate("Сканирование завершено");
     }
 
-    emit searchFinished();
+     if(rendering_flag)  emit searchFinished();
 }
 
 
@@ -228,22 +202,39 @@ QString Device::getUpdate()
 
 
 void
-Device::connectToDevice(const QString &uuid, const QString &name)
-{    
+Device::connectToDevice(const QString &dAddress, const QString &name, const QString &config)
+{
+    QBluetoothDeviceInfo info;
+
+    if(!blt_on())   return;
+
     discoveryAgent->stop();
     deviceScanFinished();
 
-    lastConnectedDevice_ = uuid;
+    lastConnectedDevice_ = dAddress;
     nameDevice_ = name;
 
-    setUpdate("Подключение к " + nameDevice_);
+    if (config == "BR") {
+        class_ = "2";
+    }
+    else if (config == "LE") {
+        class_ = "1";
+    }
+    else if (config == "BRLE") {
+        class_ = "3";
+    }
+    else{
+        class_ = "0";
+    }
+
+     if(rendering_flag)  setUpdate("Подключение к " + nameDevice_);
     //    selectedDevice = listOfDevices.at(i);
 
-    qDebug() << "User select a device: " << uuid ;
+//    qDebug() << "User select a device: " << uuid ;
     //             QBluetoothSocket::Rf
     socket = new QBluetoothSocket(QBluetoothServiceInfo::Protocol::RfcommProtocol, this);
 
-    socket->connectToService(QBluetoothAddress(uuid), QBluetoothUuid(QBluetoothUuid::ServiceClassUuid::SerialPort));
+    socket->connectToService(QBluetoothAddress(dAddress), QBluetoothUuid(QBluetoothUuid::ServiceClassUuid::SerialPort));
 
     connect(socket, SIGNAL(error(QBluetoothSocket::SocketError)), this, SLOT(socketError(QBluetoothSocket::SocketError)));
     connect(socket, SIGNAL(connected()), this, SLOT(deviceConnected()));
@@ -253,26 +244,34 @@ Device::connectToDevice(const QString &uuid, const QString &name)
 
 void Device::deviceConnected()
 {
+    QSettings setting;
+
     connected = true;
     //! [les-service-2]
     //    controller->discoverServices();
     //! [les-service-2]
-    setUpdate("Подключено");
+     if(rendering_flag)  setUpdate("Подключено");
 
-  //  mainModel_->setCurrentDeviceName(lastConnectedDevice_);
-    mainModel_->setCurrentDeviceName(nameDevice_);
+    if(rendering_flag)   mainModel_->setCurrentDeviceName(nameDevice_);
+
+    setting.setValue("dName", nameDevice_);
+    setting.setValue("dClass", class_);
+    setting.setValue("dAdres", lastConnectedDevice_);
+
+    //запрос точки восстановления
+    mainModel_->full_param_check();
 }
 
 void Device::errorReceived(QLowEnergyController::Error)
 {
-    qWarning() << "Error: " << controller->errorString();
-    setUpdate(QString("Back\n(%1)").arg(controller->errorString()));
+//     qWarning() << "Error: " << controller->errorString();
+     if(rendering_flag)  setUpdate(QString("Back\n(%1)").arg(controller->errorString()));
 }
 
 void Device::setUpdate(const QString &message)
 {
     m_message = message;
-    emit updateChanged(message);
+    if(rendering_flag)     emit updateChanged(message);
 }
 
 
@@ -445,11 +444,16 @@ QString Device::getLastConnectedDevice()
     return  lastConnectedDevice_;
 }
 
+void Device::set_rendering_flag(bool fl)
+{
+    rendering_flag = fl;
+}
+
 
 
 void Device::disconnectFromDevice()
 {
-    setUpdate("отключено");
+    if(rendering_flag)  setUpdate("Отключено");
     // UI always expects disconnect() signal when calling this signal
     // TODO what is really needed is to extend state() to a multi value
     // and thus allowing UI to keep track of controller progress in addition to
@@ -461,23 +465,44 @@ void Device::disconnectFromDevice()
     //        deviceDisconnected();
 
     mainModel_->setCurrentDeviceName("Отсутствует подключение");
+
+    //сбросить напряжение и ток
+    mainModel_->setCurReal(0.0f);
+    mainModel_->setVreal(0.0f);
 }
 
 void Device::sendUpdate(QByteArray msg)
 {
     QByteArray dataToSEnd = msg;
-
+    int r = -1;
     dataToSEnd = wrapData(dataToSEnd);
 //    qDebug() << dataToSEnd.toHex();
+    //вывод лога
+//    if(loging)
+//    {
+//        if(rendering_flag)
+//        {
+//            emit logServis("-> ", QString ("%1 (%2 size)").arg(QString(dataToSEnd.toHex())).arg(r));
+//        }
+//    }
 
     if (!socket)   {
         return;
     }
 
-    socket->write(dataToSEnd);
+    r = socket->write(dataToSEnd);
+    //вывод лога
+    if(loging)
+    {
+        if(rendering_flag)
+        {
+            emit logServis("-> ", QString ("%1 (%2 size)").arg(QString(dataToSEnd.toHex())).arg(r));
+        }
+    }
 }
 
 
+//для терминала
 void
 Device::sendMessage(QString msg)
 {
@@ -487,7 +512,7 @@ Device::sendMessage(QString msg)
         dataToSEnd = wrapData(dataToSEnd);
     }
 
- //   emit log("try_send", QString(dataToSEnd.toHex()));
+//    if(rendering_flag)    emit log("try_send", QString(dataToSEnd.toHex()));
 
     if (!socket)   {
         return;
@@ -495,17 +520,17 @@ Device::sendMessage(QString msg)
 
     int r = socket->write(dataToSEnd);
 
-    emit log("->", QString ("%1 (%2 size)").arg(QString(dataToSEnd.toHex())).arg(r));
+    if(rendering_flag)    emit log("->", QString ("%1 (%2 size)").arg(QString(dataToSEnd.toHex())).arg(r));
 }
 
-
+//для терминала
 void
 Device::sendMessageAndWrap(QString msg)
 {
     QByteArray dataToSEnd = QByteArray::fromHex(msg.toUtf8());
     dataToSEnd = wrapData(dataToSEnd);
 
-//    emit log("try_send", QString(dataToSEnd.toHex()));
+//    if(rendering_flag)    emit log("try_send", QString(dataToSEnd.toHex()));
 //    qDebug() << dataToSEnd.toHex();
 
     if (!socket)   {
@@ -514,22 +539,49 @@ Device::sendMessageAndWrap(QString msg)
 
     int r = socket->write(dataToSEnd);
 
-    emit log("->", QString ("%1 (%2 size)").arg(QString(dataToSEnd.toHex())).arg(r));
+    if(rendering_flag)    emit log("->", QString ("%1 (%2 size)").arg(QString(dataToSEnd.toHex())).arg(r));
 }
 
 void Device::sendMessageAndWrapS (QString msg)
 {
     unsigned char k;
+    quint8 cod;
+
     QByteArray dataToSEnd = QByteArray::fromHex(msg.toUtf8());
+
+//    qDebug() << dataToSEnd.toHex();
+
     k = dataToSEnd[0];
+
+    //если передача параметров
+    if(k == 0xA8)
+    {
+        QByteArray param = mainModel_->get_full_param();
+        if(param.size() > 10)
+        {
+            for(int i = 0; i < param.size(); i++)
+            {
+                dataToSEnd.append(param[i]);
+            }
+        }
+        else
+        {
+            k = 0x00;
+        }
+    }
     dataToSEnd = wrapData(dataToSEnd);
+
+    if(k == 0xE4 || k == 0xA6)
+    {
+        cod = dataToSEnd[3];
+    }
 
 //    qDebug() << dataToSEnd.toHex();
 
     //перед отправкой
-//    sendparstxlog(k);
-//    emit logServis("try_send", QString(dataToSEnd.toHex()));
-//    emit logJoy("<-", QString(dataToSEnd.toHex()));
+//    if(rendering_flag)    sendparstxlog(k);
+//    if(rendering_flag)    emit logServis("try_send", QString(dataToSEnd.toHex()));
+//    if(rendering_flag)    emit logJoy("<-", QString(dataToSEnd.toHex()));
 
 
     if (!socket)   {
@@ -537,17 +589,34 @@ void Device::sendMessageAndWrapS (QString msg)
     }
 
  //   int r = socket->write(dataToSEnd);
- //   emit logServis("->", QString ("%1 (%2 size)").arg(QString(dataToSEnd.toHex())).arg(r));
+ //   if(rendering_flag)    emit logServis("->", QString ("%1 (%2 size)").arg(QString(dataToSEnd.toHex())).arg(r));
 
-    socket->write(dataToSEnd);
-    sendparstxlog(k);
+    int r = -1;
+    if(k != 0x00)
+    {
+        r = socket->write(dataToSEnd);
+    }
+    if(rendering_flag)    sendparstxlog(k, cod);
+
+    //вывод лога
+    if(loging)
+    {
+        if(rendering_flag)
+        {
+            emit logJoy("->", QString ("%1 (%2 size)").arg(QString(dataToSEnd.toHex())).arg(r));
+            emit logServis("->", QString ("%1 (%2 size)").arg(QString(dataToSEnd.toHex())).arg(r));
+        }
+    }
 }
 
 
 void Device::sendMessageAndWrap(quint8 code, QString msg)
 {
     unsigned char k = code;
+    quint8 cod;
+
     QByteArray dataToSEnd;
+
 
     if(k == 0xF5)
     {
@@ -590,28 +659,48 @@ void Device::sendMessageAndWrap(quint8 code, QString msg)
     }
     dataToSEnd.prepend(code);
     dataToSEnd = wrapData(dataToSEnd);
+    cod = dataToSEnd[2];
+ //   qDebug() << dataToSEnd.toHex();
+
 
 //    qDebug() << dataToSEnd.toHex();
-//     sendparstxlog(k);
-//    emit logServis("try_send", QString(dataToSEnd.toHex()));
-//    emit logJoy("<-", QString(dataToSEnd.toHex()));
+//     if(rendering_flag)    sendparstxlog(k, cod);
+//    if(rendering_flag)    emit logServis("try_send", QString(dataToSEnd.toHex()));
+//    if(rendering_flag)    emit logJoy("<-", QString(dataToSEnd.toHex()));
 
     if (!socket)   {
         return;
     }
 
  //   int r = socket->write(dataToSEnd);
- //   emit logServis("->", QString ("%1 (%2 size)").arg(QString(dataToSEnd.toHex())).arg(r));
+ //   if(rendering_flag)    emit logServis("->", QString ("%1 (%2 size)").arg(QString(dataToSEnd.toHex())).arg(r));
 
-   socket->write(dataToSEnd);
-   sendparstxlog(k);
+    int r = -1;
+    if(k != 0x00)
+    {
+        r = socket->write(dataToSEnd);
+    }
+
+   if(rendering_flag)    sendparstxlog(k, cod);
+   //вывод лога
+   if(loging)
+   {
+       if(rendering_flag)
+       {
+           emit logJoy("->", QString ("%1 (%2 size)").arg(QString(dataToSEnd.toHex())).arg(r));
+           emit logServis("->", QString ("%1 (%2 size)").arg(QString(dataToSEnd.toHex())).arg(r));
+       }
+   }
 }
 
-void Device::sendparstxlog(quint8 code)
+void Device::sendparstxlog(quint8 code, quint8 cod)
 {
     QString s;
 
     switch (code) {
+    case 0x00:
+        s = "ошибка";
+        break;
     case 0xE0:
         s = "сброс до заводских";
         break;
@@ -625,7 +714,8 @@ void Device::sendparstxlog(quint8 code)
         s = "установить серву в угол";
         break;
     case 0xE4:
-        s = "флаг блокировки тока";
+        if(cod == 0x00)         s = "флаг блокировки тока OFF";
+        else if (cod == 0x01)   s = "флаг блокировки тока ON";
         break;
     case 0xE5:
         s = "запрос ошибок";
@@ -655,19 +745,22 @@ void Device::sendparstxlog(quint8 code)
         s = "сервы в домашнее положение";
         break;
     case 0xEE:
-        s = "Сохранение углов";
+        s = "сохранение углов";
         break;
     case 0xEF:
         s = "Reset foot angl";
         break;
+    case 0xF0:
+        s = "команда перезагрузки";
+        break;
     case 0xF1:
-        s = "Обновление углов серв...";
+        s = "обновление углов серв...";
         break;
     case 0xF2:
-        s = "Запрос версии";
+        s = "запрос версии";
         break;
     case 0xF5:
-        s = "Подпись приложения";
+        s = "подпись приложения";
         break;
     case 0xA0:
         s = "опрос светодиода";
@@ -678,6 +771,7 @@ void Device::sendparstxlog(quint8 code)
         break;
     case 0xA2:
         s = "запрос тока";
+        setCurReal = true;
         break;
     case 0xA3:
         s = "запрос углов гироскопа";
@@ -688,12 +782,22 @@ void Device::sendparstxlog(quint8 code)
     case 0xA5:
         s = "запрос угла сервы";
         break;
+    case 0xA6:
+        if(cod == 0x00)         s = "питание серв OFF";
+        else if (cod == 0x01)   s = "питание серв ON";
+        break;
+    case 0xA7:
+        s = "запрос точки восстановления";
+        break;
+    case 0xA8:
+        s = "отправка точки восстановления";
+        break;
 
     default:
        return;
         break;
     }
-   emit logServis("->", s);
+   if(rendering_flag)    emit logServis("-> ", s);
 }
 
 
@@ -721,8 +825,16 @@ Device::onJoysticActivity(quint8 mode, float azimut, float amplitude, float leve
     }
  //   qDebug() << azimut16;
 
-    quint16 amplitude16 = amplitude * mainModel_->getJoystickAmplitude();
-    //quint16 level16 = level * 4095;
+    quint16 amplitude16;
+    if(mode == 3)
+    {
+        amplitude16 = amplitude * (mainModel_->getJoystickAmplitude() / 2);
+    }
+    else
+    {
+        amplitude16 = amplitude * mainModel_->getJoystickAmplitude();
+    }
+
     quint16 level16 = level;
 
 //    qDebug() << mode << azimut16 << amplitude16 << level16;
@@ -736,16 +848,26 @@ Device::onJoysticActivity(quint8 mode, float azimut, float amplitude, float leve
     msg.append(level16 & 0x00FF);
 
     msg = wrapData(msg);
-//    emit logJoy("try_send", QString(msg.toHex()));
+//  if(rendering_flag)      emit logJoy("try_send", QString(msg.toHex()));
 
     if (!socket)   {
         return;
     }
 
     socket->write(msg);
-//    int r = socket->write(msg);
+    int r = socket->write(msg);
 
-    //  emit logJoy("->", QString ("%1 (%2 size)").arg(QString(msg.toHex())).arg(r));
+    //  if(rendering_flag)    emit logJoy("->", QString ("%1 (%2 size)").arg(QString(msg.toHex())).arg(r));
+
+    //вывод лога
+    if(loging)
+    {
+        if(rendering_flag)
+        {
+            emit logJoy("->", QString ("%1 (%2 size)").arg(QString(msg.toHex())).arg(r));
+            emit logServis("->", QString ("%1 (%2 size)").arg(QString(msg.toHex())).arg(r));
+        }
+    }
 }
 
 void Device::get_check()
@@ -755,15 +877,25 @@ void Device::get_check()
     get_check.insert(0, 0xE5);
     get_check = wrapData(get_check);
 
-//    emit logJoy("try_send", QString(get_check.toHex()));
+//    if(rendering_flag)    emit logJoy("try_send", QString(get_check.toHex()));
 
      if (!socket)   {
          return;
      }
-    socket->write(get_check);
+    int r = socket->write(get_check);
 
     s = "запрос ошибок";
-    emit logJoy("->", s);
+    if(rendering_flag)    emit logJoy("->", s);
+
+    //вывод лога
+    if(loging)
+    {
+        if(rendering_flag)
+        {
+            emit logJoy("->", QString ("%1 (%2 size)").arg(QString(get_check.toHex())).arg(r));
+            emit logServis("->", QString ("%1 (%2 size)").arg(QString(get_check.toHex())).arg(r));
+        }
+    }
 }
 
 void Device::onGetCurReal()
@@ -773,18 +905,30 @@ void Device::onGetCurReal()
     get_cur.insert(0, 0xA2);
     get_cur = wrapData(get_cur);
 
-//    emit logJoy("-> ",  QString(get_cur.toHex()));
+//   if(rendering_flag)     emit logJoy("-> ",  QString(get_cur.toHex()));
 
      if (!socket)   {
          return;
      }
-    socket->write(get_cur);
+    int r = socket->write(get_cur);
+    //вывод лога
+    if(loging)
+    {
+        if(rendering_flag)
+        {
+            emit logJoy("->", QString ("%1 (%2 size)").arg(QString(get_cur.toHex())).arg(r));
+            emit logServis("->", QString ("%1 (%2 size)").arg(QString(get_cur.toHex())).arg(r));
+        }
+    }
 }
 
 void Device::deviceDisconnected()
 {
     qWarning() << "Устройство отключено";
     emit disconnected();
+    //сбросить напряжение и ток
+    mainModel_->setCurReal(0.0f);
+    mainModel_->setVreal(0.0f);
 }
 
 
@@ -793,17 +937,32 @@ Device::socketRead()
 {
    QByteArray recievedData = socket->readAll();
    emit socketDataRecieved(recievedData.toHex());
+   int r = recievedData.size();
+
+   //если приложение свернуто - не парсить
+  if(!rendering_flag) return;
+
    const std::string empty;
 //   QByteArray Dat = recievedData;
 
    //если терминал - вывести в сыром виде
    //в окно терминала
-   emit log("<-", recievedData.toHex());
+   if(rendering_flag)  emit log("<-", QString ("%1 (%2 size)").arg(QString(recievedData.toHex())).arg(r));
 
+   //вывод лога
+   if(loging)
+   {
+       if(rendering_flag)
+       {
+           emit logJoy("<-", QString ("%1 (%2 size)").arg(QString(recievedData.toHex())).arg(r));
+           emit logServis("<-", QString ("%1 (%2 size)").arg(QString(recievedData.toHex())).arg(r));
+       }
+   }
 
    //склейка разорванных пакетов
    for (quint8 i = 0; i < recievedData.size(); i++)
    {
+     //если пакет не начат
      if (statys == false)
      {
        if (recievedData[i] == 0x1F)
@@ -812,8 +971,10 @@ Device::socketRead()
          statys = true;
        }
      }
+     //если пакет начат
      else if (statys == true)
      {
+       //если найден конец первой посылки
        if (i + 1 < recievedData.size() &&
            recievedData[i] == 0x2F &&
            recievedData[i + 1] == 0x55 &&
@@ -827,7 +988,9 @@ Device::socketRead()
         }
          statys = false;
          startByteIndex = 0;
+         i = recievedData.size();
        }
+       //если найден конец и пакет был разделен
        else if(i + 1 < recievedData.size() &&
                recievedData[i] == 0x2F &&
                recievedData[i + 1] == 0x55 &&
@@ -835,33 +998,46 @@ Device::socketRead()
                (recievedData.size() + Temp.size()) < max_rx_size)
        {
             //поместить Temp в начало recievedData
-           for(qint32 k = Temp.size()-1; k >= 0; k--) recievedData.insert(0, Temp[k]);
+      //     for(qint32 k = Temp.size()-1; k >= 0; k--) recievedData.insert(0, Temp[k]);
+           for(qint32 k = 0; k < recievedData.size(); k++) Temp.append(recievedData[k]);
+           recievedData.replace(0, recievedData.size(), empty);
+           for(qint32 k = 0; k < Temp.size(); k++) recievedData.append(Temp[k]);
+
             split = false;
             statys = false;
+            startByteIndex = 0;
+            Temp.replace(0, Temp.size(), empty);
+            i = recievedData.size();
        }
-       else if (i + 2 > recievedData.size() && split == false)
+       else if(recievedData.size() + Temp.size() >= max_rx_size)
        {
-           //очистить Temp
-           Temp.replace(0, Temp.size(), empty);
 
+           Temp.replace(0, Temp.size(), empty);
+           startByteIndex = 0;
+           split = false;
+           statys = false;
+           i = recievedData.size();
+           recievedData.replace(0, recievedData.size(), empty);
+           return;
+       }
+       //если конец пакета - надо склеить
+       else if (i + 2 >= recievedData.size())
+       {
            //удалить все до 1F в recievedData
            if(startByteIndex > 0)
            {
                recievedData.replace(0, startByteIndex, empty);
            }
            //поместить recievedData в Temp
-           for(qint32 k = recievedData.size()-1; k >= 0; k--) Temp.insert(0, recievedData[k]);
+     //      for(qint32 k = recievedData.size()-1; k >= 0; k--) Temp.insert(0, recievedData[k]);
 
+           for(qint32 k = 0; k < recievedData.size(); k++) Temp.append(recievedData[k]);
+
+           i = recievedData.size();
+            recievedData.replace(0, recievedData.size(), empty);
             split = true;
             startByteIndex = 0;
-       }
-       else if(recievedData.size() + Temp.size() >= max_rx_size)
-       {
-           recievedData.replace(0, Temp.size(), empty);
-           Temp.replace(0, Temp.size(), empty);
-           startByteIndex = 0;
-           split = false;
-           statys = false;
+            return;
        }
      }
    }
@@ -871,6 +1047,7 @@ Device::socketRead()
        //проверить совпадение с известным протоколом
            //если ответ известный - вывести в распарсеном виде
         /****   //если нет - в сыром, но без crc и признаком начала/конца  ****/
+
    //удаление старт байта, стоп байтов
    if(recievedData[0] == recievedData[1] &&
            recievedData[0] == 0x1F && recievedData.size() > 1)
@@ -929,6 +1106,7 @@ Device::socketRead()
 
         quint16 k = recievedData[0];
         QByteArray Data = recievedData;
+        recievedData.replace(0, recievedData.size(), empty);
         Data.replace(0, 1, empty);
 
         switch (k) {
@@ -949,6 +1127,9 @@ Device::socketRead()
             break;
         case 0x07: //не правильныая очередность пакетов
             mainModel_->on_pbStop_clicked("Ошибка. Не правильныая очередность пакетов. ");
+            break;
+        case 0x08: //ошибка загрузки прошивки
+            mainModel_->on_pbStop_clicked("Ошибка загрузки прошивки. ");
             break;
         case 0x10:
             emit logServis("<- ошибка гироскопа", " ");
@@ -1024,29 +1205,32 @@ Device::socketRead()
             break;
         case 0xE1:
             emit logServis("<- установки сервы записаны", " ");
-            if(mainModel_->getAdminTapCount() == -1)    emit logJoy("<- установки сервы записаны", " ");
             break;
         case 0xE2:
             emit logServis("<- установки светодиода записаны", " ");
-            if(mainModel_->getAdminTapCount() == -1)    emit logJoy("<- установки светодиода записаны", " ");
             break;
         case 0xE3:
             emit logServis("<- угол сервы установлен", " ");
-            if(mainModel_->getAdminTapCount() == -1)    emit logJoy("<- угол сервы установлен", " ");
             break;
         case 0xE4:
-            emit logServis("<- флаг блокировки ок", " ");
-            if(mainModel_->getAdminTapCount() == -1)    emit logJoy("<- флаг блокировки ок", " ");
+            u8 = Data[0];
+            if(u8 == 0x00)
+            {
+                emit logServis("<- флаг блокировки тока выкл.", " ");
+            }
+            else if(u8 == 0x01)
+            {
+                emit logServis("<- флаг блокировки тока вкл.", " ");
+            }
+
             break;
         case 0xE5:
             emit logServis("<- запрос ошибок ок", " ");
             emit logJoy("<- запрос ошибок ок", " ");
             break;
         case 0xE6:
-            val.data[0] = Data[10];
-            val.data[1] = Data[9];
-            val.data[2] = Data[8];
-            val.data[3] = Data[7];
+            val.data[1] = Data[8];
+            val.data[0] = Data[7];
 
             u8 = Data[0];
             u16 = Data[2] << 8 | Data[1];
@@ -1055,10 +1239,7 @@ Device::socketRead()
 
             emit logServis("<- установки сервы №", QString(QString::number(u8)) + "\nmin " + QString(QString::number(u16))
                            + "   max " + QString(QString::number(u16_2)) + "   home " + QString(QString::number(u16_3))
-                           + "   ztrim " + QString(QString::number(val.int32)));
-            if(mainModel_->getAdminTapCount() == -1)    emit logJoy("<- установки сервы №", QString(QString::number(u8)) + "\nmin " + QString(QString::number(u16))
-                           + "   max " + QString(QString::number(u16_2)) + "   home " + QString(QString::number(u16_3))
-                           + "   ztrim " + QString(QString::number(val.int32)));
+                           + "   start " + QString(QString::number(val.int32)));
 
             break;
         case 0xE7:
@@ -1078,7 +1259,6 @@ Device::socketRead()
             break;
         case 0xE9:
              emit logServis("<- знач. калибр. тока записаны", " ");
-             if(mainModel_->getAdminTapCount() == -1)   emit logJoy("<- знач. калибр. тока записаны", " ");
             break;
         case 0xEA:
             val.data[0] = Data[0];
@@ -1088,17 +1268,14 @@ Device::socketRead()
             if(val.f == val.f)
             {
                 emit logServis("<- знач. калибр. тока ", QString(QString::number(val.f)));
-                if(mainModel_->getAdminTapCount() == -1)    emit logJoy("<- знач. калибр. тока ", QString(QString::number(val.f)));
             }
             break;
         case 0xEB:
             emit logServis("<- ошибки стерты", " ");
-            if(mainModel_->getAdminTapCount() == -1)    emit logJoy("<- ошибки стерты", " ");
             break;
         case 0xEC:
         case 0xED:
             emit logServis("<- сервы установлены", " ");
-            if(mainModel_->getAdminTapCount() == -1)    emit logJoy("<- сервы установлены", " ");
             break;
         case 0xEE:
             emit logServis("<- Углы записаны", " ");
@@ -1110,7 +1287,7 @@ Device::socketRead()
             break;
         case 0xF0:
             emit logServis("<- перезагрузка", " ");
-            if(mainModel_->getAdminTapCount() == -1)    emit logJoy("<- перезагрузка", " ");
+            emit logJoy("<- перезагрузка", " ");
             break;
         case 0xF1:
             mainModel_->setcoxaAngl(Data[2] << 8 | Data[1]);
@@ -1122,12 +1299,13 @@ Device::socketRead()
         case 0xF2:
             //версия прошивки загрузчика
             val.data[3] = Data[0]; val.data[2] = Data[1]; val.data[1] = Data[2]; val.data[0] = Data[3];
-            mainModel_->setVersExt(val.u32);
+            mainModel_->setVersBootLoaderExt(val.u32);
+
             if(mainModel_->getAdminTapCount() == -1)    emit logServis("<- Версия загрузчика:\n", mainModel_->versionToString(val.u32));
             if(mainModel_->getAdminTapCount() == -1)    emit logJoy("<- Версия загрузчика:\n", mainModel_->versionToString(val.u32));
 
             val.data[3] = Data[4]; val.data[2] = Data[5]; val.data[1] = Data[6]; val.data[0] = Data[7];
-            mainModel_->setVersBootLoaderExt(val.u32);
+            mainModel_->setVersExt(val.u32);
             emit logServis("<- Версия прошивки:\n", mainModel_->versionToString(val.u32));
             emit logJoy("<- Версия прошивки:\n", mainModel_->versionToString(val.u32));
 
@@ -1147,10 +1325,6 @@ Device::socketRead()
             u8_4 = Data[3];
 
             emit logServis("<- гамма светодиода № ", QString(QString::number(u8)) + "\nR "
-                           + QString(QString::number(u8_2)) + "   G "
-                           + QString(QString::number(u8_3)) + "   B "
-                           + QString(QString::number(u8_4)));
-            if(mainModel_->getAdminTapCount() == -1)    emit logJoy("<- гамма светодиода № ", QString(QString::number(u8)) + "\nR "
                            + QString(QString::number(u8_2)) + "   G "
                            + QString(QString::number(u8_3)) + "   B "
                            + QString(QString::number(u8_4)));
@@ -1175,7 +1349,11 @@ Device::socketRead()
             if(val.f == val.f)
             {
                 mainModel_->setCurReal(val.f);
-                emit logServis("<- ток ", QString(QString::number(val.f)));
+                if(setCurReal)
+                {
+                    emit logServis("<- ток ", QString(QString::number(val.f)));
+                    setCurReal = false;
+                }
             }
             break;
         case 0xA3:
@@ -1194,7 +1372,6 @@ Device::socketRead()
                 if(val.f == val.f)
                 {
                     emit logServis("<- азимут, наклон\n", QString(QString::number(f)) + ",   " + QString(QString::number(val.f)));
-                    if(mainModel_->getAdminTapCount() == -1)    emit logJoy("<- азимут, наклон\n", QString(QString::number(f)) + ",   " + QString(QString::number(val.f)));
                 }
             }
             break;
@@ -1214,7 +1391,6 @@ Device::socketRead()
                 if(val.f == val.f)
                 {
                     emit logServis("<- ускорение, угловая скорость\n", QString(QString::number(f)) + ",   " + QString(QString::number(val.f)));
-                    if(mainModel_->getAdminTapCount() == -1)    emit logJoy("<- ускорение, угловая скорость\n", QString(QString::number(f)) + ",   " + QString(QString::number(val.f)));
                 }
             }
             break;
@@ -1223,7 +1399,37 @@ Device::socketRead()
             u16 = Data[2] << 8 | Data[1];
 
             emit logServis("<- угол сервы № ", QString(QString::number(u8)) + "   " + QString(QString::number(u16)));
-            if(mainModel_->getAdminTapCount() == -1)    emit logJoy("<- угол сервы № ", QString(QString::number(u8)) + "   " + QString(QString::number(u16)));
+            break;
+
+        case 0xA6:
+            u8 = Data[0];
+            if(u8 == 0x00)
+            {
+                emit logServis("<- сервы OFF", "");
+            }
+            else if(u8 == 0x01)
+            {
+                emit logServis("<- сервы ON", "");
+            }
+
+            break;
+        case 0xA7:
+            if(Data.size() > 10)
+            {
+                mainModel_->set_full_param(Data);
+
+                QSettings setting;
+                setting.setValue("fullParam", Data);
+
+               emit logServis("<- точка восстановления создана", "");
+            }
+            else
+            {
+                emit logServis("<- отсутствуют входящие параметры", "");
+            }
+            break;
+        case 0xA8:
+           emit logServis("<- параметры восстановленны", "");
             break;
 
         default:
@@ -1245,35 +1451,35 @@ void Device::deviceScanError(QBluetoothDeviceDiscoveryAgent::Error error)
 
     if (error == QBluetoothDeviceDiscoveryAgent::PoweredOffError)
     {
-        setUpdate("Включите Bluetooth");
-        searchFinished();
+        if(rendering_flag)  setUpdate("Включите Bluetooth");
+        if(rendering_flag)  searchFinished();
     }
 
     else if (error == QBluetoothDeviceDiscoveryAgent::UnsupportedPlatformError)
     {
-        setUpdate("Bluetooth не поддерживается платформой.");
-        searchFinished();
+        if(rendering_flag)  setUpdate("Bluetooth не поддерживается платформой.");
+        if(rendering_flag)  searchFinished();
     }
     else if (error == QBluetoothDeviceDiscoveryAgent::InputOutputError)
     {
-        setUpdate("Запись или считывание данных\n с устройства привело к ошибке.");
-        searchFinished();
+        if(rendering_flag)  setUpdate("Запись или считывание данных\n с устройства привело к ошибке.");
+        if(rendering_flag)  searchFinished();
     }
     else if (error == QBluetoothDeviceDiscoveryAgent::LocationServiceTurnedOffError)
     {
-        setUpdate("Включите геолокацию.");
-        searchFinished();
+        if(rendering_flag)  setUpdate("Включите геолокацию.");
+        if(rendering_flag)  searchFinished();
     }
     else {
         static QMetaEnum qme = discoveryAgent->metaObject()->enumerator(
                     discoveryAgent->metaObject()->indexOfEnumerator("Error"));
-        setUpdate("Error: " + QLatin1String(qme.valueToKey(error)));
-        searchFinished();
+        if(rendering_flag)  setUpdate("Error: " + QLatin1String(qme.valueToKey(error)));
+        if(rendering_flag)  searchFinished();
     }
 
     m_deviceScanState = false;
-    emit devicesUpdated();
-    emit stateChanged();
+    if(rendering_flag)  emit devicesUpdated();
+    if(rendering_flag)  emit stateChanged();
 }
 
 bool Device::state()
@@ -1309,6 +1515,74 @@ void
 Device::setNeedWrap(bool value)
 {
     needWrap_ = value;
+}
+
+bool Device::getloging()
+{
+    return loging;
+}
+
+void Device::setloging(bool newloging)
+{
+   loging = newloging;
+}
+
+bool Device::blt_on()
+{
+    QBluetoothLocalDevice device;
+    QGeoCoordinate geo;
+
+    if(!geo.isValid())
+    {
+         if(rendering_flag)  setUpdate("Геолокация не поддерживается платформой.\nПоиск bt устройств невозможен.");
+ //       return false;
+    }
+
+    if(!device.isValid())
+    {
+        if(rendering_flag)  setUpdate("Bluetooth не поддерживается платформой.");
+        return false;
+    }
+
+
+    if(device.hostMode() == QBluetoothLocalDevice::HostPoweredOff)// Bluetooth is not enabled
+    {
+        device.powerOn();// Call to open the local Bluetooth device
+         if(rendering_flag)  setUpdate("Включение Bluetooth");
+         if(rendering_flag)  emit searchInProgress();
+        delay(1500);
+
+        qint32 count = 0;
+        while(count++ < 8)
+        {
+            if(device.hostMode() != QBluetoothLocalDevice::HostPoweredOff)      count = 8;
+            delay(700);
+        }
+        delay(500);
+    }
+    return true;
+}
+
+void Device::get_last_device()
+{
+    QSettings setting;
+
+    QString dName;
+    quint32 dClass;
+    QString dAdres;
+
+    dName = setting.value("dName", QString()).toString();
+    dClass = setting.value("dClass").toUInt();
+    dAdres = setting.value("dAdres", QString()).toString();
+
+
+    if((dName.isEmpty()) || (dAdres.isEmpty()))
+    {
+        return;
+    }
+
+
+    addDevice(QBluetoothDeviceInfo(QBluetoothAddress(dAdres), dName, dClass));
 }
 
 

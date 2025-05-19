@@ -18,17 +18,14 @@ Dialog {
 
         Label {
             id: devicesDialogStatus
-            text: "Для поиска Bluetooth устройств\nнеобходимо, в настройках приложения,\nразрешить определять\n местоположение."
+            text: "Для поиска Bluetooth устройств необходимо, в настройках приложения, разрешить определять местоположение."
             font.pixelSize: 15
-            anchors.left: devicesDialog.Left
-            anchors.right: devicesDialog.Right
-
-            wrapMode: Text.WordWrap
+            width: devicesDialog.width
             horizontalAlignment: Text.left
             verticalAlignment: Text.AlignVCenter
-
-            Component.onCompleted: {
-                device.onUpdateChanged.connect(deviceChanged)
+            wrapMode: Text.Wrap
+            Component.onCompleted: { 
+                device.onUpdateChanged.connect(deviceChanged) 
             }
 
             function deviceChanged(msg){
@@ -52,7 +49,7 @@ Dialog {
                    MouseArea {
                        anchors.fill: parent
                        onClicked: {
-                           device.connectToDevice(modelData.deviceAddress,modelData.deviceName);
+                           device.connectToDevice(modelData.deviceAddress,modelData.deviceName,modelData.coreConfig);
                        }
                    }
 
@@ -135,6 +132,21 @@ Dialog {
         }
 
         Button {
+            id: get_devise
+            anchors.left: footerContainer.left
+            anchors.right: footerContainer.right
+            anchors.bottom: searchButton.top
+            anchors.margins: 5
+            highlighted: true
+            text: "Ранее подключенные"
+
+            onClicked: {
+                get_devise.visible = false
+                device.get_last_device();
+            }
+        }
+
+        Button {
             id: searchButton
             anchors.left: footerContainer.left
             anchors.right: footerContainer.right
@@ -144,9 +156,11 @@ Dialog {
             text: "Начать поиск"
 
             onClicked: {
+                get_devise.visible = false
                 device.startDeviceDiscovery();
             }
         }
+
 
         BusyIndicator {
             id: busyIndicator

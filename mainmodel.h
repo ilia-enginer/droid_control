@@ -17,6 +17,8 @@
 #include <QFileDialog>
 
 
+
+
 union f_value {
     float f;
     quint8 data[4];
@@ -47,7 +49,8 @@ public:
     Q_PROPERTY(int tibaAngl READ gettibaAngl WRITE settibaAngl NOTIFY tibaAnglChanged)
     Q_PROPERTY(float CurReal READ getCurReal WRITE setCurReal NOTIFY CurRealChanged)
     Q_PROPERTY(QString currenUpdate READ getCurrenUpdate WRITE setCurrenUpdate NOTIFY CurrenUpdateChanged)
-
+    Q_PROPERTY(QString version_app READ getversion_app WRITE setversion_app NOTIFY version_appChanged)
+    Q_PROPERTY(int servisIndexMenu READ getservisIndexMenu WRITE setservisIndexMenu NOTIFY servisIndexMenuChanged)
 
 
     MainModel();
@@ -75,6 +78,10 @@ public:
     float getheightAmplitudemin() const;
     void setheightAmplitudemin(float newHeightAmplitudemin);
     void resetheightAmplitudemin();
+
+    int getservisIndexMenu() const;
+    void setservisIndexMenu(int newservisIndexMenu);
+
 
     float getVmin() const;
     void setVmin(float newVmin);
@@ -116,14 +123,26 @@ public:
 
     void setDevice(Device *device);
 
-    int on_pbOpenFile_clicked(void);
+    int on_pbOpenFile_clicked(QString name);
 
     void setPageTx(qint32 num);
+
+    void set_rendering_flag(bool fl);
+
+    QString getversion_app();
+    void setversion_app(QString &vers);
+
+    QByteArray get_full_param(void);
+    void set_full_param(QByteArray &param);
+
+    void full_param_check(void);
 
 public slots:
     void checkingUpdates(void);
     QString versionToString(quint32 vers);
-    void on_pbWrite_clicked(void);
+    void on_pbWrite_clicked(bool flag);
+    qint32 open_Update(void);
+    qint32 openBootloaderUpdate(void);
     void on_pbStop_clicked(QString error);
     void write_page(void);
 
@@ -136,6 +155,9 @@ Q_SIGNALS:
     void joystickAmplitudeChanged();
     void heightAmplitudeChanged();
     void heightAmplitudeChangedmin();
+
+    void servisIndexMenuChanged();
+
 
     void VminChanged();
     void VmaxChanged();
@@ -154,11 +176,14 @@ Q_SIGNALS:
 
     void checkUpdateProgress();     //индикатор загрузки
     void updateAvailable();         //включение кнопки загрузки
+    void updateBootloaderAvailable();//кнопка обновления бутлоадера
     void checkUpdate();             //включение кнопки проверки обновления
     void stopUpdate();             //включение кнопки остановки обновления
 
     void txPageTimerOn();
     void txPageTimerOff();
+
+    void version_appChanged();
 
 private:
 
@@ -167,13 +192,14 @@ private:
     int timer1 = 100;
     int timer2 = 80;
     float joystickAmplitude = 100;
-    float heightAmplitudemin = 10;
-    float heightAmplitude = 60;
+    float heightAmplitudemin = 0;
+    float heightAmplitude = 45;
 
+    int servisIndexMenu = 0;
 
     float Vmin = 9.0;
     float Vreal = 0.0;
-    float Vmax = 12.6;
+    float Vmax = 12.4;
 
     float CurReal = 0.0;
 
@@ -183,14 +209,21 @@ private:
 
     QString currenDeviceName_ = "Отсутствует подключение";
 
-    int adminTapCount = 0;
+    int adminTapCount = 0;      ///флаг админа
+                                /// если -1, то полный доступ ко всем функциям
 
     QString currenUpdate = "Проверьте обновление";
 
     f_value version_BootLoader_ExternalProgram;     //версия загрузчика
+    f_value version_BootLoader_InternalProgram;     //версия загрузчика из apk
     f_value versionExternalProgram;     //версия шара
     f_value versionInternalProgram;     //версия из apk
     f_value _crc32_Internal;
+    bool load_param_ = false;           ///флаг того что загружается
+                                        ///false - bootloader
+                                        ///true - основная прошивка
+
+    QByteArray _full_Param;         ///массив с полными параметрами
 
     Device *device_ = nullptr;
 
@@ -200,6 +233,10 @@ private:
     int _pages = 0;                 ///< количество страниц для передачи
     int _size = 512;               ///< размер пакета
     int _unsuccessful_transfers = 0;    ///считает кол-во неудачных передач
+
+    bool rendering_flag = false;        //флаг выводы сообщений на экран
+
+    QString version_app = INSERT_VERSION_CODE;
 };
 
 

@@ -86,8 +86,10 @@ class Device: public QObject
     Q_PROPERTY(bool useRandomAddress READ isRandomAddress WRITE setRandomAddress NOTIFY randomAddressChanged)
     Q_PROPERTY(bool state READ state NOTIFY stateChanged)
     Q_PROPERTY(bool controllerError READ hasControllerError)
-
     Q_PROPERTY(bool needWrap READ getNeedWrap WRITE setNeedWrap)
+    Q_PROPERTY(bool loging READ getloging WRITE setloging)
+
+
 public:
     Device(MainModel *mainModel);
     ~Device();
@@ -104,17 +106,21 @@ public:
     bool getNeedWrap();
     void setNeedWrap(bool value);
 
+    bool getloging();
+    void setloging(bool newloging);
+
+    bool blt_on(void);
 
 public slots:
     void startDeviceDiscovery();
-    void connectToDevice(const QString &uuid, const QString &name);
+    void connectToDevice(const QString &dAddress, const QString &name, const QString &config);
     void disconnectFromDevice();
     void sendUpdate(QByteArray msg);
     void sendMessage (QString msg);
     void sendMessageAndWrap (QString msg);
     void sendMessageAndWrapS (QString msg);
     void sendMessageAndWrap (quint8 code, QString msg);
-    void sendparstxlog (quint8 code);
+    void sendparstxlog (quint8 code, quint8 cod);
 
     void onJoysticActivity(quint8 mode, float azimut, float amplitude, float level);
     void get_check(void);
@@ -123,6 +129,11 @@ public slots:
     uint_least32_t crc32(const QByteArray &buf, qint32 format_buf);
 
     QString getLastConnectedDevice(void);
+
+    void set_rendering_flag(bool fl);
+
+    void get_last_device(void);
+
 
 private slots:
     // QBluetoothDeviceDiscoveryAgent related
@@ -168,9 +179,12 @@ private:
 
     QBluetoothSocket *socket = nullptr;
     MainModel *mainModel_ = nullptr;
+
     bool needWrap_ = false;
     QString lastConnectedDevice_;
     QString nameDevice_;
+    QString class_;
+
 
     QByteArray wrapData(QByteArray input);
 
@@ -178,13 +192,16 @@ private:
 
 
     bool setVreal = false;
+    bool setCurReal = false;
 
-    quint8 max_rx_size = 25;
+    quint8 max_rx_size = 255;
 
     QByteArray Temp = 0;
     quint8 startByteIndex = 0;
     bool statys = false;
     bool split = false;
+    bool loging = false;                //флаг логирования
+    bool rendering_flag = false;        //флаг выводы сообщений на экран
 
 };
 

@@ -1,13 +1,14 @@
 TEMPLATE = app
 TARGET = droid_stick
 
-#VERSION = "0.1.4"
-#DEFINES += APP_VERSION=\\\"$$VERSION\\\"
+VERSION = "1.1.2"
+DEFINES += INSERT_VERSION_CODE=\\\"$$VERSION\\\"
 
-QT += quick quickcontrols2 bluetooth core positioning widgets
+QT += quick quickcontrols2 bluetooth core positioning widgets core-private
 
 SOURCES += \
 #    btscaner.cpp \
+    appmanager.cpp \
     device.cpp \
     deviceinfo.cpp \
 #    devicemodel.cpp \
@@ -93,6 +94,7 @@ DISTFILES += \
 
 
 HEADERS += \
+    appmanager.h \
     device.h \
     deviceinfo.h \
     mainmodel.h

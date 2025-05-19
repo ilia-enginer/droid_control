@@ -60,7 +60,7 @@ ApplicationWindow {
     width: 360
     height: 520
     visible: true
-    title: "Droid Stick v.1.0"
+    title: qsTr("Droid Stick v.%1").arg(mainModel.version_app)
 
     required property var builtInStyles
 
@@ -182,20 +182,19 @@ ApplicationWindow {
                     ListElement { title: "Джойстик"; source: "qrc:/pages/joystick/Joystick.qml" }
                     ListElement { title: "Настройка серв"; source: "qrc:/pages/SettingFootPage.qml" }
                     ListElement { title: "Обновление прошивки"; source: "qrc:/pages/firmware_update.qml" }
+
              //       ListElement { title: "Терминал"; source: "qrc:/pages/SenderPage.qml" }
              //       ListElement { title: "Сервис"; source: "qrc:/pages/ServicePage.qml" }
              //       ListElement { title: "Настройки"; source: "qrc:/pages/SettingsPage.qml" }
                 }
 
-
+                //включение режима админа
                 Button {
                     id: admin
-                 //   anchors.top: listView.bottom
                     width: Math.min(window.width, window.height) / 3 * 2
                     height: 100
                     anchors.bottom: listView.bottom
                     opacity: 0.0
-                   // visible: false
                     enabled: true
 
                     onClicked: {
