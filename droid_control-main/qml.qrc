@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>pages/joystick/Back.qml</file>
+        <file>pages/joystick/Groove.qml</file>
+        <file>pages/joystick/Handle.qml</file>
+        <file>pages/joystick/Joystick.qml</file>
+        <file>pages/joystick/Lights.qml</file>
+        <file>pages/joystick/SparseLight.qml</file>
+    </qresource>
+</RCC>

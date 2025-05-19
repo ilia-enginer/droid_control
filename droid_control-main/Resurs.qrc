@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>bin/roboshar_v.bin</file>
+        <file>bin/boot_loader.bin</file>
+    </qresource>
+</RCC>
