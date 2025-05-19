@@ -352,7 +352,7 @@ void MainModel::checkingUpdates(void)
         if(rendering_flag)
         {
             setCurrenUpdate("Версия шара:\n" + versionToString(versionExternalProgram.u32) + "\nДоступна версия:\n" + versionToString(versionInternalProgram.u32) + "\n"
-                            "Версия загрузчика:\n" + versionToString(version_BootLoader_ExternalProgram.u32) + "\nДоступна версия:\n" + versionToString(versionInternalProgram.u32));
+                            "Версия загрузчика:\n" + versionToString(version_BootLoader_ExternalProgram.u32) + "\nДоступна версия:\n" + versionToString(version_BootLoader_InternalProgram.u32));
         }
 
         if(rendering_flag)
@@ -605,6 +605,7 @@ void MainModel::write_page()
                 device_->sendMessageAndWrap(0xf2, "");
                 delay(50);
                 int a = 0;
+                version_BootLoader_ExternalProgram.u32 = 0;
                 //ожидание ответа
                 while(version_BootLoader_ExternalProgram.u32 != version_BootLoader_InternalProgram.u32)
                 {
@@ -648,6 +649,7 @@ void MainModel::write_page()
                 device_->sendMessageAndWrap(0xf2, "");
                 delay(50);
                 int a = 0;
+                versionExternalProgram.u32 = 0;
                 //ожидание ответа
                 while(versionExternalProgram.u32 != versionInternalProgram.u32)
                 {
@@ -685,6 +687,7 @@ void MainModel::write_page()
                 device_->sendMessageAndWrap(0xf2, "");
                 delay(50);
                 int a = 0;
+                version_BootLoader_ExternalProgram.u32 = 0;
                 //ожидание ответа
                 while(version_BootLoader_ExternalProgram.u32 != version_BootLoader_InternalProgram.u32)
                 {
@@ -700,7 +703,7 @@ void MainModel::write_page()
                                             versionToString(versionInternalProgram.u32) + "\n\n"
                                              "Версия загрузчика:\n" +
                                             versionToString(version_BootLoader_ExternalProgram.u32) +
-                                            "\nДоступна версия:\n" + versionToString(versionInternalProgram.u32));
+                                            "\nДоступна версия:\n" + versionToString(version_BootLoader_InternalProgram.u32));
                         }
                         if(rendering_flag)    emit checkUpdate();
                         //
@@ -719,7 +722,7 @@ void MainModel::write_page()
                                     versionToString(versionInternalProgram.u32) + "\n\n"
                                      "Версия загрузчика:\n" +
                                     versionToString(version_BootLoader_ExternalProgram.u32) +
-                                    "\nДоступна версия:\n" + versionToString(versionInternalProgram.u32));
+                                    "\nДоступна версия:\n" + versionToString(version_BootLoader_InternalProgram.u32));
                 }
                 if(rendering_flag)    emit checkUpdate();
                 //
@@ -738,6 +741,7 @@ void MainModel::write_page()
                 device_->sendMessageAndWrap(0xf2, "");
                 delay(50);
                 int a = 0;
+                versionExternalProgram.u32 = 0;
                 //ожидание ответа
                 while(versionExternalProgram.u32 != versionInternalProgram.u32)
                 {
@@ -753,7 +757,7 @@ void MainModel::write_page()
                                             versionToString(versionInternalProgram.u32) + "\n\n"
                                              "Версия загрузчика:\n" +
                                             versionToString(version_BootLoader_ExternalProgram.u32) +
-                                            "\nДоступна версия:\n" + versionToString(versionInternalProgram.u32));
+                                            "\nДоступна версия:\n" + versionToString(version_BootLoader_InternalProgram.u32));
                         }
                         if(rendering_flag)    emit checkUpdate();
                         //
@@ -772,7 +776,7 @@ void MainModel::write_page()
                                     versionToString(versionInternalProgram.u32) + "\n\n"
                                      "Версия загрузчика:\n" +
                                     versionToString(version_BootLoader_ExternalProgram.u32) +
-                                    "\nДоступна версия:\n" + versionToString(versionInternalProgram.u32));
+                                    "\nДоступна версия:\n" + versionToString(version_BootLoader_InternalProgram.u32));
                 }
                 if(rendering_flag)    emit checkUpdate();
 

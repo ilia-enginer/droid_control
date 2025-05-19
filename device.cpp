@@ -1311,7 +1311,12 @@ Device::socketRead()
 
             break;
         case 0xF3:
-            //номер успешно полученного пакета
+            //номер успешно полученного пакета основной прошивки
+            val.data[1] = Data[0]; val.data[0] = Data[1];
+            mainModel_->setPageTx(val.int32);
+            break;
+        case 0xF4:
+            //номер успешно полученного пакета загрузчика
             val.data[1] = Data[0]; val.data[0] = Data[1];
             mainModel_->setPageTx(val.int32);
             break;

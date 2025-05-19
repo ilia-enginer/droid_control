@@ -11,7 +11,7 @@ Page {
 
     Timer {
         id: setpageTimer
-        interval: 150
+        interval: 200
         running: false
         repeat: true
 
@@ -228,16 +228,39 @@ Page {
     CheckBox {
       id: loging
       anchors.top: update_bootloader_load.bottom
+      anchors.left: parent.left
       checked: device.loging
       text: qsTr("Включить логирование")
 
+      onClicked: {
+          device.loging = checked
+      }
+    }
+
+    CheckBox {
+      id: loging_visible
+      anchors.top: loging.top
+      anchors.right: parent.right
+      checked: false
+      text: qsTr("Вкл. экран")
+
       Component.onCompleted: {
-          if(mainModel.adiminTapCount === -1)   loging.visible = true
-          else                                  loging.visible = false
+          if(mainModel.adiminTapCount === -1)   loging_visible.visible = true
+          else                                  loging_visible.visible = false
+
+         loging.visible = loging_visible.checked
+          senderBackground.visible = loging_visible.checked
+          scrolViewLogArea.visible = loging_visible.checked
+          listView1.visible = loging_visible.checked
+          clearButton_1.visible = loging_visible.checked
      }
 
       onClicked: {
-          device.loging = checked
+          loging.visible = loging_visible.checked
+           senderBackground.visible = loging_visible.checked
+           scrolViewLogArea.visible = loging_visible.checked
+           listView1.visible = loging_visible.checked
+           clearButton_1.visible = loging_visible.checked
       }
     }
 
