@@ -1,115 +1,136 @@
+
 import QtQuick
 import QtQuick.Controls
 
 
 
-ScrollablePage {
+Page {
     id: page
 
-    anchors.fill: parent
 
-    Column {
-        spacing: 20
+    Label {
+        id: senderPageLabel
         width: parent.width
+        wrapMode: Label.Wrap
+        anchors.top: parent.top
+    //    anchors.horizontalCenter: page.horizontalCenter
+        horizontalAlignment: Qt.AlignHCenter
+        text: mainModel.currentDeviceName
+    }
 
-        Label {
-            id: senderPageLabel
-            width: parent.width
-            wrapMode: Label.Wrap
-            anchors.horizontalCenter: page.horizontalCenter
-            horizontalAlignment: Qt.AlignHCenter
-            text: mainModel.currentDeviceName
-        }
+    Rectangle {
+        id: senderBackground
+        anchors.top: senderPageLabel.bottom
+        color: "#111111"
+        width: parent.width
+        height: 250
+    }
 
-        Rectangle {
-            id: senderBackground
-//            anchors.fill: parent
-            anchors.top: senderPageLabel.bottom
-            color: "#111111"
+    ScrollView {
+        id: scrolViewLogArea
+        anchors.fill: senderBackground
+        ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-            width: page.width * 0.95
-            height: 250
-        }
+        ListView {
+               id: listView1
+               anchors.fill: scrolViewLogArea
+               snapMode:ListView.SnapToItem
+               clip: true
 
-        ScrollView {
-            id: scrolViewLogArea
-            anchors.fill: senderBackground
-            ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-            ScrollBar.vertical.interactive: true
-
-            ListView {
-                   id: listView1
-                   anchors.fill: senderBackground
-                   snapMode:ListView.SnapToItem
-                   width: senderBackground.width
-                   clip: true
-
-                   Connections {
-                       target: device
-                       onLog: {
-                           logListModel.append({msg: type + ":" + msg})
-                       }
-                   }
-
-                   delegate: Column {
-                       Text {
-                           text: msg
-                           color: "lawngreen"
-                       }
-                    }
-
-                   // Сама модель, в которой будут содержаться все элементы
-                   model: ListModel {
-                       id: logListModel // задаём ей id для обращения
+               Connections {
+                   target: device
+                    onLog: {
+                       logListModel.append({msg: type + msg})
+                       listView1.positionViewAtEnd()
                    }
                }
-        }
 
-
-
-        TextField {
-            id: messageToSend
-            placeholderText: "..."
-            anchors.top: scrolViewLogArea.bottom
-            validator: RegularExpressionValidator {regularExpression: /[0-9A-Fa-f]+/}
-
-            width: parent.width * 0.95
-        }
-
-        Button {
-            id: sendButton
-            anchors.top: messageToSend.bottom
-            width: parent.width * 0.95
-            text: "Отправить"
-
-            onClicked: {
-                device.sendMessage(messageToSend.text);
-                if (needClear.checked) {
-                    messageToSend.text = ""
+               delegate: Column {
+                   Text {
+                       width: listView1.width * 0.95
+                       text: msg
+                       font.family: "Courier New"
+                       wrapMode: Text.Wrap
+                       font.pixelSize: 14
+                       color: "lawngreen"
+                   }
                 }
 
-                listView1.positionViewAtEnd()
-            }
-        }
-
-        CheckBox {
-          id: needWrap
-          anchors.top: sendButton.bottom
-          text: qsTr("Оборачивать протоколом")
-          checkState: device.needWrap
-
-          onClicked: {
-              device.needWrap = checked
-          }
-        }
-
-        CheckBox {
-          id: needClear
-          checked: false
-          anchors.top: needWrap.bottom
-          text: qsTr("Очищать поле ввода")
-        }
-
+               // Сама модель, в которой будут содержаться все элементы
+               model: ListModel {
+                   id: logListModel // задаём ей id для обращения
+               }
+           }
     }
+
+
+
+    TextField {
+        id: messageToSend
+        placeholderText: "..."
+        anchors.top: senderBackground.bottom
+        validator: RegularExpressionValidator {regularExpression: /[0-9A-Fa-f]+/}
+
+        width: parent.width
+    }
+
+    Button {
+        id: sendButton
+        anchors.top: messageToSend.bottom
+        anchors.left: parent.left
+        height: parent.height * 0.05
+        width: parent.width * 0.49
+        text: "Отправить"
+        background: Rectangle{
+            property var normalColor: "#17d47f"
+            property var pressedColor: "#0fd93b"
+            color: sendButton.pressed ? pressedColor : normalColor
+        }
+        onClicked: {
+            device.sendMessage(messageToSend.text);
+            if (needClear.checked) {
+                messageToSend.text = ""
+            }
+
+            listView1.positionViewAtEnd()
+        }
+    }
+
+    Button {
+        id: clearButton
+        anchors.top: messageToSend.bottom
+        anchors.right: parent.right
+        height: parent.height * 0.05
+        width: parent.width * 0.49
+        text: "Очистить поле вывода"
+        background: Rectangle{
+            property var normalColor: "#cb0fd9"
+            property var pressedColor: "#ff084e"
+            color: clearButton.pressed ? pressedColor : normalColor
+        }
+        onClicked: {
+            logListModel.clear()
+        }
+    }
+
+
+    CheckBox {
+      id: needWrap
+      anchors.top: sendButton.bottom
+      checked: device.needWrap
+      text: qsTr("Оборачивать протоколом")
+
+      onClicked: {
+          device.needWrap = checked
+      }
+    }
+
+    CheckBox {
+      id: needClear
+      checked: false
+      anchors.top: needWrap.bottom
+      text: qsTr("Очищать поле ввода")
+    }
+
 }

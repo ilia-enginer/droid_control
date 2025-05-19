@@ -57,20 +57,21 @@ ScrollablePage {
     Column {
         spacing: 10
         width: parent.width
+        height: parent.height
 
 
         Label {
             width: parent.width
             wrapMode: Label.Wrap
             horizontalAlignment: Qt.AlignHCenter
-            text: "Частота отправки команд джойстиком " + "\n" + "(" + mainModel.timer1 + "мс)"
+            text: "Частота отправки команд джойстиком " + "\n" + mainModel.timer1 + "мс"
 
             Component.onCompleted: {
                 mainModel.onTimer1Changed.connect(modelChanged)
             }
 
             function modelChanged(){
-                this.text = "Частота отправки команд джойстиком" + "\n" + "(" + value + "мс)"
+                this.text = "Частота отправки команд джойстиком" + "\n" + value + "мс"
             }
         }
 
@@ -79,7 +80,9 @@ ScrollablePage {
             from: 100
             to: 1000
             value: mainModel.timer1
-            anchors.horizontalCenter: parent.horizontalCenter
+      //      anchors.horizontalCenter: parent.horizontalCenter
+            anchors.left: parent.left
+            anchors.right: parent.right
             onMoved: {mainModel.timer1 = value}
 
             Component.onCompleted: {
@@ -95,14 +98,14 @@ ScrollablePage {
             width: parent.width
             wrapMode: Label.Wrap
             horizontalAlignment: Qt.AlignHCenter
-            text: "Амплитуда джойстика" + "\n" + "(" + Math.round(mainModel.joystickAmplitude) + ")"
+            text: "Амплитуда джойстика" + "\n" + Math.round(mainModel.joystickAmplitude)
 
             Component.onCompleted: {
                 mainModel.joystickAmplitudeChanged.connect(modelChanged)
             }
 
             function modelChanged(){
-                this.text = "Амплитуда джойстика" + "\n" + "(" + Math.round(value) + ")"
+                this.text = "Амплитуда джойстика" + "\n" + Math.round(value)
             }
         }
 
@@ -110,8 +113,9 @@ ScrollablePage {
             id: timer2Slider
             value: mainModel.joystickAmplitude
             from: 1
-            to: 100
-            anchors.horizontalCenter: parent.horizontalCenter
+            to: 200
+            anchors.left: parent.left
+            anchors.right: parent.right
             onMoved: {mainModel.joystickAmplitude = value}
 
             Component.onCompleted: {
@@ -121,6 +125,95 @@ ScrollablePage {
             function modelChanged(){
                 this.value = value
             }
+        }
+
+        Label {
+            width: parent.width
+            wrapMode: Label.Wrap
+            horizontalAlignment: Qt.AlignHCenter
+            text: "Амплитуда высоты" + "\n" + Math.round(mainModel.heightAmplitudemin) + "                  " + Math.round(mainModel.heightAmplitude)
+
+            Component.onCompleted: {
+                mainModel.heightAmplitudeChangedmin.connect(modelChanged)
+                mainModel.heightAmplitudeChanged.connect(modelChanged) 
+            }
+
+            function modelChanged(){
+              //  this.text = "Амплитуда высоты" + "\n" + "(" + Math.round(value) + ")"
+             //   this.text = Math.round(value)
+            }
+        }
+        RangeSlider {
+            id: heightSlider
+            from: 0
+            to: 60
+            first.value: mainModel.heightAmplitudemin
+            second.value: mainModel.heightAmplitude
+       //     anchors.horizontalCenter: parent.horizontalCenter
+            anchors.left: parent.left
+            anchors.right: parent.right
+            first.onMoved: {mainModel.heightAmplitudemin = first.value}
+            second.onMoved: {mainModel.heightAmplitude = second.value}
+
+        /*    Component.onCompleted: {
+                mainModel.heightAmplitudeChanged.connect(modelChanged)
+                mainModel.heightAmplitudeChangedmin.connect(modelChanged)
+            }
+
+           function modelChanged(){
+                this.value = value
+            }*/
+        }
+
+        Label {
+            width: parent.width
+            wrapMode: Label.Wrap
+            horizontalAlignment: Qt.AlignHCenter
+            text: "Пределы напряжения"
+        }
+
+        Label {
+            width: parent.width
+            wrapMode: Label.Wrap
+       //     horizontalAlignment: Qt.AlignLeft
+            horizontalAlignment: Qt.AlignCenter
+            text: (Number(mainModel.Vmin.toFixed(1))) + "                   "+ (Number(mainModel.Vmax.toFixed(1)))
+            Component.onCompleted: {
+                mainModel.VminChanged.connect(modelChanged)
+                 mainModel.VmaxChanged.connect(modelChanged)
+            }
+            function modelChanged(){
+       //         this.text = Math.round(value)
+            }
+        }
+
+    /*    Label {
+            width: parent.width
+            wrapMode: Label.Wrap
+            horizontalAlignment: Qt.AlignRight
+
+            text: Math.round(mainModel.Vmax)
+
+            Component.onCompleted: {
+                mainModel.VmaxChanged.connect(modelChanged)
+            }
+
+            function modelChanged(){
+                this.text = Math.round(value)
+            }
+        }
+*/
+        RangeSlider {
+            id: voltageSlider
+            from: 1.0
+            to: 16.8
+            first.value: {mainModel.Vmin}
+            second.value: {mainModel.Vmax}
+         //   anchors.horizontalCenter: parent.horizontalCenter
+            anchors.left: parent.left
+            anchors.right: parent.right
+            first.onMoved: {mainModel.Vmin = first.value}
+            second.onMoved: {mainModel.Vmax = second.value}
         }
     }
 }
