@@ -192,8 +192,8 @@ private:
     int timer1 = 100;
     int timer2 = 80;
     float joystickAmplitude = 100;
-    float heightAmplitudemin = 0;
-    float heightAmplitude = 45;
+    float heightAmplitudemin = 20;
+    float heightAmplitude = 55;
 
     int servisIndexMenu = 0;
 

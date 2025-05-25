@@ -271,18 +271,18 @@ void MainModel::checkingUpdates(void)
     if(rendering_flag)    emit checkUpdateProgress();
 
 
-        //запрос напряжения шара
+        ///запрос напряжения шара
         Vreal = 0.0;
         device_->sendMessageAndWrap(0xa1, "");
-        delay(50);
+        delay(100);
         a = 0;
-        //ожидание ответа
+        ///ожидание ответа
         //если напряжение меньше 20% заряда - защита
         while((Vreal < (Vmax * 0.8)) && (a < 3))
         {
             device_->sendMessageAndWrap(0xa1, "");
-            delay(50);
-            if(a++ == 2)
+            delay(70);
+            if(a++ == 10)
             {
                 if(adminTapCount != -1)
                 {
@@ -304,17 +304,17 @@ void MainModel::checkingUpdates(void)
         //запрос версии прошивки шара
         device_->sendMessageAndWrap(0xf2, "");
         //ожидание ответа
-        delay(50);
+        delay(100);
         while(versionExternalProgram.u32 == 0)
         {
             device_->sendMessageAndWrap(0xf2, "");
-            if(a++ > 6)
+            if(a++ > 10)
             {
                 if(rendering_flag)    setCurrenUpdate("Ошибка\nпроверьте подключение к устройству");
                 if(rendering_flag)    emit checkUpdate();
                 return;
             }
-            delay(50);
+            delay(70);
         }
     #endif
 
@@ -430,7 +430,7 @@ void MainModel::on_pbWrite_clicked(bool flag)
     {
         //посылаю команду начала передачи
         device_->sendMessageAndWrap(0xf4, "");
-        delay(50);
+        delay(70);
         device_->sendMessageAndWrap(0xf4, "");
         delay(3000);
     }
@@ -439,7 +439,7 @@ void MainModel::on_pbWrite_clicked(bool flag)
     {
         //посылаю команду начала передачи
         device_->sendMessageAndWrap(0xf3, "");
-        delay(50);
+        delay(70);
         device_->sendMessageAndWrap(0xf3, "");
         delay(3000);
     }
@@ -568,7 +568,7 @@ void MainModel::write_page()
             return;
         }
         _unsuccessful_transfers++;
-        if(_unsuccessful_transfers > 40)
+        if(_unsuccessful_transfers > 45)
         {
             if(rendering_flag)    setCurrenUpdate("Ошибка: превышено количество попыток передачи");
             txPageTimerOff();
@@ -598,12 +598,14 @@ void MainModel::write_page()
             if(!load_param_)
             {
                 setCurrenUpdate("Проверка ключей");
-                delay(1000);
+                delay(1500);
                 setCurrenUpdate("Настройка логики");
-                delay(1000);
+                delay(1500);
+                setCurrenUpdate("Ещё чуть-чуть");
+                delay(1500);
                 //запрос версии прошивки шара
                 device_->sendMessageAndWrap(0xf2, "");
-                delay(50);
+                delay(100);
                 int a = 0;
                 version_BootLoader_ExternalProgram.u32 = 0;
                 //ожидание ответа
@@ -619,7 +621,7 @@ void MainModel::write_page()
                         app.keepScreenOn(false);
                         return;
                     }
-                    delay(50);
+                    delay(70);
                 }
                 //когда бутлоадер будет установлен
                 //загрузить основную программу, если необходимо
@@ -643,11 +645,11 @@ void MainModel::write_page()
             else
             {
                 setCurrenUpdate("Установка обновления");
-                delay(5000);    //5c
+                delay(7000);    //7c
 
                 //запрос версии прошивки шара
                 device_->sendMessageAndWrap(0xf2, "");
-                delay(50);
+                delay(100);
                 int a = 0;
                 versionExternalProgram.u32 = 0;
                 //ожидание ответа
@@ -663,7 +665,7 @@ void MainModel::write_page()
                         app.keepScreenOn(false);
                         return;
                     }
-                    delay(50);
+                    delay(70);
                 }
                 if(rendering_flag)    setCurrenUpdate("Обновление установлено");
                 if(rendering_flag)    emit checkUpdate();
@@ -680,12 +682,14 @@ void MainModel::write_page()
             if(!load_param_)
             {
                 setCurrenUpdate("Проверка ключей");
-                delay(1000);
+                delay(1500);
                 setCurrenUpdate("Настройка логики");
-                delay(1000);
+                delay(1500);
+                setCurrenUpdate("Ещё чуть-чуть");
+                delay(1500);
                 //запрос версии прошивки шара
                 device_->sendMessageAndWrap(0xf2, "");
-                delay(50);
+                delay(100);
                 int a = 0;
                 version_BootLoader_ExternalProgram.u32 = 0;
                 //ожидание ответа
@@ -711,7 +715,7 @@ void MainModel::write_page()
                         app.keepScreenOn(false);
                         return;
                     }
-                    delay(50);
+                    delay(70);
                 }
                 if(rendering_flag)
                 {
@@ -735,11 +739,11 @@ void MainModel::write_page()
             else
             {
                 setCurrenUpdate("Установка обновления");
-                delay(5000);    //5c
+                delay(7000);    //7c
 
                 //запрос версии прошивки шара
                 device_->sendMessageAndWrap(0xf2, "");
-                delay(50);
+                delay(100);
                 int a = 0;
                 versionExternalProgram.u32 = 0;
                 //ожидание ответа
@@ -765,7 +769,7 @@ void MainModel::write_page()
                         app.keepScreenOn(false);
                         return;
                     }
-                    delay(50);
+                    delay(70);
                 }
                 if(rendering_flag)
                 {
@@ -923,7 +927,7 @@ void MainModel::full_param_check()
             for(qint8 i = 0; i < 10; i++)
             {
                 if(_full_Param.size() < 10) device_->sendMessageAndWrapS(msg);
-                else                        i = 10;
+                else                        i = 15;
                 delay(70);
             }
 

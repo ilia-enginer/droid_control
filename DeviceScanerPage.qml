@@ -138,7 +138,7 @@ Dialog {
             anchors.bottom: searchButton.top
             anchors.margins: 5
             highlighted: true
-            text: "Ранее подключенные"
+            text: "Последнее подключенное"
 
             onClicked: {
                 get_devise.visible = false
