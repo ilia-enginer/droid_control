@@ -51,6 +51,7 @@ public:
     Q_PROPERTY(QString currenUpdate READ getCurrenUpdate WRITE setCurrenUpdate NOTIFY CurrenUpdateChanged)
     Q_PROPERTY(QString version_app READ getversion_app WRITE setversion_app NOTIFY version_appChanged)
     Q_PROPERTY(int servisIndexMenu READ getservisIndexMenu WRITE setservisIndexMenu NOTIFY servisIndexMenuChanged)
+    Q_PROPERTY(bool ctrl_ READ getctrl WRITE setctrl NOTIFY ctrlChanged)
 
 
     MainModel();
@@ -111,6 +112,9 @@ public:
     void settibaAngl(int newtibaAngl);
     void resettibaAngl();
 
+    bool getctrl() const;
+    void setctrl(bool newctrl);
+
     void incAdminTapCount(int value);
     int  getAdminTapCount();
 
@@ -169,6 +173,9 @@ Q_SIGNALS:
     void femurAnglChanged();
     void tibaAnglChanged();
 
+    void ctrlChanged();
+
+
     void onAdminTapCountChanged();
 
 
@@ -206,6 +213,8 @@ private:
     int coxaAngl = 0;
     int femurAngl = 0;
     int tibaAngl = 0;
+
+    bool ctrl_ = false;              //стабилизация шара
 
     QString currenDeviceName_ = "Отсутствует подключение";
 

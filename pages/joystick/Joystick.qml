@@ -17,6 +17,7 @@ import QtQuick.Controls
         property real amplitude : 0
         property int mode : 0
         property real level : mainModel.heightAmplitude/2
+        property bool ctrl : false
 
         signal joystick_moved(double x, double y);
 
@@ -32,7 +33,7 @@ import QtQuick.Controls
                     flag_getcheck = true;
                     device.get_check();
                 }
-                device.onJoysticActivity(mode, azimuth, amplitude, level);
+                device.onJoysticActivity(mode, azimuth, amplitude, level, ctrl);
             }
         }
 
@@ -522,6 +523,21 @@ import QtQuick.Controls
             }
         }
 
+        //стабилизация
+        CheckBox {
+          id: ctrl_check
+          anchors.top: joystick_mode_swith.bottom
+          anchors.topMargin: 15
+          anchors.left: parent.left
+          anchors.leftMargin: 15
+          checked: mainModel.ctrl_
+          text: qsTr("Вкл. стабилизацию")
+
+          onClicked: {
+            mainModel.ctrl_ = ctrl_check.checked
+            ctrl = ctrl_check.checked
+          }
+        }
 
     }
 

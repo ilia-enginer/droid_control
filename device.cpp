@@ -803,7 +803,7 @@ void Device::sendparstxlog(quint8 code, quint8 cod)
 
 
 void
-Device::onJoysticActivity(quint8 mode, float azimut, float amplitude, float level)
+Device::onJoysticActivity(quint8 mode, float azimut, float amplitude, float level, bool ctrl)
 {
 //    qDebug() << mode << azimut << amplitude << level;
 
@@ -846,6 +846,7 @@ Device::onJoysticActivity(quint8 mode, float azimut, float amplitude, float leve
     msg.append(amplitude16 & 0x00FF);
     msg.append((level16 >> 8) & 0x00FF);
     msg.append(level16 & 0x00FF);
+    msg.append(ctrl);
 
     msg = wrapData(msg);
 //  if(rendering_flag)      emit logJoy("try_send", QString(msg.toHex()));

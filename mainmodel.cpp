@@ -226,6 +226,16 @@ void MainModel::settibaAngl(int newtibaAngl)
     if(rendering_flag)    emit tibaAnglChanged();
 }
 
+bool MainModel::getctrl() const
+{
+    return ctrl_;
+}
+
+void MainModel::setctrl(bool newctrl)
+{
+    ctrl_ = newctrl;
+}
+
 void
 MainModel::incAdminTapCount(int value)
 {

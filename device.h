@@ -122,7 +122,7 @@ public slots:
     void sendMessageAndWrap (quint8 code, QString msg);
     void sendparstxlog (quint8 code, quint8 cod);
 
-    void onJoysticActivity(quint8 mode, float azimut, float amplitude, float level);
+    void onJoysticActivity(quint8 mode, float azimut, float amplitude, float level, bool ctrl);
     void get_check(void);
 
     void onGetCurReal(void);
