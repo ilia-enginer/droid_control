@@ -43,8 +43,9 @@ import QtQuick.Controls
             id: senderBackground_2
             anchors.top: parent.top
             height: parent.height * 0.25
-            anchors.left: tumbler.left
+            anchors.left: parent.left
             anchors.right: leveltext.right
+            anchors.leftMargin: 10
             color: "transparent"
         }
 
@@ -69,10 +70,6 @@ import QtQuick.Controls
                            listView1.positionViewAtEnd()
                        }
 
-//                         function  onLogJoy() {
-//                              logListModel_2.append({msg: type + msg})
-//                              listView1.positionViewAtEnd()
-//                          }
                    }
 
                    delegate: Column {
@@ -93,18 +90,6 @@ import QtQuick.Controls
 
 
         //напруга
-//        ProgressBar{
-//            id: voltage
-//            height: 20
-//            anchors.bottom: joystick.top
-//            anchors.bottomMargin: 20
-//            anchors.left: tumbler.left
-//            anchors.right: leveltext.right
-
-//            from: {mainModel.Vmin}
-//            to: {mainModel.Vmax}
-//            value: {mainModel.Vreal}
-//        }
         ProgressBar{
             id: voltage
             height: 20
@@ -176,17 +161,6 @@ import QtQuick.Controls
             to: 5
             value: {mainModel.CurReal}
 
-//            Component.onCompleted: {
-//                if(mainModel.adiminTapCount === -1)
-//                {
-//                    current.visible = true
-//                }
-//                else
-//                {
-//                    current.visible = false
-//                }
-//           }
-
             background: Rectangle {
                 color: "#e6e6e6"
                 radius: 3
@@ -231,17 +205,6 @@ import QtQuick.Controls
             anchors.verticalCenter: current.verticalCenter
             text: mainModel.CurReal.toFixed(2) + "А"
             color: "black"
-
-//            Component.onCompleted: {
-//                if(mainModel.adiminTapCount === -1)
-//                {
-//                    currentLabel.visible = true
-//                }
-//                else
-//                {
-//                    currentLabel.visible = false
-//                }
-//           }
         }
 
         //имя приемника
@@ -438,6 +401,7 @@ import QtQuick.Controls
 
         }
 
+        //высота
         Slider {
             id: levelSlider
             from: mainModel.heightAmplitudemin
@@ -453,6 +417,7 @@ import QtQuick.Controls
                         }
         }
 
+        //высота
         Label {
             id: leveltext
             horizontalAlignment: Qt.AlignHCenter
@@ -463,27 +428,50 @@ import QtQuick.Controls
             text: "Высота"
         }
 
-        Label {
-            id: modetext
-            anchors.right: joystick.left
-            anchors.rightMargin: 30
-            anchors.top: joystick.bottom
-            anchors.topMargin: 20
-            text: "Режим\nработы"
-        }
 
-        Tumbler {
-            id: tumbler
-            model: ["1", "2", "3", "0"]
-            anchors.right: joystick.left
-            anchors.rightMargin: 20
-            anchors.verticalCenter: joystick.verticalCenter
-            onCurrentIndexChanged: {
-                mode = Number(model[currentIndex])
+        //режим работы
+        ButtonGroup {
+            id: radioGroup
+            onClicked: mode = Number(button.text)
+            Component.onCompleted: {
+                mode = Number("1")
             }
         }
+        Column {
+            spacing: 10
+            anchors.left: parent.left
+            anchors.leftMargin: 20
+            anchors.top: joystick.top
+            anchors.topMargin: 20
 
+             RadioButton {
+                 checked: true
+                 text: qsTr("1")
+                 ButtonGroup.group: radioGroup
+             }
 
+             RadioButton {
+                 text: qsTr("2")
+                 ButtonGroup.group: radioGroup
+             }
+
+             RadioButton {
+                 text: qsTr("3")
+                 ButtonGroup.group: radioGroup
+             }
+
+             RadioButton {
+                 text: qsTr("0")
+                 ButtonGroup.group: radioGroup
+             }
+
+             Label {
+                text: qsTr("режим\nработы")
+                }
+
+        }
+
+        //углы джойстика
         Label {
             id: offsetInfo
             wrapMode: Label.Wrap

@@ -850,6 +850,7 @@ Device::onJoysticActivity(quint8 mode, float azimut, float amplitude, float leve
 
     msg = wrapData(msg);
 //  if(rendering_flag)      emit logJoy("try_send", QString(msg.toHex()));
+//  qDebug() << QString(msg.toHex());
 
     if (!socket)   {
         return;
