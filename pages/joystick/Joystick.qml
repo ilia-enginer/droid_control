@@ -786,48 +786,132 @@ SwipeView {
                      onChart_data: {
                         if(volt.checked)
                         {
+                            //масштабирование по у
+                            if(volt < valueYMin){
+                              valueYMin = volt;
+                              valueAxisY.min = valueYMin;
+                            }
+                            if(volt > valueYMax){
+                              valueYMax = volt;
+                              valueAxisY.max = valueYMax;
+                            }
                             line1.append(count_volt*2/10, volt);
                         }
 
                         if(cur.checked)
                         {
+                            //масштабирование по у
+                            if(cur < valueYMin){
+                              valueYMin = cur;
+                              valueAxisY.min = valueYMin;
+                            }
+                            if(cur > valueYMax){
+                              valueYMax = cur;
+                              valueAxisY.max = valueYMax;
+                            }
                             line1.append(count_cur*2/10, cur);
                         }
 
                         if(tilt_angle.checked)
                         {
+                            //масштабирование по у
+                            if(tilt_angle < valueYMin){
+                              valueYMin = tilt_angle;
+                              valueAxisY.min = valueYMin;
+                            }
+                            if(tilt_angle > valueYMax){
+                              valueYMax = tilt_angle;
+                              valueAxisY.max = valueYMax;
+                            }
                             line1.append(count_angle*2/10, tilt_angle);
                         }
 
                         if(tilt_direction.checked)
                         {
+                            //масштабирование по у
+                            if(tilt_direction < valueYMin){
+                              valueYMin = tilt_direction;
+                              valueAxisY.min = valueYMin;
+                            }
+                            if(tilt_direction > valueYMax){
+                              valueYMax = tilt_direction;
+                              valueAxisY.max = valueYMax;
+                            }
                             line1.append(count_tilt_direction*2/10, tilt_direction);
                         }
 
                         if(boost.checked)
                         {
+                            //масштабирование по у
+                            if(boost < valueYMin){
+                              valueYMin = boost;
+                              valueAxisY.min = valueYMin;
+                            }
+                            if(boost > valueYMax){
+                              valueYMax = boost;
+                              valueAxisY.max = valueYMax;
+                            }
                             line1.append(count_boost*2/10, boost);
                         }
 
                         if(angular_velocity.checked)
                         {
+                            //масштабирование по у
+                            if(angular_velocity < valueYMin){
+                              valueYMin = angular_velocity;
+                              valueAxisY.min = valueYMin;
+                            }
+                            if(angular_velocity > valueYMax){
+                              valueYMax = angular_velocity;
+                              valueAxisY.max = valueYMax;
+                            }
                             line1.append(count_angular_velocity*2/10, angular_velocity);
                         }
 
                         if(angleX.checked)
                         {
+                            //масштабирование по у
+                            if(angleX < valueYMin){
+                              valueYMin = angleX;
+                              valueAxisY.min = valueYMin;
+                            }
+                            if(angleX > valueYMax){
+                              valueYMax = angleX;
+                              valueAxisY.max = valueYMax;
+                            }
                             line1.append(count_angleX*2/10, angleX);
                         }
 
                         if(angleY.checked)
                         {
+                            //масштабирование по у
+                            if(angleY < valueYMin){
+                              valueYMin = angleY;
+                              valueAxisY.min = valueYMin;
+                            }
+                            if(angleY > valueYMax){
+                              valueYMax = angleY;
+                              valueAxisY.max = valueYMax;
+                            }
                             line1.append(count_angleY*2/10, angleY);
                         }
 
                         if(angleZ.checked)
                         {
+                            //масштабирование по у
+                            if(angleZ < valueYMin){
+                              valueYMin = angleZ;
+                              valueAxisY.min = valueYMin;
+                            }
+                            if(angleZ > valueYMax){
+                              valueYMax = angleZ;
+                              valueAxisY.max = valueYMax;
+                            }
                             line1.append(count_angleZ*2/10, angleZ);
                         }
+
+                        //мфсштабирование по х
+                        valueAxisX.max += 0.2;
                      }
                  }
 
@@ -964,6 +1048,9 @@ SwipeView {
                 count_angleX = 0;
                 count_angleY = 0;
                 count_angleZ = 0;
+
+                valueAxisX.max = 1;
+                valueAxisY.max = 1;
             }
         }
 
