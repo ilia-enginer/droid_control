@@ -48,7 +48,7 @@
 **
 ****************************************************************************/
 
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QSettings>
@@ -63,10 +63,10 @@
 
 int main(int argc, char *argv[])
 {
-    QGuiApplication::setApplicationName("Gallery");
-    QGuiApplication::setOrganizationName("QtProject");
+    QApplication::setApplicationName("Gallery");
+    QApplication::setOrganizationName("QtProject");
 
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
 
     QIcon::setThemeName("gallery");
 
@@ -104,7 +104,9 @@ int main(int argc, char *argv[])
 
     appManager.setModel(&model);
     appManager.setDevice(&d);
-    QObject::connect(&app, &QGuiApplication::applicationStateChanged, &appManager, &AppManager::onApplicationStateChanged);
+
+    QObject::connect(&app, &QApplication::applicationStateChanged, &appManager, &AppManager::onApplicationStateChanged);
+
 
     model.setDevice(&d);
 

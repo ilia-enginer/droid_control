@@ -1,6 +1,6 @@
 import QtQuick 2.0
 //import QtGraphicalEffects 1.0
-
+/*
 Canvas {
     property double radius: 512
     property string color: "#34393f"
@@ -34,3 +34,4 @@ Canvas {
 //        samples: 32
 //    }
 }
+*/

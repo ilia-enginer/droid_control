@@ -1,15 +1,17 @@
-import QtQuick 2.1
+import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Qt.labs.settings
 import QtQuick.Controls.Material
 
 
+
 Page {
     id: page
  //   anchors.fill: parent
 
-    Timer {
+
+   Timer {
         id: setpageTimer
         interval: 200
         running: false

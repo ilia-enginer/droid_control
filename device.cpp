@@ -1106,6 +1106,16 @@ Device::socketRead()
         quint8  u8_3;
         quint8  u8_4;
 
+        float volt = 0.0f;
+        float cur = 0.0f;
+        float tilt_angle = 0.0f;
+        float tilt_direction = 0.0f;
+        float boost = 0.0f;
+        float angular_velocity = 0.0f;
+        float angleX = 0.0f;
+        float angleY = 0.0f;
+        float angleZ = 0.0f;
+
         quint16 k = recievedData[0];
         QByteArray Data = recievedData;
         recievedData.replace(0, recievedData.size(), empty);
@@ -1437,6 +1447,64 @@ Device::socketRead()
             break;
         case 0xA8:
            emit logServis("<- параметры восстановленны", "");
+            break;
+        case 0xA9:
+            val.data[0] = Data[0];
+            val.data[1] = Data[1];
+            val.data[2] = Data[2];
+            val.data[3] = Data[3];
+            volt = val.f;
+
+            val.data[0] = Data[4];
+            val.data[1] = Data[5];
+            val.data[2] = Data[6];
+            val.data[3] = Data[7];
+            cur = val.f;
+
+            val.data[0] = Data[8];
+            val.data[1] = Data[9];
+            val.data[2] = Data[10];
+            val.data[3] = Data[11];
+            tilt_angle = val.f;
+
+            val.data[0] = Data[12];
+            val.data[1] = Data[13];
+            val.data[2] = Data[14];
+            val.data[3] = Data[15];
+            tilt_direction = val.f;
+
+            val.data[0] = Data[16];
+            val.data[1] = Data[17];
+            val.data[2] = Data[18];
+            val.data[3] = Data[19];
+            boost = val.f;
+
+            val.data[0] = Data[20];
+            val.data[1] = Data[21];
+            val.data[2] = Data[22];
+            val.data[3] = Data[23];
+            angular_velocity = val.f;
+
+            val.data[0] = Data[24];
+            val.data[1] = Data[25];
+            val.data[2] = Data[26];
+            val.data[3] = Data[27];
+            angleX = val.f;
+
+            val.data[0] = Data[28];
+            val.data[1] = Data[29];
+            val.data[2] = Data[30];
+            val.data[3] = Data[31];
+            angleY = val.f;
+
+            val.data[0] = Data[32];
+            val.data[1] = Data[33];
+            val.data[2] = Data[34];
+            val.data[3] = Data[35];
+            angleZ = val.f;
+
+            emit chart_data(volt, cur, tilt_angle, tilt_direction, boost, angular_velocity, angleX, angleY, angleZ);
+
             break;
 
         default:

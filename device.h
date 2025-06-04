@@ -163,6 +163,9 @@ Q_SIGNALS:
     void searchInProgress();
     void searchFinished();
 
+    void chart_data(float volt, float cur, float tilt_angle, float tilt_direction, float boost, float angular_velocity, float angleX, float angleY, float angleZ);
+
+
 private:
     void setUpdate(const QString &message);
     QBluetoothDeviceDiscoveryAgent *discoveryAgent;

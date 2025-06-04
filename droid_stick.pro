@@ -4,7 +4,7 @@ TARGET = droid_stick
 VERSION = "1.1.2"
 DEFINES += INSERT_VERSION_CODE=\\\"$$VERSION\\\"
 
-QT += quick quickcontrols2 bluetooth core positioning widgets core-private
+QT += quick charts qml quickcontrols2 bluetooth core positioning widgets core-private
 
 SOURCES += \
 #    btscaner.cpp \
@@ -18,7 +18,6 @@ SOURCES += \
 RESOURCES += \
     Resurs.qrc \
     gallery.qml \
-    pages/BluetoothScanner.qml \
     DeviceScanerPage.qml \
     pages/SenderPage.qml \
     pages/SettingsPage.qml \
@@ -57,13 +56,13 @@ RESOURCES += \
     ToolBar.qml \
     +Material/ToolBar.qml \
     images/bluetooth-512.png \
-    pages/joystick/Back.qml \
-    pages/joystick/Groove.qml \
-    pages/joystick/Handle.qml \
+#    pages/joystick/Back.qml \
+#    pages/joystick/Groove.qml \
+#    pages/joystick/Handle.qml \
     pages/joystick/Joystick.qml \
-    pages/joystick/Lights.qml \
-    pages/joystick/Main.qml \
-    pages/joystick/SparseLight.qml \
+#    pages/joystick/Lights.qml \
+#    pages/joystick/Main.qml \
+#    pages/joystick/SparseLight.qml \
     pages/joystick/finger.png \
     pages/joystick/background.png \
     AboutPage.qml
@@ -88,7 +87,6 @@ DISTFILES += \
     android/gradlew.bat \
     android/res/values/libs.xml \
     android/res/values/libs.xml \
-    pages/BluetoothScanner.qml \
     pages/SettingFootPage.qml \
     pages/firmware_update.qml
 

@@ -1,6 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Window 2.15
-
+/*
 Window {
     id: window
     width: 1366
@@ -16,3 +16,4 @@ Window {
         scaleRatio: 0.7 * Math.min(window.height / 1366, window.width / 768)
     }
 }
+*/

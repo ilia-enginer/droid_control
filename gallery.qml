@@ -178,9 +178,9 @@ ApplicationWindow {
                 }
              }
 
-                model: ListModel {
+                model: ListModel {    
                     ListElement { title: "Джойстик"; source: "qrc:/pages/joystick/Joystick.qml" }
-                    ListElement { title: "Настройка серв"; source: "qrc:/pages/SettingFootPage.qml" }
+                    ListElement { title: "Окно настроек\nи калибровок";  source: "qrc:/pages/SettingFootPage.qml" }
                     ListElement { title: "Обновление прошивки"; source: "qrc:/pages/firmware_update.qml" }
 
              //       ListElement { title: "Терминал"; source: "qrc:/pages/SenderPage.qml" }

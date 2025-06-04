@@ -1,3 +1,4 @@
+
 import QtQuick
 import QtQuick.Controls
 
@@ -63,6 +64,7 @@ Page {
                }
         }
 
+        //очистка окна
         Button {
             id: clearButton_1
             width: senderBackground.width * 0.08

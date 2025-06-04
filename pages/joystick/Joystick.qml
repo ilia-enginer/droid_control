@@ -1,26 +1,50 @@
-import QtQuick 2.1
-import QtQuick.Controls
+
+import QtQuick 2.7
+import QtQuick.Controls 2.0
+import QtCharts 2.15
+import QtQml
+import QtQuick.Controls.Material
 
 
-    Rectangle {
-        id: joystick_root
-        width: parent.width
-        height: parent.height
-        color: "transparent"
 
-        property bool flag_getcheck : false
-        property bool verticalOnly : false
-        property bool horizontalOnly : false
-        property real offsetX : 0
-        property real offsetY : 0
-        property real azimuth : 0
-        property real amplitude : 0
-        property int mode : 0
-        property real level : mainModel.heightAmplitude/2
-        property bool ctrl : false
+SwipeView {
+    id: swipeView
+    anchors.fill: parent
+    interactive: false
+    currentIndex: 0
 
-        signal joystick_moved(double x, double y);
+    property bool flag_getcheck : false
+    property bool verticalOnly : false
+    property bool horizontalOnly : false
+    property real offsetX : 0
+    property real offsetY : 0
+    property real azimuth : 0
+    property real amplitude : 0
+    property int mode : 0
+    property real level : mainModel.heightAmplitude/2
+    property bool ctrl : false
 
+    signal joystick_moved(double x, double y);
+
+    property int valueYMin: 0
+    property int valueYMax: 1
+
+    property int count_volt: 0
+    property int count_cur: 0
+    property int count_tilt_angle: 0
+    property int count_tilt_direction: 0
+    property int count_boost: 0
+    property int count_angular_velocity: 0
+    property int count_angleX: 0
+    property int count_angleY: 0
+    property int count_angleZ: 0
+    property int temp: 0
+
+
+    //страница управления
+    Page {
+        id: page_joystick
+        anchors.fill: swipeView
 
         Timer {
             id: joystick_timer
@@ -215,7 +239,7 @@ import QtQuick.Controls
             horizontalAlignment: Qt.AlignHCenter
             anchors.top: current.bottom
             anchors.topMargin: 10
-            text: mainModel.currentDeviceName
+            text: mainModel.OncurrentDeviceName
         }
 
         Image {
@@ -258,9 +282,11 @@ import QtQuick.Controls
             property double signal_y : -(mouseY2 - joystick.height/2) / distanceBound
 
             anchors.fill: joystick
+
             minimumTouchPoints: 1
             maximumTouchPoints: 5
             touchPoints: [
+
                 TouchPoint {id: point1 },
                 TouchPoint {id: point2 },
                 TouchPoint {id: point3 },
@@ -411,7 +437,7 @@ import QtQuick.Controls
             anchors.left: joystick.right
             anchors.leftMargin: 40
             anchors.verticalCenter: joystick.verticalCenter
-            onMoved: {level = value}  
+            onMoved: {level = value}
             Component.onCompleted: {
                             level = value
                         }
@@ -527,6 +553,451 @@ import QtQuick.Controls
           }
         }
 
+        //пролистывание
+        Rectangle
+        {
+            id:plus
+            width:parent.width * 0.3
+            height:parent.height * 0.035
+            anchors.bottom:parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            color:"#bdde1b"
+            opacity: 0.3
+            Label {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pointSize: parent.height * 0.7
+                text: "->"
+            }
+            MouseArea
+            {
+                anchors.fill:parent
+                onClicked:{
+                    if(swipeView.currentIndex<1)
+                        swipeView.currentIndex++
+                }
+            }
+        }
     }
+
+    //страница графиков
+     Page {
+        id: page_graph
+        anchors.fill: swipeView
+
+        Flickable {
+            id: flick
+            anchors.top: parent.top
+            width: parent.width
+            height: parent.height
+            interactive: true
+            clip: true
+            flickableDirection: Flickable.VerticalFlick
+            contentHeight: parent.height * 2
+
+             ChartView {
+                 id:chartView
+               //  Title: QSTR ("1 side temperature trend")
+                 titleFont.pixelSize: 15
+                 titleFont.bold: true
+                 //titleColor: Theme.darker(1.2)
+                 width: parent.width * 0.9
+                 anchors.left: parent.left
+                 height:parent.height * 0.5
+                 antialiasing: true
+
+                 //X-axis
+                 ValuesAxis {
+                     id: valueAxisX
+                     min: 0
+                     max: 1
+             //        tickCount: 10  //The number of scales on the coordinate axis. So interval = 60/30 = 2
+              //       labelFormat: "%.0f"//0 - there are several decimals after controlling the decimal point
+                 }
+
+                 //Y-axis
+                 ValuesAxis {
+                     id: valueAxisY
+                     min: 0
+                     max: 1
+              //       tickCount: 10  //Number of scale on the coordinate axis
+               //      labelFormat: "%.1f"//1 - There are several decimals after controlling the decimal point
+                 }
+
+                 //LINESERIES is a line, splineseries is a curve. Children are xypoint
+                 SplineSeries {
+                     id:line1
+                     name: "1"  //Name of the line
+                     axisX: valueAxisX  //Specify X-axis
+                     axisY: valueAxisY  //Specify Y-axis
+                     color: Qt.darker("#BB4444",1.2) //Line color, the default color of each line
+                     width: 2//The width of the line, but after modifying the line wide, you need to reset the color, otherwise the wire modified by Width is black.
+                 }
+                 SplineSeries {
+                     id:line2
+                     name: "2"
+                     axisX: valueAxisX
+                     axisY: valueAxisY
+                     color: Qt.darker("#B38A4D",1.2)
+                     width: 2
+                 }
+                 SplineSeries {
+                     id:line3
+                     name: "3"
+                     //STYLE: Qt.solidline // style
+                     axisX: valueAxisX
+                     axisY: valueAxisY
+                     color: Qt.darker("#61B34D",1.2)
+                     width: 2
+                 }
+                 SplineSeries {
+                     id:line4
+                     name: "4"
+                     //STYLE: Qt.solidline // style
+                     axisX: valueAxisX
+                     axisY: valueAxisY
+                     color: Qt.darker("#4D8AB3",1.2)
+                     width: 2
+                 }
+                 SplineSeries {
+                     id:line5
+                     name: "5"
+                     //STYLE: Qt.solidline // style
+                     axisX: valueAxisX
+                     axisY: valueAxisY
+                     color: Qt.darker("#9E4DB3",1.2)
+                     width: 2
+                 }
+                 SplineSeries {
+                     id:line6
+                     name: "6"
+                     //STYLE: Qt.solidline // style
+                     axisX: valueAxisX
+                     axisY: valueAxisY
+                     color: Qt.darker("#AA5566",1.2)
+                     width: 2
+                 }
+                 SplineSeries {
+                     id:line7
+                     name: "7"
+                     //STYLE: Qt.solidline // style
+                     axisX: valueAxisX
+                     axisY: valueAxisY
+                     color: Qt.darker("#808080",1.2)
+                     width: 2
+                 }
+                 SplineSeries {
+                     id:line8
+                     name: "8"
+                     //STYLE: Qt.solidline // style
+                     axisX: valueAxisX
+                     axisY: valueAxisY
+                     color: Qt.darker("#F79709",1.2)
+                     width: 2
+                 }
+                 SplineSeries {
+                     id:line9
+                     name: "9"
+                     //STYLE: Qt.solidline // style
+                     axisX: valueAxisX
+                     axisY: valueAxisY
+                     color: Qt.darker("#F79709",1.2)
+                     width: 2
+                 }
+
+
+                 //перетаскивание графика
+                 PinchArea{
+                    id: pa
+                    anchors.fill: parent
+                    property real currentPinchScaleX: 1
+                    property real currentPinchScaleY: 1
+                    property real pinchStartX : 0
+                    property real pinchStartY : 0
+
+                    onPinchStarted: {
+                        // Pinching has started. Record the initial center of the pinch
+                        // so relative motions can be reversed in the pinchUpdated signal
+                        // handler
+                        pinchStartX = pinch.center.x;
+                        pinchStartY = pinch.center.y;
+                    }
+
+                    onPinchUpdated: {
+                        chartView.zoomReset();
+
+                        // Reverse pinch center motion direction
+                        var center_x = pinchStartX + (pinchStartX - pinch.center.x);
+                        var center_y = pinchStartY + (pinchStartY - pinch.center.y);
+
+                        // Compound pinch.scale with prior pinch scale level and apply
+                        // scale in the absolute direction of the pinch gesture
+                        var scaleX = currentPinchScaleX * (1 + (pinch.scale - 1) * Math.abs(Math.cos(pinch.angle * Math.PI / 180)));
+                        var scaleY = currentPinchScaleY * (1 + (pinch.scale - 1) * Math.abs(Math.sin(pinch.angle * Math.PI / 180)));
+
+                        // Apply scale to zoom levels according to pinch angle
+                        var width_zoom = height / scaleX;
+                        var height_zoom = width / scaleY;
+
+                        var r = Qt.rect(center_x - width_zoom / 2, center_y - height_zoom / 2, width_zoom, height_zoom);
+                        chartView.zoomIn(r);
+                    }
+
+                    onPinchFinished: {
+                        // Pinch finished. Record compounded pinch scale.
+                        currentPinchScaleX = currentPinchScaleX * (1 + (pinch.scale - 1) * Math.abs(Math.cos(pinch.angle * Math.PI / 180)));
+                        currentPinchScaleY = currentPinchScaleY * (1 + (pinch.scale - 1) * Math.abs(Math.sin(pinch.angle * Math.PI / 180)));
+                    }
+
+                    MouseArea{
+                        anchors.fill: parent
+                        drag.target: dragTarget
+                        drag.axis: Drag.XAndYAxis
+
+                        onDoubleClicked: {
+                            chartView.zoomReset();
+                            parent.currentPinchScaleX = 1;
+                            parent.currentPinchScaleY = 1;
+                        }
+                    }
+
+                    Item {
+                        // A virtual item to receive drag signals from the MouseArea.
+                        // When x or y properties are changed by the MouseArea's
+                        // drag signals, the ChartView is scrolled accordingly.
+                        id: dragTarget
+
+                        property real oldX : x
+                        property real oldY : y
+
+                        onXChanged: {
+                            chartView.scrollLeft( x - oldX );
+                            oldX = x;
+                        }
+                        onYChanged: {
+                            chartView.scrollUp( y - oldY );
+                            oldY = y;
+                        }
+                     }
+                 }
+
+                 Connections {
+                     target: device
+                     onChart_data: {
+                        if(volt.checked)
+                        {
+                            line1.append(count_volt*2/10, volt);
+                        }
+
+                        if(cur.checked)
+                        {
+                            line1.append(count_cur*2/10, cur);
+                        }
+
+                        if(tilt_angle.checked)
+                        {
+                            line1.append(count_angle*2/10, tilt_angle);
+                        }
+
+                        if(tilt_direction.checked)
+                        {
+                            line1.append(count_tilt_direction*2/10, tilt_direction);
+                        }
+
+                        if(boost.checked)
+                        {
+                            line1.append(count_boost*2/10, boost);
+                        }
+
+                        if(angular_velocity.checked)
+                        {
+                            line1.append(count_angular_velocity*2/10, angular_velocity);
+                        }
+
+                        if(angleX.checked)
+                        {
+                            line1.append(count_angleX*2/10, angleX);
+                        }
+
+                        if(angleY.checked)
+                        {
+                            line1.append(count_angleY*2/10, angleY);
+                        }
+
+                        if(angleZ.checked)
+                        {
+                            line1.append(count_angleZ*2/10, angleZ);
+                        }
+                     }
+                 }
+
+             }
+
+       /*      Timer{
+                      id:timer
+                      property int count: 0
+           //           property int temp: 0
+
+                      //Generate random number (> = min, <= max)
+                      function getRandomNum(Min,Max)
+                      {
+                          var Range = Max - Min;
+                          var Rand = Math.random();
+                          return(Min + Math.round(Rand * Range));
+                      }
+                      function timeChanged() {
+
+
+                          temp = getRandomNum(-20,50);
+
+                          //масштабирование по у
+                          if(temp < valueYMin){
+                            valueYMin = temp;
+                            valueAxisY.min = valueYMin;
+                          }
+                          if(temp > valueYMax){
+                            valueYMax = temp;
+                            valueAxisY.max = valueYMax;
+                          }
+                          //мфсштабирование по х
+                          valueAxisX.max += 0.2;
+
+
+                          line1.append(count*2/10, temp);
+                       //   line1.append(count, mainModel.CurReal);
+
+                          count += 1;
+
+                      }
+                      interval: 200;
+                      running: true;
+                      repeat: true;
+                      onTriggered: {
+                          timeChanged();
+                      }
+                  }
+*/
+
+             Column {
+                 spacing: 5
+                 width: parent.width
+                 anchors.top: chartView.bottom
+                 anchors.bottom: flick.bottom
+
+                 CheckBox {
+                   id: volt
+                   checked: false
+                   text: qsTr("Напряжение")
+                 }
+                 CheckBox {
+                   id: cur
+                   checked: false
+                   text: qsTr("Ток")
+                 }
+                 CheckBox {
+                   id: tilt_angle
+                   checked: false
+                   text: qsTr("Угол наклона")
+                 }
+                 CheckBox {
+                   id: tilt_direction
+                   checked: false
+                   text: qsTr("Направление наклона")
+                 }
+                 CheckBox {
+                   id: boost
+                   checked: false
+                   text: qsTr("Ускорение")
+                 }
+                 CheckBox {
+                   id: angular_velocity
+                   checked: false
+                   text: qsTr("Угловая скорость")
+                 }
+                 CheckBox {
+                   id: angleX
+                   checked: false
+                   text: qsTr("Угол X")
+                 }
+                 CheckBox {
+                   id: angleY
+                   checked: false
+                   text: qsTr("Угол Y")
+                 }
+                 CheckBox {
+                   id: angleZ
+                   checked: false
+                   text: qsTr("Угол Z")
+                 }
+            }
+        }
+
+        //очистка графика
+        Button {
+            id: clearButton_1
+            width: parent.width * 0.08
+            height: parent.height
+            anchors.top: parent.top
+            anchors.right: parent.right
+            opacity: 0.2
+            contentItem: Text{
+                text: "Clear"
+                font.pointSize: 6
+            }
+            onClicked: {
+                line1.clear();
+                line2.clear();
+                line3.clear();
+                line4.clear();
+                line5.clear();
+                line6.clear();
+                line7.clear();
+                line8.clear();
+                line9.clear();
+
+                count_volt = 0;
+                count_cur = 0;
+                count_tilt_angle = 0;
+                count_tilt_direction = 0;
+                count_boost = 0;
+                count_angular_velocity = 0;
+                count_angleX = 0;
+                count_angleY = 0;
+                count_angleZ = 0;
+            }
+        }
+
+
+        //пролистывание
+        Rectangle
+        {
+            id: minus
+            width:parent.width * 0.3
+            height:parent.height * 0.035
+            anchors.bottom:parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            color:"#bdde1b"
+            opacity: 0.3
+            Label {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pointSize: parent.height * 0.7
+                text: "<-"
+            }
+            MouseArea
+            {
+                anchors.fill:parent
+                onClicked:{
+//                        timer.start();
+                    if(swipeView.currentIndex>0)
+                        swipeView.currentIndex--
+                }
+            }
+        }
+
+    }
+
+}
+
 
 
