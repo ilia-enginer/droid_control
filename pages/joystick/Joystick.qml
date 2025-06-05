@@ -468,7 +468,7 @@ SwipeView {
             anchors.left: parent.left
             anchors.leftMargin: 20
             anchors.top: joystick.top
-            anchors.topMargin: 20
+         //   anchors.topMargin: 20
 
              RadioButton {
                  checked: true
@@ -601,9 +601,9 @@ SwipeView {
                  titleFont.pixelSize: 15
                  titleFont.bold: true
                  //titleColor: Theme.darker(1.2)
-                 width: parent.width * 0.9
+                 width: parent.width
                  anchors.left: parent.left
-                 height:parent.height * 0.5
+                 height:parent.height * 0.35
                  antialiasing: true
 
                  //X-axis
@@ -787,131 +787,173 @@ SwipeView {
                         if(volt.checked)
                         {
                             //масштабирование по у
-                            if(volt < valueYMin){
-                              valueYMin = volt;
+                            if(volt_ < valueYMin){
+                              valueYMin = volt_;
                               valueAxisY.min = valueYMin;
                             }
-                            if(volt > valueYMax){
-                              valueYMax = volt;
+                            if(volt_ > valueYMax){
+                              valueYMax = volt_;
                               valueAxisY.max = valueYMax;
                             }
-                            line1.append(count_volt*2/10, volt);
+                            line1.append(count_volt*2/10, volt_);
+                            count_volt++;
+
+                            if((count_volt*2/10) > valueAxisX.max){
+                                valueAxisX.max += 0.2;
+                            }
                         }
 
                         if(cur.checked)
                         {
                             //масштабирование по у
-                            if(cur < valueYMin){
-                              valueYMin = cur;
+                            if(cur_ < valueYMin){
+                              valueYMin = cur_;
                               valueAxisY.min = valueYMin;
                             }
-                            if(cur > valueYMax){
-                              valueYMax = cur;
+                            if(cur_ > valueYMax){
+                              valueYMax = cur_;
                               valueAxisY.max = valueYMax;
                             }
-                            line1.append(count_cur*2/10, cur);
+                            line2.append(count_cur*2/10, cur_);
+                            count_cur++;
+
+                            if((count_cur*2/10) > valueAxisX.max){
+                                valueAxisX.max += 0.2;
+                            }
                         }
 
                         if(tilt_angle.checked)
                         {
                             //масштабирование по у
-                            if(tilt_angle < valueYMin){
-                              valueYMin = tilt_angle;
+                            if(tilt_angle_ < valueYMin){
+                              valueYMin = tilt_angle_;
                               valueAxisY.min = valueYMin;
                             }
-                            if(tilt_angle > valueYMax){
-                              valueYMax = tilt_angle;
+                            if(tilt_angle_ > valueYMax){
+                              valueYMax = tilt_angle_;
                               valueAxisY.max = valueYMax;
                             }
-                            line1.append(count_angle*2/10, tilt_angle);
+                            line3.append(count_tilt_angle*2/10, tilt_angle_);
+                            count_tilt_angle++;
+
+                            if((count_tilt_angle*2/10) > valueAxisX.max){
+                                valueAxisX.max += 0.2;
+                            }
                         }
 
                         if(tilt_direction.checked)
                         {
                             //масштабирование по у
-                            if(tilt_direction < valueYMin){
-                              valueYMin = tilt_direction;
+                            if(tilt_direction_ < valueYMin){
+                              valueYMin = tilt_direction_;
                               valueAxisY.min = valueYMin;
                             }
-                            if(tilt_direction > valueYMax){
-                              valueYMax = tilt_direction;
+                            if(tilt_direction_ > valueYMax){
+                              valueYMax = tilt_direction_;
                               valueAxisY.max = valueYMax;
                             }
-                            line1.append(count_tilt_direction*2/10, tilt_direction);
+                            line4.append(count_tilt_direction*2/10, tilt_direction_);
+                            count_tilt_direction++;
+
+                            if((count_tilt_direction*2/10) > valueAxisX.max){
+                                valueAxisX.max += 0.2;
+                            }
                         }
 
                         if(boost.checked)
                         {
                             //масштабирование по у
-                            if(boost < valueYMin){
-                              valueYMin = boost;
+                            if(boost_ < valueYMin){
+                              valueYMin = boost_;
                               valueAxisY.min = valueYMin;
                             }
-                            if(boost > valueYMax){
-                              valueYMax = boost;
+                            if(boost_ > valueYMax){
+                              valueYMax = boost_;
                               valueAxisY.max = valueYMax;
                             }
-                            line1.append(count_boost*2/10, boost);
+                            line5.append(count_boost*2/10, boost_);
+                            count_boost++;
+
+                            if((count_boost*2/10) > valueAxisX.max){
+                                valueAxisX.max += 0.2;
+                            }
                         }
 
                         if(angular_velocity.checked)
                         {
                             //масштабирование по у
-                            if(angular_velocity < valueYMin){
-                              valueYMin = angular_velocity;
+                            if(angular_velocity_ < valueYMin){
+                              valueYMin = angular_velocity_;
                               valueAxisY.min = valueYMin;
                             }
-                            if(angular_velocity > valueYMax){
-                              valueYMax = angular_velocity;
+                            if(angular_velocity_ > valueYMax){
+                              valueYMax = angular_velocity_;
                               valueAxisY.max = valueYMax;
                             }
-                            line1.append(count_angular_velocity*2/10, angular_velocity);
+                            line6.append(count_angular_velocity*2/10, angular_velocity_);
+                            count_angular_velocity++;
+
+                            if((count_angular_velocity*2/10) > valueAxisX.max){
+                                valueAxisX.max += 0.2;
+                            }
                         }
 
                         if(angleX.checked)
                         {
                             //масштабирование по у
-                            if(angleX < valueYMin){
-                              valueYMin = angleX;
+                            if(angleX_ < valueYMin){
+                              valueYMin = angleX_;
                               valueAxisY.min = valueYMin;
                             }
-                            if(angleX > valueYMax){
-                              valueYMax = angleX;
+                            if(angleX_ > valueYMax){
+                              valueYMax = angleX_;
                               valueAxisY.max = valueYMax;
                             }
-                            line1.append(count_angleX*2/10, angleX);
+                            line7.append(count_angleX*2/10, angleX_);
+                            count_angleX++;
+
+                            if((count_angleX*2/10) > valueAxisX.max){
+                                valueAxisX.max += 0.2;
+                            }
                         }
 
                         if(angleY.checked)
                         {
                             //масштабирование по у
-                            if(angleY < valueYMin){
-                              valueYMin = angleY;
+                            if(angleY_ < valueYMin){
+                              valueYMin = angleY_;
                               valueAxisY.min = valueYMin;
                             }
-                            if(angleY > valueYMax){
-                              valueYMax = angleY;
+                            if(angleY_ > valueYMax){
+                              valueYMax = angleY_;
                               valueAxisY.max = valueYMax;
                             }
-                            line1.append(count_angleY*2/10, angleY);
+                            line8.append(count_angleY*2/10, angleY_);
+                            count_angleY++;
+
+                            if((count_angleY*2/10) > valueAxisX.max){
+                                valueAxisX.max += 0.2;
+                            }
                         }
 
                         if(angleZ.checked)
                         {
                             //масштабирование по у
-                            if(angleZ < valueYMin){
-                              valueYMin = angleZ;
+                            if(angleZ_ < valueYMin){
+                              valueYMin = angleZ_;
                               valueAxisY.min = valueYMin;
                             }
-                            if(angleZ > valueYMax){
-                              valueYMax = angleZ;
+                            if(angleZ_ > valueYMax){
+                              valueYMax = angleZ_;
                               valueAxisY.max = valueYMax;
                             }
-                            line1.append(count_angleZ*2/10, angleZ);
-                        }
+                            line9.append(count_angleZ*2/10, angleZ_);
+                            count_angleZ++;
 
-                        //мфсштабирование по х
-                        valueAxisX.max += 0.2;
+                            if((count_angleZ*2/10) > valueAxisX.max){
+                                valueAxisX.max += 0.2;
+                            }
+                        }
                      }
                  }
 
@@ -968,89 +1010,181 @@ SwipeView {
                  anchors.top: chartView.bottom
                  anchors.bottom: flick.bottom
 
+                 //очистка графика
+                 Button {
+                     id: clearButton_1
+                     width: parent.width
+                     //opacity: 0.2
+                     text: "Очистить график"
+
+                     onClicked: {
+                         line1.clear();
+                         line2.clear();
+                         line3.clear();
+                         line4.clear();
+                         line5.clear();
+                         line6.clear();
+                         line7.clear();
+                         line8.clear();
+                         line9.clear();
+
+                         count_volt = 0;
+                         count_cur = 0;
+                         count_tilt_angle = 0;
+                         count_tilt_direction = 0;
+                         count_boost = 0;
+                         count_angular_velocity = 0;
+                         count_angleX = 0;
+                         count_angleY = 0;
+                         count_angleZ = 0;
+
+                         valueAxisX.min = 0;
+                         valueAxisX.max = 1;
+
+                         valueAxisY.min = 0;
+                         valueAxisY.max = 1;
+
+                         valueYMin = 0;
+                         valueYMax = 1;
+
+                     }
+                 }
+
                  CheckBox {
                    id: volt
                    checked: false
-                   text: qsTr("Напряжение")
+                   contentItem: Rectangle {
+                        width: parent.width
+                        height: parent.height * 0.001
+                        anchors.left: parent.right
+                        anchors.leftMargin: parent.width * 0.5
+                        Text {
+                            text: qsTr("Напряжение")
+                            color: "#BB4444"
+                            anchors.left: parent.right
+                        }
+                   }
                  }
                  CheckBox {
                    id: cur
                    checked: false
-                   text: qsTr("Ток")
+                   contentItem: Rectangle {
+                        width: parent.width
+                        height: parent.height * 0.001
+                        anchors.left: parent.right
+                        anchors.leftMargin: parent.width * 0.5
+                        Text {
+                            text: qsTr("Ток")
+                            color: "#B38A4D"
+                            anchors.left: parent.right
+                        }
+                   }
                  }
                  CheckBox {
                    id: tilt_angle
                    checked: false
-                   text: qsTr("Угол наклона")
+                   contentItem: Rectangle {
+                        width: parent.width
+                        height: parent.height * 0.001
+                        anchors.left: parent.right
+                        anchors.leftMargin: parent.width * 0.5
+                        Text {
+                            text: qsTr("Угол наклона")
+                            color: "#61B34D"
+                            anchors.left: parent.right
+                        }
+                   }
                  }
                  CheckBox {
                    id: tilt_direction
                    checked: false
-                   text: qsTr("Направление наклона")
+                   contentItem: Rectangle {
+                        width: parent.width
+                        height: parent.height * 0.001
+                        anchors.left: parent.right
+                        anchors.leftMargin: parent.width * 0.5
+                        Text {
+                            text: qsTr("Направление наклона")
+                            color: "#4D8AB3"
+                            anchors.left: parent.right
+                        }
+                   }
                  }
                  CheckBox {
                    id: boost
                    checked: false
-                   text: qsTr("Ускорение")
+                   contentItem: Rectangle {
+                        width: parent.width
+                        height: parent.height * 0.001
+                        anchors.left: parent.right
+                        anchors.leftMargin: parent.width * 0.5
+                        Text {
+                            text: qsTr("Ускорение")
+                            color: "#9E4DB3"
+                            anchors.left: parent.right
+                        }
+                   }
                  }
                  CheckBox {
                    id: angular_velocity
                    checked: false
-                   text: qsTr("Угловая скорость")
+                   contentItem: Rectangle {
+                        width: parent.width
+                        height: parent.height * 0.001
+                        anchors.left: parent.right
+                        anchors.leftMargin: parent.width * 0.5
+                        Text {
+                            text: qsTr("Угловая скорость")
+                            color: "#AA5566"
+                            anchors.left: parent.right
+                        }
+                   }
                  }
                  CheckBox {
                    id: angleX
                    checked: false
-                   text: qsTr("Угол X")
+                   contentItem: Rectangle {
+                        width: parent.width
+                        height: parent.height * 0.001
+                        anchors.left: parent.right
+                        anchors.leftMargin: parent.width * 0.5
+                        Text {
+                            text: qsTr("Угол X")
+                            color: "#808080"
+                            anchors.left: parent.right
+                        }
+                   }
                  }
                  CheckBox {
                    id: angleY
                    checked: false
-                   text: qsTr("Угол Y")
+                   contentItem: Rectangle {
+                        width: parent.width
+                        height: parent.height * 0.001
+                        anchors.left: parent.right
+                        anchors.leftMargin: parent.width * 0.5
+                        Text {
+                            text: qsTr("Угол Y")
+                            color: "#F79709"
+                            anchors.left: parent.right
+                        }
+                   }
                  }
                  CheckBox {
                    id: angleZ
                    checked: false
-                   text: qsTr("Угол Z")
+                   contentItem: Rectangle {
+                        width: parent.width
+                        height: parent.height * 0.001
+                        anchors.left: parent.right
+                        anchors.leftMargin: parent.width * 0.5
+                        Text {
+                            text: qsTr("Угол Z")
+                            color: "#F79709"
+                            anchors.left: parent.right
+                        }
+                   }
                  }
-            }
-        }
-
-        //очистка графика
-        Button {
-            id: clearButton_1
-            width: parent.width * 0.08
-            height: parent.height
-            anchors.top: parent.top
-            anchors.right: parent.right
-            opacity: 0.2
-            contentItem: Text{
-                text: "Clear"
-                font.pointSize: 6
-            }
-            onClicked: {
-                line1.clear();
-                line2.clear();
-                line3.clear();
-                line4.clear();
-                line5.clear();
-                line6.clear();
-                line7.clear();
-                line8.clear();
-                line9.clear();
-
-                count_volt = 0;
-                count_cur = 0;
-                count_tilt_angle = 0;
-                count_tilt_direction = 0;
-                count_boost = 0;
-                count_angular_velocity = 0;
-                count_angleX = 0;
-                count_angleY = 0;
-                count_angleZ = 0;
-
-                valueAxisX.max = 1;
-                valueAxisY.max = 1;
             }
         }
 

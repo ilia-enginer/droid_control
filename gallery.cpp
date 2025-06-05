@@ -71,8 +71,7 @@ int main(int argc, char *argv[])
     QIcon::setThemeName("gallery");
 
     QSettings settings;
-    if (qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE"))
-        QQuickStyle::setStyle(settings.value("style").toString());
+
 
     // If this is the first time we're running the application,
     // we need to set a style in the settings so that the QML
@@ -80,15 +79,21 @@ int main(int argc, char *argv[])
     ///////////////////settings.value("style").toString();
     /// //////////////
     const QString styleInSettings = settings.value("style").toString();
-    if (styleInSettings.isEmpty())
-        settings.setValue(QLatin1String("style"), QQuickStyle::name());
+    if (styleInSettings.isEmpty()){
+        settings.setValue(QLatin1String("style"), "Imagine");
+    }
+
+    if (qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE")){
+        QQuickStyle::setStyle(settings.value("style").toString());
+    }
 
     QQmlApplicationEngine engine;
 
-    QStringList builtInStyles = { QLatin1String("Fusion"), QLatin1String("Basic"), QLatin1String("Imagine"),
+    QStringList builtInStyles = { QLatin1String("Fusion"), QLatin1String("Imagine"),
                                 QLatin1String("Material"), QLatin1String("Universal")};
 #if defined(Q_OS_MACOS)
     builtInStyles << QLatin1String("macOS");
+//    builtInStyles << QLatin1String("Imagine");
 #elif defined(Q_OS_WINDOWS)
     builtInStyles << QLatin1String("Windows");
 #endif

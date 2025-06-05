@@ -1503,6 +1503,8 @@ Device::socketRead()
             val.data[3] = Data[35];
             angleZ = val.f;
 
+            mainModel_->setVreal(volt);
+            mainModel_->setCurReal(cur);
             emit chart_data(volt, cur, tilt_angle, tilt_direction, boost, angular_velocity, angleX, angleY, angleZ);
 
             break;

@@ -163,7 +163,7 @@ Q_SIGNALS:
     void searchInProgress();
     void searchFinished();
 
-    void chart_data(float volt, float cur, float tilt_angle, float tilt_direction, float boost, float angular_velocity, float angleX, float angleY, float angleZ);
+    void chart_data(float volt_, float cur_, float tilt_angle_, float tilt_direction_, float boost_, float angular_velocity_, float angleX_, float angleY_, float angleZ_);
 
 
 private:
