@@ -464,11 +464,12 @@ SwipeView {
             }
         }
         Column {
-            spacing: 10
+            spacing: 3
             anchors.left: parent.left
             anchors.leftMargin: 20
-            anchors.top: joystick.top
+          //  anchors.top: joystick.top
          //   anchors.topMargin: 20
+            anchors.verticalCenter: joystick.verticalCenter
 
              RadioButton {
                  checked: true
