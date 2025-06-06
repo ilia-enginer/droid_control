@@ -26,7 +26,7 @@ SwipeView {
 
     signal joystick_moved(double x, double y);
 
-    property int valueYMin: 0
+    property int valueYMin: -1
     property int valueYMax: 1
 
     property int count_volt: 0
@@ -619,7 +619,7 @@ SwipeView {
                  //Y-axis
                  ValuesAxis {
                      id: valueAxisY
-                     min: 0
+                     min: -1
                      max: 1
               //       tickCount: 10  //Number of scale on the coordinate axis
                //      labelFormat: "%.1f"//1 - There are several decimals after controlling the decimal point
@@ -702,7 +702,7 @@ SwipeView {
                      //STYLE: Qt.solidline // style
                      axisX: valueAxisX
                      axisY: valueAxisY
-                     color: Qt.darker("#F79709",1.2)
+                     color: Qt.darker("#eb0cc5",1.2)
                      width: 2
                  }
 
@@ -790,11 +790,13 @@ SwipeView {
                             //масштабирование по у
                             if(volt_ < valueYMin){
                               valueYMin = volt_;
-                              valueAxisY.min = valueYMin;
+                                //опустить ниже на 20 часть масштаба
+                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
                             }
                             if(volt_ > valueYMax){
                               valueYMax = volt_;
-                              valueAxisY.max = valueYMax;
+                                //поднять выше на 20 часть масштаба
+                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
                             }
                             line1.append(count_volt*2/10, volt_);
                             count_volt++;
@@ -809,11 +811,13 @@ SwipeView {
                             //масштабирование по у
                             if(cur_ < valueYMin){
                               valueYMin = cur_;
-                              valueAxisY.min = valueYMin;
+                                //опустить ниже на 20 часть масштаба
+                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
                             }
                             if(cur_ > valueYMax){
                               valueYMax = cur_;
-                              valueAxisY.max = valueYMax;
+                                //поднять выше на 20 часть масштаба
+                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
                             }
                             line2.append(count_cur*2/10, cur_);
                             count_cur++;
@@ -828,11 +832,13 @@ SwipeView {
                             //масштабирование по у
                             if(tilt_angle_ < valueYMin){
                               valueYMin = tilt_angle_;
-                              valueAxisY.min = valueYMin;
+                                //опустить ниже на 20 часть масштаба
+                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
                             }
                             if(tilt_angle_ > valueYMax){
                               valueYMax = tilt_angle_;
-                              valueAxisY.max = valueYMax;
+                                //поднять выше на 20 часть масштаба
+                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
                             }
                             line3.append(count_tilt_angle*2/10, tilt_angle_);
                             count_tilt_angle++;
@@ -847,11 +853,13 @@ SwipeView {
                             //масштабирование по у
                             if(tilt_direction_ < valueYMin){
                               valueYMin = tilt_direction_;
-                              valueAxisY.min = valueYMin;
+                                //опустить ниже на 20 часть масштаба
+                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
                             }
                             if(tilt_direction_ > valueYMax){
                               valueYMax = tilt_direction_;
-                              valueAxisY.max = valueYMax;
+                                //поднять выше на 20 часть масштаба
+                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
                             }
                             line4.append(count_tilt_direction*2/10, tilt_direction_);
                             count_tilt_direction++;
@@ -866,11 +874,13 @@ SwipeView {
                             //масштабирование по у
                             if(boost_ < valueYMin){
                               valueYMin = boost_;
-                              valueAxisY.min = valueYMin;
+                                //опустить ниже на 20 часть масштаба
+                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
                             }
                             if(boost_ > valueYMax){
                               valueYMax = boost_;
-                              valueAxisY.max = valueYMax;
+                                //поднять выше на 20 часть масштаба
+                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
                             }
                             line5.append(count_boost*2/10, boost_);
                             count_boost++;
@@ -885,11 +895,13 @@ SwipeView {
                             //масштабирование по у
                             if(angular_velocity_ < valueYMin){
                               valueYMin = angular_velocity_;
-                              valueAxisY.min = valueYMin;
+                                //опустить ниже на 20 часть масштаба
+                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
                             }
                             if(angular_velocity_ > valueYMax){
                               valueYMax = angular_velocity_;
-                              valueAxisY.max = valueYMax;
+                                //поднять выше на 20 часть масштаба
+                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
                             }
                             line6.append(count_angular_velocity*2/10, angular_velocity_);
                             count_angular_velocity++;
@@ -904,11 +916,13 @@ SwipeView {
                             //масштабирование по у
                             if(angleX_ < valueYMin){
                               valueYMin = angleX_;
-                              valueAxisY.min = valueYMin;
+                                //опустить ниже на 20 часть масштаба
+                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
                             }
                             if(angleX_ > valueYMax){
                               valueYMax = angleX_;
-                              valueAxisY.max = valueYMax;
+                                //поднять выше на 20 часть масштаба
+                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
                             }
                             line7.append(count_angleX*2/10, angleX_);
                             count_angleX++;
@@ -923,11 +937,13 @@ SwipeView {
                             //масштабирование по у
                             if(angleY_ < valueYMin){
                               valueYMin = angleY_;
-                              valueAxisY.min = valueYMin;
+                                //опустить ниже на 20 часть масштаба
+                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
                             }
                             if(angleY_ > valueYMax){
                               valueYMax = angleY_;
-                              valueAxisY.max = valueYMax;
+                                //поднять выше на 20 часть масштаба
+                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
                             }
                             line8.append(count_angleY*2/10, angleY_);
                             count_angleY++;
@@ -942,11 +958,13 @@ SwipeView {
                             //масштабирование по у
                             if(angleZ_ < valueYMin){
                               valueYMin = angleZ_;
-                              valueAxisY.min = valueYMin;
+                                //опустить ниже на 20 часть масштаба
+                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
                             }
                             if(angleZ_ > valueYMax){
                               valueYMax = angleZ_;
-                              valueAxisY.max = valueYMax;
+                                //поднять выше на 20 часть масштаба
+                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
                             }
                             line9.append(count_angleZ*2/10, angleZ_);
                             count_angleZ++;
@@ -1006,15 +1024,17 @@ SwipeView {
 */
 
              Column {
+                 id: column_check
                  spacing: 5
-                 width: parent.width
                  anchors.top: chartView.bottom
                  anchors.bottom: flick.bottom
+                 anchors.left: parent.left
+                 anchors.leftMargin: 10
 
                  //очистка графика
                  Button {
                      id: clearButton_1
-                     width: parent.width
+                 //    width: parent.width
                      //opacity: 0.2
                      text: "Очистить график"
 
@@ -1042,10 +1062,10 @@ SwipeView {
                          valueAxisX.min = 0;
                          valueAxisX.max = 1;
 
-                         valueAxisY.min = 0;
+                         valueAxisY.min = -1;
                          valueAxisY.max = 1;
 
-                         valueYMin = 0;
+                         valueYMin = -1;
                          valueYMax = 1;
 
                      }
@@ -1054,137 +1074,83 @@ SwipeView {
                  CheckBox {
                    id: volt
                    checked: false
-                   contentItem: Rectangle {
-                        width: parent.width
-                        height: parent.height * 0.001
-                        anchors.left: parent.right
-                        anchors.leftMargin: parent.width * 0.5
-                        Text {
-                            text: qsTr("Напряжение")
-                            color: "#BB4444"
-                            anchors.left: parent.right
-                        }
-                   }
+                   text: qsTr("Напряжение")
+                   background: Rectangle {
+                           opacity: 0.7
+                           color: "#BB4444"
+                       }
                  }
                  CheckBox {
                    id: cur
                    checked: false
-                   contentItem: Rectangle {
-                        width: parent.width
-                        height: parent.height * 0.001
-                        anchors.left: parent.right
-                        anchors.leftMargin: parent.width * 0.5
-                        Text {
-                            text: qsTr("Ток")
-                            color: "#B38A4D"
-                            anchors.left: parent.right
-                        }
-                   }
+                   text: qsTr("Ток")
+                   background: Rectangle {
+                           opacity: 0.7
+                           color: "#B38A4D"
+                       }
                  }
                  CheckBox {
                    id: tilt_angle
                    checked: false
-                   contentItem: Rectangle {
-                        width: parent.width
-                        height: parent.height * 0.001
-                        anchors.left: parent.right
-                        anchors.leftMargin: parent.width * 0.5
-                        Text {
-                            text: qsTr("Угол наклона")
-                            color: "#61B34D"
-                            anchors.left: parent.right
-                        }
-                   }
+                   text: qsTr("Угол наклона")
+                   background: Rectangle {
+                           opacity: 0.7
+                           color: "#61B34D"
+                       }
                  }
                  CheckBox {
                    id: tilt_direction
                    checked: false
-                   contentItem: Rectangle {
-                        width: parent.width
-                        height: parent.height * 0.001
-                        anchors.left: parent.right
-                        anchors.leftMargin: parent.width * 0.5
-                        Text {
-                            text: qsTr("Направление наклона")
-                            color: "#4D8AB3"
-                            anchors.left: parent.right
-                        }
-                   }
+                   text: qsTr("Направление наклона")
+                   background: Rectangle {
+                           opacity: 0.7
+                           color: "#4D8AB3"
+                       }
                  }
                  CheckBox {
                    id: boost
                    checked: false
-                   contentItem: Rectangle {
-                        width: parent.width
-                        height: parent.height * 0.001
-                        anchors.left: parent.right
-                        anchors.leftMargin: parent.width * 0.5
-                        Text {
-                            text: qsTr("Ускорение")
-                            color: "#9E4DB3"
-                            anchors.left: parent.right
-                        }
-                   }
+                   text: qsTr("Ускорение")
+                   background: Rectangle {
+                           opacity: 0.7
+                           color: "#9E4DB3"
+                       }
                  }
                  CheckBox {
                    id: angular_velocity
                    checked: false
-                   contentItem: Rectangle {
-                        width: parent.width
-                        height: parent.height * 0.001
-                        anchors.left: parent.right
-                        anchors.leftMargin: parent.width * 0.5
-                        Text {
-                            text: qsTr("Угловая скорость")
-                            color: "#AA5566"
-                            anchors.left: parent.right
-                        }
-                   }
+                   text: qsTr("Угловая скорость")
+                   background: Rectangle {
+                           opacity: 0.7
+                           color: "#AA5566"
+                       }
                  }
                  CheckBox {
                    id: angleX
                    checked: false
-                   contentItem: Rectangle {
-                        width: parent.width
-                        height: parent.height * 0.001
-                        anchors.left: parent.right
-                        anchors.leftMargin: parent.width * 0.5
-                        Text {
-                            text: qsTr("Угол X")
-                            color: "#808080"
-                            anchors.left: parent.right
-                        }
-                   }
+                   text: qsTr("Угол X")
+                   background: Rectangle {
+                           opacity: 0.7
+                           color: "#808080"
+                       }
                  }
                  CheckBox {
                    id: angleY
                    checked: false
-                   contentItem: Rectangle {
-                        width: parent.width
-                        height: parent.height * 0.001
-                        anchors.left: parent.right
-                        anchors.leftMargin: parent.width * 0.5
-                        Text {
-                            text: qsTr("Угол Y")
-                            color: "#F79709"
-                            anchors.left: parent.right
-                        }
-                   }
+                   text: qsTr("Угол Y")
+                   background: Rectangle {
+                           opacity: 0.7
+                           color: "#F79709"
+                       }
                  }
                  CheckBox {
                    id: angleZ
                    checked: false
-                   contentItem: Rectangle {
-                        width: parent.width
-                        height: parent.height * 0.001
-                        anchors.left: parent.right
-                        anchors.leftMargin: parent.width * 0.5
-                        Text {
-                            text: qsTr("Угол Z")
-                            color: "#F79709"
-                            anchors.left: parent.right
-                        }
-                   }
+                   text: qsTr("Угол Z")
+                   background: Rectangle {
+                           opacity: 0.7
+                           color: "#eb0cc5"
+                       }
                  }
             }
         }
@@ -1213,6 +1179,7 @@ SwipeView {
 //                        timer.start();
                     if(swipeView.currentIndex>0)
                         swipeView.currentIndex--
+                    //device.socketRead();
                 }
             }
         }

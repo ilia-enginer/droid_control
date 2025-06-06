@@ -142,7 +142,8 @@ Page {
                     color: get_err.pressed ? pressedColor : normalColor
                 }
                 onClicked: {
-                    device.sendMessageAndWrapS("e5");
+                //    device.sendMessageAndWrapS("e5");
+                    device.get_check();
                     listView1.positionViewAtEnd()
                 }
             }

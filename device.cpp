@@ -728,6 +728,7 @@ void Device::sendparstxlog(quint8 code, quint8 cod)
         break;
     case 0xE8:
         s = "автокалибр. датчика тока";
+        emit logJoy("-> ", s);
         break;
     case 0xE9:
         s = "записать калибровку тока";
@@ -737,6 +738,7 @@ void Device::sendparstxlog(quint8 code, quint8 cod)
         break;
     case 0xEB:
         s = "стереть ошибки";
+        emit logJoy("-> ", s);
         break;
     case 0xEC:
         s = "сервы в стартовое положение";
@@ -752,6 +754,7 @@ void Device::sendparstxlog(quint8 code, quint8 cod)
         break;
     case 0xF0:
         s = "команда перезагрузки";
+        emit logJoy("-> ", s);
         break;
     case 0xF1:
         s = "обновление углов серв...";
@@ -783,14 +786,22 @@ void Device::sendparstxlog(quint8 code, quint8 cod)
         s = "запрос угла сервы";
         break;
     case 0xA6:
-        if(cod == 0x00)         s = "питание серв OFF";
-        else if (cod == 0x01)   s = "питание серв ON";
+        if(cod == 0x00){
+            s = "питание серв OFF";
+            emit logJoy("-> ", s);
+        }
+        else if (cod == 0x01){
+            s = "питание серв ON";
+            emit logJoy("-> ", s);
+        }
         break;
     case 0xA7:
         s = "запрос точки восстановления";
+        emit logJoy("-> ", s);
         break;
     case 0xA8:
         s = "отправка точки восстановления";
+        emit logJoy("-> ", s);
         break;
 
     default:
@@ -937,6 +948,22 @@ void Device::deviceDisconnected()
 void
 Device::socketRead()
 {
+//   static float volt = -10.0f;
+
+//   float cur = 0.0f;
+//   float tilt_angle = 0.0f;
+//   float tilt_direction = 0.0f;
+//   float boost = 0.0f;
+//   float angular_velocity = 0.0f;
+//   float angleX = 0.0f;
+//   float angleY = 0.0f;
+//   float angleZ = 0.0f;
+
+//    emit chart_data(volt, cur, tilt_angle, tilt_direction, boost, angular_velocity, angleX, angleY, angleZ);
+
+
+//   return;
+
    QByteArray recievedData = socket->readAll();
    emit socketDataRecieved(recievedData.toHex());
    int r = recievedData.size();
@@ -1283,6 +1310,7 @@ Device::socketRead()
             }
             break;
         case 0xEB:
+            emit logJoy("<- ошибки стерты", " ");
             emit logServis("<- ошибки стерты", " ");
             break;
         case 0xEC:
@@ -1422,10 +1450,12 @@ Device::socketRead()
             u8 = Data[0];
             if(u8 == 0x00)
             {
+                emit logJoy("<- сервы OFF", "");
                 emit logServis("<- сервы OFF", "");
             }
             else if(u8 == 0x01)
             {
+                emit logJoy("<- сервы ON", "");
                 emit logServis("<- сервы ON", "");
             }
 
@@ -1438,14 +1468,17 @@ Device::socketRead()
                 QSettings setting;
                 setting.setValue("fullParam", Data);
 
+                emit logJoy("<- точка восстановления создана", "");
                emit logServis("<- точка восстановления создана", "");
             }
             else
             {
+                emit logJoy("<- отсутствуют входящие параметры", "");
                 emit logServis("<- отсутствуют входящие параметры", "");
             }
             break;
         case 0xA8:
+            emit logJoy("<- параметры восстановленны", "");
            emit logServis("<- параметры восстановленны", "");
             break;
         case 0xA9:
