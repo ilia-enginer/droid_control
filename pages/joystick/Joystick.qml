@@ -1074,7 +1074,7 @@ SwipeView {
                  CheckBox {
                    id: volt
                    checked: false
-                   text: qsTr("Напряжение")
+                   text: qsTr("Напряжение (В)")
                    background: Rectangle {
                            opacity: 0.7
                            color: "#BB4444"
@@ -1083,7 +1083,7 @@ SwipeView {
                  CheckBox {
                    id: cur
                    checked: false
-                   text: qsTr("Ток")
+                   text: qsTr("Ток (А)")
                    background: Rectangle {
                            opacity: 0.7
                            color: "#B38A4D"
@@ -1092,7 +1092,7 @@ SwipeView {
                  CheckBox {
                    id: tilt_angle
                    checked: false
-                   text: qsTr("Угол наклона")
+                   text: qsTr("Угол наклона (°)")
                    background: Rectangle {
                            opacity: 0.7
                            color: "#61B34D"
@@ -1101,7 +1101,7 @@ SwipeView {
                  CheckBox {
                    id: tilt_direction
                    checked: false
-                   text: qsTr("Направление наклона")
+                   text: qsTr("Направление наклона (°)")
                    background: Rectangle {
                            opacity: 0.7
                            color: "#4D8AB3"
@@ -1110,7 +1110,7 @@ SwipeView {
                  CheckBox {
                    id: boost
                    checked: false
-                   text: qsTr("Ускорение")
+                   text: qsTr("Ускорение (мс²)")
                    background: Rectangle {
                            opacity: 0.7
                            color: "#9E4DB3"
@@ -1119,7 +1119,7 @@ SwipeView {
                  CheckBox {
                    id: angular_velocity
                    checked: false
-                   text: qsTr("Угловая скорость")
+                   text: qsTr("Угловая скорость (об./мин.)")
                    background: Rectangle {
                            opacity: 0.7
                            color: "#AA5566"
@@ -1128,7 +1128,7 @@ SwipeView {
                  CheckBox {
                    id: angleX
                    checked: false
-                   text: qsTr("Угол X")
+                   text: qsTr("Угол X (°)")
                    background: Rectangle {
                            opacity: 0.7
                            color: "#808080"
@@ -1137,7 +1137,7 @@ SwipeView {
                  CheckBox {
                    id: angleY
                    checked: false
-                   text: qsTr("Угол Y")
+                   text: qsTr("Угол Y (°)")
                    background: Rectangle {
                            opacity: 0.7
                            color: "#F79709"
@@ -1146,7 +1146,7 @@ SwipeView {
                  CheckBox {
                    id: angleZ
                    checked: false
-                   text: qsTr("Угол Z")
+                   text: qsTr("Угол Z (°)")
                    background: Rectangle {
                            opacity: 0.7
                            color: "#eb0cc5"
