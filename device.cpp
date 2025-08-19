@@ -71,6 +71,7 @@
 #include <QSettings>
 #include <QtBluetooth/qbluetoothserviceinfo.h>
 #include <QBluetoothUuid>
+#include <QMessageBox>
 
 
 void delay( int millisecondsToWait )
@@ -260,6 +261,44 @@ void Device::deviceConnected()
 
     //запрос точки восстановления
     mainModel_->full_param_check();
+
+    //проверка обновления
+    mainModel_->setVersExt(0);
+    mainModel_->setVersBootLoaderExt(0);
+    //запрос версии прошивки шара
+    sendMessageAndWrap(0xf2, "");
+    //ожидание ответа
+    delay(100);
+    qint32 a = 0;
+    while(mainModel_->getVersExt() == 0)
+    {
+        sendMessageAndWrap(0xf2, "");
+        if(a++ > 10)
+        {
+            return;
+        }
+        delay(70);
+    }
+
+    //открываю файл и читаю версии прошивки и бутлоадера
+    if(!mainModel_->open_Update())  return;
+    if(!mainModel_->openBootloaderUpdate())  return;
+
+    //сделать функцию возврата версии основной и загрузчика из apk
+    //если основная версия или версия загрузчика из apk новее - предложить обновить провишку
+    if(((mainModel_->getVersInt() > mainModel_->getVersExt())
+            || (mainModel_->getVersBootLoaderInt() > mainModel_->getVersBootLoaderExt())) &&
+            (mainModel_->getVersExt() != 0))
+    {
+        //открыть всплывающее окно с предложением обновиться
+        if(rendering_flag)
+        {
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("messege");
+            msgBox.setText("Доступно обновление шара.\nМожете установить, перейдя во вкладку обновление прошивки");
+            msgBox.exec();
+        }
+    }
 }
 
 void Device::errorReceived(QLowEnergyController::Error)

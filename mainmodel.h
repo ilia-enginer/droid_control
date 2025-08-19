@@ -122,7 +122,12 @@ public:
     void setCurrenUpdate(const QString &message);
 
     void setVersExt(quint32 version);
+    quint32 getVersExt(void);
     void setVersBootLoaderExt(quint32 version);
+    quint32 getVersBootLoaderExt(void);
+
+    quint32 getVersInt(void);
+    quint32 getVersBootLoaderInt(void);
 
 
     void setDevice(Device *device);

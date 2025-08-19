@@ -17,6 +17,7 @@
 #include <QCoreApplication>
 #include <QSettings>
 
+
 #include "mainmodel.h"
 #include "device.h"
 #include "appmanager.h"
@@ -269,6 +270,7 @@ void MainModel::checkingUpdates(void)
     QString empty;
     int a = 0;
 
+
     #if defined(Q_QDOC) || (defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED))
     if (!device_) {
       return;
@@ -288,23 +290,31 @@ void MainModel::checkingUpdates(void)
         a = 0;
         ///ожидание ответа
         //если напряжение меньше 20% заряда - защита
-        while((Vreal < (Vmax * 0.8)) && (a < 3))
+        while(Vreal == 0)
         {
             device_->sendMessageAndWrap(0xa1, "");
             delay(70);
-            if(a++ == 10)
+            if(a++ > 10)
             {
-                if(adminTapCount != -1)
-                {
-                    if(rendering_flag)    setCurrenUpdate("Слишком низкое напряжение. Обновление невозможно");
-                    if(rendering_flag)    emit checkUpdate();
-                    return;
-                }
-                else
-                {
-                    if(rendering_flag)    setCurrenUpdate("Внимание! Низкое напряжение");
-                    delay(3000);
-                }
+                if(rendering_flag)    setCurrenUpdate("Непредвиденная ошибка. Попробуйте еще раз.");
+                if(rendering_flag)    emit checkUpdate();
+                return;
+            }
+        }
+
+
+        if(Vreal < (Vmax * 0.8))
+        {
+            if(adminTapCount != -1)
+            {
+                if(rendering_flag)    setCurrenUpdate("Слишком низкое напряжение. Обновление невозможно");
+                if(rendering_flag)    emit checkUpdate();
+                return;
+            }
+            else
+            {
+                if(rendering_flag)    setCurrenUpdate("Внимание! Низкое напряжение");
+                delay(3000);
             }
         }
 
@@ -966,4 +976,25 @@ void MainModel::setVersBootLoaderExt(quint32 version)
 {
     version_BootLoader_ExternalProgram.u32 = version;
 }
+
+quint32 MainModel::getVersBootLoaderExt()
+{
+    return version_BootLoader_ExternalProgram.u32;
+}
+
+quint32 MainModel::getVersInt()
+{
+    return versionInternalProgram.u32;
+}
+
+quint32 MainModel::getVersBootLoaderInt()
+{
+    return version_BootLoader_InternalProgram.u32;
+}
+
+quint32 MainModel::getVersExt()
+{
+    return versionExternalProgram.u32;
+}
+
 
