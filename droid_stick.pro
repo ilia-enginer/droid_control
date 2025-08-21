@@ -4,16 +4,18 @@ TARGET = droid_stick
 VERSION = "1.1.2"
 DEFINES += INSERT_VERSION_CODE=\\\"$$VERSION\\\"
 
-QT += quick charts qml quickcontrols2 bluetooth core positioning widgets core-private
+QT += quick charts qml quickcontrols2 bluetooth core positioning widgets core-private network #androidextras
 
 SOURCES += \
 #    btscaner.cpp \
     appmanager.cpp \
+    appversion.cpp \
     device.cpp \
     deviceinfo.cpp \
 #    devicemodel.cpp \
     gallery.cpp \
-    mainmodel.cpp
+    mainmodel.cpp \
+    updateapp.cpp
 
 RESOURCES += \
     Resurs.qrc \
@@ -93,9 +95,11 @@ DISTFILES += \
 
 HEADERS += \
     appmanager.h \
+    appversion.h \
     device.h \
     deviceinfo.h \
-    mainmodel.h
+    mainmodel.h \
+    updateapp.h
 
 #RESOURCES += qml.qrc
 
