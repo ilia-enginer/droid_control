@@ -13,10 +13,11 @@
 //#include <QNetworkReply>
 */
 
-#include <QtWidgets>
+//#include <QtWidgets>
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 //#include <QtAndroid>
+
 
 
 
@@ -25,7 +26,7 @@ class UpdateApp : public QObject
         Q_OBJECT
 
     public:
-        static const QString kVersionUrl;
+/*        static const QString kVersionUrl;
         static const QString kUpdateUrl;
         static const QString versionHeading;
 
@@ -33,9 +34,10 @@ class UpdateApp : public QObject
         explicit UpdateApp(QObject *parent = 0);
         ~UpdateApp();
 
-        void checkForUpdates(qint32);
+
 
     public slots:
+        void checkForUpdates(qint32);
         void on_NetworkReply(QNetworkReply *inReply);
         void on_CancelDownload();
         void on_HttpFinished();
@@ -55,7 +57,7 @@ class UpdateApp : public QObject
         bool mHttpRequestAborted;
 
         qint32 _verAppIn = 0;               //версия уже установленного приложения
-
+*/
 };
 
 /*

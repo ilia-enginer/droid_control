@@ -105,9 +105,12 @@ int main(int argc, char *argv[])
 
     MainModel model;
     Device d(&model);
+//    UpdateApp updateApp(&model);
+
 
     engine.rootContext()->setContextProperty("device", &d);
     engine.rootContext()->setContextProperty("mainModel", &model);
+ //   engine.rootContext()->setContextProperty("updateApp", &updateApp);
 
     appManager.setModel(&model);
     appManager.setDevice(&d);
@@ -140,8 +143,8 @@ int main(int argc, char *argv[])
     #endif
 
     //запуск проверки обновлений
-    UpdateApp *tUpdate = new UpdateApp();
-    tUpdate->checkForUpdates(ver);
+//    UpdateApp *tUpdate = new UpdateApp();
+//    tUpdate->checkForUpdates(ver);
 
 
     engine.setInitialProperties({{ "builtInStyles", builtInStyles }});

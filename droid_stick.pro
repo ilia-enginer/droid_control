@@ -1,6 +1,7 @@
 TEMPLATE = app
 TARGET = droid_stick
 
+#версия на главном экране
 VERSION = "1.1.2"
 DEFINES += INSERT_VERSION_CODE=\\\"$$VERSION\\\"
 

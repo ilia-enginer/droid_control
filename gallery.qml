@@ -80,6 +80,7 @@ ApplicationWindow {
         onActivated: help()
     }
 
+
     Action {
         id: navigateBackAction
 //        icon.name: stackView.depth > 1 ? "back" : "drawer"
@@ -306,5 +307,21 @@ ApplicationWindow {
 
     DeviceScanerPage {
         id: devicesDialog
+    }
+
+    //кнопка теста
+    Button {
+        id: test_but
+        width: window.width * 0.8
+        height: window.height * 0.07
+     //   anchors.top: senderPageLabel2.bottom
+     //   anchors.topMargin: 20
+      //  anchors.horizontalCenter: window.horizontalCenter
+        visible: true
+        text: "тест обновления"
+
+        onClicked: {
+            updateApp.checkForUpdates(1);
+        }
     }
 }

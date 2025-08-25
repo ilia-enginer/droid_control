@@ -1,6 +1,7 @@
 #include "updateapp.h"
 
 
+/*
 //------------------------------------------------------------------------------
 
 const QString UpdateApp::kVersionUrl =
@@ -326,6 +327,9 @@ void UpdateApp::on_NetworkReply(QNetworkReply *inReply)
 
     inReply->deleteLater();
 }
+*/
+
+
 
 /*
 UpdateApp::UpdateApp(QObject *parent)
