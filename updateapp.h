@@ -16,8 +16,10 @@
 #include <QtWidgets>
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
-#include <QtCore/private/qandroidextras_p.h>
 
+#if defined(Q_OS_MACOS)
+    #include <QtCore/private/qandroidextras_p.h>
+#endif
 
 
 

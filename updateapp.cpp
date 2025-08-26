@@ -60,8 +60,6 @@ UpdateApp::UpdateApp(QObject *parent) :
 
 //    }
 
-
-
     mNamChecker = new QNetworkAccessManager(this);
 
     connect(
@@ -83,6 +81,28 @@ UpdateApp::~UpdateApp()
 
 void UpdateApp::checkForUpdates(qint32 ver)
 {
+#if defined(Q_OS_MACOS)
+
+    QFuture permission_request = QtAndroidPrivate::requestPermission("android.permission.INTERNET");
+#endif
+//    switch (permission_request.result()) {
+//    case QtAndroidPrivate::Undetermined:
+//        setUpdateText("01 Undetermined");
+
+//        break;
+//    case QtAndroidPrivate::Authorized:
+//        setUpdateText("02 Authorized");
+
+//        break;
+//    case QtAndroidPrivate::Denied:
+//        setUpdateText("03 Denied");
+
+//        break;
+//    default:
+//        break;
+//    }
+//delayyy(1000);
+
     if(ver != 0)    _verAppIn = ver;
 setUpdateText("1 to checkForUpdates");
 delayyy(1000);
@@ -373,6 +393,30 @@ void UpdateApp::on_NetworkReply(QNetworkReply *inReply)
     }
     else
     {
+        setUpdateText("006 inReply->isReadable(");
+        delayyy(1000);
+        //читаю построчно
+        //ищу в каждой строке место где записана версия
+        //с помощью "лейбла"
+        QString tReplyString;
+        QString temp;
+        while(!inReply->atEnd()) {
+            temp = inReply->readLine();
+            if (temp.contains(UpdateApp::versionHeading)) {
+                tReplyString = temp.mid(temp.indexOf(UpdateApp::versionHeading) + UpdateApp::versionHeading.size() + 1, 9);
+
+         //       qDebug() << temp;
+
+            }
+            setUpdateText(temp);
+            delayyy(1000);
+        }
+        setUpdateText("Версия");
+        delayyy(3000);
+        setUpdateText(tReplyString);
+        delayyy(3000);
+
+
         setUpdateText(
                     tr(
                         "10 %1."
