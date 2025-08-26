@@ -55,6 +55,7 @@ import Qt.labs.settings
 
 import "." as App
 
+
 ApplicationWindow {
     id: window
     width: 360
@@ -314,14 +315,47 @@ ApplicationWindow {
         id: test_but
         width: window.width * 0.8
         height: window.height * 0.07
-     //   anchors.top: senderPageLabel2.bottom
-     //   anchors.topMargin: 20
-      //  anchors.horizontalCenter: window.horizontalCenter
         visible: true
         text: "тест обновления"
 
         onClicked: {
             updateApp.checkForUpdates(1);
+        }
+    }
+
+    UpdateAppPage {
+        id: updateAppWindow
+        modal: true
+        focus: true
+        x: (window.width - width) / 2
+        y: (window.height - height) / 2
+        width: window.width * 0.8
+        height: window.height * 0.7
+
+        Component.onCompleted: {
+                 updateApp.onWindowloadOpen.connect(onWindowloadOpen)
+             }
+
+        function onWindowloadOpen(){
+            updateAppWindow.open();
+        }
+    }
+
+    Update_Hex {
+        id: updateHex
+        modal: true
+        focus: true
+        x: (window.width - width) / 2
+        y: window.height / 6
+        width: Math.min(window.width, window.height) / 3 * 2
+        height: window.height * 0.3
+
+        Component.onCompleted: {
+                 updateApp.onWindowloadHexOpen.connect(onWindowloadHexOpen)
+             }
+
+        function onWindowloadHexOpen(){
+            updateHex.open();
         }
     }
 }

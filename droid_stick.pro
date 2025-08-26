@@ -68,12 +68,16 @@ RESOURCES += \
 #    pages/joystick/SparseLight.qml \
     pages/joystick/finger.png \
     pages/joystick/background.png \
-    AboutPage.qml
+    AboutPage.qml \
+    UpdateAppPage.qml \
+    Update_Hex.qml
 
 target.path = $$[QT_INSTALL_EXAMPLES]/quickcontrols2/gallery
 INSTALLS += target
 
 DISTFILES += \
+    UpdateAppPage.qml \
+    Update_Hex.qml \
     android/AndroidManifest.xml \
     android/AndroidManifest.xml \
     android/build.gradle \

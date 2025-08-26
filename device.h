@@ -165,6 +165,7 @@ Q_SIGNALS:
 
     void chart_data(float volt_, float cur_, float tilt_angle_, float tilt_direction_, float boost_, float angular_velocity_, float angleX_, float angleY_, float angleZ_);
 
+    void windowloadHexOpen();       //открывает окно-напоминание обновления hex шара
 
 private:
     void setUpdate(const QString &message);

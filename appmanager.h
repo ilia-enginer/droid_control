@@ -5,6 +5,7 @@
 
 #include "mainmodel.h"
 #include "device.h"
+#include "updateapp.h"
 
 
 class AppManager : public QObject
@@ -16,6 +17,7 @@ public:
     void setModel(MainModel *newModel);
 
     void setDevice(Device *newDevice);
+    void setUpdateApp(UpdateApp *newUpdateApp);
 
     void keepScreenOn(bool on);
 
@@ -24,7 +26,7 @@ signals:
 private:
     MainModel *model_ = nullptr;
     Device *device_ = nullptr;
-
+    UpdateApp *updateApp_ = nullptr;
 
 public slots:
 

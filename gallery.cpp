@@ -105,15 +105,16 @@ int main(int argc, char *argv[])
 
     MainModel model;
     Device d(&model);
-//    UpdateApp updateApp(&model);
+    UpdateApp updateApp(&model);
 
 
     engine.rootContext()->setContextProperty("device", &d);
     engine.rootContext()->setContextProperty("mainModel", &model);
- //   engine.rootContext()->setContextProperty("updateApp", &updateApp);
+    engine.rootContext()->setContextProperty("updateApp", &updateApp);
 
     appManager.setModel(&model);
     appManager.setDevice(&d);
+    appManager.setUpdateApp(&updateApp);
 
     QObject::connect(&app, &QApplication::applicationStateChanged, &appManager, &AppManager::onApplicationStateChanged);
 

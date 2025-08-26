@@ -28,6 +28,11 @@ void AppManager::setDevice(Device *newDevice)
     device_ = newDevice;
 }
 
+void AppManager::setUpdateApp(UpdateApp *newUpdateApp)
+{
+    updateApp_ = newUpdateApp;
+}
+
 
 void
 AppManager::onApplicationStateChanged(Qt::ApplicationState state)
@@ -38,11 +43,14 @@ AppManager::onApplicationStateChanged(Qt::ApplicationState state)
     {
         device_->set_rendering_flag(true);
         model_->set_rendering_flag(true);
+        updateApp_->set_rendering_flag(true);
+
     }
     else
     {
         device_->set_rendering_flag(false);
         model_->set_rendering_flag(false);
+        updateApp_->set_rendering_flag(false);
         keepScreenOn(false);
     }
 

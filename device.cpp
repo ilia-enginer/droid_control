@@ -293,10 +293,7 @@ void Device::deviceConnected()
         //открыть всплывающее окно с предложением обновиться
         if(rendering_flag)
         {
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("messege");
-            msgBox.setText("Доступно обновление шара.\nМожете установить, перейдя во вкладку обновление прошивки");
-            msgBox.exec();
+            windowloadHexOpen();
         }
     }
 }

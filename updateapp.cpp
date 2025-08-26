@@ -1,7 +1,7 @@
 #include "updateapp.h"
 
 
-/*
+
 //------------------------------------------------------------------------------
 
 const QString UpdateApp::kVersionUrl =
@@ -15,6 +15,24 @@ const QString UpdateApp::versionHeading =
 
 
 //------------------------------------------------------------------------------
+
+QString UpdateApp::getUpdateText()
+{
+    return updateText_;
+}
+
+void UpdateApp::setUpdateText(QString text)
+{
+    updateText_ = text;
+
+    if(rendering_flag)    emit onUpdateTextChanged(text);
+}
+
+void UpdateApp::set_rendering_flag(bool fl)
+{
+    rendering_flag = fl;
+}
+
 
 UpdateApp::UpdateApp(QObject *parent) :
     QObject(parent)
@@ -65,20 +83,12 @@ void UpdateApp::checkVersion(QString inVersion)
       ////???  if (inVersion.toInt() > _verAppIn)
         if (inVersion.toInt() > 3)
         {
-            QMessageBox msgBox;
-            msgBox.setWindowModality(Qt::ApplicationModal);
-            msgBox.setWindowTitle("Доступна новая версия приложения.");
-            msgBox.setIcon(QMessageBox::Warning);
-            msgBox.setText(QString("Обновить сейчас?"));
-            msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-            msgBox.setDefaultButton(QMessageBox::No);
-//            msgBox.setButtonText(QMessageBox::No, "Not now");
-            int tRet = msgBox.exec();
-
-            if (tRet == QMessageBox::Yes)
+            if(rendering_flag)
             {
-                downloadFile();
+                windowloadOpen();
             }
+
+            setUpdateText("Доступно обновление программы\n Обновить сейчас?");
         }
     }
 }
@@ -92,16 +102,9 @@ void UpdateApp::downloadFile()
 
     if (tServerFileName.isEmpty())
     {
-        QMessageBox msgBox;
-        msgBox.setWindowTitle(tr("Внимание!"));
-        msgBox.setIcon(QMessageBox::Critical);
-        msgBox.setText(
-            tr(
-                "Файл %1 отсутствует."
-            ).arg(tServerFileName));
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        msgBox.exec();
-
+        setUpdateText(tr(
+                        "Ошибка!\nФайл %1 отсутствует."
+                    ).arg(tServerFileName));
         return;
     }
 
@@ -117,31 +120,43 @@ void UpdateApp::downloadFile()
     mFile = new QFile(tLocalFileName);
     if (!mFile->open(QIODevice::WriteOnly))
     {
-        QMessageBox msgBox;
-        msgBox.setWindowTitle(tr("Внимание!"));
-        msgBox.setIcon(QMessageBox::Critical);
-        msgBox.setText(
-            tr(
-                "Невозможно сохранить файл %1: %2."
-            ).arg(tLocalFileName).arg(mFile->errorString())
-        );
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        msgBox.exec();
+        setUpdateText(
+                    tr(
+                        "Ошибка!\nНевозможно сохранить файл %1: %2."
+                    ).arg(tLocalFileName).arg(mFile->errorString())
+                );
 
         delete mFile;
-
         return;
     }
 
-    mProgressDialog = new QProgressDialog();
-    mProgressDialog->setWindowModality(Qt::ApplicationModal);
-    connect(mProgressDialog, SIGNAL(canceled()),
-            this, SLOT(on_CancelDownload()));
-    mProgressDialog->setWindowTitle(tr("MyApp"));
-    mProgressDialog->setLabelText(tr("Загрузка %1.").arg(tServerFileName));
+
+    startload();         //включение ползунка загрузки
+
+    setUpdateText(tr("Загрузка %1.").arg(tServerFileName));
 
     mHttpRequestAborted = false;
     startRequest(kUpdateUrl);
+}
+
+void UpdateApp::set_TotalBytes(qint64 byte)
+{
+    totalBytes_ = byte;
+}
+
+void UpdateApp::set_BytesRead(qint64 byte)
+{
+    bytesRead_ = byte;
+}
+
+qint64 UpdateApp::get_TotalBytes() const
+{
+    return totalBytes_;
+}
+
+qint64 UpdateApp::get_BytesRead() const
+{
+    return bytesRead_;
 }
 
 //------------------------------------------------------------------------------
@@ -166,8 +181,11 @@ void UpdateApp::on_CancelDownload()
 {
     qDebug() << "on_CancelDownload";
 
+    if(!mHttpRequestAborted)
+    {
+        mDownloaderReply->abort();
+    }
     mHttpRequestAborted = true;
-    mDownloaderReply->abort();
 }
 
 //------------------------------------------------------------------------------
@@ -187,12 +205,12 @@ void UpdateApp::on_HttpFinished()
         }
 
         mDownloaderReply->deleteLater();
-        mProgressDialog->hide();
+        set_BytesRead(get_TotalBytes());
 
         return;
     }
 
-    mProgressDialog->hide();
+    set_BytesRead(get_TotalBytes());
     mFile->flush();
     mFile->close();
 
@@ -204,15 +222,10 @@ void UpdateApp::on_HttpFinished()
     {
         mFile->remove();
 
-        QMessageBox msgBox;
-        msgBox.setWindowTitle(tr("Внимание!"));
-        msgBox.setIcon(QMessageBox::Critical);
-        msgBox.setText(
-            tr(
-                "Ошибка загрузки: %1."
-            ).arg(mDownloaderReply->errorString()));
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        msgBox.exec();
+        setUpdateText(
+                    tr(
+                        "Ошибка!\nОшибка загрузки: %1."
+                    ).arg(mDownloaderReply->errorString()));
     }
     else if (!tRedirectionTarget.isNull())
     {
@@ -265,8 +278,8 @@ void UpdateApp::on_UpdateDataReadProgress(
         return;
     }
 
-    mProgressDialog->setMaximum(inTotalBytes);
-    mProgressDialog->setValue(inBytesRead);
+    set_TotalBytes(inTotalBytes);
+    set_BytesRead(inBytesRead);
 }
 
 //------------------------------------------------------------------------------
@@ -283,9 +296,6 @@ void UpdateApp::on_NetworkReply(QNetworkReply *inReply)
         {             
             if (inReply->isReadable())
             {
-//                QString tReplyString =
-//                    QString::fromUtf8(inReply->readAll().data());
-
                 //читаю построчно
                 //ищу в каждой строке место где записана версия
                 //с помощью "лейбла"
@@ -327,7 +337,7 @@ void UpdateApp::on_NetworkReply(QNetworkReply *inReply)
 
     inReply->deleteLater();
 }
-*/
+
 
 
 
