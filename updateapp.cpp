@@ -16,6 +16,16 @@ const QString UpdateApp::versionHeading =
 
 //------------------------------------------------------------------------------
 
+///???
+ void  UpdateApp::delayyy( int mill)
+{
+    QTime dieTime = QTime::currentTime().addMSecs( mill );
+    while( QTime::currentTime() < dieTime )
+    {
+        QCoreApplication::processEvents( QEventLoop::AllEvents, 100 );
+    }
+}
+
 QString UpdateApp::getUpdateText()
 {
     return updateText_;
@@ -43,6 +53,15 @@ UpdateApp::UpdateApp(QObject *parent) :
 //    permission.append("android.permission.REQUEST_INSTALL_PACKAGES");
 //    QtAndroid::requestPermissionsSync(permission);
 
+//    auto r = QtAndroidPrivate::checkPermission(QtAndroidPrivate::Storage).result();
+//    if (r == QtAndroidPrivate::Denied)
+//    {
+//        r = QtAndroidPrivate::requestPermission(QtAndroidPrivate::Storage).result();
+
+//    }
+
+
+
     mNamChecker = new QNetworkAccessManager(this);
 
     connect(
@@ -65,10 +84,15 @@ UpdateApp::~UpdateApp()
 void UpdateApp::checkForUpdates(qint32 ver)
 {
     if(ver != 0)    _verAppIn = ver;
+setUpdateText("1 to checkForUpdates");
+delayyy(1000);
 
     QUrl tUrl(kVersionUrl);
 
     mNamChecker->get(QNetworkRequest(tUrl));
+
+ setUpdateText("2 to mNamChecker->get");
+ delayyy(1500);
 }
 
 //------------------------------------------------------------------------------
@@ -85,7 +109,8 @@ void UpdateApp::checkVersion(QString inVersion)
         {
             if(rendering_flag)
             {
-                windowloadOpen();
+                ///?????
+        //        emit windowloadOpen();
             }
 
             setUpdateText("Доступно обновление программы\n Обновить сейчас?");
@@ -131,7 +156,7 @@ void UpdateApp::downloadFile()
     }
 
 
-    startload();         //включение ползунка загрузки
+    emit startload();         //включение ползунка загрузки
 
     setUpdateText(tr("Загрузка %1.").arg(tServerFileName));
 
@@ -286,16 +311,24 @@ void UpdateApp::on_UpdateDataReadProgress(
 
 void UpdateApp::on_NetworkReply(QNetworkReply *inReply)
 {
+    setUpdateText("3 to on_NetworkReply");
+    delayyy(1000);
     if (inReply->error() == QNetworkReply::NoError)
     {
         int tHttpStatusCode =
             inReply->attribute(
                 QNetworkRequest::HttpStatusCodeAttribute).toUInt();
 
+        setUpdateText("4 inReply->error() == QNe");
+        delayyy(1000);
         if (tHttpStatusCode >= 200 && tHttpStatusCode < 300)
-        {             
+        {
+            setUpdateText("5 tHttpStatusCode >= 200 && tHtt");
+            delayyy(1000);
             if (inReply->isReadable())
             {
+                setUpdateText("6 inReply->isReadable(");
+                delayyy(1000);
                 //читаю построчно
                 //ищу в каждой строке место где записана версия
                 //с помощью "лейбла"
@@ -314,6 +347,8 @@ void UpdateApp::on_NetworkReply(QNetworkReply *inReply)
         }
         else if (tHttpStatusCode >= 300 && tHttpStatusCode < 400)
         {
+            setUpdateText("7 tHttpStatusCode >= 300 && tHttpStatusCode");
+            delayyy(1000);
             // Получите URL-адрес для перенаправления
             QUrl tNewUrl =
                 inReply->attribute(
@@ -331,10 +366,23 @@ void UpdateApp::on_NetworkReply(QNetworkReply *inReply)
         }
         else
         {
+            setUpdateText("8 Error!;");
+            delayyy(1000);
             qDebug() << "Error!";
         }
     }
+    else
+    {
+        setUpdateText(
+                    tr(
+                        "10 %1."
+                    ).arg(inReply->error()));
 
+        delayyy(2000);
+    }
+
+    setUpdateText("9");
+    delayyy(1000);
     inReply->deleteLater();
 }
 

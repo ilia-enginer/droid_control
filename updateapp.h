@@ -16,7 +16,7 @@
 #include <QtWidgets>
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
-//#include <QtAndroid>
+#include <QtCore/private/qandroidextras_p.h>
 
 
 
@@ -31,7 +31,7 @@ class UpdateApp : public QObject
         Q_PROPERTY(qint64 totalBytes_ READ get_TotalBytes WRITE set_TotalBytes NOTIFY TotalBytesChanged)
         Q_PROPERTY(qint64 bytesRead_ READ get_BytesRead WRITE set_BytesRead NOTIFY BytesReadChanged)
 
-
+void delayyy( int mill);
         void set_rendering_flag(bool fl);
 
         static const QString kVersionUrl;

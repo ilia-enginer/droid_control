@@ -319,6 +319,8 @@ ApplicationWindow {
         text: "тест обновления"
 
         onClicked: {
+            ///????
+            updateAppWindow.open();///
             updateApp.checkForUpdates(1);
         }
     }
