@@ -81,6 +81,7 @@ UpdateApp::~UpdateApp()
 
 void UpdateApp::checkForUpdates(qint32 ver)
 {
+    delayyy(1000);
 #if defined(Q_OS_MACOS)
 
     QFuture permission_request = QtAndroidPrivate::requestPermission("android.permission.INTERNET");
