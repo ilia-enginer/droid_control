@@ -1,9 +1,11 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
+import QtQuick.Controls  2.0
 import Qt.labs.settings
 import QtQuick.Controls.Material
 import QtQuick.Dialogs
+import QtQml
+
 
 
 Dialog {
@@ -61,9 +63,9 @@ Dialog {
             anchors.left: parent.left
             anchors.right: parent.right
             visible: false
-            from: 0
-            to: {updateApp.totalBytes_}
-            value: {updateApp.bytesRead_}
+            from: 0.0
+            to: {updateApp.totalBytes}
+            value: {updateApp.bytesRead}
 
             background: Rectangle {
                 color: "#e6e6e6"
@@ -113,7 +115,7 @@ Dialog {
         id: yes
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        height: parent.height * 0.25
+        height: parent.height * 0.15
         width: parent.width * 0.4
         text: "Да"
         background: Rectangle{
@@ -133,7 +135,7 @@ Dialog {
         id: no
         anchors.bottom: parent.bottom
         anchors.right: parent.right
-        height: parent.height * 0.25
+        height: parent.height * 0.15
         width: parent.width * 0.4
         text: "Отмена"
         background: Rectangle{
@@ -141,6 +143,7 @@ Dialog {
             property var pressedColor: "#ff084e"
             color: no.pressed ? pressedColor : normalColor
         }
+
         onClicked: {
             updateApp.on_CancelDownload();
             updateAppWindow.close()

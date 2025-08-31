@@ -8,10 +8,18 @@ const QString UpdateApp::kVersionUrl =
     "https://github.com/ilia-enginer/droid_stick/blob/main/version.txt";
 
 const QString UpdateApp::kUpdateUrl =
-    "https://github.com/ilia-enginer/droid_stick/blob/main/droid_stick.apk";
+    //"https://raw.githubusercontent.com/ilia-enginer/droid_stick/blob/main/droid_stick.apk";     //1 вариант
+    "https://github.com/ilia-enginer/droid_stick/blob/main/droid_stick.apk?raw=true";   //2 вариант
 
 const QString UpdateApp::versionHeading =
     "4294967295";                           //0xFFFFFFFF
+
+const QString UpdateApp::fileName =
+        "droid_stick.apk";
+
+const QString UpdateApp::downloadFolderAdress =
+        "/storage/emulated/0/Download/";
+
 
 
 //------------------------------------------------------------------------------
@@ -47,19 +55,6 @@ void UpdateApp::set_rendering_flag(bool fl)
 UpdateApp::UpdateApp(QObject *parent) :
     QObject(parent)
 {
-//    QStringList permission;
-//    permission.append("android.permission.WRITE_EXTERNAL_STORAGE");
-//    permission.append("android.permission.INSTALL_PACKAGES");
-//    permission.append("android.permission.REQUEST_INSTALL_PACKAGES");
-//    QtAndroid::requestPermissionsSync(permission);
-
-//    auto r = QtAndroidPrivate::checkPermission(QtAndroidPrivate::Storage).result();
-//    if (r == QtAndroidPrivate::Denied)
-//    {
-//        r = QtAndroidPrivate::requestPermission(QtAndroidPrivate::Storage).result();
-
-//    }
-
     mNamChecker = new QNetworkAccessManager(this);
 
     connect(
@@ -81,39 +76,13 @@ UpdateApp::~UpdateApp()
 
 void UpdateApp::checkForUpdates(qint32 ver)
 {
-    delayyy(1000);
-#if defined(Q_OS_MACOS)
-
-    QFuture permission_request = QtAndroidPrivate::requestPermission("android.permission.INTERNET");
-#endif
-//    switch (permission_request.result()) {
-//    case QtAndroidPrivate::Undetermined:
-//        setUpdateText("01 Undetermined");
-
-//        break;
-//    case QtAndroidPrivate::Authorized:
-//        setUpdateText("02 Authorized");
-
-//        break;
-//    case QtAndroidPrivate::Denied:
-//        setUpdateText("03 Denied");
-
-//        break;
-//    default:
-//        break;
-//    }
-//delayyy(1000);
-
     if(ver != 0)    _verAppIn = ver;
-setUpdateText("1 to checkForUpdates");
-delayyy(1000);
+
+    requestAndroidPermissions();
 
     QUrl tUrl(kVersionUrl);
 
     mNamChecker->get(QNetworkRequest(tUrl));
-
- setUpdateText("2 to mNamChecker->get");
- delayyy(1500);
 }
 
 //------------------------------------------------------------------------------
@@ -125,13 +94,11 @@ void UpdateApp::checkVersion(QString inVersion)
 
     if ((inVersion.toInt() != 0) && (_verAppIn != 0))
     {
-      ////???  if (inVersion.toInt() > _verAppIn)
-        if (inVersion.toInt() > 3)
+        if (inVersion.toInt() > _verAppIn)
         {
             if(rendering_flag)
             {
-                ///?????
-        //        emit windowloadOpen();
+                emit windowloadOpen();
             }
 
             setUpdateText("Доступно обновление программы\n Обновить сейчас?");
@@ -144,6 +111,7 @@ void UpdateApp::checkVersion(QString inVersion)
 void UpdateApp::downloadFile()
 {
     QFileInfo tServerFileInfo(kUpdateUrl);
+
     QString tServerFileName = tServerFileInfo.fileName();
 
     if (tServerFileName.isEmpty())
@@ -154,6 +122,7 @@ void UpdateApp::downloadFile()
         return;
     }
 
+    /*
     QString tLocalFileName =
         QDir::toNativeSeparators(
             QCoreApplication::applicationDirPath() + "/" + tServerFileName);
@@ -164,6 +133,7 @@ void UpdateApp::downloadFile()
     }
 
     mFile = new QFile(tLocalFileName);
+
     if (!mFile->open(QIODevice::WriteOnly))
     {
         setUpdateText(
@@ -173,36 +143,113 @@ void UpdateApp::downloadFile()
                 );
 
         delete mFile;
+
+        return;
+    }
+
+*/
+
+
+
+//    dir = new QDir("/");
+//    dir->setPath(QDir::currentPath());
+//    mFile = new QFile(fileName);
+
+      requestAndroidPermissions();
+
+#if defined(Q_OS_ANDROID)
+     mFile = new QFile(downloadFolderAdress + fileName);
+#elif defined(Q_OS_WINDOWS)
+    mFile = new QFile(fileName);
+#endif
+
+    fileinfo = QFileInfo(*mFile);
+
+    if(!mFile->open(QIODevice::WriteOnly)) // Just write the way to open the file
+    {
+        setUpdateText(
+                    tr(
+                        "Ошибка!\nНевозможно сохранить файл %1: %2."
+                    ).arg(fileName).arg(mFile->errorString())
+                );
+
+        delete mFile;
         return;
     }
 
 
     emit startload();         //включение ползунка загрузки
 
-    setUpdateText(tr("Загрузка %1.").arg(tServerFileName));
+   // setUpdateText(tr("Загрузка %1.").arg(tServerFileName));
+    setUpdateText("Загрузка " + fileName);
 
     mHttpRequestAborted = false;
     startRequest(kUpdateUrl);
 }
 
-void UpdateApp::set_TotalBytes(qint64 byte)
+void UpdateApp::set_TotalBytes(double byte)
 {
-    totalBytes_ = byte;
+    totalBytes = byte;
 }
 
-void UpdateApp::set_BytesRead(qint64 byte)
+void UpdateApp::set_BytesRead(double byte)
 {
-    bytesRead_ = byte;
+    bytesRead = byte;
 }
 
-qint64 UpdateApp::get_TotalBytes() const
+double UpdateApp::get_TotalBytes() const
 {
-    return totalBytes_;
+    return totalBytes;
 }
 
-qint64 UpdateApp::get_BytesRead() const
+double UpdateApp::get_BytesRead() const
 {
-    return bytesRead_;
+    return bytesRead;
+}
+
+bool UpdateApp::requestAndroidPermissions()
+{
+#if defined(Q_OS_ANDROID)
+   QFuture permission_request = QtAndroidPrivate::requestPermission("android.permission.WRITE_EXTERNAL_STORAGE");
+   switch(permission_request.result())
+   {
+   case QtAndroidPrivate::Undetermined:
+       return false;
+       break;
+   case QtAndroidPrivate::Authorized:
+       break;
+   case QtAndroidPrivate::Denied:
+       return false;
+       break;
+   }
+
+   permission_request = QtAndroidPrivate::requestPermission("android.permission.READ_EXTERNAL_STORAGE");
+   switch(permission_request.result())
+   {
+   case QtAndroidPrivate::Undetermined:
+       return false;
+       break;
+   case QtAndroidPrivate::Authorized:
+       break;
+   case QtAndroidPrivate::Denied:
+       return false;
+       break;
+   }
+
+   permission_request = QtAndroidPrivate::requestPermission("android.permission.INSTALL_PACKAGES");
+   switch(permission_request.result())
+   {
+   case QtAndroidPrivate::Undetermined:
+       return false;
+       break;
+   case QtAndroidPrivate::Authorized:
+       break;
+   case QtAndroidPrivate::Denied:
+       return false;
+       break;
+   }
+#endif
+    return true;
 }
 
 //------------------------------------------------------------------------------
@@ -215,10 +262,12 @@ void UpdateApp::startRequest(QUrl inUrl)
 
     connect(mDownloaderReply, SIGNAL(finished()),
             this, SLOT(on_HttpFinished()));
+
     connect(mDownloaderReply, SIGNAL(readyRead()),
             this, SLOT(on_HttpDataRead()));
+
     connect(mDownloaderReply, SIGNAL(downloadProgress(qint64, qint64)),
-            this, SLOT(on_UpdateDataReadProgress(qint64, qint64)));
+            this, SLOT(on_UpdateDataReadProgress(qint64, qint64)));          
 }
 
 //------------------------------------------------------------------------------
@@ -255,8 +304,8 @@ void UpdateApp::on_HttpFinished()
 
         return;
     }
-
     set_BytesRead(get_TotalBytes());
+
     mFile->flush();
     mFile->close();
 
@@ -267,6 +316,7 @@ void UpdateApp::on_HttpFinished()
     if (mDownloaderReply->error())
     {
         mFile->remove();
+        mFile = NULL;
 
         setUpdateText(
                     tr(
@@ -275,6 +325,8 @@ void UpdateApp::on_HttpFinished()
     }
     else if (!tRedirectionTarget.isNull())
     {
+        setUpdateText("6");
+        delayyy(3000);
         QUrl tUrl = QUrl(kUpdateUrl);
         QUrl tNewUrl = tUrl.resolved(tRedirectionTarget.toUrl());
         tUrl = tNewUrl;
@@ -287,7 +339,7 @@ void UpdateApp::on_HttpFinished()
         return;
     }
     else
-    {
+    {     
         QString tLocalFileName =
             QDir::toNativeSeparators(
                 QCoreApplication::applicationDirPath() + "/" + QFileInfo(
@@ -295,10 +347,17 @@ void UpdateApp::on_HttpFinished()
 
         QDesktopServices::openUrl(QUrl::fromLocalFile(tLocalFileName));
 
+        setUpdateText("Скачано");
+        delayyy(2000);
+
         QApplication::quit();
     }
 
     mDownloaderReply->deleteLater();
+    mDownloaderReply = NULL;
+
+    mNamDownloader -> deleteLater();
+    mNamDownloader = NULL;
 
     delete mFile;
 }
@@ -324,32 +383,24 @@ void UpdateApp::on_UpdateDataReadProgress(
         return;
     }
 
-    set_TotalBytes(inTotalBytes);
-    set_BytesRead(inBytesRead);
+    set_TotalBytes((double)inTotalBytes);
+    set_BytesRead((double)inBytesRead);
 }
 
 //------------------------------------------------------------------------------
 
 void UpdateApp::on_NetworkReply(QNetworkReply *inReply)
 {
-    setUpdateText("3 to on_NetworkReply");
-    delayyy(1000);
     if (inReply->error() == QNetworkReply::NoError)
     {
         int tHttpStatusCode =
             inReply->attribute(
                 QNetworkRequest::HttpStatusCodeAttribute).toUInt();
 
-        setUpdateText("4 inReply->error() == QNe");
-        delayyy(1000);
         if (tHttpStatusCode >= 200 && tHttpStatusCode < 300)
         {
-            setUpdateText("5 tHttpStatusCode >= 200 && tHtt");
-            delayyy(1000);
             if (inReply->isReadable())
             {
-                setUpdateText("6 inReply->isReadable(");
-                delayyy(1000);
                 //читаю построчно
                 //ищу в каждой строке место где записана версия
                 //с помощью "лейбла"
@@ -368,8 +419,6 @@ void UpdateApp::on_NetworkReply(QNetworkReply *inReply)
         }
         else if (tHttpStatusCode >= 300 && tHttpStatusCode < 400)
         {
-            setUpdateText("7 tHttpStatusCode >= 300 && tHttpStatusCode");
-            delayyy(1000);
             // Получите URL-адрес для перенаправления
             QUrl tNewUrl =
                 inReply->attribute(
@@ -387,129 +436,10 @@ void UpdateApp::on_NetworkReply(QNetworkReply *inReply)
         }
         else
         {
-            setUpdateText("8 Error!;");
-            delayyy(1000);
             qDebug() << "Error!";
         }
     }
-    else
-    {
-        setUpdateText("006 inReply->isReadable(");
-        delayyy(1000);
-        //читаю построчно
-        //ищу в каждой строке место где записана версия
-        //с помощью "лейбла"
-        QString tReplyString;
-        QString temp;
-        while(!inReply->atEnd()) {
-            temp = inReply->readLine();
-            if (temp.contains(UpdateApp::versionHeading)) {
-                tReplyString = temp.mid(temp.indexOf(UpdateApp::versionHeading) + UpdateApp::versionHeading.size() + 1, 9);
 
-         //       qDebug() << temp;
-
-            }
-            setUpdateText(temp);
-            delayyy(1000);
-        }
-        setUpdateText("Версия");
-        delayyy(3000);
-        setUpdateText(tReplyString);
-        delayyy(3000);
-
-
-        setUpdateText(
-                    tr(
-                        "10 %1."
-                    ).arg(inReply->error()));
-
-        delayyy(2000);
-    }
-
-    setUpdateText("9");
-    delayyy(1000);
     inReply->deleteLater();
 }
 
-
-
-
-/*
-UpdateApp::UpdateApp(QObject *parent)
-    : QObject{parent}
-{
-
-}
-
-
-void UpdateApp::httpDownload()
-{
-    dir = new QDir("/");
-    qDebug()<< "mkpath:" << dir->mkpath("/storage/emulated/0/Android/data/com.hznk/files");
-    qDebug()<< "setCurrent:" << QDir::setCurrent("/storage/emulated/0/Android/data/com.hznk/files");
-    qDebug() << "QDir::currentPath():"<<QDir::currentPath();
-    dir->setPath(QDir::currentPath());
-    file = new QFile(fileName);
-    fileinfo = QFileInfo(*file);
-    qDebug() << "QFileInfo" << fileinfo.absoluteFilePath();
-
-    bool suc = file->open(QIODevice::WriteOnly); // Just write the way to open the file
-    if(suc){
-                 qDebug () << "File opens successfully";
-    }else{
-                 qDebug () << "File fails";
-    }
-
-    accessManager = new QNetworkAccessManager(this);
-    request.setUrl(url);
-    // ******************** Set the header *****************************************************
-    // request.setHeader(QNetworkRequest::ContentTypeHeader, "multipart/form-data");
-    // request.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
-    // request.setRawHeader("Content-Disposition","form-data;name='doc';filename='a.txt'");
-    //request.setHeader(QNetworkRequest::ContentLengthHeader,post_data.length());
-
-    reply = accessManager->get(request); // By sending data, the return value is stored in the repy pointer.
-  //  connect(accessManager, signal (FINISHED (QNetworkReply)), this, Slot (Replyfinished (QNetworkReply*)); // FINISH is a signal that comes with Manager. Definition
-  //  connect (reply, Signal (DOWNLOADPROGress (Qint64, Qint64)), this, slot (onDownloadProgress (Qint64, Qint64))); // Download the schedule schedule progress progress progress progress schedule)
-    connect((QObject *)reply, SIGNAL(readyRead()),this, SLOT(onReadyRead()));
-}
-
-void UpdateApp::replyFinished(QNetworkReply *reply)
-{
-    // Get the information of the response, the status code is 200 to indicate normal
-    QVariant status_code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
-    qDebug () << "The network response is complete:" << status_code;
-
-    // Return without mistakes
-    if(reply->error() == QNetworkReply::NoError)
-    {
-      file->flush();
-      file->close();
-      delete file;
-      file=NULL;
-    }else
-    {
-             // Process errors
-    }
-
-    reply->deleteLater(); // Delete reply, but you cannot directly delete in the repyfinished.
-    reply = NULL;
-
-    accessManager->deleteLater();
-    accessManager = NULL;
-
-//    downloadFinished();
-}
-
-void UpdateApp::onDownloadProgress(qint64 bytesSent, qint64 bytesTotal)
-{
-//    double pre = double(bytesSent)/bytesTotal;
-//    emit progressPosition(pre);
-}
-
-void UpdateApp::onReadyRead()
-{
-    file->write(reply->readAll());
-}
-
-*/

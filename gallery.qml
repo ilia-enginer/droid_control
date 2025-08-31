@@ -65,6 +65,10 @@ ApplicationWindow {
 
     required property var builtInStyles
 
+    Component.onCompleted: {
+        updateApp.checkForUpdates(1);
+    }
+
     Settings {
         id: settings
         property string style
@@ -311,7 +315,7 @@ ApplicationWindow {
     }
 
     //кнопка теста
-    Button {
+/*    Button {
         id: test_but
         width: window.width * 0.8
         height: window.height * 0.07
@@ -319,11 +323,11 @@ ApplicationWindow {
         text: "тест обновления"
 
         onClicked: {
-            updateAppWindow.open();
+      //      updateAppWindow.open();
             updateApp.checkForUpdates(1);
         }
     }
-
+*/
     UpdateAppPage {
         id: updateAppWindow
         modal: true

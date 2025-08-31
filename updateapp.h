@@ -17,7 +17,7 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 
-#if defined(Q_OS_MACOS)
+#if defined(Q_OS_ANDROID)
     #include <QtCore/private/qandroidextras_p.h>
 #endif
 
@@ -30,19 +30,28 @@ class UpdateApp : public QObject
     public:
 
         Q_PROPERTY(QString updateText READ getUpdateText WRITE setUpdateText NOTIFY onUpdateTextChanged)
-        Q_PROPERTY(qint64 totalBytes_ READ get_TotalBytes WRITE set_TotalBytes NOTIFY TotalBytesChanged)
-        Q_PROPERTY(qint64 bytesRead_ READ get_BytesRead WRITE set_BytesRead NOTIFY BytesReadChanged)
+        Q_PROPERTY(double totalBytes READ get_TotalBytes WRITE set_TotalBytes NOTIFY TotalBytesChanged)
+        Q_PROPERTY(double bytesRead READ get_BytesRead WRITE set_BytesRead NOTIFY BytesReadChanged)
 
 void delayyy( int mill);
+
         void set_rendering_flag(bool fl);
 
         static const QString kVersionUrl;
         static const QString kUpdateUrl;
         static const QString versionHeading;
+        static const QString fileName;
+        static const QString downloadFolderAdress;
 
 
         explicit UpdateApp(QObject *parent = 0);
         ~UpdateApp();
+
+        void set_TotalBytes(double byte);
+        void set_BytesRead(double byte);
+
+        double get_TotalBytes() const;
+        double get_BytesRead() const;
 
 
 
@@ -56,13 +65,6 @@ void delayyy( int mill);
 
         void downloadFile();
 
-        void set_TotalBytes(qint64 byte);
-        void set_BytesRead(qint64 byte);
-
-        qint64 get_TotalBytes() const;
-        qint64 get_BytesRead() const;
-
-
 Q_SIGNALS:
 
         void onUpdateTextChanged(QString text);
@@ -75,6 +77,7 @@ Q_SIGNALS:
         void windowloadOpen();           //открывает окно обновления app
 
     private:
+        bool requestAndroidPermissions(void);
         QString getUpdateText();
         void setUpdateText(QString text);
 
@@ -89,46 +92,19 @@ Q_SIGNALS:
         QFile *mFile;
         bool mHttpRequestAborted = true;
 
+
+        QDir *dir;
+        QFileInfo fileinfo;
+
         qint32 _verAppIn = 0;               //версия уже установленного приложения
 
         QString updateText_ = "Проверка обновлений...";
 
-        qint64 totalBytes_ = 0;             //кол-во байтов всего загружаемого приложения
-        qint64 bytesRead_ = 0;              //сколько уже загружено
+        double totalBytes = 0.0;             //кол-во байтов всего загружаемого приложения
+        double bytesRead = 0.0;              //сколько уже загружено
 
 
         bool rendering_flag = false;        //флаг выводы сообщений на экран
 };
 
-/*
-class UpdateApp : public QObject
-
-{
-    Q_OBJECT
-public:
-
-    explicit UpdateApp(QObject *parent = nullptr);
-    Q_INVOKABLE void httpDownload();
-
-signals:
-    void ProgressPosition (double PRE); // Update the progress bar signal
-    void downloadfinished ();           // end the signal
-
-protected slots:
-    void replyFinished(QNetworkReply*reply);
-    void onDownloadProgress(qint64 bytesSent, qint64 bytesTotal);
-    void onReadyRead();
-
-private:
-    QNetworkAccessManager * accessManager = nullptr;
-    QNetworkRequest request;
-    QNetworkReply * reply = nullptr;
-    QString url = "Fill your download address here";
-    QString fileName = "506787841apk.apk";
-    QFileInfo fileinfo;
-    QDir *dir;
-    QFile *file;
-
-};
-*/
 #endif // UPDATEAPP_H
