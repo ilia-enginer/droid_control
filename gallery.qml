@@ -65,8 +65,9 @@ ApplicationWindow {
 
     required property var builtInStyles
 
+    //запуск механизма проверки обновлений
     Component.onCompleted: {
-        updateApp.checkForUpdates(1);
+        updateApp.checkForUpdates();
     }
 
     Settings {
@@ -356,7 +357,7 @@ ApplicationWindow {
         height: window.height * 0.3
 
         Component.onCompleted: {
-                 updateApp.onWindowloadHexOpen.connect(onWindowloadHexOpen)
+                 device.onWindowloadHexOpen.connect(onWindowloadHexOpen)
              }
 
         function onWindowloadHexOpen(){

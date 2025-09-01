@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
 
     MainModel model;
     Device d(&model);
-    UpdateApp updateApp(&model);
+    UpdateApp updateApp;
 
 
     engine.rootContext()->setContextProperty("device", &d);
@@ -140,12 +140,10 @@ int main(int argc, char *argv[])
                        .arg((ver >> 11) & 0x1F, 2, 10, QChar('0'))       // день
                        .arg((ver >> 6) & 0x01F, 2, 10, QChar('0'))       // час
                        .arg(ver & 0x3F, 2, 10, QChar('0')));             // минуты
+
+        msgBox.setDetailedText(QString("%1").arg(ver));                   //версия полным числом для копирования
         msgBox.exec();
     #endif
-
-    //запуск проверки обновлений
-//    UpdateApp *tUpdate = new UpdateApp();
-//    tUpdate->checkForUpdates(ver);
 
 
     engine.setInitialProperties({{ "builtInStyles", builtInStyles }});

@@ -2,20 +2,19 @@
 #define UPDATEAPP_H
 
 #include <QObject>
+#include <QVariant>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 #include <QFile>
 #include <QFileInfo>
 #include <QDir>
-
-//#include <QtNetwork>
-//#include <QNetworkReply>
-
-
+#include <QMetaEnum>
 #include <QtWidgets>
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
+#include "appversion.h"
+
 
 #if defined(Q_OS_ANDROID)
     #include <QtCore/private/qandroidextras_p.h>
@@ -30,8 +29,9 @@ class UpdateApp : public QObject
     public:
 
         Q_PROPERTY(QString updateText READ getUpdateText WRITE setUpdateText NOTIFY onUpdateTextChanged)
-        Q_PROPERTY(double totalBytes READ get_TotalBytes WRITE set_TotalBytes NOTIFY TotalBytesChanged)
-        Q_PROPERTY(double bytesRead READ get_BytesRead WRITE set_BytesRead NOTIFY BytesReadChanged)
+        Q_PROPERTY(double TotalBytes READ get_TotalBytes WRITE set_TotalBytes NOTIFY totalBytesChanged)
+        Q_PROPERTY(double BytesRead READ get_BytesRead WRITE set_BytesRead NOTIFY bytesReadChanged)
+
 
 void delayyy( int mill);
 
@@ -55,8 +55,9 @@ void delayyy( int mill);
 
 
 
+
     public slots:
-        void checkForUpdates(qint32);
+        void checkForUpdates(void);
         void on_NetworkReply(QNetworkReply *inReply);
         void on_CancelDownload();
         void on_HttpFinished();
@@ -65,14 +66,19 @@ void delayyy( int mill);
 
         void downloadFile();
 
+
 Q_SIGNALS:
 
         void onUpdateTextChanged(QString text);
 
         void startload();         //включение ползунка загрузки
+        void statusLoadOFF();     //отключение ползунка загрузки
 
-        void TotalBytesChanged();
-        void BytesReadChanged();
+        void busyIndicatorON();     //включает крутилку загрузки
+        void busyIndicatorOFF();    //отключает крутилку загрузки
+
+        void totalBytesChanged();
+        void bytesReadChanged();
 
         void windowloadOpen();           //открывает окно обновления app
 
@@ -96,12 +102,12 @@ Q_SIGNALS:
         QDir *dir;
         QFileInfo fileinfo;
 
-        qint32 _verAppIn = 0;               //версия уже установленного приложения
+        qint32 _verAppIn;               //версия уже установленного приложения
 
         QString updateText_ = "Проверка обновлений...";
 
-        double totalBytes = 0.0;             //кол-во байтов всего загружаемого приложения
-        double bytesRead = 0.0;              //сколько уже загружено
+        double TotalBytes = 0.0;             //кол-во байтов всего загружаемого приложения
+        double BytesRead = 0.0;              //сколько уже загружено
 
 
         bool rendering_flag = false;        //флаг выводы сообщений на экран

@@ -74,11 +74,16 @@ UpdateApp::~UpdateApp()
 
 //------------------------------------------------------------------------------
 
-void UpdateApp::checkForUpdates(qint32 ver)
+void UpdateApp::checkForUpdates(void)
 {
-    if(ver != 0)    _verAppIn = ver;
+    AppVersion *AppVer = new AppVersion();
+    qint32 ver = AppVer->getAppVersion();
 
-    requestAndroidPermissions();
+    if(ver == 0)    return;
+
+    _verAppIn = ver;
+
+//    qDebug() << _verAppIn;
 
     QUrl tUrl(kVersionUrl);
 
@@ -117,8 +122,11 @@ void UpdateApp::downloadFile()
     if (tServerFileName.isEmpty())
     {
         setUpdateText(tr(
-                        "Ошибка!\nФайл %1 отсутствует."
+                        "Ошибка!\nФайл обновления %1 отсутствует."
                     ).arg(tServerFileName));
+
+        if(rendering_flag) emit busyIndicatorOFF();
+
         return;
     }
 
@@ -169,16 +177,19 @@ void UpdateApp::downloadFile()
     {
         setUpdateText(
                     tr(
-                        "Ошибка!\nНевозможно сохранить файл %1: %2."
+                        "Ошибка!\nОшибка сохранения файла %1: %2."
                     ).arg(fileName).arg(mFile->errorString())
                 );
+
+        if(rendering_flag) emit busyIndicatorOFF();
 
         delete mFile;
         return;
     }
 
+    if(rendering_flag) emit busyIndicatorOFF();
 
-    emit startload();         //включение ползунка загрузки
+    if(rendering_flag) emit startload();         //включение ползунка загрузки
 
    // setUpdateText(tr("Загрузка %1.").arg(tServerFileName));
     setUpdateText("Загрузка " + fileName);
@@ -187,24 +198,27 @@ void UpdateApp::downloadFile()
     startRequest(kUpdateUrl);
 }
 
+
 void UpdateApp::set_TotalBytes(double byte)
 {
-    totalBytes = byte;
+    TotalBytes = byte;
+    if(rendering_flag) emit totalBytesChanged();
 }
 
 void UpdateApp::set_BytesRead(double byte)
 {
-    bytesRead = byte;
+    BytesRead = byte;
+    if(rendering_flag) emit bytesReadChanged();
 }
 
 double UpdateApp::get_TotalBytes() const
 {
-    return totalBytes;
+    return TotalBytes;
 }
 
 double UpdateApp::get_BytesRead() const
 {
-    return bytesRead;
+    return BytesRead;
 }
 
 bool UpdateApp::requestAndroidPermissions()
@@ -276,9 +290,11 @@ void UpdateApp::on_CancelDownload()
 {
     qDebug() << "on_CancelDownload";
 
+    if(rendering_flag) emit statusLoadOFF();    //отключение ползунка загрузки
+
     if(!mHttpRequestAborted)
     {
-        mDownloaderReply->abort();
+        if(mDownloaderReply)    mDownloaderReply->abort();
     }
     mHttpRequestAborted = true;
 }
@@ -322,6 +338,8 @@ void UpdateApp::on_HttpFinished()
                     tr(
                         "Ошибка!\nОшибка загрузки: %1."
                     ).arg(mDownloaderReply->errorString()));
+
+        if(rendering_flag) emit statusLoadOFF();    //отключение ползунка загрузки
     }
     else if (!tRedirectionTarget.isNull())
     {
@@ -333,6 +351,8 @@ void UpdateApp::on_HttpFinished()
 
         mFile->open(QIODevice::WriteOnly);
         mFile->resize(0);
+
+        set_BytesRead(0.0);
 
         startRequest(tUrl);
 
@@ -348,9 +368,20 @@ void UpdateApp::on_HttpFinished()
         QDesktopServices::openUrl(QUrl::fromLocalFile(tLocalFileName));
 
         setUpdateText("Скачано");
-        delayyy(2000);
+        delayyy(1000);
 
-        QApplication::quit();
+        if(rendering_flag) emit statusLoadOFF();    //отключение ползунка загрузки
+
+        setUpdateText("Установка приложения");
+        if(rendering_flag) emit busyIndicatorON();
+
+        #if defined(Q_OS_ANDROID)
+            QAndroidJniObject intent("InstallAPK");
+            QAndroidJniObject jsText = QAndroidJniObject::fromString("/storage/emulated/0/Android/data/com.hznk/files/droid_stick.apk");
+            jint ret = intent.callMethod<jint>("installApp","(Ljava/lang/String;)I",jsText.object<jstring>());
+        #endif
+
+ //       QApplication::quit();
     }
 
     mDownloaderReply->deleteLater();

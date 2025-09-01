@@ -8,12 +8,12 @@ import QtQml
 
 
 
+
 Dialog {
     id: updateAppWindow
     modal: true
     focus: true
     title: "Обновление приложения"
-//    modality: Qt.ApplicationModal
     onRejected: Qt.callLater(updateAppWindow.open)
 
 
@@ -32,7 +32,6 @@ Dialog {
             font.pixelSize: 14
             font.family: "Courier New"
             color: "#0b8fdb"
-         //   anchors.horizontalCenter: parent.horizontalCenter
             horizontalAlignment: Qt.AlignHCenter
         }
 
@@ -44,16 +43,18 @@ Dialog {
             height: parent.height * 0.2
 
             Component.onCompleted: {
-                       // mainModel.onCheckUpdateProgress.connect(onCheckUpdateProgress)
-                visible = false
+                        updateApp.onBusyIndicatorON.connect(onBusyIndicatorON)
+                        updateApp.onBusyIndicatorOFF.connect(onBusyIndicatorOFF)
+
+                        visible = false
                     }
 
-//            function onCheckUpdateProgress(){
-//                get_firmware_update.visible = false
-//                update_load.visible = false
-//                busyIndicator.visible = true
-//                stop_load.visible = false
-//            }
+            function onBusyIndicatorON(){
+                    busyIndicator.visible = true
+            }
+            function onBusyIndicatorOFF(){
+                    busyIndicator.visible = false
+            }
         }
 
         //процесс загрузки
@@ -64,8 +65,8 @@ Dialog {
             anchors.right: parent.right
             visible: false
             from: 0.0
-            to: {updateApp.totalBytes}
-            value: {updateApp.bytesRead}
+            to: {updateApp.TotalBytes}
+            value: {updateApp.BytesRead}
 
             background: Rectangle {
                 color: "#e6e6e6"
@@ -74,11 +75,16 @@ Dialog {
 
             Component.onCompleted: {
                         updateApp.onStartload.connect(onStartload)
+                        updateApp.onStatusLoadOFF.connect(onStatusLoadOFF)
                     }
 
             function onStartload(){
                 load.visible = true
             }
+            function onStatusLoadOFF(){
+                load.visible = false
+            }
+
 
             contentItem: Item {
                 Rectangle {
