@@ -1,3 +1,5 @@
+
+
 buildscript {
     repositories {
         google()
@@ -11,13 +13,17 @@ buildscript {
 
 repositories {
     google()
-    mavenCentral()
+/*    mavenCentral()*/
+    mavenCentral{
+        url 'https://maven.google.com'
+    }
 }
 
 apply plugin: 'com.android.application'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+    implementation 'com.android.support:support-v4:25.3.1'
 }
 
 android {
@@ -76,3 +82,4 @@ android {
         ndk.abiFilters = qtTargetAbiList.split(",")
     }
 }
+
