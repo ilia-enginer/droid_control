@@ -122,11 +122,11 @@ int main(int argc, char *argv[])
     model.setDevice(&d);
 
 
+    //вывод версии в сообщении для изменения txt файла
+    #if defined(Q_OS_WINDOWS)    
     AppVersion *AppVer = new AppVersion();
     qint32 ver = AppVer->getAppVersion();
 
-    //вывод версии в сообщении для изменения txt файла
-    #if defined(Q_OS_WINDOWS)
         QMessageBox msgBox;
         msgBox.setWindowModality(Qt::ApplicationModal);
         msgBox.setWindowTitle("Версия приложения.");

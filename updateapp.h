@@ -13,6 +13,7 @@
 #include <QtWidgets>
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
+#include <QJniObject>
 #include "appversion.h"
 
 

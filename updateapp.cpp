@@ -22,6 +22,7 @@ const QString UpdateApp::downloadFolderAdress =
 
 
 
+
 //------------------------------------------------------------------------------
 
 ///???
@@ -115,6 +116,45 @@ void UpdateApp::checkVersion(QString inVersion)
 
 void UpdateApp::downloadFile()
 {
+    ////????
+/*    QFuture permission_request = QtAndroidPrivate::requestPermission("android.permission.REQUEST_INSTALL_PACKAGES");
+    switch(permission_request.result())
+    {
+    case QtAndroidPrivate::Undetermined:
+
+        break;
+    case QtAndroidPrivate::Authorized:
+        break;
+    case QtAndroidPrivate::Denied:
+
+        break;
+    }
+*/
+    jint ret = 5;
+    setUpdateText(tr(
+                    "%1 от."
+                ).arg(ret));
+delayyy(5000);
+    QJniObject jsText = QJniObject::fromString("/storage/emulated/0/Download/droid_stick.apk");
+    ret = QJniObject::callStaticMethod<jint>("android/src/InstallAPK/InstallAPK",
+                                       "installApp",
+                                       "(Ljava/lang/String;)I",
+                                       jsText.object<jstring>());
+
+    setUpdateText(tr(
+                    "%1 от."
+                ).arg(ret));
+delayyy(5000);
+
+    /*{
+            QAndroidJniObject jsText = QAndroidJniObject::fromString(appPackageName);
+            QAndroidJniObject::callStaticMethod<jint>("installApp",
+                                               "installApp",
+                                               "(Ljava/lang/String;)I",
+                                               jsText.object<jstring>());
+            */
+    return;
+
     QFileInfo tServerFileInfo(kUpdateUrl);
 
     QString tServerFileName = tServerFileInfo.fileName();
@@ -130,40 +170,7 @@ void UpdateApp::downloadFile()
         return;
     }
 
-    /*
-    QString tLocalFileName =
-        QDir::toNativeSeparators(
-            QCoreApplication::applicationDirPath() + "/" + tServerFileName);
-
-    if (QFile::exists(tLocalFileName))
-    {
-        QFile::remove(tLocalFileName);
-    }
-
-    mFile = new QFile(tLocalFileName);
-
-    if (!mFile->open(QIODevice::WriteOnly))
-    {
-        setUpdateText(
-                    tr(
-                        "Ошибка!\nНевозможно сохранить файл %1: %2."
-                    ).arg(tLocalFileName).arg(mFile->errorString())
-                );
-
-        delete mFile;
-
-        return;
-    }
-
-*/
-
-
-
-//    dir = new QDir("/");
-//    dir->setPath(QDir::currentPath());
-//    mFile = new QFile(fileName);
-
-      requestAndroidPermissions();
+   requestAndroidPermissions();
 
 #if defined(Q_OS_ANDROID)
      mFile = new QFile(downloadFolderAdress + fileName);
@@ -202,13 +209,13 @@ void UpdateApp::downloadFile()
 void UpdateApp::set_TotalBytes(double byte)
 {
     TotalBytes = byte;
-    if(rendering_flag) emit totalBytesChanged();
+    emit totalBytesChanged();
 }
 
 void UpdateApp::set_BytesRead(double byte)
 {
     BytesRead = byte;
-    if(rendering_flag) emit bytesReadChanged();
+    emit bytesReadChanged();
 }
 
 double UpdateApp::get_TotalBytes() const
@@ -360,13 +367,6 @@ void UpdateApp::on_HttpFinished()
     }
     else
     {     
-        QString tLocalFileName =
-            QDir::toNativeSeparators(
-                QCoreApplication::applicationDirPath() + "/" + QFileInfo(
-                    QUrl(kUpdateUrl).path()).fileName());
-
-        QDesktopServices::openUrl(QUrl::fromLocalFile(tLocalFileName));
-
         setUpdateText("Скачано");
         delayyy(1000);
 
@@ -375,13 +375,25 @@ void UpdateApp::on_HttpFinished()
         setUpdateText("Установка приложения");
         if(rendering_flag) emit busyIndicatorON();
 
+
         #if defined(Q_OS_ANDROID)
-            QAndroidJniObject intent("InstallAPK");
-            QAndroidJniObject jsText = QAndroidJniObject::fromString("/storage/emulated/0/Android/data/com.hznk/files/droid_stick.apk");
-            jint ret = intent.callMethod<jint>("installApp","(Ljava/lang/String;)I",jsText.object<jstring>());
+            jint ret = 5;
+            QJniObject jsText = QJniObject::fromString(downloadFolderAdress + fileName);
+            ret = QJniObject::callStaticMethod<jint>("android/src/InstallAPK/InstallAPK",
+                                               "installApp",
+                                               "(Ljava/lang/String;)I",
+                                               jsText.object<jstring>());
+        #elif defined(Q_OS_WINDOWS)
+            QString tLocalFileName =
+                QDir::toNativeSeparators(
+                    QCoreApplication::applicationDirPath() + "/" + QFileInfo(
+                        QUrl(kUpdateUrl).path()).fileName());
+
+            QDesktopServices::openUrl(QUrl::fromLocalFile(tLocalFileName));
+            QApplication::quit();
         #endif
 
- //       QApplication::quit();
+        return;
     }
 
     mDownloaderReply->deleteLater();

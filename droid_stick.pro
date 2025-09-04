@@ -2,10 +2,10 @@ TEMPLATE = app
 TARGET = droid_stick
 
 #версия на главном экране
-VERSION = "1.1.2"
+VERSION = "1.1.3"
 DEFINES += INSERT_VERSION_CODE=\\\"$$VERSION\\\"
 
-QT += quick charts qml quickcontrols2 bluetooth core positioning widgets core-private network #androidextras
+QT += quick charts qml quickcontrols2 bluetooth core positioning widgets core-private network  #androidextras
 
 SOURCES += \
 #    btscaner.cpp \
@@ -79,21 +79,13 @@ DISTFILES += \
     UpdateAppPage.qml \
     Update_Hex.qml \
     android/AndroidManifest.xml \
-    android/AndroidManifest.xml \
     android/InstallAPK.java \
     android/build.gradle \
-    android/build.gradle \
-    android/gradle.properties \
     android/gradle.properties \
     android/gradle/wrapper/gradle-wrapper.jar \
-    android/gradle/wrapper/gradle-wrapper.jar \
-    android/gradle/wrapper/gradle-wrapper.properties \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/gradlew \
-    android/gradlew \
     android/gradlew.bat \
-    android/gradlew.bat \
-    android/res/XML/FilePaths.xml \
     android/res/drawable-hdpi/icon.png \
     android/res/drawable-ldpi/icon.png \
     android/res/drawable-mdpi/icon.png \
@@ -101,8 +93,7 @@ DISTFILES += \
     android/res/drawable-xxhdpi/icon.png \
     android/res/drawable-xxxhdpi/icon.png \
     android/res/values/libs.xml \
-    android/res/values/libs.xml \
-    android/src/InstallAPK.java \
+    android/res/xml/provider_paths.xml \
     pages/SettingFootPage.qml \
     pages/firmware_update.qml
 
@@ -118,6 +109,9 @@ HEADERS += \
 #RESOURCES += qml.qrc
 
 contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
+    OTHER_FILES = \
+    $$PWD/android/src/InstallAPK.java
+
     ANDROID_PACKAGE_SOURCE_DIR = \
         $$PWD/android
  }
@@ -127,4 +121,6 @@ contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
         $$PWD/armeabi-v7a/libcrypto_1_1.so\
         $$PWD/armeabi-v7a/libssl_1_1.so
  }
+
+
 
