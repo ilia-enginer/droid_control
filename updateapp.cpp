@@ -117,29 +117,41 @@ void UpdateApp::checkVersion(QString inVersion)
 void UpdateApp::downloadFile()
 {
     ////????
-/*    QFuture permission_request = QtAndroidPrivate::requestPermission("android.permission.REQUEST_INSTALL_PACKAGES");
+    jint ret = 5;
+
+ /*   QFuture permission_request = QtAndroidPrivate::requestPermission("android.permission.REQUEST_INSTALL_PACKAGES");
     switch(permission_request.result())
     {
     case QtAndroidPrivate::Undetermined:
-
+        ret = 6;
         break;
     case QtAndroidPrivate::Authorized:
         break;
     case QtAndroidPrivate::Denied:
-
+        ret = 7;
         break;
     }
 */
-    jint ret = 5;
+
+
     setUpdateText(tr(
                     "%1 от."
                 ).arg(ret));
 delayyy(5000);
-    QJniObject jsText = QJniObject::fromString("/storage/emulated/0/Download/droid_stick.apk");
-    ret = QJniObject::callStaticMethod<jint>("android/src/InstallAPK/InstallAPK",
-                                       "installApp",
-                                       "(Ljava/lang/String;)I",
-                                       jsText.object<jstring>());
+//    QJniObject jsText = QJniObject::fromString("/storage/emulated/0/Download/droid_stick.apk");
+//    ret = QJniObject::callStaticMethod<jint>("android/src/InstallAPK/InstallAPK",
+//                                       "installApp",
+//                                       "(Ljava/lang/String;)I",
+//                                       jsText.object<jstring>());
+//"org/qtproject/installapk/InstallAPK"
+        QJniObject javaPath = QJniObject::fromString("/storage/emulated/0/Download/droid_stick.apk");
+        ret = QJniObject::callStaticMethod<jint>(
+                        "InstallAPK",
+                        "execute",
+                        "(Landroid/content/Context;Ljava/lang/String;)V",
+                        QNativeInterface::QAndroidApplication::context(),
+                        javaPath.object<jstring>());
+
 
     setUpdateText(tr(
                     "%1 от."

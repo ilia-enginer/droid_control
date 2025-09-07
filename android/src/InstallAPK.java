@@ -13,6 +13,34 @@ import android.app.Activity;
 import android.os.Bundle;
 
 
+
+public class InstallAPK {
+    public static int execute(Context context, String message) {
+        if (context == null)
+            return -1;
+        try {
+            /*вставлять сюда*/
+
+            File file = new File("/storage/emulated/0/Download/droid_stick.apk");
+            Uri fileUri = FileProvider.getUriForFile(context, "org.qtproject.install.fileProvider", file);                                       //моя строка
+            Intent intent = new Intent(Intent.ACTION_VIEW, fileUri);
+            intent.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true);
+            intent.setDataAndType(fileUri, "application/vnd.android" + ".package-archive");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            QtNative.activity().startActivity(intent);
+            /***********************/
+
+            return 0;
+        } catch (android.content.ActivityNotFoundException anfe) {
+            return -3;
+        }
+    }
+}
+
+
+/*
+//как было
 public class InstallAPK extends Activity
 {
     protected InstallAPK()
@@ -26,33 +54,8 @@ public class InstallAPK extends Activity
          if (QtNative.activity() == null)
             return -1;
          try {
-                /*вставлять сюда*/
+                //вставлять сюда
 
-             File file = new File("/storage/emulated/0/Download/droid_stick.apk");
-             Uri fileUri = FileProvider.getUriForFile(context,"org.qtproject.install.fileProvider", file);                                       //моя строка
-         //    Uri fileUri = FileProvider.getUriForFile(activity.getBaseContext(), activity.getApplicationContext().getPackageName() + ".provider", file);  //была строка
-             Intent intent = new Intent(Intent.ACTION_VIEW, fileUri);
-             intent.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true);
-             intent.setDataAndType(fileUri, "application/vnd.android" + ".package-archive");
-             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-             startActivity(intent);
-            /***********************/
-
-             return 0;
-         } catch (android.content.ActivityNotFoundException anfe) {
-             return -3;
-         }
-     }
-}
-
-
-/*
-//как было
-public  int installApp(String appPackageName) {
-        if (QtNative.activity() == null)
-            return -1;
-        try {
             File apk = new File(appPackageName);
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -61,11 +64,14 @@ public  int installApp(String appPackageName) {
             intent.setDataAndType(uri,"application/vnd.android.package-archive");
 
             QtNative.activity().startActivity(intent);
-            return 0;
-        } catch (android.content.ActivityNotFoundException anfe) {
-            return -3;
-        }
-    }
+            // ***********************
+
+             return 0;
+         } catch (android.content.ActivityNotFoundException anfe) {
+             return -3;
+         }
+     }
+}
 */
 
 
