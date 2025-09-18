@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<paths xmlns:android="https://github.com/ilia-enginer/droid_stick/blob/main">
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
     <external-path
         name="external"
         path="." />
