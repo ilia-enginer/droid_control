@@ -1,5 +1,6 @@
 #include "appmanager.h"
 
+#include <QJniObject>
 #include <QDebug>
 #include <QFile>
 #include <QTextStream>
@@ -95,4 +96,22 @@ void AppManager::keepScreenOn(bool on)
           flag_on = on;
     }
     #endif
+}
+
+int AppManager::installApk(const QString& absPath)
+{
+#if defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED)
+    QJniObject jPath = QJniObject::fromString(absPath);
+    jint res = QJniObject::callStaticMethod<jint>(
+        "org/qtproject/example/InstallAPK",
+        "execute",
+        "(Landroid/content/Context;Ljava/lang/String;)I",
+        nullptr,
+        jPath.object<jstring>()
+    );
+    return int(res);
+#else
+    Q_UNUSED(absPath);
+    return -42;
+#endif
 }

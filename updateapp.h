@@ -55,8 +55,6 @@ void delayyy( int mill);
         double get_BytesRead() const;
 
 
-
-
     public slots:
         void checkForUpdates(void);
         void on_NetworkReply(QNetworkReply *inReply);
@@ -66,7 +64,7 @@ void delayyy( int mill);
         void on_UpdateDataReadProgress(qint64 inBytesRead, qint64 inTotalBytes);
 
         void downloadFile();
-
+        void install();
 
 Q_SIGNALS:
 
@@ -82,6 +80,8 @@ Q_SIGNALS:
         void bytesReadChanged();
 
         void windowloadOpen();           //открывает окно обновления app
+
+        void but_Ok_On();            //включение кнопки повторной установки
 
     private:
         bool requestAndroidPermissions(void);

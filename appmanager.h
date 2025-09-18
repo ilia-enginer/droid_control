@@ -20,7 +20,8 @@ public:
     void setUpdateApp(UpdateApp *newUpdateApp);
 
     void keepScreenOn(bool on);
-
+    
+    Q_INVOKABLE int installApk(const QString& absPath);
 signals:
 
 private:

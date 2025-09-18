@@ -138,6 +138,32 @@ Dialog {
     }
 
     Button {
+        id: ok
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        height: parent.height * 0.15
+        width: parent.width * 0.4
+        text: "Ок"
+        background: Rectangle{
+            property var normalColor: "#07e67a"
+            property var pressedColor: "#0b6b3d"
+            color: ok.pressed ? pressedColor : normalColor
+        }
+        Component.onCompleted: {
+                    updateApp.onBut_Ok_On.connect(onBut_Ok_On)
+                    visible = false
+                }
+
+        function onBut_Ok_On(){
+                ok.visible = true
+        }
+        onClicked: {
+            ok.visible = false
+            updateApp.install();
+        }
+    }
+
+    Button {
         id: no
         anchors.bottom: parent.bottom
         anchors.right: parent.right

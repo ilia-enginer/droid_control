@@ -1,5 +1,7 @@
 #include "updateapp.h"
-
+#include "appmanager.h"
+#include <QStandardPaths>
+#include <QDir>
 
 
 //------------------------------------------------------------------------------
@@ -16,12 +18,6 @@ const QString UpdateApp::versionHeading =
 
 const QString UpdateApp::fileName =
         "droid_stick.apk";
-
-const QString UpdateApp::downloadFolderAdress =
-        "/storage/emulated/0/Download/";
-
-
-
 
 //------------------------------------------------------------------------------
 
@@ -116,102 +112,47 @@ void UpdateApp::checkVersion(QString inVersion)
 
 void UpdateApp::downloadFile()
 {
-    ////????
-    jint ret = 5;
-
- /*   QFuture permission_request = QtAndroidPrivate::requestPermission("android.permission.REQUEST_INSTALL_PACKAGES");
-    switch(permission_request.result())
-    {
-    case QtAndroidPrivate::Undetermined:
-        ret = 6;
-        break;
-    case QtAndroidPrivate::Authorized:
-        break;
-    case QtAndroidPrivate::Denied:
-        ret = 7;
-        break;
-    }
-*/
-
-
-    setUpdateText(tr(
-                    "%1 от."
-                ).arg(ret));
-delayyy(5000);
-//    QJniObject jsText = QJniObject::fromString("/storage/emulated/0/Download/droid_stick.apk");
-//    ret = QJniObject::callStaticMethod<jint>("android/src/InstallAPK/InstallAPK",
-//                                       "installApp",
-//                                       "(Ljava/lang/String;)I",
-//                                       jsText.object<jstring>());
-//"org/qtproject/installapk/InstallAPK"
-        QJniObject javaPath = QJniObject::fromString("/storage/emulated/0/Download/droid_stick.apk");
-        ret = QJniObject::callStaticMethod<jint>(
-                        "InstallAPK",
-                        "execute",
-                        "(Landroid/content/Context;Ljava/lang/String;)V",
-                        QNativeInterface::QAndroidApplication::context(),
-                        javaPath.object<jstring>());
-
-
-    setUpdateText(tr(
-                    "%1 от."
-                ).arg(ret));
-delayyy(5000);
-
-    /*{
-            QAndroidJniObject jsText = QAndroidJniObject::fromString(appPackageName);
-            QAndroidJniObject::callStaticMethod<jint>("installApp",
-                                               "installApp",
-                                               "(Ljava/lang/String;)I",
-                                               jsText.object<jstring>());
-            */
-    return;
+    setUpdateText("Подготовка к загрузке...");
 
     QFileInfo tServerFileInfo(kUpdateUrl);
-
     QString tServerFileName = tServerFileInfo.fileName();
 
     if (tServerFileName.isEmpty())
     {
-        setUpdateText(tr(
-                        "Ошибка!\nФайл обновления %1 отсутствует."
-                    ).arg(tServerFileName));
-
-        if(rendering_flag) emit busyIndicatorOFF();
-
+        setUpdateText(tr("Ошибка!\nФайл обновления %1 отсутствует.").arg(tServerFileName));
+        if (rendering_flag) emit busyIndicatorOFF();
         return;
     }
 
-   requestAndroidPermissions();
+    requestAndroidPermissions();
 
 #if defined(Q_OS_ANDROID)
-     mFile = new QFile(downloadFolderAdress + fileName);
+{
+    QString base = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QDir().mkpath(base);
+    mFile = new QFile(QDir(base).filePath(fileName)); // .../files/<org>/AppName/droid_stick.apk
+}
 #elif defined(Q_OS_WINDOWS)
+{
     mFile = new QFile(fileName);
+}
 #endif
 
     fileinfo = QFileInfo(*mFile);
 
-    if(!mFile->open(QIODevice::WriteOnly)) // Just write the way to open the file
+    if (!mFile->open(QIODevice::WriteOnly))
     {
-        setUpdateText(
-                    tr(
-                        "Ошибка!\nОшибка сохранения файла %1: %2."
-                    ).arg(fileName).arg(mFile->errorString())
-                );
-
-        if(rendering_flag) emit busyIndicatorOFF();
-
+        setUpdateText(tr("Ошибка!\nОшибка сохранения файла %1: %2.")
+                          .arg(fileName).arg(mFile->errorString()));
+        if (rendering_flag) emit busyIndicatorOFF();
         delete mFile;
         return;
     }
 
-    if(rendering_flag) emit busyIndicatorOFF();
+    if (rendering_flag) emit busyIndicatorOFF();
+    if (rendering_flag) emit startload();       
 
-    if(rendering_flag) emit startload();         //включение ползунка загрузки
-
-   // setUpdateText(tr("Загрузка %1.").arg(tServerFileName));
-    setUpdateText("Загрузка " + fileName);
+    setUpdateText("Загрузка...\nНе сворачивайте приложение во время загрузки");
 
     mHttpRequestAborted = false;
     startRequest(kUpdateUrl);
@@ -221,13 +162,13 @@ delayyy(5000);
 void UpdateApp::set_TotalBytes(double byte)
 {
     TotalBytes = byte;
-    emit totalBytesChanged();
+    if (rendering_flag) emit totalBytesChanged();
 }
 
 void UpdateApp::set_BytesRead(double byte)
 {
     BytesRead = byte;
-    emit bytesReadChanged();
+    if (rendering_flag) emit bytesReadChanged();
 }
 
 double UpdateApp::get_TotalBytes() const
@@ -240,55 +181,126 @@ double UpdateApp::get_BytesRead() const
     return BytesRead;
 }
 
+void UpdateApp::install()
+{
+    #if defined(Q_OS_ANDROID)
+        QString base = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+        const QString apkPath = QDir(base).filePath(fileName);
+
+        QJniObject jPath = QJniObject::fromString(apkPath);
+        jint ret = QJniObject::callStaticMethod<jint>(
+            "org/qtproject/example/InstallAPK",
+            "execute",
+            "(Landroid/content/Context;Ljava/lang/String;)I",
+            nullptr,
+            jPath.object<jstring>()
+        );
+
+        if(ret == 0)
+        {
+            setUpdateText("Процесс обновления успешно запущен");
+            delayyy(1500);
+        }
+        else if(ret == -1)
+        {
+            setUpdateText("Что-то пошло не по плану. Попробуйте обновиться чуть позже");
+            delayyy(1500);
+        }
+        else if(ret == -2)
+        {
+            setUpdateText("Странные вещи происходят. Установочный файл пустой. Попробуйте перезапустить приложение.");
+            delayyy(1500);
+        }
+        else if(ret == -3)
+        {
+            setUpdateText("Странные вещи происходят. Установочный файл куда-то пропал. Попробуйте перезапустить приложение.");
+            delayyy(1500);
+        }
+        else if(ret == -4)
+        {
+            setUpdateText(QStringLiteral("Все еще не хватает разрешений на установку. Вы можете изменить это в настройках приложения. Раздел 'Разрешения'"));
+            delayyy(3000);
+        }
+        else if(ret == -5)
+        {
+            setUpdateText("Неудача. Попробуйте перезапустить приложение.");
+            delayyy(1500);
+        }
+
+
+        // Аккуратная очистка
+        mDownloaderReply->deleteLater();
+        mDownloaderReply = nullptr;
+
+        if (mFile) {
+            delete mFile;
+            mFile = nullptr;
+        }
+    #endif
+}
+
 bool UpdateApp::requestAndroidPermissions()
 {
 #if defined(Q_OS_ANDROID)
-   QFuture permission_request = QtAndroidPrivate::requestPermission("android.permission.WRITE_EXTERNAL_STORAGE");
-   switch(permission_request.result())
-   {
-   case QtAndroidPrivate::Undetermined:
-       return false;
-       break;
-   case QtAndroidPrivate::Authorized:
-       break;
-   case QtAndroidPrivate::Denied:
-       return false;
-       break;
-   }
-
-   permission_request = QtAndroidPrivate::requestPermission("android.permission.READ_EXTERNAL_STORAGE");
-   switch(permission_request.result())
-   {
-   case QtAndroidPrivate::Undetermined:
-       return false;
-       break;
-   case QtAndroidPrivate::Authorized:
-       break;
-   case QtAndroidPrivate::Denied:
-       return false;
-       break;
-   }
-
-   permission_request = QtAndroidPrivate::requestPermission("android.permission.INSTALL_PACKAGES");
-   switch(permission_request.result())
-   {
-   case QtAndroidPrivate::Undetermined:
-       return false;
-       break;
-   case QtAndroidPrivate::Authorized:
-       break;
-   case QtAndroidPrivate::Denied:
-       return false;
-       break;
-   }
-#endif
+    // Приватные директории приложения не требуют рантайм-разрешений
     return true;
+#else
+    return true;
+#endif
 }
 
 //------------------------------------------------------------------------------
 
 void UpdateApp::startRequest(QUrl inUrl)
 {
+//    if (!mNamDownloader)
+//        mNamDownloader = new QNetworkAccessManager(this);
+
+//    QNetworkRequest req(inUrl);
+
+//#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+//    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute,
+//                     QNetworkRequest::NoLessSafeRedirectPolicy);
+//#endif
+
+//    req.setAttribute(QNetworkRequest::CacheLoadControlAttribute,
+//                     QNetworkRequest::AlwaysNetwork);
+
+//    req.setHeader(QNetworkRequest::UserAgentHeader,
+//                  QByteArray("DroidStickUpdater/1.0 (Qt)"));
+//    req.setRawHeader("Accept", "*/*");
+
+//#if QT_CONFIG(ssl)
+//    QSslConfiguration ssl = QSslConfiguration::defaultConfiguration();
+//    ssl.setProtocol(QSsl::TlsV1_2OrLater);
+//    req.setSslConfiguration(ssl);
+//#endif
+
+//    mDownloaderReply = mNamDownloader->get(req);
+
+//    connect(mDownloaderReply, &QNetworkReply::finished,
+//            this, &UpdateApp::on_HttpFinished);
+//    connect(mDownloaderReply, &QIODevice::readyRead,
+//            this, &UpdateApp::on_HttpDataRead);
+//    connect(mDownloaderReply, &QNetworkReply::downloadProgress,
+//            this, &UpdateApp::on_UpdateDataReadProgress);
+
+//#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+//    connect(mDownloaderReply, &QNetworkReply::errorOccurred, this,
+//            [this](QNetworkReply::NetworkError code) {
+//                Q_UNUSED(code);
+//                setUpdateText(tr("Ошибка сети: %1").arg(mDownloaderReply->errorString()));
+//            });
+//#endif
+
+//#if QT_CONFIG(ssl)
+//    connect(mDownloaderReply, &QNetworkReply::sslErrors, this,
+//            [this](const QList<QSslError>& errs) {
+//                if (!errs.isEmpty())
+//                    setUpdateText(tr("SSL ошибка: %1").arg(errs.first().errorString()));
+//            });
+//#endif
+
     mNamDownloader = new QNetworkAccessManager(this);
 
     mDownloaderReply = mNamDownloader->get(QNetworkRequest(inUrl));
@@ -300,8 +312,14 @@ void UpdateApp::startRequest(QUrl inUrl)
             this, SLOT(on_HttpDataRead()));
 
     connect(mDownloaderReply, SIGNAL(downloadProgress(qint64, qint64)),
-            this, SLOT(on_UpdateDataReadProgress(qint64, qint64)));          
+            this, SLOT(on_UpdateDataReadProgress(qint64, qint64)));
+
+    //чтоб экран не гас
+    AppManager app;
+    app.keepScreenOn(true);
 }
+
+
 
 //------------------------------------------------------------------------------
 
@@ -313,9 +331,22 @@ void UpdateApp::on_CancelDownload()
 
     if(!mHttpRequestAborted)
     {
-        if(mDownloaderReply)    mDownloaderReply->abort();
+        if(mDownloaderReply)
+        {
+            //mDownloaderReply->abort();
+            mDownloaderReply->deleteLater();
+            mDownloaderReply = nullptr;
+        }
+    }
+    if (mFile) {
+        delete mFile;
+        mFile = nullptr;
     }
     mHttpRequestAborted = true;
+
+    //чтоб экран не гас
+    AppManager app;
+    app.keepScreenOn(false);
 }
 
 //------------------------------------------------------------------------------
@@ -324,107 +355,165 @@ void UpdateApp::on_HttpFinished()
 {
     qDebug() << "on_HttpFinished";
 
-    if (mHttpRequestAborted)
-    {
-        if (mFile)
-        {
+    //чтоб экран не гас
+    AppManager app;
+    app.keepScreenOn(false);
+
+    if (!mDownloaderReply) {
+        // Нечего обрабатывать
+        return;
+    }
+
+    if (mHttpRequestAborted) {
+        if (mFile) {
             mFile->close();
             mFile->remove();
-
             delete mFile;
+            mFile = nullptr;
         }
+        mDownloaderReply->deleteLater();
+        mDownloaderReply = nullptr;
+        return;
+    }
+
+    if (mFile) {
+        mFile->flush();
+        mFile->close();
+    }
+
+    const QVariant redirTarget =
+        mDownloaderReply->attribute(QNetworkRequest::RedirectionTargetAttribute);
+
+    if (mDownloaderReply->error() != QNetworkReply::NoError) {
+        if (mFile) {
+            mFile->remove();
+            delete mFile;
+            mFile = nullptr;
+        }
+        setUpdateText(tr("Ошибка!\nОшибка загрузки: %1.")
+                          .arg(mDownloaderReply->errorString()));
+        if (rendering_flag) emit statusLoadOFF();
 
         mDownloaderReply->deleteLater();
-        set_BytesRead(get_TotalBytes());
-
+        mDownloaderReply = nullptr;
         return;
     }
-    set_BytesRead(get_TotalBytes());
 
-    mFile->flush();
-    mFile->close();
+    if (!redirTarget.isNull()) {
+        // Обработка редиректа: перезапускаем запрос и выходим,
+        // чтобы не удалить новый reply ниже.
+        QUrl nextUrl = QUrl(kUpdateUrl).resolved(redirTarget.toUrl());
 
-    QVariant tRedirectionTarget =
-        mDownloaderReply->attribute(
-            QNetworkRequest::RedirectionTargetAttribute);
+        if (mFile && mFile->open(QIODevice::WriteOnly)) {
+            mFile->resize(0);
+            set_BytesRead(0.0);
+            mDownloaderReply->deleteLater();
+            mDownloaderReply = nullptr;
 
-    if (mDownloaderReply->error())
+            startRequest(nextUrl);
+            return; // <<< ОБЯЗАТЕЛЬНО
+        } else {
+            setUpdateText(tr("Ошибка!\nНе удалось переоткрыть файл для записи."));
+            if (rendering_flag) emit statusLoadOFF();
+
+            if (mFile) {
+                delete mFile;
+                mFile = nullptr;
+            }
+            mDownloaderReply->deleteLater();
+            mDownloaderReply = nullptr;
+            return;
+        }
+    }
+
+    // ==== УСПЕШНО СКАЧАНО ====
+    setUpdateText("Обновление скачано");
+    delayyy(300);
+    if (rendering_flag) emit statusLoadOFF();
+    setUpdateText("Установка обновления");
+    if (rendering_flag) emit busyIndicatorON();
+    delayyy(500);
+
+#if defined(Q_OS_ANDROID)
     {
-        mFile->remove();
-        mFile = NULL;
+        QString base = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+        const QString apkPath = QDir(base).filePath(fileName);
 
-        setUpdateText(
-                    tr(
-                        "Ошибка!\nОшибка загрузки: %1."
-                    ).arg(mDownloaderReply->errorString()));
-
-        if(rendering_flag) emit statusLoadOFF();    //отключение ползунка загрузки
+        QJniObject jPath = QJniObject::fromString(apkPath);
+        jint ret = QJniObject::callStaticMethod<jint>(
+            "org/qtproject/example/InstallAPK",
+            "execute",
+            "(Landroid/content/Context;Ljava/lang/String;)I",
+            nullptr,
+            jPath.object<jstring>()
+        );
+//        setUpdateText(QStringLiteral("Код установки: %1").arg(ret));
+        if(ret == 0)
+        {
+            setUpdateText("Процесс обновления успешно запущен");
+            delayyy(1500);
+        }
+        else if(ret == -1)
+        {
+            if (rendering_flag) emit busyIndicatorOFF();
+            setUpdateText("Что-то пошло не по плану. Попробуйте обновиться чуть позже");
+            delayyy(1500);
+        }
+        else if(ret == -2)
+        {
+            if (rendering_flag) emit busyIndicatorOFF();
+            setUpdateText("Странные вещи происходят. Установочный файл пустой. Попробуйте перезапустить приложение.");
+            delayyy(1500);
+        }
+        else if(ret == -3)
+        {
+            if (rendering_flag) emit busyIndicatorOFF();
+            setUpdateText("Странные вещи происходят. Установочный файл куда-то пропал. Попробуйте перезапустить приложение.");
+            delayyy(1500);
+        }
+        else if(ret == -4)
+        {
+            if (rendering_flag) emit busyIndicatorOFF();
+            setUpdateText(QStringLiteral("Не хватает разрешений на установку, попробую еще раз. Для продолжения нажмите 'Ок'"));
+            delayyy(3000);
+            emit but_Ok_On();
+            return;
+        }
+        else if(ret == -5)
+        {
+            setUpdateText("Неудача. Попробуйте перезапустить приложение.");
+            delayyy(1500);
+        }
     }
-    else if (!tRedirectionTarget.isNull())
+#elif defined(Q_OS_WINDOWS)
     {
-        setUpdateText("6");
-        delayyy(3000);
-        QUrl tUrl = QUrl(kUpdateUrl);
-        QUrl tNewUrl = tUrl.resolved(tRedirectionTarget.toUrl());
-        tUrl = tNewUrl;
-
-        mFile->open(QIODevice::WriteOnly);
-        mFile->resize(0);
-
-        set_BytesRead(0.0);
-
-        startRequest(tUrl);
-
-        return;
+        QString tLocalFileName =
+            QDir::toNativeSeparators(
+                QCoreApplication::applicationDirPath() + "/" +
+                QFileInfo(QUrl(kUpdateUrl).path()).fileName());
+        QDesktopServices::openUrl(QUrl::fromLocalFile(tLocalFileName));
+        QApplication::quit();
     }
-    else
-    {     
-        setUpdateText("Скачано");
-        delayyy(1000);
+#endif
 
-        if(rendering_flag) emit statusLoadOFF();    //отключение ползунка загрузки
-
-        setUpdateText("Установка приложения");
-        if(rendering_flag) emit busyIndicatorON();
-
-
-        #if defined(Q_OS_ANDROID)
-            jint ret = 5;
-            QJniObject jsText = QJniObject::fromString(downloadFolderAdress + fileName);
-            ret = QJniObject::callStaticMethod<jint>("android/src/InstallAPK/InstallAPK",
-                                               "installApp",
-                                               "(Ljava/lang/String;)I",
-                                               jsText.object<jstring>());
-        #elif defined(Q_OS_WINDOWS)
-            QString tLocalFileName =
-                QDir::toNativeSeparators(
-                    QCoreApplication::applicationDirPath() + "/" + QFileInfo(
-                        QUrl(kUpdateUrl).path()).fileName());
-
-            QDesktopServices::openUrl(QUrl::fromLocalFile(tLocalFileName));
-            QApplication::quit();
-        #endif
-
-        return;
-    }
-
+    // Аккуратная очистка
     mDownloaderReply->deleteLater();
-    mDownloaderReply = NULL;
+    mDownloaderReply = nullptr;
 
-    mNamDownloader -> deleteLater();
-    mNamDownloader = NULL;
-
-    delete mFile;
+    if (mFile) {
+        delete mFile;
+        mFile = nullptr;
+    }
 }
+
+
 
 //------------------------------------------------------------------------------
 
 void UpdateApp::on_HttpDataRead()
 {
-    if (mFile)
-    {
-        mFile->write(mDownloaderReply->readAll());
-    }
+    if (!mFile || !mDownloaderReply) return;
+    mFile->write(mDownloaderReply->readAll());
 }
 
 //------------------------------------------------------------------------------

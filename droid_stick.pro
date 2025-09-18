@@ -79,7 +79,7 @@ DISTFILES += \
     UpdateAppPage.qml \
     Update_Hex.qml \
     android/AndroidManifest.xml \
-    android/InstallAPK.java \
+    android/src/org/qtproject/example/InstallAPK.java \
     android/build.gradle \
     android/gradle.properties \
     android/gradle/wrapper/gradle-wrapper.jar \
@@ -94,6 +94,7 @@ DISTFILES += \
     android/res/drawable-xxxhdpi/icon.png \
     android/res/values/libs.xml \
     android/res/xml/provider_paths.xml \
+    android/src/org/qtproject/example/InstallAPK.java \
     pages/SettingFootPage.qml \
     pages/firmware_update.qml
 
@@ -110,7 +111,8 @@ HEADERS += \
 
 contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
     OTHER_FILES = \
-    $$PWD/android/src/InstallAPK.java
+    $$PWD/android/src/org/qtproject/example/InstallAPK.java\
+    $$PWD/android/res/xml/provider_paths.xml
 
     ANDROID_PACKAGE_SOURCE_DIR = \
         $$PWD/android
