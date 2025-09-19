@@ -20,7 +20,7 @@ Dialog {
 
         Label {
             width: aboutDialog.availableWidth
-            text: "Droid Stick - предназначена для управления роботизированныйми устройствами по Bluetooch."
+            text: " Droid Stick - предназначена для управления роботизированныйми устройствами по Bluetooch."
             wrapMode: Label.Wrap
             font.pixelSize: 12
         }

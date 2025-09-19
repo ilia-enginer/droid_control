@@ -19,7 +19,6 @@ Dialog {
 
     Column {
         id: updateAppWindowColumn
-
         width: parent.width
         height: parent.height
         spacing: 10

@@ -18,10 +18,11 @@ Dialog {
 
         Label {
             id: devicesDialogStatus
-            text: "Для поиска Bluetooth устройств необходимо, в настройках приложения, разрешить определять местоположение."
+            horizontalAlignment: Qt.AlignHCenter
+            text: " Для поиска Bluetooth устройств необходимо, в настройках приложения, разрешить определять местоположение."
             font.pixelSize: 15
             width: devicesDialog.width
-            horizontalAlignment: Text.left
+      //      horizontalAlignment: Text.left
             verticalAlignment: Text.AlignVCenter
             wrapMode: Text.Wrap
             Component.onCompleted: { 

@@ -152,8 +152,13 @@ ApplicationWindow {
                     }
 
                     Action {
-                        text: "О программе ..."
+                        text: "О программе"
                         onTriggered: aboutDialog.open()
+                    }
+
+                    Action {
+                        text: "Обновление"
+                        onTriggered: updateDialog.open()
                     }
                 }
             }
@@ -315,20 +320,11 @@ ApplicationWindow {
         id: devicesDialog
     }
 
-    //кнопка теста
-/*    Button {
-        id: test_but
-        width: window.width * 0.8
-        height: window.height * 0.07
-        visible: true
-        text: "тест обновления"
-
-        onClicked: {
-      //      updateAppWindow.open();
-            updateApp.checkForUpdates(1);
-        }
+    UpdateDialogPage {
+        id: updateDialog
     }
-*/
+
+
     UpdateAppPage {
         id: updateAppWindow
         modal: true

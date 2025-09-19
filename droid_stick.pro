@@ -20,6 +20,7 @@ SOURCES += \
 
 RESOURCES += \
     Resurs.qrc \
+    UpdateDialogPage.qml \
     gallery.qml \
     DeviceScanerPage.qml \
     pages/SenderPage.qml \
