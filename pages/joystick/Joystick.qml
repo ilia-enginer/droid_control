@@ -560,6 +560,8 @@ SwipeView {
             anchors.top: joystick_mode_swith.bottom
             anchors.topMargin: 15
             anchors.right: parent.right
+            anchors.leftMargin: parent.width * 0.015
+            width: parent.width * 0.3
             delay: 3000     //3000 ms
 
             onActivated: {
