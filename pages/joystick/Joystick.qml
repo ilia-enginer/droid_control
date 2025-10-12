@@ -560,26 +560,28 @@ SwipeView {
             anchors.top: joystick_mode_swith.bottom
             anchors.topMargin: 15
             anchors.right: parent.right
-            text: qsTr("Выкл. шар")
             delay: 3000     //3000 ms
 
-//            background:
-//            Rectangle{
-//                property var normalColor: "#7FFF00"
-//                property var pressedColor: "#FFA07A"
-//              //  anchors.top: parent.top
-//             //   anchors.bottom: parent.bottom
-//             //   anchors.right: power_off.right
-//               // anchors.left: power_off.left
-//            //    height: power_off.height * 0.5
-//            //    scale: 0.5
-//                color: power_off.pressed ? pressedColor : normalColor
-//            }
             onActivated: {
                 device.sendMessageAndWrap(0xF6, "");
                 power_off.progress = 0.0
             }
 
+        }
+        Rectangle{
+            property var normalColor: "#7FFF00"
+            property var pressedColor: "#FFA07A"
+            anchors.top: power_off.top
+            anchors.right: power_off.right
+            anchors.left: power_off.left
+            height: power_off.height * 0.8
+            Text {
+                id: name
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("Выкл. шар")
+            }
+            color: power_off.pressed ? pressedColor : normalColor
         }
 
 
