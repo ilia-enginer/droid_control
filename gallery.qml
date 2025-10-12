@@ -67,6 +67,7 @@ ApplicationWindow {
 
     //запуск механизма проверки обновлений
     Component.onCompleted: {
+        //запуск механизма проверки обновлений
         updateApp.checkForUpdates();
     }
 
@@ -143,7 +144,12 @@ ApplicationWindow {
 
                     Action {
                         text: "Поиск устройств"
-                        onTriggered: devicesDialog.open()
+                        onTriggered: {
+
+                            devicesDialog.open()
+                            //добавление в список последнее подключенное устройство
+                            device.get_last_device()
+                        }
                     }
 
                     Action {

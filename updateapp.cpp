@@ -21,7 +21,7 @@ const QString UpdateApp::fileName =
 
 //------------------------------------------------------------------------------
 
-///???
+
  void  UpdateApp::delayyy( int mill)
 {
     QTime dieTime = QTime::currentTime().addMSecs( mill );

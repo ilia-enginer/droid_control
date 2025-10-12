@@ -115,8 +115,7 @@ void Device::startDeviceDiscovery()
 {
     if(!blt_on())   return;
 
-    qDeleteAll(devices);
-    devices.clear();
+    clearDeviceDiscovery();
     if(rendering_flag)   emit devicesUpdated();
 
 //    devices.append(new DeviceInfo("asfdf", "asdfsdf"));
@@ -132,9 +131,26 @@ void Device::startDeviceDiscovery()
 
     if (discoveryAgent->isActive()) {
         m_deviceScanState = true;
-        Q_EMIT stateChanged();
+        emit stateChanged();
          if(rendering_flag)  emit searchInProgress();
     }
+}
+
+void Device::stopDeviceDiscovery()
+{
+    discoveryAgent->stop();
+
+    if(rendering_flag)  emit devicesUpdated();
+   m_deviceScanState = false;
+    if(rendering_flag)  emit stateChanged();
+
+    if(rendering_flag)  emit searchFinished();
+}
+
+void Device::clearDeviceDiscovery()
+{
+    qDeleteAll(devices);
+    devices.clear();
 }
 
 //! [les-devicediscovery-3]
@@ -801,6 +817,9 @@ void Device::sendparstxlog(quint8 code, quint8 cod)
     case 0xF5:
         s = "подпись приложения";
         break;
+    case 0xF6:
+        s = "команда выключения";
+        break;
     case 0xA0:
         s = "опрос светодиода";
         break;
@@ -1399,6 +1418,10 @@ Device::socketRead()
         case 0xF5:
             emit logServis("<- Подпись ок","");
             break;
+        case 0xF6:
+            emit logJoy("<- Выключение шара","");
+            emit logServis("<- Выключение шара","");
+            break;
         case 0xA0:
             u8 = Data[0];
             u8_2 = Data[1];
@@ -1724,11 +1747,15 @@ void Device::get_last_device()
 
     if((dName.isEmpty()) || (dAdres.isEmpty()))
     {
+        if(rendering_flag)  setUpdate("Сохраненные устройства отсутствуют. Начать поиск устройств?");
         return;
     }
 
+    stopDeviceDiscovery();
+    clearDeviceDiscovery();
 
     addDevice(QBluetoothDeviceInfo(QBluetoothAddress(dAdres), dName, dClass));
+    if(rendering_flag)  setUpdate("Сохраненное устройство добавлено.");
 }
 
 

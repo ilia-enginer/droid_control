@@ -113,6 +113,8 @@ public:
 
 public slots:
     void startDeviceDiscovery();
+    void stopDeviceDiscovery();
+    void clearDeviceDiscovery();
     void connectToDevice(const QString &dAddress, const QString &name, const QString &config);
     void disconnectFromDevice();
     void sendUpdate(QByteArray msg);

@@ -17,9 +17,19 @@ Dialog {
         anchors.right: devicesDialog.Right
 
         Label {
+            id: devicesWarning
+            horizontalAlignment: Qt.AlignHCenter
+            text: " Для поиска Bluetooth устройств необходимо, в настройках приложения, разрешить определять местоположение.\n\n"
+            font.pixelSize: 13
+            width: devicesDialog.width
+            verticalAlignment: Text.AlignVCenter
+            wrapMode: Text.Wrap
+        }
+
+        Label {
             id: devicesDialogStatus
             horizontalAlignment: Qt.AlignHCenter
-            text: " Для поиска Bluetooth устройств необходимо, в настройках приложения, разрешить определять местоположение."
+            text: " "
             font.pixelSize: 15
             width: devicesDialog.width
       //      horizontalAlignment: Text.left
@@ -141,6 +151,10 @@ Dialog {
             highlighted: true
             text: "Последнее подключенное"
 
+            Component.onCompleted: {
+                get_devise.visible = false
+            }
+
             onClicked: {
                 get_devise.visible = false
                 device.get_last_device();
@@ -157,7 +171,8 @@ Dialog {
             text: "Начать поиск"
 
             onClicked: {
-                get_devise.visible = false
+    ////            get_devise.visible = true
+                devicesWarning.visible = false
                 device.startDeviceDiscovery();
             }
         }
