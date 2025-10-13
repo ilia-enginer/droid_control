@@ -142,9 +142,11 @@ Page {
                     color: get_err.pressed ? pressedColor : normalColor
                 }
                 onClicked: {
+                    getcurtimer.running = false
                 //    device.sendMessageAndWrapS("e5");
                     device.get_check();
                     listView1.positionViewAtEnd()
+                    getcurtimer.running = true
                 }
             }
 
@@ -161,8 +163,10 @@ Page {
                   color: clear_err.pressed ? pressedColor : normalColor
               }
                onClicked: {
+                   getcurtimer.running = false
                   device.sendMessageAndWrapS("eb");
                   listView1.positionViewAtEnd()
+                   getcurtimer.running = true
                }
             }
 
@@ -179,8 +183,10 @@ Page {
                   color: reboot.pressed ? pressedColor : normalColor
               }
                onClicked: {
+                   getcurtimer.running = false
                   device.sendMessageAndWrapS("f0");
                   listView1.positionViewAtEnd()
+                   getcurtimer.running = true
                }
             }
 
@@ -197,8 +203,10 @@ Page {
                     color: get_full_param.pressed ? pressedColor : normalColor
                 }
                 onClicked: {
+                    getcurtimer.running = false
                     device.sendMessageAndWrapS("a7");
                     listView1.positionViewAtEnd()
+                    getcurtimer.running = true
                 }
             }
 
@@ -215,8 +223,10 @@ Page {
                     color: set_full_param.pressed ? pressedColor : normalColor
                 }
                 onClicked: {
+                    getcurtimer.running = false
                     device.sendMessageAndWrapS("a8");
                     listView1.positionViewAtEnd()
+                    getcurtimer.running = true
                 }
             }
 
@@ -235,8 +245,10 @@ Page {
                   color: cur_calibr_auto.pressed ? pressedColor : normalColor
               }
                onClicked: {
+                   getcurtimer.running = false
                   device.sendMessageAndWrapS("e8");
                   listView1.positionViewAtEnd()
+                   getcurtimer.running = true
                }
             }
 
@@ -254,8 +266,10 @@ Page {
                   color: servscalibr.pressed ? pressedColor : normalColor
               }
                onClicked: {
+                   getcurtimer.running = false
                   device.sendMessageAndWrapS("e7");
                   listView1.positionViewAtEnd()
+                   getcurtimer.running = true
                }
              }
 
@@ -273,8 +287,10 @@ Page {
                     color: serv_off_but.pressed ? pressedColor : normalColor
                 }
                 onClicked: {
+                    getcurtimer.running = false
                     device.sendMessageAndWrap(0xA6, 0x00);
                     listView1.positionViewAtEnd()
+                    getcurtimer.running = true
                 }
             }
 
@@ -292,8 +308,10 @@ Page {
                     color: serv_on_but.pressed ? pressedColor : normalColor
                 }
                 onClicked: {
+                    getcurtimer.running = false
                     device.sendMessageAndWrap(0xA6, 0x01);
                     listView1.positionViewAtEnd()
+                    getcurtimer.running = true
                 }
             }
         }
@@ -332,8 +350,10 @@ Page {
                 visible: false
 
                 onClicked: {
+                    getcurtimer.running = false
                     device.sendMessageAndWrap(0xf1, butClick);
                     listView1.positionViewAtEnd()
+                    getcurtimer.running = true
                 }
             }
 
@@ -352,6 +372,7 @@ Page {
                 }
 
                 onClicked: {
+                    getcurtimer.running = false
                     coxaH = mainModel.coxaAngl >> 8 & 0x00ff
                     coxaL = mainModel.coxaAngl & 0x00ff
                     femurH = mainModel.femurAngl >> 8 & 0x00ff
@@ -362,6 +383,7 @@ Page {
                     device.sendMessageAndWrap(0xee, butClick + " " + coxaL + " " + coxaH + " " + femurL + " " + femurH + " " + tibaL + " " + tibaH);
 
                     listView1.positionViewAtEnd()
+                    getcurtimer.running = true
                 }
             }
 
@@ -439,10 +461,12 @@ Page {
                anchors.top: label1.bottom
                text: "1"
                onClicked: {
+                   getcurtimer.running = false
                    get_foot_param.visible = true
                    set_foot_param.visible = true
                    butClick = 0
                    device.sendMessageAndWrap(0xf1, butClick);
+                   getcurtimer.running = true
                }
            }
            RadioButton{
@@ -452,10 +476,12 @@ Page {
                anchors.leftMargin: 10
                text: "2"
                onClicked: {
+                   getcurtimer.running = false
                    get_foot_param.visible = true
                    set_foot_param.visible = true
                    butClick = 1
                    device.sendMessageAndWrap(0xf1, butClick);
+                   getcurtimer.running = true
                }
            }
            RadioButton{
@@ -465,10 +491,12 @@ Page {
                anchors.leftMargin: 10
                text: "3"
                onClicked: {
+                   getcurtimer.running = false
                    get_foot_param.visible = true
                    set_foot_param.visible = true
                    butClick = 2
                    device.sendMessageAndWrap(0xf1, butClick);
+                   getcurtimer.running = true
                }
            }
            RadioButton{
@@ -478,10 +506,12 @@ Page {
                anchors.rightMargin: 10
                text: "4"
                onClicked: {
+                   getcurtimer.running = false
                    get_foot_param.visible = true
                    set_foot_param.visible = true
                    butClick = 3
                    device.sendMessageAndWrap(0xf1, butClick);
+                   getcurtimer.running = true
                }
            }
            RadioButton{
@@ -491,10 +521,12 @@ Page {
                anchors.rightMargin: 10
                text: "5"
                onClicked: {
+                   getcurtimer.running = false
                    get_foot_param.visible = true
                    set_foot_param.visible = true
                    butClick = 4
                    device.sendMessageAndWrap(0xf1, butClick);
+                   getcurtimer.running = true
                }
            }
            RadioButton{
@@ -503,10 +535,12 @@ Page {
                anchors.top: label1.bottom
                text: "6"
                onClicked: {
+                   getcurtimer.running = false
                    get_foot_param.visible = true
                    set_foot_param.visible = true
                    butClick = 5
                    device.sendMessageAndWrap(0xf1, butClick);
+                   getcurtimer.running = true
                }
            }
 
@@ -526,6 +560,7 @@ Page {
                }
                text: "<<"
                onClicked: {
+                   getcurtimer.running = false
                    if(mainModel.coxaAngl >= 10)
                    {
                        mainModel.coxaAngl = mainModel.coxaAngl - 10
@@ -534,7 +569,7 @@ Page {
 
                        device.sendMessageAndWrap(0xe3, (butClick * 3 + 0) + " " + coxaL + " " + coxaH);
                    }
-
+                    getcurtimer.running = true
                }
            }
 
@@ -552,6 +587,7 @@ Page {
                }
                text: "<"
                onClicked: {
+                   getcurtimer.running = false
                    if(mainModel.coxaAngl >= 1)
                    {
                        mainModel.coxaAngl = mainModel.coxaAngl - 1
@@ -560,7 +596,7 @@ Page {
 
                        device.sendMessageAndWrap(0xe3, (butClick * 3 + 0) + " " + coxaL + " " + coxaH);
                    }
-
+                    getcurtimer.running = true
                }
            }
 
@@ -577,6 +613,7 @@ Page {
                }
                text: ">>"
                onClicked: {
+                   getcurtimer.running = false
                    if(mainModel.coxaAngl <= 260)
                    {
                        mainModel.coxaAngl = mainModel.coxaAngl + 10
@@ -585,7 +622,7 @@ Page {
 
                        device.sendMessageAndWrap(0xe3, (butClick * 3 + 0) + " " + coxaL + " " + coxaH);
                    }
-
+                    getcurtimer.running = true
                }
            }
 
@@ -603,6 +640,7 @@ Page {
                }
                text: ">"
                onClicked: {
+                   getcurtimer.running = false
                    if(mainModel.coxaAngl <= 269)
                    {
                        mainModel.coxaAngl = mainModel.coxaAngl + 1
@@ -611,7 +649,7 @@ Page {
 
                        device.sendMessageAndWrap(0xe3, (butClick * 3 + 0) + " " + coxaL + " " + coxaH);
                    }
-
+                    getcurtimer.running = true
                }
            }
 
@@ -644,10 +682,12 @@ Page {
                 onPressedChanged: {
                     if(!pressed)
                     {
+                        getcurtimer.running = false
                        coxaH = mainModel.coxaAngl >> 8 & 0x00ff
                        coxaL = mainModel.coxaAngl & 0x00ff
 
                        device.sendMessageAndWrap(0xe3, (butClick * 3 + 0) + " " + coxaL + " " + coxaH);
+                        getcurtimer.running = true
                     }
                }
 
@@ -672,6 +712,7 @@ Page {
                }
                text: "<<"
                onClicked: {
+                   getcurtimer.running = false
                    if(mainModel.femurAngl >= 10)
                    {
                        mainModel.femurAngl = mainModel.femurAngl - 10
@@ -680,7 +721,7 @@ Page {
 
                        device.sendMessageAndWrap(0xe3, (butClick * 3 + 1) + " " + femurL + " " + femurH);
                    }
-
+                    getcurtimer.running = true
                }
            }
 
@@ -698,6 +739,7 @@ Page {
                }
                text: "<"
                onClicked: {
+                   getcurtimer.running = false
                    if(mainModel.femurAngl >= 1)
                    {
                        mainModel.femurAngl = mainModel.femurAngl - 1
@@ -706,7 +748,7 @@ Page {
 
                        device.sendMessageAndWrap(0xe3, (butClick * 3 + 1) + " " + femurL + " " + femurH);
                    }
-
+                    getcurtimer.running = true
                }
            }
 
@@ -723,6 +765,7 @@ Page {
                }
                text: ">>"
                onClicked: {
+                   getcurtimer.running = false
                    if(mainModel.femurAngl <= 260)
                    {
                        mainModel.femurAngl = mainModel.femurAngl + 10
@@ -731,7 +774,7 @@ Page {
 
                        device.sendMessageAndWrap(0xe3, (butClick * 3 + 1) + " " + femurL + " " + femurH);
                    }
-
+                    getcurtimer.running = true
                }
            }
 
@@ -749,6 +792,7 @@ Page {
                }
                text: ">"
                onClicked: {
+                   getcurtimer.running = false
                    if(mainModel.femurAngl <= 269)
                    {
                        mainModel.femurAngl = mainModel.femurAngl + 1
@@ -757,7 +801,7 @@ Page {
 
                        device.sendMessageAndWrap(0xe3, (butClick * 3 + 1) + " " + femurL + " " + femurH);
                    }
-
+                    getcurtimer.running = true
                }
            }
 
@@ -789,10 +833,12 @@ Page {
                onPressedChanged: {
                    if(!pressed)
                    {
+                       getcurtimer.running = false
                        femurH = mainModel.femurAngl >> 8 & 0x00ff
                        femurL = mainModel.femurAngl & 0x00ff
 
                        device.sendMessageAndWrap(0xe3, (butClick * 3 + 1) + " " + femurL + " " + femurH);
+                       getcurtimer.running = true
                    }
               }
 
@@ -817,6 +863,7 @@ Page {
                }
                text: "<<"
                onClicked: {
+                   getcurtimer.running = false
                    if(mainModel.tibaAngl >= 10)
                    {
                        mainModel.tibaAngl = mainModel.tibaAngl - 10
@@ -825,7 +872,7 @@ Page {
 
                        device.sendMessageAndWrap(0xe3, (butClick * 3 + 2) + " " + tibaL + " " + tibaH);
                    }
-
+                    getcurtimer.running = true
                }
            }
 
@@ -843,6 +890,7 @@ Page {
                }
                text: "<"
                onClicked: {
+                   getcurtimer.running = false
                    if(mainModel.tibaAngl >= 1)
                    {
                        mainModel.tibaAngl = mainModel.tibaAngl - 1
@@ -851,7 +899,7 @@ Page {
 
                        device.sendMessageAndWrap(0xe3, (butClick * 3 + 2) + " " + tibaL + " " + tibaH);
                    }
-
+                    getcurtimer.running = true
                }
            }
 
@@ -868,6 +916,7 @@ Page {
                }
                text: ">>"
                onClicked: {
+                   getcurtimer.running = false
                    if(mainModel.tibaAngl <= 260)
                    {
                        mainModel.tibaAngl = mainModel.tibaAngl + 10
@@ -876,7 +925,7 @@ Page {
 
                        device.sendMessageAndWrap(0xe3, (butClick * 3 + 2) + " " + tibaL + " " + tibaH);
                    }
-
+                    getcurtimer.running = true
                }
            }
 
@@ -894,6 +943,7 @@ Page {
                }
                text: ">"
                onClicked: {
+                   getcurtimer.running = false
                    if(mainModel.tibaAngl <= 269)
                    {
                        mainModel.tibaAngl = mainModel.tibaAngl + 1
@@ -902,7 +952,7 @@ Page {
 
                        device.sendMessageAndWrap(0xe3, (butClick * 3 + 2) + " " + tibaL + " " + tibaH);
                    }
-
+                    getcurtimer.running = true
                }
            }
 
@@ -934,10 +984,12 @@ Page {
                onPressedChanged: {
                    if(!pressed)
                    {
+                       getcurtimer.running = false
                        tibaH = mainModel.tibaAngl >> 8 & 0x00ff
                        tibaL = mainModel.tibaAngl & 0x00ff
 
                        device.sendMessageAndWrap(0xe3, (butClick * 3 + 2) + " " + tibaL + " " + tibaH);
+                       getcurtimer.running = true
                    }
               }
 
@@ -959,8 +1011,10 @@ Page {
                }
 
                onClicked: {
+                   getcurtimer.running = false
                    device.sendMessageAndWrap(0xef, butClick);
                    listView1.positionViewAtEnd()
+                   getcurtimer.running = true
                }
            }
             }

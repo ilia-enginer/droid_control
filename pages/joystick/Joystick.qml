@@ -13,7 +13,7 @@ SwipeView {
     interactive: false
     currentIndex: 0
 
-    property bool flag_getcheck : false
+//    property bool flag_getcheck : false
     property bool verticalOnly : false
     property bool horizontalOnly : false
     property real offsetX : 0
@@ -49,14 +49,20 @@ SwipeView {
         Timer {
             id: joystick_timer
             interval: mainModel.timer1
-            running: true
+            running: false
             repeat: true
+
+            Component.onCompleted: {
+                device.get_check();
+                joystick_timer.running = true
+            }
+
             onTriggered: {
-                if(!flag_getcheck)
-                {
-                    flag_getcheck = true;
-                    device.get_check();
-                }
+//                if(!flag_getcheck)
+//                {
+//                    flag_getcheck = true;
+//                    device.get_check();
+//                }
                 device.onJoysticActivity(mode, azimuth, amplitude, level, ctrl);
             }
         }
