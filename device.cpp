@@ -1419,8 +1419,8 @@ Device::socketRead()
             emit logServis("<- Подпись ок","");
             break;
         case 0xF6:
-            emit logJoy("<- Выключение шара","");
-            emit logServis("<- Выключение шара","");
+            emit logJoy("<- выключение шара","");
+            emit logServis("<- выключение шара","");
             break;
         case 0xA0:
             u8 = Data[0];

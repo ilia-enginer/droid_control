@@ -565,7 +565,10 @@ SwipeView {
             delay: 3000     //3000 ms
 
             onActivated: {
+                joystick_timer.running = false
                 device.sendMessageAndWrap(0xF6, "");
+                device.sendMessageAndWrap(0xF6, "");
+
                 power_off.progress = 0.0
             }
 
