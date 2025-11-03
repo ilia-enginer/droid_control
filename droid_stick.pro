@@ -2,27 +2,35 @@ TEMPLATE = app
 TARGET = droid_stick
 
 #версия на главном экране
-VERSION = "1.1.3"
+VERSION = "1.1.4"
 DEFINES += INSERT_VERSION_CODE=\\\"$$VERSION\\\"
 
 QT += quick charts qml quickcontrols2 bluetooth core positioning widgets core-private network  #androidextras
 
 SOURCES += \
 #    btscaner.cpp \
-    appmanager.cpp \
-    appversion.cpp \
-    device.cpp \
-    deviceinfo.cpp \
+    source/communication/crc.cpp \
+    source/communication/rx/rx_commands.cpp \
+    source/communication/tx/packing.cpp \
+    source/communication/rx/unpacking.cpp \
+    source/communication/tx/tx_commands.cpp \
+    source/display_working/commun_display.cpp \
+    source/main/appmanager.cpp \
+    source/main/settings.cpp \
+    source/update/appversion.cpp \
+    source/device/device.cpp \
+    source/device/deviceinfo.cpp \
 #    devicemodel.cpp \
-    gallery.cpp \
-    mainmodel.cpp \
-    updateapp.cpp
+    source/main/main.cpp \
+    source/main/mainmodel.cpp \
+    source/update/updateapp.cpp \
+    source/update/updatehex.cpp
 
 RESOURCES += \
     Resurs.qrc \
-    UpdateDialogPage.qml \
-    gallery.qml \
-    DeviceScanerPage.qml \
+    pages/UpdateDialogPage.qml \
+    pages/DeviceScanerPage.qml \
+    pages/main.qml \
     pages/SenderPage.qml \
     pages/SettingsPage.qml \
     pages/SettingFootPage.qml \
@@ -57,7 +65,7 @@ RESOURCES += \
     images/qt-logo@2x.png \
     images/qt-logo@3x.png \
     images/qt-logo@4x.png \
-    ToolBar.qml \
+    pages/ToolBar.qml \
     +Material/ToolBar.qml \
     images/bluetooth-512.png \
 #    pages/joystick/Back.qml \
@@ -69,16 +77,16 @@ RESOURCES += \
 #    pages/joystick/SparseLight.qml \
     pages/joystick/finger.png \
     pages/joystick/background.png \
-    AboutPage.qml \
-    UpdateAppPage.qml \
-    Update_Hex.qml
+    pages/AboutPage.qml \
+    pages/UpdateAppPage.qml \
+    pages/Update_Hex.qml
 
 target.path = $$[QT_INSTALL_EXAMPLES]/quickcontrols2/gallery
 INSTALLS += target
 
 DISTFILES += \
-    UpdateAppPage.qml \
-    Update_Hex.qml \
+    pages/UpdateAppPage.qml \
+    pages/Update_Hex.qml \
     android/AndroidManifest.xml \
     android/src/org/qtproject/example/InstallAPK.java \
     android/build.gradle \
@@ -101,12 +109,20 @@ DISTFILES += \
 
 
 HEADERS += \
-    appmanager.h \
-    appversion.h \
-    device.h \
-    deviceinfo.h \
-    mainmodel.h \
-    updateapp.h
+    source/communication/crc.h \
+    source/communication/rx/rx_commands.h \
+    source/communication/tx/packing.h \
+    source/communication/rx/unpacking.h \
+    source/communication/tx/tx_commands.h \
+    source/display_working/commun_display.h \
+    source/main/appmanager.h \
+    source/main/settings.h \
+    source/update/appversion.h \
+    source/device/device.h \
+    source/device/deviceinfo.h \
+    source/main/mainmodel.h \
+    source/update/updateapp.h \
+    source/update/updatehex.h
 
 #RESOURCES += qml.qrc
 
