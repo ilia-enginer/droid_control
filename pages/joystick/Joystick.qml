@@ -1,0 +1,1184 @@
+
+import QtQuick 2.7
+import QtQuick.Controls 2.0
+import QtCharts 2.15
+import QtQml
+import QtQuick.Controls.Material
+
+
+
+SwipeView {
+    id: swipeView
+    interactive: false
+    currentIndex: 0
+
+    property bool verticalOnly : false
+    property bool horizontalOnly : false
+    property real offsetX : 0
+    property real offsetY : 0
+    property real azimuth : 0
+    property real amplitude : 0
+    property int mode : 0
+    property real level : settParam.heightAmplitude/2
+    property bool ctrl : false
+
+    signal joystick_moved(double x, double y);
+
+    property int valueYMin: -1
+    property int valueYMax: 1
+
+    property int count_volt: 0
+    property int count_cur: 0
+    property int count_tilt_angle: 0
+    property int count_tilt_direction: 0
+    property int count_boost: 0
+    property int count_angular_velocity: 0
+    property int count_angleX: 0
+    property int count_angleY: 0
+    property int count_angleZ: 0
+    property int temp: 0
+
+
+    //страница управления
+    Item {
+        id: page_joystick
+
+        Timer {
+            id: joystick_timer
+            interval: settParam.timer1
+            running: false
+            repeat: true
+
+            Component.onCompleted: {
+                tx_commands.getCheck();
+                joystick_timer.running = true
+            }
+
+            onTriggered: {
+                tx_commands.joysticActivity(mode, azimuth, amplitude, level, ctrl);
+            }
+        }
+
+
+        //окно лога
+        Rectangle {
+            id: senderBackground_2
+            anchors.top: parent.top
+            height: parent.height * 0.25
+            anchors.left: parent.left
+            anchors.right: leveltext.right
+            anchors.leftMargin: 10
+            color: "transparent"
+        }
+
+        ScrollView {
+            id: scrolViewLogArea_2
+            anchors.fill: senderBackground_2
+            ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            ScrollBar.vertical.interactive: true
+
+            ListView {
+                   id: listView1
+                   anchors.fill: scrolViewLogArea_2
+                   snapMode:ListView.SnapToItem
+                   width: scrolViewLogArea_2.width
+                   clip: true
+
+                   Connections {
+                       target: commun_display
+                      function onLogJoy(type, msg) {
+                           logListModel_2.append({msg: type + msg})
+                           listView1.positionViewAtEnd()
+                       }
+
+                   }
+
+                   delegate: Column {
+                       Text {
+                           text: msg
+                           font.family: "transparent"
+                           font.pixelSize: 14
+                           color: "orange"
+                       }
+                    }
+
+                   // Сама модель, в которой будут содержаться все элементы
+                   model: ListModel {
+                       id: logListModel_2 // задаём ей id для обращения
+                   }
+               }
+        }
+
+
+        //напруга
+        ProgressBar{
+            id: voltage
+            height: 20
+            anchors.top: senderBackground_2.bottom
+            anchors.topMargin: 10
+            anchors.left: parent.left
+            anchors.right: parent.right
+            from: {settParam.Vmin}
+            to: {settParam.Vmax}
+
+            background: Rectangle {
+                color: "#e6e6e6"
+                radius: 3
+            }
+
+            contentItem: Item {
+                Rectangle {
+                    width: voltage.visualPosition * parent.width
+                    height: parent.height
+                    radius: 2
+                    color: "#17a81a"
+
+                    gradient: Gradient {
+                        GradientStop {
+                            position: 0.0
+                            SequentialAnimation on color {
+                                loops: Animation.Infinite
+                                ColorAnimation { from: "#11ed61"; to: "#0ba142"; duration: 5000 }
+                                ColorAnimation { from: "#0ba142"; to: "#11ed61"; duration: 5000 }
+                            }
+                        }
+                        GradientStop {
+                            position: 1.0
+                            SequentialAnimation on color {
+                                loops: Animation.Infinite
+                                ColorAnimation { from: "#14aaff"; to: "#437284"; duration: 5000 }
+                                ColorAnimation { from: "#437284"; to: "#14aaff"; duration: 5000 }
+                            }
+                        }
+                    }
+                }
+            }
+            Connections {
+                target: commun_display
+                function onVrealChanged(V) {
+                    voltage.value = V
+                }
+            }
+        }
+
+        //напруга
+        Label {
+            id: voltageLabel
+            width: parent.width
+            height: voltage.height
+            wrapMode: Label.Wrap
+            horizontalAlignment: Qt.AlignHCenter
+            anchors.verticalCenter: voltage.verticalCenter
+            text: commun_display.Volt.toFixed(1) + "V"
+            color: "black"
+        }
+
+        //ток
+        ProgressBar{
+            id: current
+            height: 20
+            anchors.top: voltage.bottom
+            anchors.topMargin: 10
+            anchors.left: parent.left
+            anchors.right: parent.right
+            from: 0
+            to: 5
+
+            background: Rectangle {
+                color: "#e6e6e6"
+                radius: 3
+            }
+
+            contentItem: Item {
+                Rectangle {
+                    width: current.visualPosition * parent.width
+                    height: parent.height
+                    radius: 2
+                    color: "#17a81a"
+
+                    gradient: Gradient {
+                        GradientStop {
+                            position: 0.0
+                            SequentialAnimation on color {
+                                loops: Animation.Infinite
+                                ColorAnimation { from: "#d6e014"; to: "#b39812"; duration: 5000 }
+                                ColorAnimation { from: "#b39812"; to: "#d6e014"; duration: 5000 }
+                            }
+                        }
+                        GradientStop {
+                            position: 1.0
+                            SequentialAnimation on color {
+                                loops: Animation.Infinite
+                                ColorAnimation { from: "#ed4811"; to: "#a1330e"; duration: 5000 }
+                                ColorAnimation { from: "#a1330e"; to: "#ed4811"; duration: 5000 }
+                            }
+                        }
+                    }
+                }
+            }
+            Connections {
+                target: commun_display
+               function onCurRealChanged(Cur) {
+                    current.value = Cur
+                }
+            }
+        }
+
+        //ток
+        Label {
+            id: currentLabel
+            width: parent.width
+            height: current.height
+            wrapMode: Label.Wrap
+            horizontalAlignment: Qt.AlignHCenter
+            anchors.verticalCenter: current.verticalCenter
+            text: commun_display.Cur.toFixed(2) + "А"
+            color: "black"
+        }
+
+        //имя приемника
+        Label {
+            id: senderPageLabel
+            width: parent.width
+            wrapMode: Label.Wrap
+            horizontalAlignment: Qt.AlignHCenter
+            anchors.top: current.bottom
+            anchors.topMargin: 10
+            text: commun_display.curDeviceName_
+        }
+
+        Image {
+            id: joystick
+            property real angle : 0
+            property real distance : 0
+
+            source: "background.png"
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: senderPageLabel.bottom
+            anchors.topMargin: 10
+
+            ParallelAnimation {
+                id: returnAnimation
+                NumberAnimation { target: thumb.anchors; property: "horizontalCenterOffset";
+                    to: 0; duration: 200; easing.type: Easing.OutSine }
+                NumberAnimation { target: thumb.anchors; property: "verticalCenterOffset";
+                    to: 0; duration: 200; easing.type: Easing.OutSine }
+            }
+
+            Image {
+                id: thumb
+                source: "finger.png"
+                anchors.centerIn: parent
+            }
+        }
+
+        MultiPointTouchArea{
+            id: mouse_touch
+            property real mouseX2 : verticalOnly ? width * 0.5 : point1.x //mouseX
+            property real mouseY2 : horizontalOnly ? height * 0.5 : point1.y //mouseY
+            property real fingerAngle : Math.atan2(mouseX2, mouseY2)
+            property int mcx : mouseX2 - width * 0.5
+            property int mcy : mouseY2 - height * 0.5
+            property bool fingerInBounds : fingerDistance2 < distanceBound2
+            property real fingerDistance2 : mcx * mcx + mcy * mcy
+            property real distanceBound : width * 0.5 - thumb.width * 0.5
+            property real distanceBound2 : distanceBound * distanceBound
+            property double signal_x : (mouseX2 - joystick.width/2) / distanceBound
+            property double signal_y : -(mouseY2 - joystick.height/2) / distanceBound
+
+            anchors.fill: joystick
+
+            minimumTouchPoints: 1
+            maximumTouchPoints: 5
+            touchPoints: [
+
+                TouchPoint {id: point1 },
+                TouchPoint {id: point2 },
+                TouchPoint {id: point3 },
+                TouchPoint {id: point4 },
+                TouchPoint {id: point5 }]
+
+            onPressed: {
+                returnAnimation.stop();
+            }
+
+            onReleased: {
+                    returnAnimation.restart()
+                    joystick_moved(0, 0);
+                    offsetX = 0
+                    offsetY = 0
+                    amplitude = 0
+                    azimuth = 0
+                    offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
+            }
+            onUpdated: {
+                if (fingerInBounds) {
+                    thumb.anchors.horizontalCenterOffset = mcx
+                    thumb.anchors.verticalCenterOffset = mcy
+                } else {
+                    var angle = Math.atan2(mcy, mcx)
+                    thumb.anchors.horizontalCenterOffset = Math.cos(angle) * distanceBound
+                    thumb.anchors.verticalCenterOffset = Math.sin(angle) * distanceBound
+                }
+
+                // Fire the signal to indicate the joystick has moved
+                angle = Math.atan2(signal_y, signal_x)
+
+                var offX = 0
+                var offY = 0
+
+                if(fingerInBounds) {
+                    offX = verticalOnly ? 0 : Math.cos(angle) * Math.sqrt(fingerDistance2) / distanceBound
+                    offY = horizontalOnly ? 0 : Math.sin(angle) * Math.sqrt(fingerDistance2) / distanceBound
+                    amplitude  = Math.sqrt(fingerDistance2) / distanceBound
+                    azimuth = angle
+                } else {
+                    offX = verticalOnly ? 0 : Math.cos(angle) * 1
+                    offY = horizontalOnly ? 0 : Math.sin(angle) * 1
+
+                    amplitude  = 1
+                    azimuth = angle
+                }
+
+                joystick_moved(offX, offY)
+                offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
+                offsetX = offX
+                offsetY = offY
+            }
+
+        }
+
+        Image {
+            id: joystick_buttons
+
+            property real angle : 0
+            property real distance : 0
+
+            width: 160
+            height: 160
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: senderPageLabel.bottom
+            anchors.topMargin: 10
+            visible: false
+
+            Button {
+                text: "UP"
+                highlighted: true
+                anchors.top: parent.top
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                onPressed: {
+                    amplitude = 0.5
+                    azimuth = 1.57
+                    tx_commands.joysticActivity(mode, 1.57, 1, level);
+                }
+
+                onReleased: {
+                    amplitude = 0
+                    azimuth = 0
+                }
+            }
+            Button {
+                text: "DOWN"
+                highlighted: true
+                anchors.bottom: parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                onPressed: {
+                    amplitude = 0.5
+                    azimuth = -1.57
+                    tx_commands.joysticActivity(mode, -1.57, 1, level);
+                }
+
+                onReleased: {
+                    amplitude = 0
+                    azimuth = 0
+                }
+            }
+            Button {
+                text: "LEFT"
+                highlighted: true
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+
+                onPressed: {
+                    amplitude = 0.5
+                    azimuth = -3.14
+                    tx_commands.joysticActivity(mode, -3.14, 1, level);
+                }
+
+                onReleased: {
+                    amplitude = 0
+                    azimuth = 0
+                }
+            }
+            Button {
+                text: "RIGHT"
+                highlighted: true
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+
+                onPressed: {
+                    amplitude = 0.5
+                    azimuth = 0
+                    tx_commands.joysticActivity(mode, 0, 1, level);
+                }
+
+                onReleased: {
+                    amplitude = 0
+                    azimuth = 0
+                }
+            }
+
+        }
+
+        //высота
+        Slider {
+            id: levelSlider
+            from: settParam.heightAmplitudemin
+            to: settParam.heightAmplitude
+            orientation: Qt.Vertical
+            value: (((settParam.heightAmplitude - settParam.heightAmplitudemin) / 2) + settParam.heightAmplitudemin)
+            anchors.left: joystick.right
+            anchors.leftMargin: 40
+            anchors.verticalCenter: joystick.verticalCenter
+            onMoved: {level = value}
+            Component.onCompleted: {
+                            level = value
+                        }
+        }
+
+        //высота
+        Label {
+            id: leveltext
+            horizontalAlignment: Qt.AlignHCenter
+            anchors.top: joystick.bottom
+            anchors.left: joystick.right
+            anchors.leftMargin: 30
+            anchors.topMargin: 20
+            text: "Высота"
+        }
+
+
+        //режим работы
+        ButtonGroup {
+            id: radioGroup
+            onClicked: mode = Number(RadioButton.text)
+            Component.onCompleted: {
+                mode = Number("1")
+            }
+        }
+        Column {
+            spacing: 3
+            anchors.left: parent.left
+            anchors.leftMargin: 20
+          //  anchors.top: joystick.top
+         //   anchors.topMargin: 20
+            anchors.verticalCenter: joystick.verticalCenter
+
+             RadioButton {
+                 checked: true
+                 text: qsTr("1")
+                 ButtonGroup.group: radioGroup
+             }
+
+             RadioButton {
+                 text: qsTr("2")
+                 ButtonGroup.group: radioGroup
+             }
+
+             RadioButton {
+                 text: qsTr("3")
+                 ButtonGroup.group: radioGroup
+             }
+
+             RadioButton {
+                 text: qsTr("0")
+                 ButtonGroup.group: radioGroup
+             }
+
+             Label {
+                text: qsTr("режим\nработы")
+                }
+
+        }
+
+        //углы джойстика
+        Label {
+            id: offsetInfo
+            wrapMode: Label.Wrap
+            horizontalAlignment: Qt.AlignHCenter
+            anchors.top: joystick.bottom
+            anchors.topMargin: 10
+            anchors.horizontalCenter: joystick.horizontalCenter
+            text: "0/0"
+            Component.onCompleted: {
+                if(mainModel.adiminTapCount)
+                {
+                    offsetInfo.visible = true
+                }
+                else
+                {
+                    offsetInfo.visible = false
+                }
+
+           }
+        }
+
+        Switch {
+            id: joystick_mode_swith
+            text: "Джойстик"
+            checked: true
+            anchors.top: offsetInfo.bottom
+            anchors.topMargin: 20
+            anchors.horizontalCenter: joystick.horizontalCenter
+            onCheckedChanged:  {
+               joystick.visible = checked
+               joystick_buttons.visible = !checked
+
+                if(mainModel.adiminTapCount)
+                {
+                    offsetInfo.visible = checked
+                }
+            }
+        }
+
+        //стабилизация
+        CheckBox {
+          id: ctrl_check
+          anchors.top: joystick_mode_swith.bottom
+          anchors.topMargin: 15
+          anchors.left: parent.left
+          anchors.leftMargin: 15
+          checked: settParam.ctrl_
+          text: qsTr("Вкл. стабилизацию")
+
+          onClicked: {
+            settParam.ctrl_ = ctrl_check.checked
+            ctrl = ctrl_check.checked
+          }
+        }
+
+        //выключение шара
+        DelayButton{
+            id: power_off
+            anchors.top: joystick_mode_swith.bottom
+            anchors.topMargin: 15
+            anchors.right: parent.right
+            anchors.leftMargin: parent.width * 0.015
+            width: parent.width * 0.3
+            delay: 3000     //3000 ms
+
+            onActivated: {
+                joystick_timer.running = false
+                tx_commands.shutdown();
+                tx_commands.shutdown();
+
+                power_off.progress = 0.0
+            }
+
+        }
+        Rectangle{
+            property var normalColor: "#1cc976"
+            property var pressedColor: "#FFA07A"
+            anchors.top: power_off.top
+            anchors.right: power_off.right
+            anchors.left: power_off.left
+            height: power_off.height * 0.8
+            Text {
+                id: name
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("Выкл. шар")
+            }
+            color: power_off.pressed ? pressedColor : normalColor
+        }
+
+
+        //пролистывание
+        Rectangle
+        {
+            id:plus
+            width:parent.width * 0.3
+            height:parent.height * 0.035
+            anchors.bottom:parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            color:"#bdde1b"
+            opacity: 0.3
+            Label {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pointSize: parent.height * 0.7
+                text: "->"
+            }
+            MouseArea
+            {
+                anchors.fill:parent
+                onClicked:{
+                    if(swipeView.currentIndex<1)
+                        swipeView.currentIndex++
+                }
+            }
+        }
+    }
+
+    //страница графиков
+     Item {
+        id: page_graph
+
+        Flickable {
+            id: flick
+            anchors.top: parent.top
+            width: parent.width
+            height: parent.height
+            interactive: true
+            clip: true
+            flickableDirection: Flickable.VerticalFlick
+            contentHeight: parent.height * 2
+
+             ChartView {
+                 id:chartView
+               //  Title: QSTR ("1 side temperature trend")
+                 titleFont.pixelSize: 15
+                 titleFont.bold: true
+                 //titleColor: Theme.darker(1.2)
+                 width: parent.width
+                 anchors.left: parent.left
+                 height:parent.height * 0.35
+                 antialiasing: true
+
+                 //X-axis
+                 ValuesAxis {
+                     id: valueAxisX
+                     min: 0
+                     max: 1
+             //        tickCount: 10  //The number of scales on the coordinate axis. So interval = 60/30 = 2
+              //       labelFormat: "%.0f"//0 - there are several decimals after controlling the decimal point
+                 }
+
+                 //Y-axis
+                 ValuesAxis {
+                     id: valueAxisY
+                     min: -1
+                     max: 1
+              //       tickCount: 10  //Number of scale on the coordinate axis
+               //      labelFormat: "%.1f"//1 - There are several decimals after controlling the decimal point
+                 }
+
+                 //LINESERIES is a line, splineseries is a curve. Children are xypoint
+                 SplineSeries {
+                     id:line1
+                     name: "1"  //Name of the line
+                     axisX: valueAxisX  //Specify X-axis
+                     axisY: valueAxisY  //Specify Y-axis
+                     color: Qt.darker("#BB4444",1.2) //Line color, the default color of each line
+                     width: 2//The width of the line, but after modifying the line wide, you need to reset the color, otherwise the wire modified by Width is black.
+                 }
+                 SplineSeries {
+                     id:line2
+                     name: "2"
+                     axisX: valueAxisX
+                     axisY: valueAxisY
+                     color: Qt.darker("#B38A4D",1.2)
+                     width: 2
+                 }
+                 SplineSeries {
+                     id:line3
+                     name: "3"
+                     //STYLE: Qt.solidline // style
+                     axisX: valueAxisX
+                     axisY: valueAxisY
+                     color: Qt.darker("#61B34D",1.2)
+                     width: 2
+                 }
+                 SplineSeries {
+                     id:line4
+                     name: "4"
+                     //STYLE: Qt.solidline // style
+                     axisX: valueAxisX
+                     axisY: valueAxisY
+                     color: Qt.darker("#4D8AB3",1.2)
+                     width: 2
+                 }
+                 SplineSeries {
+                     id:line5
+                     name: "5"
+                     //STYLE: Qt.solidline // style
+                     axisX: valueAxisX
+                     axisY: valueAxisY
+                     color: Qt.darker("#9E4DB3",1.2)
+                     width: 2
+                 }
+                 SplineSeries {
+                     id:line6
+                     name: "6"
+                     //STYLE: Qt.solidline // style
+                     axisX: valueAxisX
+                     axisY: valueAxisY
+                     color: Qt.darker("#AA5566",1.2)
+                     width: 2
+                 }
+                 SplineSeries {
+                     id:line7
+                     name: "7"
+                     //STYLE: Qt.solidline // style
+                     axisX: valueAxisX
+                     axisY: valueAxisY
+                     color: Qt.darker("#808080",1.2)
+                     width: 2
+                 }
+                 SplineSeries {
+                     id:line8
+                     name: "8"
+                     //STYLE: Qt.solidline // style
+                     axisX: valueAxisX
+                     axisY: valueAxisY
+                     color: Qt.darker("#F79709",1.2)
+                     width: 2
+                 }
+                 SplineSeries {
+                     id:line9
+                     name: "9"
+                     //STYLE: Qt.solidline // style
+                     axisX: valueAxisX
+                     axisY: valueAxisY
+                     color: Qt.darker("#eb0cc5",1.2)
+                     width: 2
+                 }
+
+
+                 //перетаскивание графика
+                 PinchArea{
+                    id: pa
+                    anchors.fill: parent
+                    property real currentPinchScaleX: 1
+                    property real currentPinchScaleY: 1
+                    property real pinchStartX : 0
+                    property real pinchStartY : 0
+
+                    onPinchStarted: {
+                        // Pinching has started. Record the initial center of the pinch
+                        // so relative motions can be reversed in the pinchUpdated signal
+                        // handler
+                        pinchStartX = pinch.center.x;
+                        pinchStartY = pinch.center.y;
+                    }
+
+                    onPinchUpdated: {
+                        chartView.zoomReset();
+
+                        // Reverse pinch center motion direction
+                        var center_x = pinchStartX + (pinchStartX - pinch.center.x);
+                        var center_y = pinchStartY + (pinchStartY - pinch.center.y);
+
+                        // Compound pinch.scale with prior pinch scale level and apply
+                        // scale in the absolute direction of the pinch gesture
+                        var scaleX = currentPinchScaleX * (1 + (pinch.scale - 1) * Math.abs(Math.cos(pinch.angle * Math.PI / 180)));
+                        var scaleY = currentPinchScaleY * (1 + (pinch.scale - 1) * Math.abs(Math.sin(pinch.angle * Math.PI / 180)));
+
+                        // Apply scale to zoom levels according to pinch angle
+                        var width_zoom = height / scaleX;
+                        var height_zoom = width / scaleY;
+
+                        var r = Qt.rect(center_x - width_zoom / 2, center_y - height_zoom / 2, width_zoom, height_zoom);
+                        chartView.zoomIn(r);
+                    }
+
+                    onPinchFinished: {
+                        // Pinch finished. Record compounded pinch scale.
+                        currentPinchScaleX = currentPinchScaleX * (1 + (pinch.scale - 1) * Math.abs(Math.cos(pinch.angle * Math.PI / 180)));
+                        currentPinchScaleY = currentPinchScaleY * (1 + (pinch.scale - 1) * Math.abs(Math.sin(pinch.angle * Math.PI / 180)));
+                    }
+
+                    MouseArea{
+                        anchors.fill: parent
+                        drag.target: dragTarget
+                        drag.axis: Drag.XAndYAxis
+
+                        onDoubleClicked: {
+                            chartView.zoomReset();
+                            parent.currentPinchScaleX = 1;
+                            parent.currentPinchScaleY = 1;
+                        }
+                    }
+
+                    Item {
+                        // A virtual item to receive drag signals from the MouseArea.
+                        // When x or y properties are changed by the MouseArea's
+                        // drag signals, the ChartView is scrolled accordingly.
+                        id: dragTarget
+
+                        property real oldX : x
+                        property real oldY : y
+
+                        onXChanged: {
+                            chartView.scrollLeft( x - oldX );
+                            oldX = x;
+                        }
+                        onYChanged: {
+                            chartView.scrollUp( y - oldY );
+                            oldY = y;
+                        }
+                     }
+                 }
+
+                 Connections {
+                     target: commun_display
+                     function  onChart_data(voltt, curr, tilt_anglee, tilt_directionn, boostt, angular_velocityy, angleXX, angleYY, angleZZ) {
+                        if(volt.checked)
+                        {
+                            //масштабирование по у
+                            if(voltt < valueYMin){
+                              valueYMin = voltt;
+                                //опустить ниже на 20 часть масштаба
+                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
+                            }
+                            if(voltt > valueYMax){
+                              valueYMax = voltt;
+                                //поднять выше на 20 часть масштаба
+                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
+                            }
+                            line1.append(count_volt*2/10, voltt);
+                            count_volt++;
+
+                            if((count_volt*2/10) > valueAxisX.max){
+                                valueAxisX.max += 0.1;
+                            }
+                        }
+
+                        if(cur.checked)
+                        {
+                            //масштабирование по у
+                            if(curr < valueYMin){
+                              valueYMin = curr;
+                                //опустить ниже на 20 часть масштаба
+                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
+                            }
+                            if(curr > valueYMax){
+                              valueYMax = curr;
+                                //поднять выше на 20 часть масштаба
+                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
+                            }
+                            line2.append(count_cur*2/10, curr);
+                            count_cur++;
+
+                            if((count_cur*2/10) > valueAxisX.max){
+                                valueAxisX.max += 0.1;
+                            }
+                        }
+
+                        if(tilt_angle.checked)
+                        {
+                            //масштабирование по у
+                            if(tilt_anglee < valueYMin){
+                              valueYMin = tilt_anglee;
+                                //опустить ниже на 20 часть масштаба
+                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
+                            }
+                            if(tilt_anglee > valueYMax){
+                              valueYMax = tilt_anglee;
+                                //поднять выше на 20 часть масштаба
+                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
+                            }
+                            line3.append(count_tilt_angle*2/10, tilt_anglee);
+                            count_tilt_angle++;
+
+                            if((count_tilt_angle*2/10) > valueAxisX.max){
+                                valueAxisX.max += 0.1;
+                            }
+                        }
+
+                        if(tilt_direction.checked)
+                        {
+                            //масштабирование по у
+                            if(tilt_directionn < valueYMin){
+                              valueYMin = tilt_directionn;
+                                //опустить ниже на 20 часть масштаба
+                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
+                            }
+                            if(tilt_directionn > valueYMax){
+                              valueYMax = tilt_directionn;
+                                //поднять выше на 20 часть масштаба
+                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
+                            }
+                            line4.append(count_tilt_direction*2/10, tilt_directionn);
+                            count_tilt_direction++;
+
+                            if((count_tilt_direction*2/10) > valueAxisX.max){
+                                valueAxisX.max += 0.1;
+                            }
+                        }
+
+                        if(boost.checked)
+                        {
+                            //масштабирование по у
+                            if(boostt < valueYMin){
+                              valueYMin = boostt;
+                                //опустить ниже на 20 часть масштаба
+                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
+                            }
+                            if(boostt > valueYMax){
+                              valueYMax = boostt;
+                                //поднять выше на 20 часть масштаба
+                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
+                            }
+                            line5.append(count_boost*2/10, boostt);
+                            count_boost++;
+
+                            if((count_boost*2/10) > valueAxisX.max){
+                                valueAxisX.max += 0.1;
+                            }
+                        }
+
+                        if(angular_velocity.checked)
+                        {
+                            //масштабирование по у
+                            if(angular_velocityy < valueYMin){
+                              valueYMin = angular_velocityy;
+                                //опустить ниже на 20 часть масштаба
+                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
+                            }
+                            if(angular_velocityy > valueYMax){
+                              valueYMax = angular_velocityy;
+                                //поднять выше на 20 часть масштаба
+                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
+                            }
+                            line6.append(count_angular_velocity*2/10, angular_velocityy);
+                            count_angular_velocity++;
+
+                            if((count_angular_velocity*2/10) > valueAxisX.max){
+                                valueAxisX.max += 0.1;
+                            }
+                        }
+
+                        if(angleX.checked)
+                        {
+                            //масштабирование по у
+                            if(angleXX < valueYMin){
+                              valueYMin = angleXX;
+                                //опустить ниже на 20 часть масштаба
+                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
+                            }
+                            if(angleXX > valueYMax){
+                              valueYMax = angleXX;
+                                //поднять выше на 20 часть масштаба
+                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
+                            }
+                            line7.append(count_angleX*2/10, angleXX);
+                            count_angleX++;
+
+                            if((count_angleX*2/10) > valueAxisX.max){
+                                valueAxisX.max += 0.1;
+                            }
+                        }
+
+                        if(angleY.checked)
+                        {
+                            //масштабирование по у
+                            if(angleYY < valueYMin){
+                              valueYMin = angleYY;
+                                //опустить ниже на 20 часть масштаба
+                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
+                            }
+                            if(angleYY > valueYMax){
+                              valueYMax = angleYY;
+                                //поднять выше на 20 часть масштаба
+                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
+                            }
+                            line8.append(count_angleY*2/10, angleYY);
+                            count_angleY++;
+
+                            if((count_angleY*2/10) > valueAxisX.max){
+                                valueAxisX.max += 0.1;
+                            }
+                        }
+
+                        if(angleZ.checked)
+                        {
+                            //масштабирование по у
+                            if(angleZZ < valueYMin){
+                              valueYMin = angleZZ;
+                                //опустить ниже на 20 часть масштаба
+                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
+                            }
+                            if(angleZZ > valueYMax){
+                              valueYMax = angleZZ;
+                                //поднять выше на 20 часть масштаба
+                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
+                            }
+                            line9.append(count_angleZ*2/10, angleZZ);
+                            count_angleZ++;
+
+                            if((count_angleZ*2/10) > valueAxisX.max){
+                                valueAxisX.max += 0.1;
+                            }
+                        }
+                     }
+                 }
+
+             }
+
+             Column {
+                 id: column_check
+                 spacing: 5
+                 anchors.top: chartView.bottom
+             //    anchors.bottom: flick.bottom
+                 anchors.left: parent.left
+                 anchors.leftMargin: 10
+
+                 //очистка графика
+                 Button {
+                     id: clearButton_1
+                     text: "Очистить график"
+
+                     onClicked: {
+                         line1.clear();
+                         line2.clear();
+                         line3.clear();
+                         line4.clear();
+                         line5.clear();
+                         line6.clear();
+                         line7.clear();
+                         line8.clear();
+                         line9.clear();
+
+                         count_volt = 0;
+                         count_cur = 0;
+                         count_tilt_angle = 0;
+                         count_tilt_direction = 0;
+                         count_boost = 0;
+                         count_angular_velocity = 0;
+                         count_angleX = 0;
+                         count_angleY = 0;
+                         count_angleZ = 0;
+
+                         valueAxisX.min = 0;
+                         valueAxisX.max = 1;
+
+                         valueAxisY.min = -1;
+                         valueAxisY.max = 1;
+
+                         valueYMin = -1;
+                         valueYMax = 1;
+
+                     }
+                 }
+
+                 CheckBox {
+                   id: volt
+                   checked: false
+                   text: qsTr("Напряжение (В)")
+                   background: Rectangle {
+                           opacity: 0.7
+                           color: "#BB4444"
+                       }
+                 }
+                 CheckBox {
+                   id: cur
+                   checked: false
+                   text: qsTr("Ток (А)")
+                   background: Rectangle {
+                           opacity: 0.7
+                           color: "#B38A4D"
+                       }
+                 }
+                 CheckBox {
+                   id: tilt_angle
+                   checked: false
+                   text: qsTr("Угол наклона (° град.)")
+                   background: Rectangle {
+                           opacity: 0.7
+                           color: "#61B34D"
+                       }
+                 }
+                 CheckBox {
+                   id: tilt_direction
+                   checked: false
+                   text: qsTr("Направление наклона (° град.)")
+                   background: Rectangle {
+                           opacity: 0.7
+                           color: "#4D8AB3"
+                       }
+                 }
+                 CheckBox {
+                   id: boost
+                   checked: false
+                   text: qsTr("Ускорение (мс²)")
+                   background: Rectangle {
+                           opacity: 0.7
+                           color: "#9E4DB3"
+                       }
+                 }
+                 CheckBox {
+                   id: angular_velocity
+                   checked: false
+                   text: qsTr("Угловая скорость (об./мин.)")
+                   background: Rectangle {
+                           opacity: 0.7
+                           color: "#AA5566"
+                       }
+                 }
+                 CheckBox {
+                   id: angleX
+                   checked: false
+                   text: qsTr("Угол X (° град.)")
+                   background: Rectangle {
+                           opacity: 0.7
+                           color: "#808080"
+                       }
+                 }
+                 CheckBox {
+                   id: angleY
+                   checked: false
+                   text: qsTr("Угол Y (° град.)")
+                   background: Rectangle {
+                           opacity: 0.7
+                           color: "#F79709"
+                       }
+                 }
+                 CheckBox {
+                   id: angleZ
+                   checked: false
+                   text: qsTr("Угол Z (° град.)")
+                   background: Rectangle {
+                           opacity: 0.7
+                           color: "#eb0cc5"
+                       }
+                 }
+            }
+        }
+
+
+        //пролистывание
+        Rectangle
+        {
+            id: minus
+            width:parent.width * 0.3
+            height:parent.height * 0.035
+            anchors.bottom:parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            color:"#bdde1b"
+            opacity: 0.3
+            Label {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pointSize: parent.height * 0.7
+                text: "<-"
+            }
+            MouseArea
+            {
+                anchors.fill:parent
+                onClicked:{
+                    if(swipeView.currentIndex>0)
+                        swipeView.currentIndex--
+                }
+            }
+        }
+
+    }
+
+}
+
+
+
