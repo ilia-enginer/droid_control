@@ -436,11 +436,15 @@ Rx_commands::voltage_read(QByteArray Volt)
     val.data[1] = Volt[1];
     val.data[2] = Volt[2];
     val.data[3] = Volt[3];
-
-    if(_setVreal)
+    if(val.f == val.f)
     {
-        _commun_display->logServis("<- напряжение ",  QString(QString::number(val.f)));
-        _setVreal = false;
+        _commun_display->vrealChang(val.f);
+
+        if(_setVreal)
+        {
+            _commun_display->logServis("<- напряжение ",  QString(QString::number(val.f)));
+            _setVreal = false;
+    }
     }
 }
 
@@ -455,6 +459,7 @@ Rx_commands::current_read(QByteArray Cur)
     val.data[3] = Cur[3];
     if(val.f == val.f)
     {
+        _commun_display->curRealChang(val.f);
         if(_setCurReal)
         {
             _commun_display->logServis("<- ток ", QString(QString::number(val.f)));
@@ -848,6 +853,10 @@ Rx_commands::writeProgram(QByteArray Num)
     f_value val;
     //номер успешно полученного пакета основной прошивки
     val.data[1] = Num[0]; val.data[0] = Num[1];
+
+    _commun_display->logServis("<- прием пакета №" + val.int32, "");
+    _commun_display->logJoy("<- прием пакета №" + val.int32, "");
+
     _updatehex->setPageTx(val.int32);
 }
 
@@ -858,6 +867,10 @@ Rx_commands::writeBootloader(QByteArray Num)
     f_value val;
     //номер успешно полученного пакета загрузчика
     val.data[1] = Num[0]; val.data[0] = Num[1];
+
+    _commun_display->logServis("<- прием пакета №" + val.int32, "");
+    _commun_display->logJoy("<- прием пакета №" + val.int32, "");
+
     _updatehex->setPageTx(val.int32);
 }
 

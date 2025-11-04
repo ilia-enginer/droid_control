@@ -8,7 +8,7 @@ ScrollablePage {
     id: page
 
     Column {
-        spacing: 10
+        spacing: 3
         width: parent.width
         height: parent.height
 

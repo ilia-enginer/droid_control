@@ -683,9 +683,16 @@ int
 Tx_commands::writeProgram(QByteArray data)
 {
     int res = -1;
+    QString s;
+    f_value val;
+    val.data[0] = data[0];
+    val.data[1] = data[1];
+    qint32 num = val.int32;
+    s = "-> передача пакета №" + num;
+
     data.prepend(0xF3);
-
-
+    //отправка команды, вывод лога
+    res = Sending(data, s);
     return res;
 }
 
@@ -694,9 +701,16 @@ int
 Tx_commands::writeBootloader(QByteArray data)
 {
     int res = -1;
-    data.prepend(0xF4);
-    _packing->sendMessage(data, true);
+    QString s;
+    f_value val;
+    val.data[0] = data[0];
+    val.data[1] = data[1];
+    qint32 num = val.int32;
 
+    s = "-> передача пакета №" + num;
+    data.prepend(0xF4);
+    //отправка команды, вывод лога
+    res = Sending(data, s);
     return res;
 }
 

@@ -41,7 +41,7 @@ Page {
         wrapMode: Label.Wrap
         horizontalAlignment: Qt.AlignHCenter
         text: commun_display.curDeviceName_
-        font.pointSize: parent.height * 0.04
+        font.pointSize: parent.height * 0.022
     }
 
     Label {
@@ -49,13 +49,11 @@ Page {
         anchors.top: senderPageLabel.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.topMargin: 10
         width: parent.width
         wrapMode: Label.Wrap
-//        anchors.horizontalCenter: page.horizontalCenter
         horizontalAlignment: Qt.AlignHCenter
         text: "Во время обновления не блокируйте телефон и не сворачивайте приложение"
-        font.pointSize: parent.height * 0.03
+        font.pointSize: parent.height * 0.027
         color: "red" 
     }
 
@@ -64,7 +62,6 @@ Page {
         anchors.top: senderPageLabel1.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.topMargin: 30
         width: parent.width
         wrapMode: Label.Wrap
         horizontalAlignment: Qt.AlignHCenter
@@ -84,7 +81,6 @@ Page {
         width: parent.width * 0.8
         height: parent.height * 0.07
         anchors.top: senderPageLabel2.bottom
-        anchors.topMargin: 20
         anchors.horizontalCenter: parent.horizontalCenter
         visible: true
         text: "Проверить обновление"
@@ -114,7 +110,6 @@ Page {
         width: parent.width * 0.8
         height: parent.height * 0.07
         anchors.top: senderPageLabel2.bottom
-        anchors.topMargin: 20
         anchors.horizontalCenter: parent.horizontalCenter
         visible: false
         text: "Загрузить обновление"
@@ -147,7 +142,6 @@ Page {
         width: parent.width * 0.8
         height: parent.height * 0.07
         anchors.top: update_load.bottom
-        anchors.topMargin: 20
         anchors.horizontalCenter: parent.horizontalCenter
         visible: false
         text: "Загрузить bootloader"
@@ -180,7 +174,6 @@ Page {
         id: busyIndicator
         Material.accent: Material.Light
         anchors.top: senderPageLabel2.bottom
-        anchors.topMargin: 20
         anchors.horizontalCenter: parent.horizontalCenter
         visible: false
         height: get_firmware_update.height - 5
@@ -230,6 +223,7 @@ Page {
       anchors.left: parent.left
       checked: settParam.loging
       text: qsTr("Включить логирование")
+      visible: false
 
       onClicked: {
           settParam.loging = checked
@@ -242,17 +236,11 @@ Page {
       anchors.right: parent.right
       checked: false
       text: qsTr("Вкл. экран")
+      visible: false
 
       Component.onCompleted: {
-          if(mainModel.adiminTapCount)   loging_visible.visible = true
-          else                                  loging_visible.visible = false
-
-         loging.visible = loging_visible.checked
-          senderBackground.visible = loging_visible.checked
-          scrolViewLogArea.visible = loging_visible.checked
-          listView1.visible = loging_visible.checked
-          clearButton_1.visible = loging_visible.checked
-     }
+                if(mainModel.adminTapCount)   loging_visible.visible = true
+            }
 
       onClicked: {
           loging.visible = loging_visible.checked
@@ -269,10 +257,7 @@ Page {
         anchors.bottom: parent.bottom
         color: "#111111"
         width: page.width
-        Component.onCompleted: {
-            if(mainModel.adiminTapCount)   senderBackground.visible = true
-            else                                  senderBackground.visible = false
-       }
+        visible: false
     }
 
     ScrollView {
@@ -281,10 +266,7 @@ Page {
         ScrollBar.vertical.policy: ScrollBar.AlwaysOff
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         ScrollBar.vertical.interactive: true
-        Component.onCompleted: {
-            if(mainModel.adiminTapCount)   scrolViewLogArea.visible = true
-            else                                  scrolViewLogArea.visible = false
-       }
+        visible: false
 
         ListView {
                id: listView1
@@ -292,11 +274,8 @@ Page {
                snapMode:ListView.SnapToItem
                width: scrolViewLogArea.width
                clip: true
+               visible: false
 
-               Component.onCompleted: {
-                   if(mainModel.adiminTapCount)   listView1.visible = true
-                   else                                  listView1.visible = false
-              }
                Connections {
                    target: commun_display
                    function onLogServis(type, msg) {
@@ -328,10 +307,8 @@ Page {
         anchors.top: senderBackground.top
         anchors.right: senderBackground.right
         opacity: 0.2
-        Component.onCompleted: {
-            if(mainModel.adiminTapCount)   clearButton_1.visible = true
-            else                                  clearButton_1.visible = false
-       }
+        visible: false
+
         contentItem: Text{
             text: "Clear"
             font.pointSize: 6

@@ -15,6 +15,7 @@ Dialog {
     header: Column {
         anchors.left: devicesDialog.Left
         anchors.right: devicesDialog.Right
+        spacing: 1
 
         Label {
             id: devicesWarning

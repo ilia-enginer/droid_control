@@ -37,6 +37,7 @@ private:
     quint8 max_rx_size = 254;
     QByteArray dataRes;
     QByteArray Temp = 0;
+    QByteArray Temp1 = 0;
     quint8 startByteIndex = 0;
     bool statys = false;
     bool split = false;
