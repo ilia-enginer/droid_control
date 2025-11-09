@@ -84,11 +84,6 @@ ScrollablePage {
             wrapMode: Label.Wrap
             horizontalAlignment: Qt.AlignHCenter
             text: "Амплитуда высоты" + "\n" + Math.round(settParam.heightAmplitudemin) + "                  " + Math.round(settParam.heightAmplitude)
-
-//            Component.onCompleted: {
-//                settParam.heightAmplitudeChangedmin.connect(modelChanged)
-//                settParam.heightAmplitudeChanged.connect(modelChanged)
-//            }
         }
         RangeSlider {
             id: heightSlider
@@ -114,10 +109,6 @@ ScrollablePage {
             wrapMode: Label.Wrap
             horizontalAlignment: Qt.AlignCenter
             text: (Number(settParam.Vmin.toFixed(1))) + "                   "+ (Number(settParam.Vmax.toFixed(1)))
-//            Component.onCompleted: {
-//                settParam.VminChanged.connect(modelChanged)
-//                settParam.VmaxChanged.connect(modelChanged)
-//            }
         }
 
         RangeSlider {

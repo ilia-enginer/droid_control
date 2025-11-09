@@ -9,10 +9,10 @@ Dialog {
     id: updateDialog
     modal: true
     focus: true
-    x: (window.width - width) / 2
-    y: (window.height - height) / 2
+    x: (window.width - updateDialog.width) / 2
+    y: (window.height - updateDialog.height) / 4
     width: window.width * 0.8
-    height: window.height * 0.7
+    height: window.height * 0.5
 
 
     Column {
@@ -66,7 +66,7 @@ Dialog {
 
             id: coppy
             anchors.horizontalCenter: parent.horizontalCenter
-            height: parent.height * 0.1
+            height: parent.height * 0.12
             width: parent.width * 0.9
             text: "Копировать ссылку"
             background: Rectangle{

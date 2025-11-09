@@ -33,7 +33,6 @@ Dialog {
             text: " "
             font.pixelSize: 15
             width: devicesDialog.width
-      //      horizontalAlignment: Text.left
             verticalAlignment: Text.AlignVCenter
             wrapMode: Text.Wrap
             Component.onCompleted: { 
@@ -51,7 +50,7 @@ Dialog {
 
         Rectangle {
                    id: box
-                   height:45
+                   height: 45
                    width: devicesListView.width
                    color: "#cccccc"
                    border.width: 2
@@ -172,7 +171,6 @@ Dialog {
             text: "Начать поиск"
 
             onClicked: {
-    ////            get_devise.visible = true
                 devicesWarning.visible = false
                 device.startDeviceDiscovery();
             }

@@ -114,7 +114,7 @@ SwipeView {
         //напруга
         ProgressBar{
             id: voltage
-            height: 20
+            height: parent.height * 0.043
             anchors.top: senderBackground_2.bottom
             anchors.topMargin: 10
             anchors.left: parent.left
@@ -177,9 +177,9 @@ SwipeView {
         //ток
         ProgressBar{
             id: current
-            height: 20
+            height: parent.height * 0.043
             anchors.top: voltage.bottom
-            anchors.topMargin: 10
+            anchors.topMargin: 5
             anchors.left: parent.left
             anchors.right: parent.right
             from: 0
@@ -355,8 +355,8 @@ SwipeView {
             property real angle : 0
             property real distance : 0
 
-            width: 160
-            height: 160
+            width: parent.width * 0.5
+            height: parent.height * 0.35
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: senderPageLabel.bottom
             anchors.topMargin: 10
@@ -473,8 +473,6 @@ SwipeView {
             spacing: 3
             anchors.left: parent.left
             anchors.leftMargin: 20
-          //  anchors.top: joystick.top
-         //   anchors.topMargin: 20
             anchors.verticalCenter: joystick.verticalCenter
 
              RadioButton {
@@ -639,10 +637,8 @@ SwipeView {
 
              ChartView {
                  id:chartView
-               //  Title: QSTR ("1 side temperature trend")
                  titleFont.pixelSize: 15
                  titleFont.bold: true
-                 //titleColor: Theme.darker(1.2)
                  width: parent.width
                  anchors.left: parent.left
                  height:parent.height * 0.35
@@ -653,8 +649,6 @@ SwipeView {
                      id: valueAxisX
                      min: 0
                      max: 1
-             //        tickCount: 10  //The number of scales on the coordinate axis. So interval = 60/30 = 2
-              //       labelFormat: "%.0f"//0 - there are several decimals after controlling the decimal point
                  }
 
                  //Y-axis
@@ -662,8 +656,6 @@ SwipeView {
                      id: valueAxisY
                      min: -1
                      max: 1
-              //       tickCount: 10  //Number of scale on the coordinate axis
-               //      labelFormat: "%.1f"//1 - There are several decimals after controlling the decimal point
                  }
 
                  //LINESERIES is a line, splineseries is a curve. Children are xypoint
@@ -1023,7 +1015,6 @@ SwipeView {
                  id: column_check
                  spacing: 5
                  anchors.top: chartView.bottom
-             //    anchors.bottom: flick.bottom
                  anchors.left: parent.left
                  anchors.leftMargin: 10
 

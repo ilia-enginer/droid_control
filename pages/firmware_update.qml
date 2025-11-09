@@ -8,8 +8,6 @@ import QtQuick.Controls.Material
 
 Page {
     id: page
- //   anchors.fill: parent
-
 
    Timer {
         id: setpageTimer
@@ -176,7 +174,7 @@ Page {
         anchors.top: senderPageLabel2.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         visible: false
-        height: get_firmware_update.height - 5
+        height: get_firmware_update.height * 0.95
 
         Component.onCompleted: {
                     commun_display.onCheckUpdateProgress.connect(onCheckUpdateProgress)

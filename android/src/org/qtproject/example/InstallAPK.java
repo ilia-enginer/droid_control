@@ -7,9 +7,7 @@ import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
-
 import org.qtproject.qt.android.QtNative;
-
 import java.io.File;
 
 public class InstallAPK {

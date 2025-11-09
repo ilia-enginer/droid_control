@@ -65,10 +65,6 @@ Page {
                        logListModel.append({msg: type + msg})
                        listView1.positionViewAtEnd()
                    }
-//                       function onLogJoy() {
-//                           logListModel.append({msg: type + msg})
-//                           listView1.positionViewAtEnd()
-//                       }
                }
                delegate: Column {
                    Text {
@@ -382,8 +378,6 @@ Page {
                 anchors.left: page_setting_foot.left
                 anchors.right: page_setting_foot.right
                 anchors.top: set_foot_param.bottom
-              //  anchors.topMargin: 10
-
                 from: 0
                 to: 5
 
@@ -543,7 +537,6 @@ Page {
                id: left_left_coxa
                anchors.top: box1.bottom
                anchors.left: page_setting_foot.left
-           //    anchors.topMargin: page_setting_foot.height * 0.08
                width: page_setting_foot.width * 0.12
                height: page_setting_foot.height * 0.08
                background: Rectangle{
@@ -560,7 +553,7 @@ Page {
                        coxaH = settParam.coxaAngl >> 8 & 0x00ff
                        coxaL = settParam.coxaAngl & 0x00ff
 
-                       tx_commands.setServoAngle((butClick * 3 + 0) + " " + coxaL + " " + coxaH);
+                       tx_commands.setServoAnglee((butClick * 3 + 0) + " " + coxaL + " " + coxaH);
                    }
                     getcurtimer.running = true
                }
@@ -587,7 +580,7 @@ Page {
                        coxaH = settParam.coxaAngl >> 8 & 0x00ff
                        coxaL = settParam.coxaAngl & 0x00ff
 
-                       tx_commands.setServoAngle((butClick * 3 + 0) + " " + coxaL + " " + coxaH);
+                       tx_commands.setServoAnglee((butClick * 3 + 0) + " " + coxaL + " " + coxaH);
                    }
                     getcurtimer.running = true
                }
@@ -613,7 +606,7 @@ Page {
                        coxaH = settParam.coxaAngl >> 8 & 0x00ff
                        coxaL = settParam.coxaAngl & 0x00ff
 
-                       tx_commands.setServoAngle((butClick * 3 + 0) + " " + coxaL + " " + coxaH);
+                       tx_commands.setServoAnglee((butClick * 3 + 0) + " " + coxaL + " " + coxaH);
                    }
                     getcurtimer.running = true
                }
@@ -640,7 +633,7 @@ Page {
                        coxaH = settParam.coxaAngl >> 8 & 0x00ff
                        coxaL = settParam.coxaAngl & 0x00ff
 
-                       tx_commands.setServoAngle((butClick * 3 + 0) + " " + coxaL + " " + coxaH);
+                       tx_commands.setServoAnglee((butClick * 3 + 0) + " " + coxaL + " " + coxaH);
                    }
                     getcurtimer.running = true
                }
@@ -679,7 +672,7 @@ Page {
                        coxaH = settParam.coxaAngl >> 8 & 0x00ff
                        coxaL = settParam.coxaAngl & 0x00ff
 
-                       tx_commands.setServoAngle((butClick * 3 + 0) + " " + coxaL + " " + coxaH);
+                       tx_commands.setServoAnglee((butClick * 3 + 0) + " " + coxaL + " " + coxaH);
                         getcurtimer.running = true
                     }
                }
@@ -712,7 +705,7 @@ Page {
                        femurH = settParam.femurAngl >> 8 & 0x00ff
                        femurL = settParam.femurAngl & 0x00ff
 
-                       tx_commands.setServoAngle((butClick * 3 + 1) + " " + femurL + " " + femurH);
+                       tx_commands.setServoAnglee((butClick * 3 + 1) + " " + femurL + " " + femurH);
                    }
                     getcurtimer.running = true
                }
@@ -739,7 +732,7 @@ Page {
                        femurH = settParam.femurAngl >> 8 & 0x00ff
                        femurL = settParam.femurAngl & 0x00ff
 
-                       tx_commands.setServoAngle((butClick * 3 + 1) + " " + femurL + " " + femurH);
+                       tx_commands.setServoAnglee((butClick * 3 + 1) + " " + femurL + " " + femurH);
                    }
                     getcurtimer.running = true
                }
@@ -765,7 +758,7 @@ Page {
                        femurH = settParam.femurAngl >> 8 & 0x00ff
                        femurL = settParam.femurAngl & 0x00ff
 
-                       tx_commands.setServoAngle((butClick * 3 + 1) + " " + femurL + " " + femurH);
+                       tx_commands.setServoAnglee((butClick * 3 + 1) + " " + femurL + " " + femurH);
                    }
                     getcurtimer.running = true
                }
@@ -792,7 +785,7 @@ Page {
                        femurH = settParam.femurAngl >> 8 & 0x00ff
                        femurL = settParam.femurAngl & 0x00ff
 
-                       tx_commands.setServoAngle((butClick * 3 + 1) + " " + femurL + " " + femurH);
+                       tx_commands.setServoAnglee((butClick * 3 + 1) + " " + femurL + " " + femurH);
                    }
                     getcurtimer.running = true
                }
@@ -829,7 +822,7 @@ Page {
                        femurH = settParam.femurAngl >> 8 & 0x00ff
                        femurL = settParam.femurAngl & 0x00ff
 
-                       tx_commands.setServoAngle((butClick * 3 + 1) + " " + femurL + " " + femurH);
+                       tx_commands.setServoAnglee((butClick * 3 + 1) + " " + femurL + " " + femurH);
                        getcurtimer.running = true
                    }
               }
@@ -861,7 +854,7 @@ Page {
                        tibaH = settParam.tibaAngl >> 8 & 0x00ff
                        tibaL = settParam.tibaAngl & 0x00ff
 
-                       tx_commands.setServoAngle((butClick * 3 + 2) + " " + tibaL + " " + tibaH);
+                       tx_commands.setServoAnglee((butClick * 3 + 2) + " " + tibaL + " " + tibaH);
                    }
                     getcurtimer.running = true
                }
@@ -888,7 +881,7 @@ Page {
                        tibaH = settParam.tibaAngl >> 8 & 0x00ff
                        tibaL = settParam.tibaAngl & 0x00ff
 
-                       tx_commands.setServoAngle((butClick * 3 + 2) + " " + tibaL + " " + tibaH);
+                       tx_commands.setServoAnglee((butClick * 3 + 2) + " " + tibaL + " " + tibaH);
                    }
                     getcurtimer.running = true
                }
@@ -914,7 +907,7 @@ Page {
                        tibaH = settParam.tibaAngl >> 8 & 0x00ff
                        tibaL = settParam.tibaAngl & 0x00ff
 
-                       tx_commands.setServoAngle((butClick * 3 + 2) + " " + tibaL + " " + tibaH);
+                       tx_commands.setServoAnglee((butClick * 3 + 2) + " " + tibaL + " " + tibaH);
                    }
                     getcurtimer.running = true
                }
@@ -941,7 +934,7 @@ Page {
                        tibaH = settParam.tibaAngl >> 8 & 0x00ff
                        tibaL = settParam.tibaAngl & 0x00ff
 
-                       tx_commands.setServoAngle((butClick * 3 + 2) + " " + tibaL + " " + tibaH);
+                       tx_commands.setServoAnglee((butClick * 3 + 2) + " " + tibaL + " " + tibaH);
                    }
                     getcurtimer.running = true
                }
@@ -979,7 +972,7 @@ Page {
                        tibaH = settParam.tibaAngl >> 8 & 0x00ff
                        tibaL = settParam.tibaAngl & 0x00ff
 
-                       tx_commands.setServoAngle((butClick * 3 + 2) + " " + tibaL + " " + tibaH);
+                       tx_commands.setServoAnglee((butClick * 3 + 2) + " " + tibaL + " " + tibaH);
                        getcurtimer.running = true
                    }
               }

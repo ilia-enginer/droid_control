@@ -61,6 +61,7 @@ ApplicationWindow {
     id: window
     width: 360
     height: 520
+
     visible: true
     title: qsTr("Droid Stick v.%1").arg(appversion.version_app)
 
@@ -211,7 +212,7 @@ ApplicationWindow {
                 Button {
                     id: admin
                     width: Math.min(window.width, window.height) / 3 * 2
-                    height: 100
+                    height: parent.height * 0.2
                     anchors.bottom: listView.bottom
                     opacity: 0.0
                     enabled: true
@@ -249,7 +250,7 @@ ApplicationWindow {
                 width: pane.availableWidth / 2
                 height: pane.availableHeight / 2
                 anchors.centerIn: parent
-                anchors.verticalCenterOffset: -50
+                anchors.verticalCenterOffset: -(parent.height * 0.08)
                 fillMode: Image.PreserveAspectFit
                 source: "../images/play_store_512.png"
             }
@@ -313,12 +314,6 @@ ApplicationWindow {
 
     AboutPage {
         id: aboutDialog
-        modal: true
-        focus: true
-        x: (window.width - width) / 2
-        y: window.height / 6
-        width: Math.min(window.width, window.height) / 3 * 2
-    //    contentHeight: aboutColumn.height
     }
 
      DeviceScanerPage {
@@ -331,13 +326,7 @@ ApplicationWindow {
 
 
     UpdateAppPage {
-        id: updateAppWindow
-        modal: true
-        focus: true
-        x: (window.width - width) / 2
-        y: (window.height - height) / 2
-        width: window.width * 0.8
-        height: window.height * 0.7
+        id: updateAppWindow      
 
         Component.onCompleted: {
                  updateApp.onWindowloadOpen.connect(onWindowloadOpen)
@@ -350,12 +339,6 @@ ApplicationWindow {
 
     Update_Hex {
         id: updateHex
-        modal: true
-        focus: true
-        x: (window.width - width) / 2
-        y: window.height / 6
-        width: Math.min(window.width, window.height) / 3 * 2
-        height: window.height * 0.3
 
         Component.onCompleted: {
                  commun_display.onWindowloadHexOpen.connect(onWindowloadHexOpen)

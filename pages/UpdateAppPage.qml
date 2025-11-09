@@ -14,6 +14,10 @@ Dialog {
     modal: true
     focus: true
     title: "Обновление приложения"
+    x: (window.width - updateAppWindow.width) / 2
+    y: (window.height - updateAppWindow.height) / 4
+    width: window.width * 0.8
+    height: window.height * 0.7
     onRejected: Qt.callLater(updateAppWindow.open)
 
 
@@ -59,7 +63,7 @@ Dialog {
         //процесс загрузки
         ProgressBar{
             id: load
-            height: 20
+            height: parent.height * 0.043
             anchors.left: parent.left
             anchors.right: parent.right
             visible: false

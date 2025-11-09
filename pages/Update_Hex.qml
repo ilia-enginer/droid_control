@@ -10,9 +10,10 @@ Dialog {
     modal: true
     focus: true
     title: "Доступно обновление прошивки шара."
-    x: (parent.width - width) / 2
+    x: (window.width - updateHex.width) / 2
+    y: (window.height - updateHex.height) / 4
     height: parent.height / 4
-
+    width: Math.min(window.width, window.height) / 3 * 2
 
     Column {
         y: parent.height / 6

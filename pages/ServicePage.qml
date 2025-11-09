@@ -6,8 +6,6 @@ import QtQuick.Controls.Material
 Page {
     id: page
 
-//    property int paramIndex: -1
-
         Label {
             id: senderPageLabel
             anchors.top: parent.top

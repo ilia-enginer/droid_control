@@ -13,7 +13,6 @@ Page {
         width: parent.width
         wrapMode: Label.Wrap
         anchors.top: parent.top
-    //    anchors.horizontalCenter: page.horizontalCenter
         horizontalAlignment: Qt.AlignHCenter
         text: commun_display.curDeviceName_
     }
@@ -63,7 +62,6 @@ Page {
                }
            }
     }
-
 
 
     TextField {
