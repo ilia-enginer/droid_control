@@ -139,14 +139,14 @@ UpdateHex::checkingUpdates(void)
 //         "(Landroid/content/Context;)V",
 //         context.object());
 
- jint result = QJniObject::callStaticMethod<jint>(
-     "org/qtproject/example/QtAndroidService",
-     "startQtAndroidService",
-     "(Landroid/content/Context;)V",
-     QNativeInterface::QAndroidApplication::context());
+// jint result = QJniObject::callStaticMethod<jint>(
+//     "org/qtproject/example/QtAndroidService",
+//     "startQtAndroidService",
+//     "(Landroid/content/Context;)V",
+//     QNativeInterface::QAndroidApplication::context());
 
-_commun_display->setCurrenUpd(QString::number(result) + " result");
-delay(2000);
+//_commun_display->setCurrenUpd(QString::number(result) + " result");
+//delay(2000);
 //???
     #if defined(Q_QDOC) || (defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED))
     int a = 0;
@@ -335,23 +335,8 @@ UpdateHex::on_pbWrite_clicked(bool flag)
      _commun_display->statusUpdate(_commun_display->statusUpd::stopUpd);
 
      #if defined(Q_OS_ANDROID)
-     const QJniObject context(QNativeInterface::QAndroidApplication::context());
-//     jint result = QJniObject::callStaticMethod<jint>(
-//         "org/qtproject/example/QtAndroidService",
-//         "startQtAndroidService",
-//         "(Landroid/content/Context;)V",
-//         context.object());
-      jint result = QJniObject::callStaticMethod<jint>(
-          "org/qtproject/example/QtAndroidService",
-          "startQtAndroidService",
-          "(Landroid/content/Context;)V",
-          QNativeInterface::QAndroidApplication::context());
-
 
      #endif
-
-     _commun_display->setCurrenUpd(QString::number(result) + " result");
-     delay(2000);
 
     //включить таймер
      txPageTimerOn();

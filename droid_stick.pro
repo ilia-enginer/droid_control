@@ -8,7 +8,6 @@ DEFINES += INSERT_VERSION_CODE=\\\"$$VERSION\\\"
 QT += quick charts qml quickcontrols2 bluetooth core positioning widgets core-private network  #androidextras
 
 SOURCES += \
-#    btscaner.cpp \
     source/communication/crc.cpp \
     source/communication/rx/rx_commands.cpp \
     source/communication/tx/packing.cpp \
@@ -16,11 +15,29 @@ SOURCES += \
     source/communication/tx/tx_commands.cpp \
     source/display_working/commun_display.cpp \
     source/main/appmanager.cpp \
+    source/main/feedback.cpp \
     source/main/settings.cpp \
+    source/smtp/emailaddress.cpp \
+    source/smtp/mimeattachment.cpp \
+    source/smtp/mimebase64encoder.cpp \
+    source/smtp/mimebase64formatter.cpp \
+    source/smtp/mimebytearrayattachment.cpp \
+    source/smtp/mimecontentencoder.cpp \
+    source/smtp/mimecontentformatter.cpp \
+    source/smtp/mimefile.cpp \
+    source/smtp/mimehtml.cpp \
+    source/smtp/mimeinlinefile.cpp \
+    source/smtp/mimemessage.cpp \
+    source/smtp/mimemultipart.cpp \
+    source/smtp/mimepart.cpp \
+    source/smtp/mimeqpencoder.cpp \
+    source/smtp/mimeqpformatter.cpp \
+    source/smtp/mimetext.cpp \
+    source/smtp/quotedprintable.cpp \
+    source/smtp/smtpclient.cpp \
     source/update/appversion.cpp \
     source/device/device.cpp \
     source/device/deviceinfo.cpp \
-#    devicemodel.cpp \
     source/main/main.cpp \
     source/main/mainmodel.cpp \
     source/update/updateapp.cpp \
@@ -68,13 +85,7 @@ RESOURCES += \
     pages/ToolBar.qml \
     +Material/ToolBar.qml \
     images/bluetooth-512.png \
-#    pages/joystick/Back.qml \
-#    pages/joystick/Groove.qml \
-#    pages/joystick/Handle.qml \
     pages/joystick/Joystick.qml \
-#    pages/joystick/Lights.qml \
-#    pages/joystick/Main.qml \
-#    pages/joystick/SparseLight.qml \
     pages/joystick/finger.png \
     pages/joystick/background.png \
     pages/AboutPage.qml \
@@ -85,6 +96,7 @@ target.path = $$[QT_INSTALL_EXAMPLES]/quickcontrols2/gallery
 INSTALLS += target
 
 DISTFILES += \
+    android/src/org/qtproject/example/QtAndroidService.java \
     pages/UpdateAppPage.qml \
     pages/Update_Hex.qml \
     android/AndroidManifest.xml \
@@ -116,7 +128,27 @@ HEADERS += \
     source/communication/tx/tx_commands.h \
     source/display_working/commun_display.h \
     source/main/appmanager.h \
+    source/main/feedback.h \
     source/main/settings.h \
+    source/smtp/emailaddress.h \
+    source/smtp/mimeattachment.h \
+    source/smtp/mimebase64encoder.h \
+    source/smtp/mimebase64formatter.h \
+    source/smtp/mimebytearrayattachment.h \
+    source/smtp/mimecontentencoder.h \
+    source/smtp/mimecontentformatter.h \
+    source/smtp/mimefile.h \
+    source/smtp/mimehtml.h \
+    source/smtp/mimeinlinefile.h \
+    source/smtp/mimemessage.h \
+    source/smtp/mimemultipart.h \
+    source/smtp/mimepart.h \
+    source/smtp/mimeqpencoder.h \
+    source/smtp/mimeqpformatter.h \
+    source/smtp/mimetext.h \
+    source/smtp/quotedprintable.h \
+    source/smtp/smtpclient.h \
+    source/smtp/smtpmime_global.h \
     source/update/appversion.h \
     source/device/device.h \
     source/device/deviceinfo.h \
@@ -129,7 +161,8 @@ HEADERS += \
 contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
     OTHER_FILES = \
     $$PWD/android/src/org/qtproject/example/InstallAPK.java\
-    $$PWD/android/res/xml/provider_paths.xml
+    $$PWD/android/res/xml/provider_paths.xml\
+    $$PWD/android/src/org/qtproject/example/QtAndroidService.java
 
     ANDROID_PACKAGE_SOURCE_DIR = \
         $$PWD/android
