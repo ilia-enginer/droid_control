@@ -102,7 +102,7 @@ Tx_commands::leds_read(QString msg)
     QByteArray data;
     int res = -1;
     QString s;
-    s = "опрос светодиода # " + msg;
+    s = "опрос светодиода № " + msg;
     quint8 comand = 0xA0;
 
     //раскладывание строки по интовым числам
@@ -200,7 +200,7 @@ Tx_commands::readAngleServo(QString msg)
     QByteArray data;
     int res = -1;
     QString s;
-    s = "запрос угла сервы # " + msg;
+    s = "запрос угла сервы № " + msg;
     quint8 comand = 0xA5;
 
     //раскладывание строки по интовым числам
@@ -268,11 +268,11 @@ Tx_commands::writeAllParams()
     s = "отправка точки восстановления";
     quint8 comand = 0xA8;
 
-    //вписывание команды
-    data.prepend(comand);
-
     //вписывание параметров
     data.prepend(_settings->get_full_param());
+
+    //вписывание команды
+    data.prepend(comand);  
 
     //отправка команды, вывод лога
     res = Sending(data, s);
@@ -306,11 +306,36 @@ Tx_commands::writeMinAngleServo(QString msg)
     QByteArray data;
     int res = -1;
     QString s;
-    s = "запись мин угла сервы " + msg;
+    quint8 temp;
+    const std::string empty;
     quint8 comand = 0xE1;
+    quint16  u16;
+    quint8  u8;
 
     //раскладывание строки по интовым числам
     StringToIntToByte(msg, &data);
+
+    //если число меньше или равно 255
+    if(data.size() <3)
+    {
+        temp = 0x00;
+        //вписать в конец "старший байт"
+        data.append(temp);
+    }
+    else
+    {
+        temp = data[1];
+        data.replace(1, 1, empty);
+        data.append(temp);
+    }
+
+    u8 = data[0];
+    f_value val;
+    val.data[0] = data[1];
+    val.data[1] = data[2];
+    u16 = val.U16;
+
+    s = tr("запись мин угла сервы № %1").arg(u8) + tr(" угол %1").arg(u16);
 
     //вписывание команды
     data.prepend(comand);
@@ -328,7 +353,6 @@ Tx_commands::writeSettingLeds(QString msg)
     QByteArray data;
     int res = -1;
     QString s;
-    s = "запись уст. светодиодов № R G B " + msg;
     quint8 comand = 0xE2;
 
     //раскладывание строки по интовым числам
@@ -336,6 +360,15 @@ Tx_commands::writeSettingLeds(QString msg)
 
     //вписывание команды
     data.prepend(comand);
+
+    quint8  u8 = data[0];
+    quint8  u8_2 = data[1];
+    quint8  u8_3 = data[2];
+    quint8  u8_4 = data[3];
+    s = "запись уст. светодиодов № ", QString(QString::number(u8)) + "\nR "
+                                                      + QString(QString::number(u8_2)) + "   G "
+                                                      + QString(QString::number(u8_3)) + "   B "
+                                                      + QString(QString::number(u8_4));
 
     //отправка команды, вывод лога
     res = Sending(data, s);
@@ -351,12 +384,67 @@ Tx_commands::setServoAngle(QString msg)
     int res = -1;
     QString s;
     quint8 comand = 0xE3;
+    quint8 temp;
+    const std::string empty;
+    quint16  u16;
+    quint8  u8;
 
     //раскладывание строки по интовым числам
     StringToIntToByte(msg, &data);
 
-    s = "задать угол сервы № " + data[0];
 
+    //если число меньше или равно 255
+    if(data.size() <3)
+    {
+        temp = 0x00;
+        //вписать в конец "старший байт"
+        data.append(temp);
+    }
+    else
+    {
+        temp = data[1];
+        data.replace(1, 1, empty);
+        data.append(temp);
+    }
+
+    u8 = data[0];
+    f_value val;
+    val.data[0] = data[1];
+    val.data[1] = data[2];
+    u16 = val.U16;
+
+    s = tr("задать угол сервы № %1").arg(u8) + tr(" угол %1").arg(u16);
+    //вписывание команды
+    data.prepend(comand);
+
+    //отправка команды, вывод лога
+    res = Sending(data, s);
+
+    return res;
+}
+
+//установить серву в определенное положение 0xE3
+int
+Tx_commands::setServoAnglee(QString msg)
+{
+    QByteArray data;
+    int res = -1;
+    QString s;
+    quint8 comand = 0xE3;
+    const std::string empty;
+    quint16  u16;
+    quint8  u8;
+
+    //раскладывание строки по интовым числам
+    StringToIntToByte(msg, &data);
+
+    u8 = data[0];
+    f_value val;
+    val.data[0] = data[1];
+    val.data[1] = data[2];
+    u16 = val.U16;
+
+    s = tr("задать угол сервы № %1").arg(u8) + tr(" угол %1").arg(u16);
     //вписывание команды
     data.prepend(comand);
 
@@ -478,7 +566,7 @@ Tx_commands::setCurCalibration(QString msg)
     int res = -1;
     QString s;
     s = "записать калибровку тока " + msg;
-    quint8 comand = 0xE6;
+    quint8 comand = 0xE9;
 
     //раскладывание строки по float числам
     StringToFloatToByte(msg, &data);
@@ -685,10 +773,15 @@ Tx_commands::writeProgram(QByteArray data)
     int res = -1;
     QString s;
     f_value val;
-    val.data[0] = data[0];
-    val.data[1] = data[1];
-    qint32 num = val.int32;
-    s = "-> передача пакета №" + num;
+    qint32 num = 0;
+
+    if(!data.isEmpty())
+    {
+        val.data[0] = data[5];
+        val.data[1] = data[6];
+        num = val.int32;
+    }
+    s = tr("передача пакета № %1").arg(num);
 
     data.prepend(0xF3);
     //отправка команды, вывод лога
@@ -703,11 +796,16 @@ Tx_commands::writeBootloader(QByteArray data)
     int res = -1;
     QString s;
     f_value val;
-    val.data[0] = data[0];
-    val.data[1] = data[1];
-    qint32 num = val.int32;
+    qint32 num = 0;
 
-    s = "-> передача пакета №" + num;
+    if(!data.isEmpty())
+    {
+        val.data[0] = data[5];
+        val.data[1] = data[6];
+        num = val.int32;
+    }
+
+    s = tr("передача пакета №  %1").arg(num);
     data.prepend(0xF4);
     //отправка команды, вывод лога
     res = Sending(data, s);

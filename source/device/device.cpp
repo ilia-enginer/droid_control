@@ -368,6 +368,18 @@ Device::socketRead()
            _commun_display->logJoy("<- ", "Ошибка. Превышена длина входящего сообщения");
        }
    }
+
+    res = 1;
+    while(res == 1)
+    {
+        QByteArray mess;
+        //проверка остатка в переменной темп
+        res = _unpacking->checkBalance();
+        if(res == 1)
+        {
+            _unpacking->unpack(mess, mess.size());
+        }
+    }
 }
 
 

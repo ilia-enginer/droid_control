@@ -130,6 +130,24 @@ UpdateHex::f_AdminChange(bool f)
 void
 UpdateHex::checkingUpdates(void)
 {
+    //???
+
+//const QJniObject context(QNativeInterface::QAndroidApplication::context());
+//     jint result = QJniObject::callStaticMethod<jint>(
+//         "org/qtproject/example/QtAndroidService",
+//         "startQtAndroidService",
+//         "(Landroid/content/Context;)V",
+//         context.object());
+
+ jint result = QJniObject::callStaticMethod<jint>(
+     "org/qtproject/example/QtAndroidService",
+     "startQtAndroidService",
+     "(Landroid/content/Context;)V",
+     QNativeInterface::QAndroidApplication::context());
+
+_commun_display->setCurrenUpd(QString::number(result) + " result");
+delay(2000);
+//???
     #if defined(Q_QDOC) || (defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED))
     int a = 0;
 
@@ -241,6 +259,7 @@ UpdateHex::versionToString(quint32 vers)
                               .arg(val.data[0] & 0x3F, 2, 10, QChar('0')));            // минуты
 }
 
+
 //! Включить запись
 void
 UpdateHex::on_pbWrite_clicked(bool flag)
@@ -315,6 +334,25 @@ UpdateHex::on_pbWrite_clicked(bool flag)
      //и кнопку остановки
      _commun_display->statusUpdate(_commun_display->statusUpd::stopUpd);
 
+     #if defined(Q_OS_ANDROID)
+     const QJniObject context(QNativeInterface::QAndroidApplication::context());
+//     jint result = QJniObject::callStaticMethod<jint>(
+//         "org/qtproject/example/QtAndroidService",
+//         "startQtAndroidService",
+//         "(Landroid/content/Context;)V",
+//         context.object());
+      jint result = QJniObject::callStaticMethod<jint>(
+          "org/qtproject/example/QtAndroidService",
+          "startQtAndroidService",
+          "(Landroid/content/Context;)V",
+          QNativeInterface::QAndroidApplication::context());
+
+
+     #endif
+
+     _commun_display->setCurrenUpd(QString::number(result) + " result");
+     delay(2000);
+
     //включить таймер
      txPageTimerOn();
 }
@@ -380,9 +418,7 @@ UpdateHex::openBootloaderUpdate()
     }
 
     //расчет срс прошивки
-//    qDebug() << _bin.size();
     int fullSize = ceil((double)_bin.size() / _size) * _size;
-//    qDebug() << fullSize << "*" << _size;
     QByteArray pack_crc(fullSize, 0xFF);
     for (int i = 0; i < pack_crc.size(); i++) {
         int binPtr = i;
@@ -392,7 +428,6 @@ UpdateHex::openBootloaderUpdate()
         }
     }
     _crc32_Internal.int32 = _crc->crc32(pack_crc, 8);
-//    qDebug() <<_crc32_Internal.int32;
 
     return true;
 }

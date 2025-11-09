@@ -853,9 +853,9 @@ Rx_commands::writeProgram(QByteArray Num)
     f_value val;
     //номер успешно полученного пакета основной прошивки
     val.data[1] = Num[0]; val.data[0] = Num[1];
-
-    _commun_display->logServis("<- прием пакета №" + val.int32, "");
-    _commun_display->logJoy("<- прием пакета №" + val.int32, "");
+    qint32 num = val.int32;
+    _commun_display->logServis(tr("<- подтверждение приема пакета №  %1").arg(num), "");
+    _commun_display->logJoy(tr("<- подтверждение приема пакета №  %1").arg(num), "");
 
     _updatehex->setPageTx(val.int32);
 }
@@ -867,9 +867,9 @@ Rx_commands::writeBootloader(QByteArray Num)
     f_value val;
     //номер успешно полученного пакета загрузчика
     val.data[1] = Num[0]; val.data[0] = Num[1];
-
-    _commun_display->logServis("<- прием пакета №" + val.int32, "");
-    _commun_display->logJoy("<- прием пакета №" + val.int32, "");
+    qint32 num = val.int32;
+    _commun_display->logServis(tr("<- подтверждение приема пакета №  %1").arg(num), "");
+    _commun_display->logJoy(tr("<- подтверждение приема пакета №  %1").arg(num), "");
 
     _updatehex->setPageTx(val.int32);
 }

@@ -10,6 +10,7 @@ union f_value {
     float f;
     quint8 data[4];
     quint16 u16[2];
+    quint16 U16;
     quint32 u32;
     int     int32;
 };

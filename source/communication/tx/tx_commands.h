@@ -36,6 +36,7 @@ public slots:
     int writeMinAngleServo(QString msg);//запись мин угла сервы во флеш, остальные углы рассчитываются     0xE1
     int writeSettingLeds(QString msg);  //запись установок для светодиодов      0xE2
     int setServoAngle(QString msg);     //установить серву в угол               0xE3
+    int setServoAnglee(QString msg);     //установить серву в угол               0xE3
     int setCurBlock(QString msg);        //установка флага включения/отключения блокировки сброса параметров тока       0xE4
     int getCheck();                     //запрос ошибок                    0xE5
     int getSettingServo(QString msg);   //запрос предустановок сервы        0xE6

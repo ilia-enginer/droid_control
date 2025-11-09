@@ -69,6 +69,7 @@
 #include "source/main/settings.h"
 #include "source/update/updatehex.h"
 #include "source/update/appversion.h"
+#include "source/main/feedback.h"
 
 
 
@@ -120,6 +121,8 @@ int main(int argc, char *argv[])
     Settings settings;
     UpdateHex updateHex;
     AppVersion appversion;
+    Feedback feedback;
+
 
     engine.rootContext()->setContextProperty("device", &d);
     engine.rootContext()->setContextProperty("mainModel", &model);
@@ -131,6 +134,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("updateHexx", &updateHex);
     engine.rootContext()->setContextProperty("appversion", &appversion);
     engine.rootContext()->setContextProperty("rx_commands", &rx_commands);
+    engine.rootContext()->setContextProperty("feedback", &feedback);
 
     packing.setCrc(&crc);
     packing.setCommun_display(&commun_display);

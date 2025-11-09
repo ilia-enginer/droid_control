@@ -22,7 +22,8 @@ const QString UpdateApp::fileName =
 //------------------------------------------------------------------------------
 
 
- void  UpdateApp::delayyy( int mill)
+void
+UpdateApp::delayyy( int mill)
 {
     QTime dieTime = QTime::currentTime().addMSecs( mill );
     while( QTime::currentTime() < dieTime )
@@ -31,19 +32,22 @@ const QString UpdateApp::fileName =
     }
 }
 
-QString UpdateApp::getUpdateText()
+QString
+UpdateApp::getUpdateText()
 {
     return updateText_;
 }
 
-void UpdateApp::setUpdateText(QString text)
+void
+UpdateApp::setUpdateText(QString text)
 {
     updateText_ = text;
 
     if(rendering_flag)    emit onUpdateTextChanged(text);
 }
 
-void UpdateApp::set_rendering_flag(bool fl)
+void
+UpdateApp::set_rendering_flag(bool fl)
 {
     rendering_flag = fl;
 }
@@ -71,7 +75,8 @@ UpdateApp::~UpdateApp()
 
 //------------------------------------------------------------------------------
 
-void UpdateApp::checkForUpdates(void)
+void
+UpdateApp::checkForUpdates(void)
 {
     AppVersion *AppVer = new AppVersion();
     qint32 ver = AppVer->getAppVersion();
@@ -89,7 +94,8 @@ void UpdateApp::checkForUpdates(void)
 
 //------------------------------------------------------------------------------
 
-void UpdateApp::checkVersion(QString inVersion)
+void
+UpdateApp::checkVersion(QString inVersion)
 {
 //    qDebug() << inVersion.toInt();
 //    qDebug() << inVersion;
@@ -110,7 +116,8 @@ void UpdateApp::checkVersion(QString inVersion)
 
 //------------------------------------------------------------------------------
 
-void UpdateApp::downloadFile()
+void
+UpdateApp::downloadFile()
 {
     setUpdateText("Подготовка к загрузке...");
 
@@ -159,29 +166,34 @@ void UpdateApp::downloadFile()
 }
 
 
-void UpdateApp::set_TotalBytes(double byte)
+void
+UpdateApp::set_TotalBytes(double byte)
 {
     TotalBytes = byte;
     if (rendering_flag) emit totalBytesChanged();
 }
 
-void UpdateApp::set_BytesRead(double byte)
+void
+UpdateApp::set_BytesRead(double byte)
 {
     BytesRead = byte;
     if (rendering_flag) emit bytesReadChanged();
 }
 
-double UpdateApp::get_TotalBytes() const
+double
+UpdateApp::get_TotalBytes() const
 {
     return TotalBytes;
 }
 
-double UpdateApp::get_BytesRead() const
+double
+UpdateApp::get_BytesRead() const
 {
     return BytesRead;
 }
 
-void UpdateApp::install()
+void
+UpdateApp::install()
 {
     #if defined(Q_OS_ANDROID)
         QString base = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
@@ -239,7 +251,8 @@ void UpdateApp::install()
     #endif
 }
 
-bool UpdateApp::requestAndroidPermissions()
+bool
+UpdateApp::requestAndroidPermissions()
 {
 #if defined(Q_OS_ANDROID)
     // Приватные директории приложения не требуют рантайм-разрешений
@@ -251,56 +264,9 @@ bool UpdateApp::requestAndroidPermissions()
 
 //------------------------------------------------------------------------------
 
-void UpdateApp::startRequest(QUrl inUrl)
+void
+UpdateApp::startRequest(QUrl inUrl)
 {
-//    if (!mNamDownloader)
-//        mNamDownloader = new QNetworkAccessManager(this);
-
-//    QNetworkRequest req(inUrl);
-
-//#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-//    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute,
-//                     QNetworkRequest::NoLessSafeRedirectPolicy);
-//#endif
-
-//    req.setAttribute(QNetworkRequest::CacheLoadControlAttribute,
-//                     QNetworkRequest::AlwaysNetwork);
-
-//    req.setHeader(QNetworkRequest::UserAgentHeader,
-//                  QByteArray("DroidStickUpdater/1.0 (Qt)"));
-//    req.setRawHeader("Accept", "*/*");
-
-//#if QT_CONFIG(ssl)
-//    QSslConfiguration ssl = QSslConfiguration::defaultConfiguration();
-//    ssl.setProtocol(QSsl::TlsV1_2OrLater);
-//    req.setSslConfiguration(ssl);
-//#endif
-
-//    mDownloaderReply = mNamDownloader->get(req);
-
-//    connect(mDownloaderReply, &QNetworkReply::finished,
-//            this, &UpdateApp::on_HttpFinished);
-//    connect(mDownloaderReply, &QIODevice::readyRead,
-//            this, &UpdateApp::on_HttpDataRead);
-//    connect(mDownloaderReply, &QNetworkReply::downloadProgress,
-//            this, &UpdateApp::on_UpdateDataReadProgress);
-
-//#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-//    connect(mDownloaderReply, &QNetworkReply::errorOccurred, this,
-//            [this](QNetworkReply::NetworkError code) {
-//                Q_UNUSED(code);
-//                setUpdateText(tr("Ошибка сети: %1").arg(mDownloaderReply->errorString()));
-//            });
-//#endif
-
-//#if QT_CONFIG(ssl)
-//    connect(mDownloaderReply, &QNetworkReply::sslErrors, this,
-//            [this](const QList<QSslError>& errs) {
-//                if (!errs.isEmpty())
-//                    setUpdateText(tr("SSL ошибка: %1").arg(errs.first().errorString()));
-//            });
-//#endif
-
     mNamDownloader = new QNetworkAccessManager(this);
 
     mDownloaderReply = mNamDownloader->get(QNetworkRequest(inUrl));
@@ -323,7 +289,8 @@ void UpdateApp::startRequest(QUrl inUrl)
 
 //------------------------------------------------------------------------------
 
-void UpdateApp::on_CancelDownload()
+void
+UpdateApp::on_CancelDownload()
 {
     qDebug() << "on_CancelDownload";
 
@@ -351,7 +318,8 @@ void UpdateApp::on_CancelDownload()
 
 //------------------------------------------------------------------------------
 
-void UpdateApp::on_HttpFinished()
+void
+UpdateApp::on_HttpFinished()
 {
     qDebug() << "on_HttpFinished";
 
@@ -436,54 +404,7 @@ void UpdateApp::on_HttpFinished()
 
 #if defined(Q_OS_ANDROID)
     {
-        QString base = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-        const QString apkPath = QDir(base).filePath(fileName);
-
-        QJniObject jPath = QJniObject::fromString(apkPath);
-        jint ret = QJniObject::callStaticMethod<jint>(
-            "org/qtproject/example/InstallAPK",
-            "execute",
-            "(Landroid/content/Context;Ljava/lang/String;)I",
-            nullptr,
-            jPath.object<jstring>()
-        );
-//        setUpdateText(QStringLiteral("Код установки: %1").arg(ret));
-        if(ret == 0)
-        {
-            setUpdateText("Процесс обновления успешно запущен");
-            delayyy(1500);
-        }
-        else if(ret == -1)
-        {
-            if (rendering_flag) emit busyIndicatorOFF();
-            setUpdateText("Что-то пошло не по плану. Попробуйте обновиться чуть позже");
-            delayyy(1500);
-        }
-        else if(ret == -2)
-        {
-            if (rendering_flag) emit busyIndicatorOFF();
-            setUpdateText("Странные вещи происходят. Установочный файл пустой. Попробуйте перезапустить приложение.");
-            delayyy(1500);
-        }
-        else if(ret == -3)
-        {
-            if (rendering_flag) emit busyIndicatorOFF();
-            setUpdateText("Странные вещи происходят. Установочный файл куда-то пропал. Попробуйте перезапустить приложение.");
-            delayyy(1500);
-        }
-        else if(ret == -4)
-        {
-            if (rendering_flag) emit busyIndicatorOFF();
-            setUpdateText(QStringLiteral("Не хватает разрешений на установку, попробую еще раз. Для продолжения нажмите 'Ок'"));
-            delayyy(3000);
-            emit but_Ok_On();
-            return;
-        }
-        else if(ret == -5)
-        {
-            setUpdateText("Неудача. Попробуйте перезапустить приложение.");
-            delayyy(1500);
-        }
+        install();
     }
 #elif defined(Q_OS_WINDOWS)
     {
@@ -506,11 +427,10 @@ void UpdateApp::on_HttpFinished()
     }
 }
 
-
-
 //------------------------------------------------------------------------------
 
-void UpdateApp::on_HttpDataRead()
+void
+UpdateApp::on_HttpDataRead()
 {
     if (!mFile || !mDownloaderReply) return;
     mFile->write(mDownloaderReply->readAll());
@@ -518,7 +438,8 @@ void UpdateApp::on_HttpDataRead()
 
 //------------------------------------------------------------------------------
 
-void UpdateApp::on_UpdateDataReadProgress(
+void
+UpdateApp::on_UpdateDataReadProgress(
     qint64 inBytesRead,
     qint64 inTotalBytes)
 {
@@ -533,7 +454,8 @@ void UpdateApp::on_UpdateDataReadProgress(
 
 //------------------------------------------------------------------------------
 
-void UpdateApp::on_NetworkReply(QNetworkReply *inReply)
+void
+UpdateApp::on_NetworkReply(QNetworkReply *inReply)
 {
     if (inReply->error() == QNetworkReply::NoError)
     {

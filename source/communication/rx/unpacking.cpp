@@ -42,16 +42,19 @@ Unpacking::setSettings(Settings *newSettings)
 int
 Unpacking::unpack(QByteArray data, int size)
 {
-    Q_UNUSED(size);
-    dataRes = data;
+    Q_UNUSED(size); 
     int res;
     const std::string empty;
 
-    //вывод лога, если надо
-    if(_settings->getLoging())
+    if(!data.isEmpty())
     {
-        _commDisplay->logJoy("<- ", QString ("%1 (%2 size)").arg(QString(data.toHex())).arg(size));
-        _commDisplay->logServis("<- ", QString ("%1 (%2 size)").arg(QString(data.toHex())).arg(size));
+        dataRes = data;
+        //вывод лога, если надо
+        if(_settings->getLoging())
+        {
+            _commDisplay->logJoy("<- ", QString ("%1 (%2 size)").arg(QString(data.toHex())).arg(size));
+            _commDisplay->logServis("<- ", QString ("%1 (%2 size)").arg(QString(data.toHex())).arg(size));
+        }
     }
 
     //склейка разорванных пакетов
@@ -71,11 +74,15 @@ Unpacking::unpack(QByteArray data, int size)
 
         //проверка crc
         size = dataRes.size();
-        quint16 crc_recieved = (dataRes[size-1] << 8) | dataRes[size-2];
+        f_value val;
+        val.data[0] = dataRes[size-2];
+        val.data[1] = dataRes[size-1];
+        quint16 crc_recieved = val.U16;
+
         dataRes.replace(size-2, 2, empty);
         quint16 crc = _crc->crc16(dataRes);
 
-        if (crc == crc_recieved)
+       if (crc == crc_recieved)
         {
             //попытка распарсить посылку
             if(_rx_commands->searchCommand(dataRes) == -1)
@@ -99,10 +106,44 @@ Unpacking::unpack(QByteArray data, int size)
     return res;
 }
 
+//проверка данных в массиве темп
+int
+Unpacking::checkBalance()
+{
+    const std::string empty;
+
+    //если есть остаток и первый символ - начало пакета
+    if(Temp.isEmpty())      return 0;
+
+    for (quint8 i = 0; i < Temp.size(); i++)
+    {
+        if(Temp[i] == 0x55 &&
+           Temp[i-1] == 0x2F)
+        {
+            //поместить часть сообщения из Temp в начало recievedData
+            dataRes.replace(0, dataRes.size(), empty);
+            for(qint32 k = i; k >= 0; k--) dataRes.prepend(Temp[k]);
+
+            //если дальше не лежит еще один пакет
+            if(Temp.size() > i+2 &&
+               Temp[i + 1] != 0x1F)
+            {
+                Temp.replace(0, Temp.size(), empty);
+            }
+            else    Temp.replace(0, i+1, empty);
+
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 //склейка разорванных пакетов
 int
 Unpacking::gluingPackages()
 {
+
    const std::string empty;
 
    for (quint8 i = 0; i < dataRes.size(); i++)
@@ -112,7 +153,8 @@ Unpacking::gluingPackages()
      {
        if (dataRes[i] == 0x1F)
        {
-         startByteIndex = i;
+         //удалить все до 1F
+         dataRes.replace(0, i, empty);
          statys = true;
        }
      }
@@ -120,106 +162,89 @@ Unpacking::gluingPackages()
      else if (statys == true)
      {
        //если найден конец сообщения
-       if (dataRes[i] == 0x2F &&
-           dataRes[i + 1] == 0x55 &&
-           i > (startByteIndex + 1) && split == false &&
+       if (dataRes[i] == 0x55 &&
+           dataRes[i - 1] == 0x2F &&
+           !split &&
            dataRes.size() < max_rx_size)
        {
-        //если не конец пакета и дальше идет начало посылки
-        if(i + 2 >= dataRes.size() &&
-                dataRes[i + 2] == 0x1F)
-        {
-            Temp.replace(0, Temp.size(), empty);
-            //поместить recievedData в Temp
-            for(qint32 k = i+2; k < dataRes.size(); k++) Temp.append(dataRes[k]);
-            //удалить все посде 2f 55
-            dataRes.replace(i+2, dataRes.size() - i+2, empty);
-            //удалить все до 1F в recievedData
-            if(startByteIndex > 0)  dataRes.replace(0, startByteIndex, empty);
-            i = dataRes.size();
-            split = true;
-            startByteIndex = 0;
-            return 1;
-        }
-        else
-        {
-            //удалить все до 1F в recievedData
-            if(startByteIndex > 0)  dataRes.replace(0, startByteIndex, empty);
-            statys = false;
-            startByteIndex = 0;
-            i = dataRes.size();
-            return 1;
-        }
-
-       }
-       //если найден конец сообщения, сообщение было разделено
-       else if(dataRes[i] == 0x2F &&
-               dataRes[i + 1] == 0x55 &&
-               split == true &&
-               (dataRes.size() + Temp.size()) < max_rx_size)
-       {
-           //если не конец пакета и дальше идет начало посылки
-           if(i + 2 >= dataRes.size() &&
-                   dataRes[i + 2] == 0x1F)
+           //если дальше идет начало посылки
+           if(dataRes.size() > i+2 &&
+                   dataRes[i+1] == 0x1F)
            {
-                Temp1.replace(0, Temp1.size(), empty);
-                //удалить все до 1F в recievedData
-                if(startByteIndex > 0)  dataRes.replace(0, startByteIndex, empty);
-                //поместить recievedData в Temp1
-                for(qint32 k = i+2; k < dataRes.size(); k++) Temp1.append(dataRes[k]);
-                dataRes.replace(i+2, dataRes.size() - i+2, empty);
-                //поместить Temp в начало recievedData
-               for(qint32 k = 0; k < Temp.size(); k++) dataRes.append(Temp[k]);
                Temp.replace(0, Temp.size(), empty);
-               //поместить в Temp Temp1
-              for(qint32 k = 0; k < Temp1.size(); k++) Temp.append(Temp1[k]);
-              Temp1.replace(0, Temp1.size(), empty);
+               //поместить recievedData в Temp
+               for(qint32 k = i+1; k < dataRes.size(); k++) Temp.append(dataRes[k]);
+               //удаляю в dataRes ненужный хвост
+               dataRes.replace(i+1, dataRes.size()-i, empty);
+               split = true;
+               return 1;
+           }
+           //если дальше идет не начало посылки
+           if(dataRes.size() > i+2 &&
+                   dataRes[i+1] != 0x1F)
+           {
+               dataRes.replace(i+1, dataRes.size(), empty);
 
-              i = dataRes.size();
-              split = true;
-              startByteIndex = 0;
-              return 1;
+               split = false;
+               return 1;
            }
            else
            {
-                //поместить Temp в начало recievedData
-               for(qint32 k = 0; k < Temp.size(); k++) dataRes.append(Temp[k]);
-
-                split = false;
-                statys = false;
-                startByteIndex = 0;
-                Temp.replace(0, Temp.size(), empty);
-                i = dataRes.size();
-                return 1;
+               split = false;
+               return 1;
            }
+       }
+       //если найден конец сообщения, сообщение было разделено
+       else if(dataRes[i] == 0x55 &&
+               dataRes[i - 1] == 0x2F &&
+               split &&
+               (dataRes.size() + Temp.size()) < max_rx_size)
+       {
+
+            //переместить все из temp
+           if(!Temp.isEmpty())
+           {
+                for(qint32 k = Temp.size()-1; k >= 0; k--) dataRes.prepend(Temp[k]);
+                Temp.replace(0, Temp.size(), empty);
+           }
+             //поиск целикового пакета
+            for(qint32 k = 0; k < dataRes.size(); k++)
+            {
+                //если найден конец сообщения
+                if (dataRes[k] == 0x55 &&
+                    dataRes[k - 1] == 0x2F)
+                {
+                    //все что после поместить в темп
+                    if(dataRes.size() > k+1)
+                    {
+                        for(qint32 q = k+2; q < dataRes.size(); q++) Temp.append(dataRes[q]);
+                        split = true;
+                    }
+                    else    split = false;
+
+                    dataRes.replace(k+1, dataRes.size(), empty);
+                    return 1;
+                }
+
+            }
        }
        //если превышена максимальная длина пакета
        else if(dataRes.size() + Temp.size() >= max_rx_size)
        {
-    //       Temp.replace(0, Temp.size(), std::empty);
-           Temp.replace(0, Temp.size(), empty);
-           startByteIndex = 0;
-           split = false;
-           statys = false;
-           i = dataRes.size();
            dataRes.replace(0, dataRes.size(), empty);
+           Temp.replace(0, Temp.size(), empty);
+           split = false;
+           statys = false;  
            return -1;
        }
        //если конец пакета - надо склеить
-       else if (i + 2 >= dataRes.size())
+       else if (dataRes.size() == i + 1)
        {
-           //удалить все до 1F в recievedData
-           if(startByteIndex > 0)
-           {
-               dataRes.replace(0, startByteIndex, empty);
-           }
            //поместить recievedData в Temp
            for(qint32 k = 0; k < dataRes.size(); k++) Temp.append(dataRes[k]);
 
-            i = dataRes.size();
             dataRes.replace(0, dataRes.size(), empty);
             split = true;
-            startByteIndex = 0;
             return 0;
        }
      }

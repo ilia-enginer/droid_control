@@ -4,6 +4,12 @@
 #include <QObject>
 #include <QWidget>
 #include <QFile>
+
+#if defined(Q_OS_ANDROID)
+    #include <QtCore/QJniObject>
+    #include <QtCore/private/qandroidextras_p.h>
+#endif
+
 #include "../communication/tx/tx_commands.h"
 #include "../communication/crc.h"
 #include "../display_working/commun_display.h"
