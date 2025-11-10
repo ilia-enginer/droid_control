@@ -522,8 +522,14 @@ Rx_commands::readAcceleration(QByteArray Accel)
 void
 Rx_commands::readAngleServo(QByteArray Angle)
 {
-    quint8 u8 = Angle[0];
-    quint8 u16 = Angle[2] << 8 | Angle[1];
+    f_value val;
+    quint8 u8;
+    quint8 u16;
+
+    u8 = Angle[0];
+    val.u16[0] = Angle[1];
+    val.u16[1] = Angle[2];
+    u16 = val.U16;
 
     _commun_display->logServis("<- угол сервы № ", QString(QString::number(u8)) + "   " + QString(QString::number(u16)));
 }

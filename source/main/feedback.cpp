@@ -9,14 +9,6 @@
 Feedback::Feedback(QObject *parent) :
     QObject(parent)
 {
-    MimeMessage message;
-    EmailAddress sender("ilia.zhuc@yandex.ru", "roboshar");
-    message.setSender(sender);
-
-    EmailAddress to("zhuckov.ilia@yandex.ru", "Илья");
-    message.addRecipient(to);
-
-//    message.setSubject("SmtpClient for Qt - Demo");
 
 }
 
@@ -28,16 +20,29 @@ Feedback::~Feedback()
 int
 Feedback::sendFedback(QString text)
 {
-    MimeMessage message;
-    MimeText messageText;
+   MimeMessage message;
+   MimeText Text;
 
-    qDebug() << text;
+   EmailAddress sender("your_email_address@host.com", "Your Name");
+   message.setSender(sender);
 
-    messageText.setText(text);
-    message.addPart(&messageText);
+   EmailAddress to("recipient@host.com", "Recipient's Name");
+   message.addRecipient(to);
 
-    // Now we can send the mail
-    SmtpClient smtp("smtp.yandex.ru", 465, SmtpClient::SslConnection);
+   message.setSubject("SmtpClient for Qt - Demo");
+
+   // Now add some text to the email.
+   // First we create a MimeText object.
+
+   Text.setText(text);
+
+   // Now add it to the mail
+
+   message.addPart(&Text);
+
+   // Now we can send the mail
+   SmtpClient smtp("smtp.gmail.com", 465, SmtpClient::SslConnection);
+
 
     smtp.connectToHost();
     if (!smtp.waitForReadyConnected()) {

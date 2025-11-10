@@ -247,7 +247,7 @@ Page {
               anchors.top: cur_calibr_auto.bottom
               width: page_settings.width
               height: page_settings.height * 0.08
-              text: "Автокалибровка серв"
+              text: "автокалибровка серв"
               background: Rectangle{
                   property var normalColor: "#1fc2b2"
                   property var pressedColor: "#17d47f"

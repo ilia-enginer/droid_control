@@ -10,8 +10,8 @@ Dialog {
     modal: true
     focus: true
     title: "О программе..."
-    width: window.width * 0.8
-    height: window.height * 0.85
+    width: window.width * 0.6
+    height: window.height * 0.3
     x: (window.width - aboutDialog.width) / 2
     y: (window.height - aboutDialog.height) / 5
 
@@ -28,7 +28,7 @@ Dialog {
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 12
         }
-
+/*
         Flickable {
              id: flick
              width: parent.width * 0.95
@@ -116,6 +116,7 @@ Dialog {
             color: "#7387d1"
             visible: false
         }
+      */
     }
 }
 

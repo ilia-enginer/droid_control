@@ -160,13 +160,13 @@ ApplicationWindow {
                     }
 
                     Action {
-                        text: "О программе"
-                        onTriggered: aboutDialog.open()
+                        text: "Обновление"
+                        onTriggered: updateDialog.open()
                     }
 
                     Action {
-                        text: "Обновление"
-                        onTriggered: updateDialog.open()
+                        text: "О программе"
+                        onTriggered: aboutDialog.open()
                     }
                 }
             }
