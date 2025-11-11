@@ -15,6 +15,7 @@
 #include <QtNetwork/QNetworkRequest>
 #include <QJniObject>
 #include "appversion.h"
+#include "../main/appmanager.h"
 
 
 #if defined(Q_OS_ANDROID)
@@ -28,15 +29,12 @@ class UpdateApp : public QObject
         Q_OBJECT
 
     public:
-
         Q_PROPERTY(QString updateText READ getUpdateText WRITE setUpdateText NOTIFY onUpdateTextChanged)
         Q_PROPERTY(double TotalBytes READ get_TotalBytes WRITE set_TotalBytes NOTIFY totalBytesChanged)
         Q_PROPERTY(double BytesRead READ get_BytesRead WRITE set_BytesRead NOTIFY bytesReadChanged)
 
 
 void delayyy( int mill);
-
-        void set_rendering_flag(bool fl);
 
         static const QString kVersionUrl;
         static const QString kUpdateUrl;
@@ -47,6 +45,8 @@ void delayyy( int mill);
 
         explicit UpdateApp(QObject *parent = 0);
         ~UpdateApp();
+
+        void setAppManager(AppManager *newAppManager);
 
         void set_TotalBytes(double byte);
         void set_BytesRead(double byte);
@@ -91,6 +91,7 @@ Q_SIGNALS:
         void checkVersion(QString inVersion);
         void startRequest(QUrl inUrl);
 
+        AppManager * _appManager = nullptr;
 
         QProgressDialog *mProgressDialog;
         QNetworkAccessManager *mNamChecker;
@@ -109,9 +110,6 @@ Q_SIGNALS:
 
         double TotalBytes = 0.0;             //кол-во байтов всего загружаемого приложения
         double BytesRead = 0.0;              //сколько уже загружено
-
-
-        bool rendering_flag = false;        //флаг выводы сообщений на экран
 };
 
 #endif // UPDATEAPP_H

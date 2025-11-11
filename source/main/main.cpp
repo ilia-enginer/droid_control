@@ -176,6 +176,8 @@ int main(int argc, char *argv[])
 
     appManager.setCommun_display(&commun_display);
 
+    updateApp.setAppManager(&appManager);
+
     QObject::connect(&app, &QApplication::applicationStateChanged, &appManager, &AppManager::onApplicationStateChanged);
 
     //вывод версии в сообщении для изменения txt файла

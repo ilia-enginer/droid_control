@@ -43,15 +43,8 @@ UpdateApp::setUpdateText(QString text)
 {
     updateText_ = text;
 
-    if(rendering_flag)    emit onUpdateTextChanged(text);
+    if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive)    emit onUpdateTextChanged(text);
 }
-
-void
-UpdateApp::set_rendering_flag(bool fl)
-{
-    rendering_flag = fl;
-}
-
 
 UpdateApp::UpdateApp(QObject *parent) :
     QObject(parent)
@@ -71,6 +64,12 @@ UpdateApp::UpdateApp(QObject *parent) :
 UpdateApp::~UpdateApp()
 {
     delete mNamChecker;
+}
+
+void
+UpdateApp::setAppManager(AppManager *newAppManager)
+{
+    _appManager = newAppManager;
 }
 
 //------------------------------------------------------------------------------
@@ -104,7 +103,7 @@ UpdateApp::checkVersion(QString inVersion)
     {
         if (inVersion.toInt() > _verAppIn)
         {
-            if(rendering_flag)
+            if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive)
             {
                 emit windowloadOpen();
             }
@@ -127,7 +126,7 @@ UpdateApp::downloadFile()
     if (tServerFileName.isEmpty())
     {
         setUpdateText(tr("Ошибка!\nФайл обновления %1 отсутствует.").arg(tServerFileName));
-        if (rendering_flag) emit busyIndicatorOFF();
+        if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive) emit busyIndicatorOFF();
         return;
     }
 
@@ -151,13 +150,13 @@ UpdateApp::downloadFile()
     {
         setUpdateText(tr("Ошибка!\nОшибка сохранения файла %1: %2.")
                           .arg(fileName).arg(mFile->errorString()));
-        if (rendering_flag) emit busyIndicatorOFF();
+        if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive)  emit busyIndicatorOFF();
         delete mFile;
         return;
     }
 
-    if (rendering_flag) emit busyIndicatorOFF();
-    if (rendering_flag) emit startload();       
+    if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive) emit busyIndicatorOFF();
+    if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive) emit startload();
 
     setUpdateText("Загрузка...\nНе сворачивайте приложение во время загрузки");
 
@@ -170,14 +169,14 @@ void
 UpdateApp::set_TotalBytes(double byte)
 {
     TotalBytes = byte;
-    if (rendering_flag) emit totalBytesChanged();
+    if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive) emit totalBytesChanged();
 }
 
 void
 UpdateApp::set_BytesRead(double byte)
 {
     BytesRead = byte;
-    if (rendering_flag) emit bytesReadChanged();
+    if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive) emit bytesReadChanged();
 }
 
 double
@@ -294,7 +293,7 @@ UpdateApp::on_CancelDownload()
 {
     qDebug() << "on_CancelDownload";
 
-    if(rendering_flag) emit statusLoadOFF();    //отключение ползунка загрузки
+    if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive) emit statusLoadOFF();    //отключение ползунка загрузки
 
     if(!mHttpRequestAborted)
     {
@@ -360,7 +359,7 @@ UpdateApp::on_HttpFinished()
         }
         setUpdateText(tr("Ошибка!\nОшибка загрузки: %1.")
                           .arg(mDownloaderReply->errorString()));
-        if (rendering_flag) emit statusLoadOFF();
+        if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive) emit statusLoadOFF();
 
         mDownloaderReply->deleteLater();
         mDownloaderReply = nullptr;
@@ -382,7 +381,7 @@ UpdateApp::on_HttpFinished()
             return; // <<< ОБЯЗАТЕЛЬНО
         } else {
             setUpdateText(tr("Ошибка!\nНе удалось переоткрыть файл для записи."));
-            if (rendering_flag) emit statusLoadOFF();
+            if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive) emit statusLoadOFF();
 
             if (mFile) {
                 delete mFile;
@@ -397,9 +396,9 @@ UpdateApp::on_HttpFinished()
     // ==== УСПЕШНО СКАЧАНО ====
     setUpdateText("Обновление скачано");
     delayyy(300);
-    if (rendering_flag) emit statusLoadOFF();
+    if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive) emit statusLoadOFF();
     setUpdateText("Установка обновления");
-    if (rendering_flag) emit busyIndicatorON();
+    if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive) emit busyIndicatorON();
     delayyy(500);
 
 #if defined(Q_OS_ANDROID)

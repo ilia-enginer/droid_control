@@ -32,13 +32,15 @@ AppManager::onApplicationStateChanged(Qt::ApplicationState state)
     if(state == Qt::ApplicationState::ApplicationActive)
     {
         _commun_display->allUpdate();
+        state_ = Qt::ApplicationState::ApplicationActive;
     }
     else
     {
+        state_ = Qt::ApplicationState::ApplicationInactive;
         keepScreenOn(false);
     }
 
-    _commun_display->set_rendering_flag(Qt::ApplicationState::ApplicationActive);
+    _commun_display->set_rendering_flag(state);
 
 //    QString filename="Data.txt";
 //    QFile file( filename );
@@ -84,7 +86,13 @@ void AppManager::keepScreenOn(bool on)
           });
           flag_on = on;
     }
-    #endif
+#endif
+}
+
+int
+AppManager::getStateApp()
+{
+    return state_;
 }
 
 int AppManager::installApk(const QString& absPath)
