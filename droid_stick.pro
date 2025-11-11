@@ -14,6 +14,7 @@ SOURCES += \
     source/communication/rx/unpacking.cpp \
     source/communication/tx/tx_commands.cpp \
     source/display_working/commun_display.cpp \
+    source/info/info.cpp \
     source/main/appmanager.cpp \
     source/main/feedback.cpp \
     source/main/settings.cpp \
@@ -53,7 +54,6 @@ RESOURCES += \
     pages/SettingFootPage.qml \
     pages/firmware_update.qml \
     pages/ServicePage.qml \
-    qmldir \
     pages/ScrollablePage.qml \
     qtquickcontrols2.conf \
     icons/gallery/index.theme \
@@ -90,7 +90,8 @@ RESOURCES += \
     pages/joystick/background.png \
     pages/AboutPage.qml \
     pages/UpdateAppPage.qml \
-    pages/Update_Hex.qml
+    pages/Update_Hex.qml \
+    pages/information.qml
 
 target.path = $$[QT_INSTALL_EXAMPLES]/quickcontrols2/gallery
 INSTALLS += target
@@ -117,7 +118,8 @@ DISTFILES += \
     android/res/xml/provider_paths.xml \
     android/src/org/qtproject/example/InstallAPK.java \
     pages/SettingFootPage.qml \
-    pages/firmware_update.qml
+    pages/firmware_update.qml \
+    pages/information.qml
 
 
 HEADERS += \
@@ -127,6 +129,7 @@ HEADERS += \
     source/communication/rx/unpacking.h \
     source/communication/tx/tx_commands.h \
     source/display_working/commun_display.h \
+    source/info/info.h \
     source/main/appmanager.h \
     source/main/feedback.h \
     source/main/settings.h \

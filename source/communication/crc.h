@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QWidget>
-//#include "../main/mainmodel.h"
 
 
 union f_value {

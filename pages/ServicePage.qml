@@ -94,12 +94,12 @@ Page {
 
                 id: scrolViewLogArea_1
                 anchors.top: loging.bottom
+                anchors.bottom: parent.bottom
                 width: parent.width
-                height: 500
                 interactive: true
                 clip: true
                 flickableDirection: Flickable.VerticalFlick
-                contentHeight: 700
+                contentHeight: 500
 
 
                 ComboBox {

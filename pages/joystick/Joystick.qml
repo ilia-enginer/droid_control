@@ -6,7 +6,6 @@ import QtQml
 import QtQuick.Controls.Material
 
 
-
 SwipeView {
     id: swipeView
     interactive: false

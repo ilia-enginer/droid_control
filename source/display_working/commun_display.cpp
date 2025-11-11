@@ -146,7 +146,7 @@ Commun_display::statusDevicee(int status)
 int Commun_display::setCurDeviceName(QString name)
 {
     curDeviceName_ = name;
-    return CurDeviceNameRefresh();;
+    return CurDeviceNameRefresh();
 }
 
 QString Commun_display::getCurDeviceName()
