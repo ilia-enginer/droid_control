@@ -280,8 +280,7 @@ UpdateApp::startRequest(QUrl inUrl)
             this, SLOT(on_UpdateDataReadProgress(qint64, qint64)));
 
     //чтоб экран не гас
-    AppManager app;
-    app.keepScreenOn(true);
+    _appManager->keepScreenOn(true);
 }
 
 
@@ -302,17 +301,15 @@ UpdateApp::on_CancelDownload()
             //mDownloaderReply->abort();
             mDownloaderReply->deleteLater();
             mDownloaderReply = nullptr;
+
+            delete mFile;
+            mFile = nullptr;
         }
-    }
-    if (mFile) {
-        delete mFile;
-        mFile = nullptr;
     }
     mHttpRequestAborted = true;
 
     //чтоб экран не гас
-    AppManager app;
-    app.keepScreenOn(false);
+    _appManager->keepScreenOn(false);
 }
 
 //------------------------------------------------------------------------------
@@ -323,8 +320,7 @@ UpdateApp::on_HttpFinished()
     qDebug() << "on_HttpFinished";
 
     //чтоб экран не гас
-    AppManager app;
-    app.keepScreenOn(false);
+    _appManager->keepScreenOn(false);
 
     if (!mDownloaderReply) {
         // Нечего обрабатывать
