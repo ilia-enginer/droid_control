@@ -46,6 +46,20 @@ UpdateApp::setUpdateText(QString text)
     if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive)    emit onUpdateTextChanged(text);
 }
 
+QString
+UpdateApp::getLoadText()
+{
+    return loadText_;
+}
+
+void
+UpdateApp::setLoadText(QString text)
+{
+    loadText_ = text;
+
+    if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive)    emit onLoadTextChanged(text);
+}
+
 UpdateApp::UpdateApp(QObject *parent) :
     QObject(parent)
 {
@@ -105,6 +119,7 @@ UpdateApp::checkVersion(QString inVersion)
         {
             if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive)
             {
+                //открыть всплывающее окно с предложением обновиться
                 emit windowloadOpen();
             }
 
@@ -159,6 +174,7 @@ UpdateApp::downloadFile()
     if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive) emit startload();
 
     setUpdateText("Загрузка...\nНе сворачивайте приложение во время загрузки");
+    setLoadText("");
 
     mHttpRequestAborted = false;
     startRequest(kUpdateUrl);
@@ -194,6 +210,8 @@ UpdateApp::get_BytesRead() const
 void
 UpdateApp::install()
 {
+    if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive) emit busyIndicatorON();
+
     #if defined(Q_OS_ANDROID)
         QString base = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
         const QString apkPath = QDir(base).filePath(fileName);
@@ -229,7 +247,7 @@ UpdateApp::install()
         }
         else if(ret == -4)
         {
-            setUpdateText(QStringLiteral("Все еще не хватает разрешений на установку. Вы можете изменить это в настройках приложения. Раздел 'Разрешения'"));
+            setUpdateText(QStringLiteral("Не хватает разрешений на установку. Вы можете изменить это в настройках приложения. Раздел 'Разрешения'"));
             delayyy(3000);
         }
         else if(ret == -5)
@@ -247,7 +265,17 @@ UpdateApp::install()
             delete mFile;
             mFile = nullptr;
         }
-    #endif
+#elif defined(Q_OS_WINDOWS)
+    {
+        QString tLocalFileName =
+            QDir::toNativeSeparators(
+                QCoreApplication::applicationDirPath() + "/" +
+                QFileInfo(QUrl(kUpdateUrl).path()).fileName());
+        QDesktopServices::openUrl(QUrl::fromLocalFile(tLocalFileName));
+        QApplication::quit();
+    }
+#endif
+    if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive) emit busyIndicatorOFF();
 }
 
 bool
@@ -293,6 +321,7 @@ UpdateApp::on_CancelDownload()
     qDebug() << "on_CancelDownload";
 
     if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive) emit statusLoadOFF();    //отключение ползунка загрузки
+    setLoadText("");
 
     if(!mHttpRequestAborted)
     {
@@ -301,11 +330,11 @@ UpdateApp::on_CancelDownload()
             //mDownloaderReply->abort();
             mDownloaderReply->deleteLater();
             mDownloaderReply = nullptr;
-
-            delete mFile;
-            mFile = nullptr;
         }
     }
+
+    if(mFile)   mFile = nullptr;
+
     mHttpRequestAborted = true;
 
     //чтоб экран не гас
@@ -321,6 +350,7 @@ UpdateApp::on_HttpFinished()
 
     //чтоб экран не гас
     _appManager->keepScreenOn(false);
+    setLoadText("");
 
     if (!mDownloaderReply) {
         // Нечего обрабатывать
@@ -390,36 +420,9 @@ UpdateApp::on_HttpFinished()
     }
 
     // ==== УСПЕШНО СКАЧАНО ====
-    setUpdateText("Обновление скачано");
-    delayyy(300);
+    setUpdateText("Обновление скачано. Установить?");
     if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive) emit statusLoadOFF();
-    setUpdateText("Установка обновления");
-    if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive) emit busyIndicatorON();
-    delayyy(500);
-
-#if defined(Q_OS_ANDROID)
-    {
-        install();
-    }
-#elif defined(Q_OS_WINDOWS)
-    {
-        QString tLocalFileName =
-            QDir::toNativeSeparators(
-                QCoreApplication::applicationDirPath() + "/" +
-                QFileInfo(QUrl(kUpdateUrl).path()).fileName());
-        QDesktopServices::openUrl(QUrl::fromLocalFile(tLocalFileName));
-        QApplication::quit();
-    }
-#endif
-
-    // Аккуратная очистка
-    mDownloaderReply->deleteLater();
-    mDownloaderReply = nullptr;
-
-    if (mFile) {
-        delete mFile;
-        mFile = nullptr;
-    }
+    if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive)emit but_Ok_On();
 }
 
 //------------------------------------------------------------------------------
@@ -442,6 +445,13 @@ UpdateApp::on_UpdateDataReadProgress(
     {
         return;
     }
+
+    qint64 Mbyte = inBytesRead / 1024 / 1024;
+    qint64 Mbytes = inTotalBytes / 1024 / 1024;
+
+    setLoadText(QString("Загружено %1 Мб / %2 Мб")
+                .arg(Mbyte)
+                .arg(Mbytes));
 
     set_TotalBytes((double)inTotalBytes);
     set_BytesRead((double)inBytesRead);

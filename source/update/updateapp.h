@@ -30,6 +30,7 @@ class UpdateApp : public QObject
 
     public:
         Q_PROPERTY(QString updateText READ getUpdateText WRITE setUpdateText NOTIFY onUpdateTextChanged)
+        Q_PROPERTY(QString loadText READ getLoadText WRITE setLoadText NOTIFY onLoadTextChanged)
         Q_PROPERTY(double TotalBytes READ get_TotalBytes WRITE set_TotalBytes NOTIFY totalBytesChanged)
         Q_PROPERTY(double BytesRead READ get_BytesRead WRITE set_BytesRead NOTIFY bytesReadChanged)
 
@@ -69,6 +70,7 @@ void delayyy( int mill);
 Q_SIGNALS:
 
         void onUpdateTextChanged(QString text);
+        void onLoadTextChanged(QString text);
 
         void startload();         //включение ползунка загрузки
         void statusLoadOFF();     //отключение ползунка загрузки
@@ -87,6 +89,9 @@ Q_SIGNALS:
         bool requestAndroidPermissions(void);
         QString getUpdateText();
         void setUpdateText(QString text);
+
+        QString getLoadText();
+        void setLoadText(QString text);
 
         void checkVersion(QString inVersion);
         void startRequest(QUrl inUrl);
@@ -107,6 +112,7 @@ Q_SIGNALS:
         qint32 _verAppIn;               //версия уже установленного приложения
 
         QString updateText_ = "Проверка обновлений...";
+        QString loadText_ = "";
 
         double TotalBytes = 0.0;             //кол-во байтов всего загружаемого приложения
         double BytesRead = 0.0;              //сколько уже загружено

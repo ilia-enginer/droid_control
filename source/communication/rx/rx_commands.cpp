@@ -527,8 +527,8 @@ Rx_commands::readAngleServo(QByteArray Angle)
     quint8 u16;
 
     u8 = Angle[0];
-    val.u16[0] = Angle[1];
-    val.u16[1] = Angle[2];
+    val.u16[0] = Angle[2];
+    val.u16[1] = Angle[1];
     u16 = val.U16;
 
     _commun_display->logServis("<- угол сервы № ", QString(QString::number(u8)) + "   " + QString(QString::number(u16)));
@@ -713,8 +713,8 @@ void
 Rx_commands::getSettingServo(QByteArray Params)
 {
     f_value val;
-    val.data[1] = Params[8];
-    val.data[0] = Params[7];
+    val.data[1] = Params[7];
+    val.data[0] = Params[8];
 
     quint8 u8 = Params[0];
     quint8 u16 = Params[2] << 8 | Params[1];

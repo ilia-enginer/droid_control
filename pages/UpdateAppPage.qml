@@ -17,7 +17,7 @@ Dialog {
     x: (window.width - updateAppWindow.width) / 2
     y: (window.height - updateAppWindow.height) / 4
     width: window.width * 0.8
-    height: window.height * 0.7
+    height: window.height * 0.5
     onRejected: Qt.callLater(updateAppWindow.open)
 
 
@@ -31,6 +31,17 @@ Dialog {
             id: updateLabel
             width: parent.width
             text: updateApp.updateText
+            wrapMode: Label.Wrap
+            font.pixelSize: 14
+            font.family: "Courier New"
+            color: "#0b8fdb"
+            horizontalAlignment: Qt.AlignHCenter
+        }
+
+        Label {
+            id: loadLabel
+            width: parent.width
+            text: updateApp.loadText
             wrapMode: Label.Wrap
             font.pixelSize: 14
             font.family: "Courier New"
@@ -124,7 +135,7 @@ Dialog {
         id: yes
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        height: parent.height * 0.15
+        height: parent.height * 0.25
         width: parent.width * 0.4
         text: "Да"
         background: Rectangle{
@@ -144,9 +155,9 @@ Dialog {
         id: ok
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        height: parent.height * 0.15
+        height: parent.height * 0.25
         width: parent.width * 0.4
-        text: "Ок"
+        text: "Установить"
         background: Rectangle{
             property var normalColor: "#07e67a"
             property var pressedColor: "#0b6b3d"
@@ -161,16 +172,16 @@ Dialog {
                 ok.visible = true
         }
         onClicked: {
-            ok.visible = false
             updateApp.install();
         }
     }
+
 
     Button {
         id: no
         anchors.bottom: parent.bottom
         anchors.right: parent.right
-        height: parent.height * 0.15
+        height: parent.height * 0.25
         width: parent.width * 0.4
         text: "Отмена"
         background: Rectangle{

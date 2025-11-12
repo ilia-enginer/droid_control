@@ -92,7 +92,7 @@ Q_SIGNALS:
     void searchInProgress();
     void searchFinished();
 
-    void windowloadHexOpen();       //открывает окно-напоминание обновления hex шара
+    void onWindowloadHexOpen();       //открывает окно-напоминание обновления hex шара
 
     void chart_data(float volt_, float cur_,
                     float tilt_angle_, float tilt_direction_,

@@ -13,16 +13,16 @@ Dialog {
     x: (window.width - updateHex.width) / 2
     y: (window.height - updateHex.height) / 4
     height: parent.height / 4
-    width: Math.min(window.width, window.height) / 3 * 2
+    width: window.width * 0.8
 
     Column {
-        y: parent.height / 6
-        width: Math.min(parent.width, parent.height) /3*2
         id: aboutColumn
+        width: parent.width
+        height: parent.height
         spacing: 20
 
         Label {
-            width: updateHexx.availableWidth
+            width: parent.width
             text: "Можете установить, перейдя во вкладку 'Обновление прошивки'."
             wrapMode: Label.Wrap
             font.pixelSize: 14

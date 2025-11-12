@@ -346,7 +346,7 @@ ApplicationWindow {
              }
 
         function onWindowloadHexOpen(){
-            updateHexx.open();
+            updateHex.open();
         }
     }
 }

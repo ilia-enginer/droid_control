@@ -159,7 +159,7 @@ Commun_display::windloadHexOpen()
 {
     if(rendering_flag == Qt::ApplicationState::ApplicationActive)
     {
-        emit windowloadHexOpen();
+        emit onWindowloadHexOpen();
         return 0;
     }
     return -1;

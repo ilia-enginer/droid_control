@@ -28,15 +28,18 @@ MainModel::checkingParameters()
     {
         //на всякий. вдруг шар еще не включен, жду
         delay(500);
-       //запрашиваю параметры с шара
-       _tx_commands->readAllParams();
-       delay(150);
-       for(qint8 i = 0; i < 6; i++)
-       {
-           if(!_settings->full_param_check()) _tx_commands->readAllParams();
-           else                        i = 6;
-           delay(90);
-       }
+       //запрашиваю параметры с шара если их нет
+        if(!_settings->full_param_check())
+        {
+            _tx_commands->readAllParams();
+            delay(150);
+            for(qint8 i = 0; i < 6; i++)
+            {
+                if(!_settings->full_param_check()) _tx_commands->readAllParams();
+                else                        i = 6;
+                delay(90);
+            }
+         }
     }
 
     //проверка обновлений
