@@ -523,15 +523,16 @@ void
 Rx_commands::readAngleServo(QByteArray Angle)
 {
     f_value val;
-    quint8 u8;
-    quint8 u16;
+    quint8 num;
+    quint8 angl;
 
-    u8 = Angle[0];
-    val.u16[0] = Angle[2];
-    val.u16[1] = Angle[1];
-    u16 = val.U16;
+    num = Angle[0];
 
-    _commun_display->logServis("<- угол сервы № ", QString(QString::number(u8)) + "   " + QString(QString::number(u16)));
+    val.u16[1] = Angle[2];
+    val.u16[0] = Angle[1];
+    angl = val.U16;
+
+    _commun_display->logServis("<- угол сервы № ", QString(QString::number(num)) + "   " + QString(QString::number(angl)));
 }
 
 //вкл/выкл сервы                    0xA6
@@ -713,17 +714,33 @@ void
 Rx_commands::getSettingServo(QByteArray Params)
 {
     f_value val;
-    val.data[1] = Params[7];
-    val.data[0] = Params[8];
+    quint8 num;
+    quint8 min;
+    quint8 max;
+    quint8 home;
+    quint8 start;
 
-    quint8 u8 = Params[0];
-    quint8 u16 = Params[2] << 8 | Params[1];
-    quint8 u16_2 = Params[4] << 8 | Params[3];
-    quint8 u16_3 = Params[6] << 8 | Params[5];
+    num = Params[0];
 
-    _commun_display->logServis("<- установки сервы №", QString(QString::number(u8)) + "\nmin " + QString(QString::number(u16))
-                   + "   max " + QString(QString::number(u16_2)) + "   home " + QString(QString::number(u16_3))
-                   + "   start " + QString(QString::number(val.int32)));
+    val.data[1] = Params[2];
+    val.data[0] = Params[1];
+    min = val.U16;
+
+    val.data[1] = Params[4];
+    val.data[0] = Params[3];
+    max = val.U16;
+
+    val.data[1] = Params[6];
+    val.data[0] = Params[5];
+    home = val.U16;
+
+    val.data[1] = Params[8];
+    val.data[0] = Params[7];
+    start = val.U16;
+
+    _commun_display->logServis("<- установки сервы №", QString(QString::number(num)) + "\nmin " + QString(QString::number(min))
+                   + "   max " + QString(QString::number(max)) + "   home " + QString(QString::number(home))
+                   + "   start " + QString(QString::number(start)));
 }
 
 //выполнить авто калибровку серв     0xE7

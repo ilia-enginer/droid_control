@@ -143,13 +143,15 @@ Commun_display::statusDevicee(int status)
     return res;
 }
 
-int Commun_display::setCurDeviceName(QString name)
+int
+Commun_display::setCurDeviceName(QString name)
 {
     curDeviceName_ = name;
     return CurDeviceNameRefresh();
 }
 
-QString Commun_display::getCurDeviceName()
+QString
+Commun_display::getCurDeviceName()
 {
     return curDeviceName_;
 }
