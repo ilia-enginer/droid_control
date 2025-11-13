@@ -524,7 +524,7 @@ Rx_commands::readAngleServo(QByteArray Angle)
 {
     f_value val;
     quint8 num;
-    quint8 angl;
+    quint16 angl;
 
     num = Angle[0];
 
@@ -715,10 +715,10 @@ Rx_commands::getSettingServo(QByteArray Params)
 {
     f_value val;
     quint8 num;
-    quint8 min;
-    quint8 max;
-    quint8 home;
-    quint8 start;
+    quint16 min;
+    quint16 max;
+    quint16 home;
+    quint16 start;
 
     num = Params[0];
 
@@ -839,12 +839,32 @@ Rx_commands::reboot()
 void
 Rx_commands::getParamServsFoot(QByteArray Angle)
 {
-    _settings->setcoxaAngl(Angle[2] << 8 | Angle[1]);
-    _settings->setfemurAngl(Angle[4] << 8 | Angle[3]);
-    _settings->settibaAngl(Angle[6] << 8 | Angle[5]);
+    f_value val;
+    quint8 num;
+    quint16 coxa;
+    quint16 femur;
+    quint16 tiba;
 
-    _commun_display->logServis("<- Углы ноги № " + QString(QString::number(Angle[0])), " прочитаны");
-    _commun_display->logJoy("<- Углы ноги № " + QString(QString::number(Angle[0])), " прочитаны");
+    num = Angle[0];
+
+    val.data[1] = Angle[2];
+    val.data[0] = Angle[1];
+    coxa = val.U16;
+
+    val.data[1] = Angle[4];
+    val.data[0] = Angle[3];
+    femur = val.U16;
+
+    val.data[1] = Angle[6];
+    val.data[0] = Angle[5];
+    tiba = val.U16;
+
+    _settings->setcoxaAngl(coxa);
+    _settings->setfemurAngl(femur);
+    _settings->settibaAngl(tiba);
+
+    _commun_display->logServis("<- Углы ноги № " + QString(QString::number(num)), " прочитаны");
+    _commun_display->logJoy("<- Углы ноги № " + QString(QString::number(num)), " прочитаны");
 }
 
 //запрос версии  0xF2
