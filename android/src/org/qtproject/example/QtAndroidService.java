@@ -14,27 +14,38 @@ public class QtAndroidService extends QtService
     @Override
     public void onCreate() {
         super.onCreate();
+        INSTANCE = this;
         Log.i(TAG, "Creating Service");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        INSTANCE = null;
         Log.i(TAG, "Destroying Service");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         int ret = super.onStartCommand(intent, flags, startId);
-
-        // Do some work
-
-        return ret;
+        return android.app.Service.START_STICKY;
     }
 
-//    public static void startQtAndroidService(Context context)
-//    {
-//        context.startService(new Intent(context, QtAndroidService.class));
-//        Log.d("TEST", "Android Service Start");
-//    }
+    public static void startQtAndroidService(Context context)
+    {
+        if (context != null) {
+            Intent serviceIntent = new Intent(context, QtAndroidService.class);
+            context.startService(serviceIntent);
+            Log.d(TAG, "Android Service Start");
+        }
+    }
+
+    public static void stopQtAndroidService(Context context)
+    {
+        if (context != null) {
+            Intent serviceIntent = new Intent(context, QtAndroidService.class);
+            context.stopService(serviceIntent);
+            Log.d(TAG, "Android Service Stop");
+        }
+    }
 }
