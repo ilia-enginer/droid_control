@@ -112,3 +112,41 @@ int AppManager::installApk(const QString& absPath)
     return -42;
 #endif
 }
+
+void AppManager::startBackgroundService()
+{
+#if defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED)
+    if(!flagServiceStart)
+    {
+        using QNativeInterface::QAndroidApplication;
+        QAndroidApplication::runOnAndroidMainThread([] {
+            QJniObject::callStaticMethod<void>(
+                "org/qtproject/example/QtAndroidService",
+                "startQtAndroidService",
+                "(Landroid/content/Context;)V",
+                QNativeInterface::QAndroidApplication::context()
+            );
+        });
+        flagServiceStart = true;
+    }
+#endif
+}
+
+void AppManager::stopBackgroundService()
+{
+#if defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED)
+    if(flagServiceStart)
+    {
+        using QNativeInterface::QAndroidApplication;
+        QAndroidApplication::runOnAndroidMainThread([] {
+            QJniObject::callStaticMethod<void>(
+                "org/qtproject/example/QtAndroidService",
+                "stopQtAndroidService",
+                "(Landroid/content/Context;)V",
+                QNativeInterface::QAndroidApplication::context()
+            );
+        });
+        flagServiceStart = false;
+    }
+#endif
+}

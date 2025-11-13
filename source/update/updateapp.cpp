@@ -176,6 +176,8 @@ UpdateApp::downloadFile()
     setUpdateText("Загрузка...\nНе сворачивайте приложение во время загрузки");
     setLoadText("");
 
+    _appManager->startBackgroundService();
+
     mHttpRequestAborted = false;
     startRequest(kUpdateUrl);
 }
@@ -339,6 +341,7 @@ UpdateApp::on_CancelDownload()
 
     //чтоб экран не гас
     _appManager->keepScreenOn(false);
+    _appManager->stopBackgroundService();
 }
 
 //------------------------------------------------------------------------------
@@ -350,6 +353,7 @@ UpdateApp::on_HttpFinished()
 
     //чтоб экран не гас
     _appManager->keepScreenOn(false);
+    _appManager->stopBackgroundService();
     setLoadText("");
 
     if (!mDownloaderReply) {
@@ -386,6 +390,7 @@ UpdateApp::on_HttpFinished()
         setUpdateText(tr("Ошибка!\nОшибка загрузки: %1.")
                           .arg(mDownloaderReply->errorString()));
         if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive) emit statusLoadOFF();
+        _appManager->stopBackgroundService();
 
         mDownloaderReply->deleteLater();
         mDownloaderReply = nullptr;
@@ -408,6 +413,7 @@ UpdateApp::on_HttpFinished()
         } else {
             setUpdateText(tr("Ошибка!\nНе удалось переоткрыть файл для записи."));
             if(_appManager->getStateApp() == Qt::ApplicationState::ApplicationActive) emit statusLoadOFF();
+            _appManager->stopBackgroundService();
 
             if (mFile) {
                 delete mFile;

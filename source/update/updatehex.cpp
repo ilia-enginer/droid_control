@@ -130,24 +130,6 @@ UpdateHex::f_AdminChange(bool f)
 void
 UpdateHex::checkingUpdates(void)
 {
-    //???
-
-//const QJniObject context(QNativeInterface::QAndroidApplication::context());
-//     jint result = QJniObject::callStaticMethod<jint>(
-//         "org/qtproject/example/QtAndroidService",
-//         "startQtAndroidService",
-//         "(Landroid/content/Context;)V",
-//         context.object());
-
-// jint result = QJniObject::callStaticMethod<jint>(
-//     "org/qtproject/example/QtAndroidService",
-//     "startQtAndroidService",
-//     "(Landroid/content/Context;)V",
-//     QNativeInterface::QAndroidApplication::context());
-
-//_commun_display->setCurrenUpd(QString::number(result) + " result");
-//delay(2000);
-//???
     #if defined(Q_QDOC) || (defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED))
     int a = 0;
 
@@ -329,6 +311,7 @@ UpdateHex::on_pbWrite_clicked(bool flag)
      //чтоб экран не гас
      AppManager app;
      app.keepScreenOn(true);
+     app.startBackgroundService();
 
      //включить индикатор загрузки
      //и кнопку остановки
@@ -425,6 +408,7 @@ UpdateHex::on_pbStop_clicked(QString error)
     //
     AppManager app;
     app.keepScreenOn(false);
+    app.stopBackgroundService();
 
     //выключить таймер
     txPageTimerOff();
@@ -503,6 +487,7 @@ UpdateHex::write_page()
                         //
                         AppManager app;
                         app.keepScreenOn(false);
+                        app.stopBackgroundService();
                         return;
                     }
                     delay(70);
@@ -522,6 +507,7 @@ UpdateHex::write_page()
                     //
                     AppManager app;
                     app.keepScreenOn(false);
+                    app.stopBackgroundService();
                     return;
                 }
             }
@@ -547,6 +533,7 @@ UpdateHex::write_page()
                         //
                         AppManager app;
                         app.keepScreenOn(false);
+                        app.stopBackgroundService();
                         return;
                     }
                     delay(70);
@@ -557,6 +544,7 @@ UpdateHex::write_page()
                 //
                 AppManager app;
                 app.keepScreenOn(false);
+                app.stopBackgroundService();
             }
         }
         //если режим админа
@@ -594,6 +582,7 @@ UpdateHex::write_page()
                         //
                         AppManager app;
                         app.keepScreenOn(false);
+                        app.stopBackgroundService();
                         return;
                     }
                     delay(70);
@@ -611,6 +600,7 @@ UpdateHex::write_page()
                 //
                 AppManager app;
                 app.keepScreenOn(false);
+                app.stopBackgroundService();
                 return;
 
             }
@@ -644,6 +634,7 @@ UpdateHex::write_page()
                         //
                         AppManager app;
                         app.keepScreenOn(false);
+                        app.stopBackgroundService();
                         return;
                     }
                     delay(70);
@@ -660,6 +651,7 @@ UpdateHex::write_page()
                 //
                 AppManager app;
                 app.keepScreenOn(false);
+                app.stopBackgroundService();
             }
         }
     }

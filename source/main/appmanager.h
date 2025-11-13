@@ -18,14 +18,18 @@ public:
 
     int getStateApp();
 
+    void startBackgroundService();
+    void stopBackgroundService();
     
     Q_INVOKABLE int installApk(const QString& absPath);
+
 signals:
 
 private:
     Commun_display * _commun_display = nullptr;
 
     int state_;
+    bool flagServiceStart = false;
 
 
 public slots:
