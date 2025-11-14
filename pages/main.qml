@@ -330,7 +330,7 @@ ApplicationWindow {
         id: updateAppWindow      
 
         Component.onCompleted: {
-                 updateApp.onWindowloadOpen.connect(onWindowloadOpen)
+                 commun_display.onWindowloadOpen.connect(onWindowloadOpen)
              }
 
         function onWindowloadOpen(){

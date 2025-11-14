@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QWidget>
 #include <QFile>
+#include <QTimer>
 
 #if defined(Q_OS_ANDROID)
     #include <QtCore/QJniObject>
@@ -56,10 +57,6 @@ public slots:
     void on_pbStop_clicked(QString error);
     void write_page(void);
 
-Q_SIGNALS:
-    void txPageTimerOn();
-    void txPageTimerOff();
-
 private:
     void sendPage(void);
 
@@ -67,6 +64,7 @@ private:
     Crc *_crc = nullptr;
     Commun_display *_commun_display = nullptr;
     Settings *_settings = nullptr;
+    QTimer *_timer = nullptr;
 
     f_value version_BootLoader_ExternalProgram;     //версия загрузчика
     f_value version_BootLoader_InternalProgram;     //версия загрузчика из apk

@@ -9,27 +9,6 @@ import QtQuick.Controls.Material
 Page {
     id: page
 
-   Timer {
-        id: setpageTimer
-        interval: 200
-        running: false
-        repeat: true
-
-        onTriggered: {
-            updateHexx.write_page();
-        }
-        Component.onCompleted: {
-                    updateHexx.onTxPageTimerOn.connect(onTimerOn)
-                    updateHexx.onTxPageTimerOff.connect(onTimerOff)
-                }
-        function onTimerOn(){
-            setpageTimer.start();
-        }
-        function onTimerOff(){
-            setpageTimer.stop();
-        }
-    }
-
     Label {
         id: senderPageLabel
         anchors.top: parent.top

@@ -9,7 +9,7 @@ UpdateHex::UpdateHex(QObject *parent)
     versionExternalProgram.u32 = 0;
     versionInternalProgram.u32 = 0;
     version_BootLoader_ExternalProgram.u32 = 0;
-    version_BootLoader_InternalProgram.u32 = 0;
+    version_BootLoader_InternalProgram.u32 = 0; 
 }
 
 
@@ -317,12 +317,12 @@ UpdateHex::on_pbWrite_clicked(bool flag)
      //и кнопку остановки
      _commun_display->statusUpdate(_commun_display->statusUpd::stopUpd);
 
-     #if defined(Q_OS_ANDROID)
-
-     #endif
-
     //включить таймер
-     txPageTimerOn();
+     _timer = new QTimer(this);
+     _timer->setInterval(200);
+     connect(_timer, &QTimer::timeout, this, &UpdateHex::write_page);
+
+     _timer->start();
 }
 
 
@@ -411,7 +411,8 @@ UpdateHex::on_pbStop_clicked(QString error)
     app.stopBackgroundService();
 
     //выключить таймер
-    txPageTimerOff();
+    _timer->stop();
+
     _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
     _commun_display->setCurrenUpd(error + "Проверьте обновление");
 }
@@ -431,7 +432,8 @@ UpdateHex::write_page()
         else if(_pageTx > _page)
         {
             _commun_display->setCurrenUpd("Неизвестная ошибка передачи");
-            txPageTimerOff();
+            _timer->stop();
+
             _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
             return;
         }
@@ -439,7 +441,8 @@ UpdateHex::write_page()
         if(_unsuccessful_transfers > 45)
         {
             _commun_display->setCurrenUpd("Ошибка: превышено количество попыток передачи");
-            txPageTimerOff();
+            _timer->stop();
+
             _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
             return;
         }
@@ -448,7 +451,8 @@ UpdateHex::write_page()
     else if(_pageTx > _pages)
     {
         _commun_display->setCurrenUpd("Странная ошибка передачи");
-        txPageTimerOff();
+        _timer->stop();
+
         _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
         return;
     }
@@ -457,7 +461,7 @@ UpdateHex::write_page()
     if((_pageTx == _page) && (_pageTx == _pages))
     {
         //выключить таймер
-        txPageTimerOff();
+        _timer->stop();
 
         //если обычный режим
         if(!_f_Admin)

@@ -30,7 +30,7 @@ Dialog {
         Label {
             id: updateLabel
             width: parent.width
-            text: updateApp.updateText
+            text: commun_display.updateAppText
             wrapMode: Label.Wrap
             font.pixelSize: 14
             font.family: "Courier New"
@@ -41,12 +41,13 @@ Dialog {
         Label {
             id: loadLabel
             width: parent.width
-            text: updateApp.loadText
+            text: commun_display.loadTextApp
             wrapMode: Label.Wrap
             font.pixelSize: 14
             font.family: "Courier New"
             color: "#0b8fdb"
             horizontalAlignment: Qt.AlignHCenter
+            visible: false
         }
 
 
@@ -57,8 +58,8 @@ Dialog {
             height: parent.height * 0.2
 
             Component.onCompleted: {
-                        updateApp.onBusyIndicatorON.connect(onBusyIndicatorON)
-                        updateApp.onBusyIndicatorOFF.connect(onBusyIndicatorOFF)
+                        commun_display.onBusyIndicatorON.connect(onBusyIndicatorON)
+                        commun_display.onBusyIndicatorOFF.connect(onBusyIndicatorOFF)
 
                         visible = false
                     }
@@ -67,7 +68,7 @@ Dialog {
                     busyIndicator.visible = true
             }
             function onBusyIndicatorOFF(){
-                    busyIndicator.visible = false
+                    busyIndicator.visible = false    
             }
         }
 
@@ -79,8 +80,8 @@ Dialog {
             anchors.right: parent.right
             visible: false
             from: 0.0
-            to: {updateApp.TotalBytes}
-            value: {updateApp.BytesRead}
+            to: {commun_display.TotalBytes}
+            value: {commun_display.BytesRead}
 
             background: Rectangle {
                 color: "#e6e6e6"
@@ -88,15 +89,17 @@ Dialog {
             }
 
             Component.onCompleted: {
-                        updateApp.onStartload.connect(onStartload)
-                        updateApp.onStatusLoadOFF.connect(onStatusLoadOFF)
+                        commun_display.onStartload.connect(onStartload)
+                        commun_display.onStatusLoadOFF.connect(onStatusLoadOFF)
                     }
 
             function onStartload(){
                 load.visible = true
+                loadLabel.visible = true
             }
             function onStatusLoadOFF(){
                 load.visible = false
+                loadLabel.visible = false
             }
 
 
@@ -157,14 +160,14 @@ Dialog {
         anchors.left: parent.left
         height: parent.height * 0.25
         width: parent.width * 0.4
-        text: "Установить"
+        text: "Да"
         background: Rectangle{
             property var normalColor: "#07e67a"
             property var pressedColor: "#0b6b3d"
             color: ok.pressed ? pressedColor : normalColor
         }
         Component.onCompleted: {
-                    updateApp.onBut_Ok_On.connect(onBut_Ok_On)
+                    commun_display.onBut_Ok_On.connect(onBut_Ok_On)
                     visible = false
                 }
 

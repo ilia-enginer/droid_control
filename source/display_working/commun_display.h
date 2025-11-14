@@ -28,11 +28,25 @@ public:
         searchFinish
     };
 
+    enum updApp {
+        null,
+        startloadStat,          //включение ползунка загрузки
+        statusLoadOFFStat,      //отключение ползунка загрузки
+        busyIndicatorONStat,    //включает крутилку загрузки
+        busyIndicatorOFFStat,   //отключает крутилку загрузки
+        windowloadOpenStat,     //открывает окно обновления app
+        but_Ok_OnStat           //включение кнопки повторной установки
+    };
+
     Q_PROPERTY(QString currUpd READ getCurrenUpd WRITE setCurrenUpd NOTIFY CurrenUpdateChanged)
     Q_PROPERTY(QString update READ getUpdate WRITE setUpdatee NOTIFY updateChanged)
     Q_PROPERTY(QString curDeviceName_ READ getCurDeviceName WRITE setCurDeviceName NOTIFY onCurDeviceNameChanged)
     Q_PROPERTY(float Volt READ getVolt WRITE vrealChang NOTIFY vrealChanged)
     Q_PROPERTY(float Cur READ getCur WRITE curRealChang NOTIFY curRealChanged)
+    Q_PROPERTY(QString updateAppText READ getUpdateAppText WRITE setUpdateAppText NOTIFY UpdateAppTextChanged)
+    Q_PROPERTY(QString loadTextApp READ getLoadTextApp WRITE setLoadTextApp NOTIFY onLoadTextAppChanged)
+    Q_PROPERTY(double TotalBytes READ get_TotalBytes WRITE set_TotalBytes NOTIFY totalBytesChanged)
+    Q_PROPERTY(double BytesRead READ get_BytesRead WRITE set_BytesRead NOTIFY bytesReadChanged)
 
     int get_rendering_flag();
     void set_rendering_flag(int flag);
@@ -69,6 +83,19 @@ public:
                       float angleY, float angleZ);
 
 
+    int statusUpdateApp(int status);
+
+    int setUpdateAppText(const QString &message);
+    QString getUpdateAppText();
+
+    QString getLoadTextApp();
+    int setLoadTextApp(QString text);
+
+    void set_TotalBytes(double byte);
+    void set_BytesRead(double byte);
+    double get_TotalBytes() const;
+    double get_BytesRead() const;
+
 Q_SIGNALS:
     void logT(QString type, QString msg);
     void logServis(QString type, QString msg);
@@ -100,6 +127,19 @@ Q_SIGNALS:
                     float angleX_, float angleY_,
                     float angleZ_);              //вывод графиков
 
+    void UpdateAppTextChanged(QString msg);
+    void onLoadTextAppChanged(QString text);
+
+    void startload();         //включение ползунка загрузки
+    void statusLoadOFF();     //отключение ползунка загрузки
+    void busyIndicatorON();     //включает крутилку загрузки
+    void busyIndicatorOFF();    //отключает крутилку загрузки
+    void windowloadOpen();           //открывает окно обновления app
+    void but_Ok_On();            //включение кнопки повторной установки
+
+    void totalBytesChanged();
+    void bytesReadChanged();
+
 private:
     int vrealUpdate();
     int curRealUpdate();
@@ -108,6 +148,11 @@ private:
     int updateRefresh();
     int statusDeviceRefresh();
     int CurDeviceNameRefresh();
+    int updateAppTextRefresh();
+    int LoadTextAppRefresh();
+    int statusUpdateAppRefresh();
+    int TotalBytesRefresh();
+    int BytesReadRefresh();
 
     int rendering_flag;
     bool connected = false;
@@ -115,12 +160,19 @@ private:
     float Volt = 0.0;
     float Cur = 0.0;
 
+    double TotalBytes = 0.0;             //кол-во байтов всего загружаемого приложения
+    double BytesRead = 0.0;              //сколько уже загружено
+
     QString currUpd = "Проверьте обновление";
     QString messagee = " ";
     QString curDeviceName_ = "Устройство отключено";
 
+    QString updateAppText_ = "Проверка обновлений...";
+    QString loadTextApp_ = "";
+
     int statusUpd = statusUpd::checkUpd;
     int statusDevic = statusDevic::searchFinish;
+    int statusUpdApp = updApp::null;
 };
 
 #endif // COMMUN_DISPLAY_H

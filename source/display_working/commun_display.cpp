@@ -17,12 +17,14 @@ Commun_display::~Commun_display()
 
 }
 
-int Commun_display::get_rendering_flag()
+int
+Commun_display::get_rendering_flag()
 {
     return rendering_flag;
 }
 
-void Commun_display::set_rendering_flag(int flag)
+void
+Commun_display::set_rendering_flag(int flag)
 {
     rendering_flag = flag;
 }
@@ -189,6 +191,75 @@ Commun_display::graphsOutput(float volt, float cur, float tilt_angle, float tilt
                     angleY, angleZ);
 }
 
+int
+Commun_display::statusUpdateApp(int status)
+{
+    int res = -1;
+    statusUpdApp = status;
+    res = statusUpdateAppRefresh();
+    return res;
+}
+
+int
+Commun_display::setUpdateAppText(const QString &message)
+{
+    int res = -1;
+    if(message.isEmpty())
+        return res;
+    updateAppText_ = message;
+    res = updateAppTextRefresh();
+    return res;
+}
+
+QString
+Commun_display::getUpdateAppText()
+{
+    return updateAppText_;
+}
+
+QString
+Commun_display::getLoadTextApp()
+{
+    return loadTextApp_;
+}
+
+int
+Commun_display::setLoadTextApp(QString text)
+{
+    int res = -1;
+    if(text.isEmpty())
+        return res;
+    loadTextApp_ = text;
+    res = LoadTextAppRefresh();
+    return res;
+}
+
+void
+Commun_display::set_TotalBytes(double byte)
+{
+    TotalBytes = byte;
+    TotalBytesRefresh();
+}
+
+void
+Commun_display::set_BytesRead(double byte)
+{
+    BytesRead = byte;
+    BytesReadRefresh();
+}
+
+double
+Commun_display::get_TotalBytes() const
+{
+    return TotalBytes;
+}
+
+double
+Commun_display::get_BytesRead() const
+{
+    return BytesRead;
+}
+
 
 int
 Commun_display::allUpdate()
@@ -200,6 +271,12 @@ Commun_display::allUpdate()
     updateRefresh();    //состояние поисковой страницы
     statusDeviceRefresh();//обновить состояние поисковой страницы
     CurDeviceNameRefresh();//обновление имени подключенного устройства
+    statusUpdateAppRefresh();//обновить состояние страницы обновления Апк
+    updateAppTextRefresh(); //обновить текст на странице обновления приложения
+    LoadTextAppRefresh();   //обновить загрузочный текст на странице обновления приложения
+    TotalBytesRefresh();
+    BytesReadRefresh();
+
     return 0;
 }
 
@@ -299,6 +376,84 @@ int Commun_display::CurDeviceNameRefresh()
     if(rendering_flag == Qt::ApplicationState::ApplicationActive)
     {
         emit onCurDeviceNameChanged(curDeviceName_);
+        return 0;
+    }
+    return -1;
+}
+
+int
+Commun_display::updateAppTextRefresh()
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit UpdateAppTextChanged(updateAppText_);
+        return 0;
+    }
+    return -1;
+}
+
+int
+Commun_display::LoadTextAppRefresh()
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit onLoadTextAppChanged(loadTextApp_);
+        return 0;
+    }
+    return -1;
+}
+
+int
+Commun_display::statusUpdateAppRefresh()
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        switch(statusUpdApp)
+        {
+            case updApp::startloadStat:
+                emit startload();         //включение ползунка загрузки
+                break;
+            case updApp::statusLoadOFFStat:
+                emit statusLoadOFF();     //отключение ползунка загрузки
+                break;
+            case updApp::busyIndicatorONStat:
+                emit busyIndicatorON();     //включает крутилку загрузки
+                break;
+            case updApp::busyIndicatorOFFStat:
+                emit busyIndicatorOFF();    //отключает крутилку загрузки
+                break;
+            case updApp::windowloadOpenStat:
+                emit windowloadOpen();           //открывает окно обновления app
+                break;
+            case updApp::but_Ok_OnStat:
+                emit but_Ok_On();            //включение кнопки повторной установки
+                break;
+
+            default:
+                break;
+        }
+        return 0;
+    }
+    return -1;
+}
+
+int
+Commun_display::TotalBytesRefresh()
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit totalBytesChanged();
+        return 0;
+    }
+    return -1;
+}
+
+int
+Commun_display::BytesReadRefresh()
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit bytesReadChanged();
         return 0;
     }
     return -1;

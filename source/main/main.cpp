@@ -177,6 +177,7 @@ int main(int argc, char *argv[])
     appManager.setCommun_display(&commun_display);
 
     updateApp.setAppManager(&appManager);
+    updateApp.setCommun_display(&commun_display);
 
     QObject::connect(&app, &QApplication::applicationStateChanged, &appManager, &AppManager::onApplicationStateChanged);
 
