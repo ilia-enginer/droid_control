@@ -42,6 +42,12 @@ UpdateHex::setSettings(Settings *newSettings)
     _settings = newSettings;
 }
 
+void
+UpdateHex::setAppManager(AppManager *newAppManager)
+{
+    _appManager = newAppManager;
+}
+
 
 void
 UpdateHex::setVersExt(quint32 version)
@@ -308,10 +314,11 @@ UpdateHex::on_pbWrite_clicked(bool flag)
         delay(3000);
     }
 
-     //чтоб экран не гас
-     AppManager app;
-     app.keepScreenOn(true);
-     app.startBackgroundService();
+     if(_appManager)
+     {
+         _appManager->keepScreenOn(true);
+         _appManager->startBackgroundService();
+     }
 
      //включить индикатор загрузки
      //и кнопку остановки
@@ -405,10 +412,11 @@ UpdateHex::openBootloaderUpdate()
 void
 UpdateHex::on_pbStop_clicked(QString error)
 {
-    //
-    AppManager app;
-    app.keepScreenOn(false);
-    app.stopBackgroundService();
+    if(_appManager)
+    {
+        _appManager->keepScreenOn(false);
+        _appManager->stopBackgroundService();
+    }
 
     //выключить таймер
     _timer->stop();
@@ -488,10 +496,11 @@ UpdateHex::write_page()
                     {
                         _commun_display->setCurrenUpd("Что-то поломалось. Попробуйте еще раз");
                         _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
-                        //
-                        AppManager app;
-                        app.keepScreenOn(false);
-                        app.stopBackgroundService();
+                        if(_appManager)
+                        {
+                            _appManager->keepScreenOn(false);
+                            _appManager->stopBackgroundService();
+                        }
                         return;
                     }
                     delay(70);
@@ -508,10 +517,11 @@ UpdateHex::write_page()
                 {
                     _commun_display->setCurrenUpd("Обновление установлено");
                     _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
-                    //
-                    AppManager app;
-                    app.keepScreenOn(false);
-                    app.stopBackgroundService();
+                    if(_appManager)
+                    {
+                        _appManager->keepScreenOn(false);
+                        _appManager->stopBackgroundService();
+                    }
                     return;
                 }
             }
@@ -534,10 +544,11 @@ UpdateHex::write_page()
                     {
                         _commun_display->setCurrenUpd("Ошибка установки. Попробуйте еще раз");
                         _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
-                        //
-                        AppManager app;
-                        app.keepScreenOn(false);
-                        app.stopBackgroundService();
+                        if(_appManager)
+                        {
+                            _appManager->keepScreenOn(false);
+                            _appManager->stopBackgroundService();
+                        }
                         return;
                     }
                     delay(70);
@@ -545,10 +556,11 @@ UpdateHex::write_page()
                 _commun_display->setCurrenUpd("Обновление установлено");
                 _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
 
-                //
-                AppManager app;
-                app.keepScreenOn(false);
-                app.stopBackgroundService();
+                if(_appManager)
+                {
+                    _appManager->keepScreenOn(false);
+                    _appManager->stopBackgroundService();
+                }
             }
         }
         //если режим админа
@@ -583,10 +595,11 @@ UpdateHex::write_page()
                                         versionToString(version_BootLoader_ExternalProgram.u32) +
                                         "\nДоступна версия:\n" + versionToString(version_BootLoader_InternalProgram.u32));
                         _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
-                        //
-                        AppManager app;
-                        app.keepScreenOn(false);
-                        app.stopBackgroundService();
+                        if(_appManager)
+                        {
+                            _appManager->keepScreenOn(false);
+                            _appManager->stopBackgroundService();
+                        }
                         return;
                     }
                     delay(70);
@@ -601,10 +614,11 @@ UpdateHex::write_page()
                                 "\nДоступна версия:\n" + versionToString(version_BootLoader_InternalProgram.u32));
 
                 _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
-                //
-                AppManager app;
-                app.keepScreenOn(false);
-                app.stopBackgroundService();
+                if(_appManager)
+                {
+                    _appManager->keepScreenOn(false);
+                    _appManager->stopBackgroundService();
+                }
                 return;
 
             }
@@ -635,10 +649,11 @@ UpdateHex::write_page()
                                         "\nДоступна версия:\n" + versionToString(version_BootLoader_InternalProgram.u32));
 
                         _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
-                        //
-                        AppManager app;
-                        app.keepScreenOn(false);
-                        app.stopBackgroundService();
+                        if(_appManager)
+                        {
+                            _appManager->keepScreenOn(false);
+                            _appManager->stopBackgroundService();
+                        }
                         return;
                     }
                     delay(70);
@@ -652,10 +667,11 @@ UpdateHex::write_page()
                                 versionToString(version_BootLoader_ExternalProgram.u32) +
                                 "\nДоступна версия:\n" + versionToString(version_BootLoader_InternalProgram.u32));
                 _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
-                //
-                AppManager app;
-                app.keepScreenOn(false);
-                app.stopBackgroundService();
+                if(_appManager)
+                {
+                    _appManager->keepScreenOn(false);
+                    _appManager->stopBackgroundService();
+                }
             }
         }
     }

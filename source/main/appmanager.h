@@ -4,6 +4,10 @@
 #include <QObject>
 #include "../display_working/commun_display.h"
 
+#if defined(Q_QDOC) || (defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED))
+#include <QtCore/qjniobject.h>
+#endif
+
 
 class AppManager : public QObject
 {
@@ -16,7 +20,7 @@ public:
 
     void keepScreenOn(bool on);
 
-    int getStateApp();
+    int getStateApp();    
 
     void startBackgroundService();
     void stopBackgroundService();
@@ -30,10 +34,16 @@ private:
 
     int state_;
     bool flagServiceStart = false;
+    int _serviceClients = 0;
+#if defined(Q_QDOC) || (defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED))
+    QJniObject _wakeLock;
+#endif
+    void updateWakeLock(bool enable);
 
 
 public slots:
     void onApplicationStateChanged(Qt::ApplicationState state);
+    void ensureBluetoothPermissions();
 
 };
 

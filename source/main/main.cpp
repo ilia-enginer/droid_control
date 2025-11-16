@@ -126,7 +126,6 @@ int main(int argc, char *argv[])
     Info info;
 
 
-
     engine.rootContext()->setContextProperty("device", &d);
     engine.rootContext()->setContextProperty("mainModel", &model);
     engine.rootContext()->setContextProperty("updateApp", &updateApp);
@@ -139,6 +138,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("rx_commands", &rx_commands);
     engine.rootContext()->setContextProperty("feedback", &feedback);
     engine.rootContext()->setContextProperty("info", &info);
+    engine.rootContext()->setContextProperty("appManager", &appManager);
 
     packing.setCrc(&crc);
     packing.setCommun_display(&commun_display);
@@ -166,6 +166,7 @@ int main(int argc, char *argv[])
     updateHex.setCrc(&crc);
     updateHex.setCommun_display(&commun_display);
     updateHex.setSettings(&settings);
+    updateHex.setAppManager(&appManager);
 
     model.setDevice(&d);
     model.setUpdateHex(&updateHex);
@@ -175,6 +176,9 @@ int main(int argc, char *argv[])
     model.setTx_commands(&tx_commands);
 
     appManager.setCommun_display(&commun_display);
+#if defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED)
+  //  appManager.ensureBluetoothPermissions();  //запуск при нажатии кнопки "Начать поиск"
+#endif
 
     updateApp.setAppManager(&appManager);
     updateApp.setCommun_display(&commun_display);

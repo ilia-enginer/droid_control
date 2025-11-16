@@ -158,7 +158,7 @@ UpdateApp::downloadFile()
     _commun_display->statusUpdateApp(_commun_display->updApp::busyIndicatorOFFStat);
     _commun_display->statusUpdateApp(_commun_display->updApp::startloadStat);
 
-    setUpdateText("Загрузка...\nНе сворачивайте приложение во время загрузки");
+    setUpdateText("Загрузка...");
     setLoadText("");
 
     _appManager->startBackgroundService();

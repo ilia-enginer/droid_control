@@ -16,6 +16,8 @@
 #include "../display_working/commun_display.h"
 #include "../main/settings.h"
 
+class AppManager;
+
 
 
 class UpdateHex : public QObject
@@ -31,6 +33,7 @@ public:
     void setCrc(Crc *newCrc);
     void setCommun_display(Commun_display *newCommun_display);
     void setSettings(Settings *newSettings);
+    void setAppManager(AppManager *newAppManager);
 
     void setVersExt(quint32 version);
     quint32 getVersExt(void);
@@ -64,6 +67,7 @@ private:
     Crc *_crc = nullptr;
     Commun_display *_commun_display = nullptr;
     Settings *_settings = nullptr;
+    AppManager *_appManager = nullptr;
     QTimer *_timer = nullptr;
 
     f_value version_BootLoader_ExternalProgram;     //версия загрузчика
