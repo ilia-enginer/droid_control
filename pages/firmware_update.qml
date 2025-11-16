@@ -21,22 +21,22 @@ Page {
         font.pointSize: parent.height * 0.022
     }
 
-    Label {
-        id: senderPageLabel1
-        anchors.top: senderPageLabel.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        width: parent.width
-        wrapMode: Label.Wrap
-        horizontalAlignment: Qt.AlignHCenter
-        text: "Во время обновления не блокируйте телефон и не сворачивайте приложение"
-        font.pointSize: parent.height * 0.027
-        color: "red" 
-    }
+//    Label {
+//        id: senderPageLabel1
+//        anchors.top: senderPageLabel.bottom
+//        anchors.left: parent.left
+//        anchors.right: parent.right
+//        width: parent.width
+//        wrapMode: Label.Wrap
+//        horizontalAlignment: Qt.AlignHCenter
+//        text: "Во время обновления не блокируйте телефон и не сворачивайте приложение"
+//        font.pointSize: parent.height * 0.027
+//        color: "red"
+//    }
 
     Label {
         id: senderPageLabel2
-        anchors.top: senderPageLabel1.bottom
+        anchors.top: senderPageLabel.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         width: parent.width

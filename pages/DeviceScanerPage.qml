@@ -173,6 +173,7 @@ Dialog {
             onClicked: {
                 devicesWarning.visible = false
                 device.startDeviceDiscovery();
+                appManager.ensureBluetoothPermissions();
             }
         }
 
