@@ -184,11 +184,14 @@ Commun_display::get_connected()
 void
 Commun_display::graphsOutput(float volt, float cur, float tilt_angle, float tilt_direction, float boost, float angular_velocity, float angleX, float angleY, float angleZ)
 {
-    emit chart_data(volt,
-                    cur, tilt_angle,
-                    tilt_direction, boost,
-                    angular_velocity, angleX,
-                    angleY, angleZ);
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit chart_data(volt,
+                        cur, tilt_angle,
+                        tilt_direction, boost,
+                        angular_velocity, angleX,
+                        angleY, angleZ);
+    }
 }
 
 int
