@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QWidget>
 #include <QString>
-
+#include "../communication/crc.h"
 
 class Commun_display: public QObject
 {

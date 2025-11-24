@@ -197,8 +197,10 @@ Commun_display::graphsOutput(float volt, float cur, float tilt_angle, float tilt
 int
 Commun_display::statusUpdateApp(int status)
 {
-    int res = -1;
-    statusUpdApp.append(status);
+    f_value val;
+    int res = -1;  
+    val.u32 = status;
+    statusUpdApp.append(val.data[0]);
     res = statusUpdateAppRefresh();
     return res;
 }
@@ -415,7 +417,9 @@ Commun_display::statusUpdateAppRefresh()
 
         while(!statusUpdApp.isEmpty())
         {
-            switch(statusUpdApp[0])
+           f_value val;
+           val.data[0] = statusUpdApp[0];
+            switch(val.u32)
             {
                 case updApp::startloadStat:
                     emit startload();         //включение ползунка загрузки

@@ -24,11 +24,6 @@ Packing::setCrc(Crc *newCrc)
     _crc = newCrc;
 }
 
-//void
-//Packing::setDevice(Device *newDevice)
-//{
-//    _device = newDevice;
-//}
 
 void
 Packing::setCommun_display(Commun_display *newCommun_display)
@@ -64,7 +59,7 @@ Packing::sendMessage(QString msg, bool wrap)
     if (!_socket)   {
         return -1;
     }
-//    int res = _device->sendMessage(dataToSend);
+
     int res = _socket->write(dataToSend);
 
     //если не отправлено - выйти
@@ -91,7 +86,7 @@ Packing::sendMessage(QByteArray msg, bool wrap)
     if (!_socket)   {
         return -1;
     }
-//    int res = _device->sendMessage(dataToSend);
+
     int res = _socket->write(dataToSend);
 
 
