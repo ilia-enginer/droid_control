@@ -30,11 +30,12 @@ void
 AppManager::onApplicationStateChanged(Qt::ApplicationState state)
 {
 //    qDebug() << state;
+    _commun_display->set_rendering_flag(state);
 
     if(state == Qt::ApplicationState::ApplicationActive)
     {
-        _commun_display->allUpdate();
         state_ = Qt::ApplicationState::ApplicationActive;
+        _commun_display->allUpdate(); 
     }
     else
     {
@@ -43,9 +44,7 @@ AppManager::onApplicationStateChanged(Qt::ApplicationState state)
         {
             keepScreenOn(false);
         }
-    }
-
-    _commun_display->set_rendering_flag(state);
+    }  
 
 //    QString filename="Data.txt";
 //    QFile file( filename );

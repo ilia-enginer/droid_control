@@ -198,7 +198,7 @@ int
 Commun_display::statusUpdateApp(int status)
 {
     int res = -1;
-    statusUpdApp = status;
+    statusUpdApp.append(status);
     res = statusUpdateAppRefresh();
     return res;
 }
@@ -411,29 +411,36 @@ Commun_display::statusUpdateAppRefresh()
 {
     if(rendering_flag == Qt::ApplicationState::ApplicationActive)
     {
-        switch(statusUpdApp)
-        {
-            case updApp::startloadStat:
-                emit startload();         //включение ползунка загрузки
-                break;
-            case updApp::statusLoadOFFStat:
-                emit statusLoadOFF();     //отключение ползунка загрузки
-                break;
-            case updApp::busyIndicatorONStat:
-                emit busyIndicatorON();     //включает крутилку загрузки
-                break;
-            case updApp::busyIndicatorOFFStat:
-                emit busyIndicatorOFF();    //отключает крутилку загрузки
-                break;
-            case updApp::windowloadOpenStat:
-                emit windowloadOpen();           //открывает окно обновления app
-                break;
-            case updApp::but_Ok_OnStat:
-                emit but_Ok_On();            //включение кнопки повторной установки
-                break;
+        const std::string empty;
 
-            default:
-                break;
+        while(!statusUpdApp.isEmpty())
+        {
+            switch(statusUpdApp[0])
+            {
+                case updApp::startloadStat:
+                    emit startload();         //включение ползунка загрузки
+                    break;
+                case updApp::statusLoadOFFStat:
+                    emit statusLoadOFF();     //отключение ползунка загрузки
+                    break;
+                case updApp::busyIndicatorONStat:
+                    emit busyIndicatorON();     //включает крутилку загрузки
+                    break;
+                case updApp::busyIndicatorOFFStat:
+                    emit busyIndicatorOFF();    //отключает крутилку загрузки
+                    break;
+                case updApp::windowloadOpenStat:
+                    emit windowloadOpen();           //открывает окно обновления app
+                    break;
+                case updApp::but_Ok_OnStat:
+                    emit but_Ok_On();            //включение кнопки повторной установки
+                    break;
+
+                default:
+                    break;
+            }
+
+            statusUpdApp.replace(0, 1, empty);
         }
         return 0;
     }

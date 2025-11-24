@@ -29,7 +29,6 @@ public:
     };
 
     enum updApp {
-        null,
         startloadStat,          //включение ползунка загрузки
         statusLoadOFFStat,      //отключение ползунка загрузки
         busyIndicatorONStat,    //включает крутилку загрузки
@@ -172,7 +171,8 @@ private:
 
     int statusUpd = statusUpd::checkUpd;
     int statusDevic = statusDevic::searchFinish;
-    int statusUpdApp = updApp::null;
+    QByteArray statusUpdApp;
+
 };
 
 #endif // COMMUN_DISPLAY_H
