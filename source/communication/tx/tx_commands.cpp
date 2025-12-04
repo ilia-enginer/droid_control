@@ -280,6 +280,29 @@ Tx_commands::writeAllParams()
     return res;
 }
 
+//установить яркость светодиодной ленты
+int
+Tx_commands::setBrightness(QString msg)
+{
+    QByteArray data;
+    int res = -1;
+    QString s;
+    quint8 comand = 0xAA;
+
+    //раскладывание строки по интовым числам
+    StringToIntToByte(msg, &data);
+
+    s = "установить яркость oled " + msg;
+
+    //вписывание команды
+    data.prepend(comand);
+
+    //отправка команды, вывод лога
+    res = Sending(data, s);
+
+    return res;
+}
+
 //сброс до заводских нистроек 0xE0
 int
 Tx_commands::fullReset()

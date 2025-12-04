@@ -135,6 +135,8 @@ Rx_commands::searchCommand(QByteArray dat)
         break;
     case 0xA9:
         getParamsChart(Data);
+    case 0xAA:
+        setBrightness();
         break;
     case 0xE0:
         fullReset();
@@ -655,6 +657,13 @@ Rx_commands::getParamsChart(QByteArray Params)
     _commun_display->curRealChang(cur);
 
     _commun_display->graphsOutput(volt, cur, tilt_angle, tilt_direction, boost, angular_velocity, angleX, angleY, angleZ);
+}
+
+//подтверждение установленной яркости светодиодной ленты
+void
+Rx_commands::setBrightness()
+{
+    _commun_display->logServis("<- яркость oled изменена", " ");
 }
 
 //сброс до заводских нистроек                       0xE0

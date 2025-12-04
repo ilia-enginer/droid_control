@@ -68,6 +68,7 @@ private:
     void readAllParams(QByteArray Params); //запросить все параметры(точка восстановления) 0xA7
     void writeAllParams();                //отправить все параметры(точка восстановления)    0xA8
     void getParamsChart(QByteArray Params); //получение параметров для графика 0xA9
+    void setBrightness();                //подтверждение установленной яркости светодиодной ленты
     void fullReset();                    //сброс до заводских нистроек                       0xE0
     void writeMinAngleServo();          //запись мин угла сервы во флеш, остальные углы рассчитываются     0xE1
     void writeSettingLeds();             //запись установок для светодиодов      0xE2

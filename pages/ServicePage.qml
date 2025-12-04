@@ -173,6 +173,8 @@ Page {
                                 get_led_but.visible             = false
                                 set_led.visible                 = false
                                 set_led_but.visible             = false
+                                brightnessOLEDlabel.visible     = false
+                                brightnessOLED.visible          = false
                             }
                             //Система
                             else if (currentIndex === 1)
@@ -226,6 +228,8 @@ Page {
                                 get_led_but.visible             = false
                                 set_led.visible                 = false
                                 set_led_but.visible             = false
+                                brightnessOLEDlabel.visible     = false
+                                brightnessOLED.visible          = false
                             }
                             //Сервы
                             else if (currentIndex === 2)
@@ -279,6 +283,8 @@ Page {
                                 get_led_but.visible             = false
                                 set_led.visible                 = false
                                 set_led_but.visible             = false
+                                brightnessOLEDlabel.visible     = false
+                                brightnessOLED.visible          = false
                             }
                             //Ток
                             else if (currentIndex === 3)
@@ -332,6 +338,8 @@ Page {
                                 get_led_but.visible             = false
                                 set_led.visible                 = false
                                 set_led_but.visible             = false
+                                brightnessOLEDlabel.visible     = false
+                                brightnessOLED.visible          = false
                             }
                             //Напряжение
                             else if (currentIndex === 4)
@@ -385,6 +393,8 @@ Page {
                                 get_led_but.visible             = false
                                 set_led.visible                 = false
                                 set_led_but.visible             = false
+                                brightnessOLEDlabel.visible     = false
+                                brightnessOLED.visible          = false
                             }
                             //Акселерометр
                             else if (currentIndex === 5)
@@ -438,6 +448,8 @@ Page {
                                 get_led_but.visible             = false
                                 set_led.visible                 = false
                                 set_led_but.visible             = false
+                                brightnessOLEDlabel.visible     = false
+                                brightnessOLED.visible          = false
                             }
                             //Светодиоды
                             else if (currentIndex === 6)
@@ -491,6 +503,8 @@ Page {
                                 get_led_but.visible             = true
                                 set_led.visible                 = true
                                 set_led_but.visible             = true
+                                brightnessOLEDlabel.visible     = true
+                                brightnessOLED.visible          = true
                             }
 
                         }
@@ -1111,6 +1125,27 @@ Page {
                         listView1.positionViewAtEnd()
                     }
                 }
-
+                Label {
+                    id: brightnessOLEDlabel
+                    anchors.top: set_led_but.bottom
+                    width: parent.width
+                    wrapMode: Label.Wrap
+                    horizontalAlignment: Qt.AlignHCenter
+                    text: "яркость oled  " + Math.round(brightnessOLED.value)
+                }
+                Slider {
+                    id: brightnessOLED
+                    value: 255
+                    from: 0
+                    to: 255
+                    anchors.top: brightnessOLEDlabel.bottom
+                    width: parent.width
+                    onPressedChanged: {
+                        if(!pressed)
+                        {
+                            tx_commands.setBrightness(Math.round(brightnessOLED.value));
+                        }
+                    }
+                }
         }
 }
