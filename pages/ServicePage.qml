@@ -672,7 +672,7 @@ Page {
                     anchors.top: power_off.top
                     anchors.right: power_off.right
                     anchors.left: power_off.left
-                    height: power_off.height * 0.8
+                    height: power_off.height * 0.67
                     Text {
                         id: name
                         anchors.verticalCenter: parent.verticalCenter
