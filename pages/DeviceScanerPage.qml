@@ -12,6 +12,11 @@ Dialog {
     x: parent.width * 0.1
     y: parent.height * 0.05
 
+    Component.onCompleted: {
+        //добавление в список последнее подключенное устройство
+        device.get_last_device()
+    }
+
     header: Column {
         anchors.left: devicesDialog.Left
         anchors.right: devicesDialog.Right

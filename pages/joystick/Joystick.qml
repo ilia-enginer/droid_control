@@ -58,7 +58,6 @@ SwipeView {
             }
         }
 
-
         //окно лога
         Rectangle {
             id: senderBackground_2
@@ -817,199 +816,219 @@ SwipeView {
                  Connections {
                      target: commun_display
                      function  onChart_data(voltt, curr, tilt_anglee, tilt_directionn, boostt, angular_velocityy, angleXX, angleYY, angleZZ) {
+                         chartView.visible = false
+
                         if(volt.checked)
                         {
                             //масштабирование по у
-                            if(voltt < valueYMin){
+                            if(voltt <= valueYMin){
                               valueYMin = voltt;
                                 //опустить ниже на 20 часть масштаба
-                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
+                              valueYMin = valueYMin - ((valueYMax - valueYMin) * 0.12);
+                              valueAxisY.min = valueYMin;
                             }
-                            if(voltt > valueYMax){
+                            if(voltt >= valueYMax){
                               valueYMax = voltt;
                                 //поднять выше на 20 часть масштаба
-                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
+                              valueYMax = valueYMax + ((valueYMax - valueYMin) * 0.12);
+                              valueAxisY.max = valueYMax;
                             }
                             line1.append(count_volt*2/10, voltt);
                             count_volt++;
 
-                            if((count_volt*2/10) > valueAxisX.max){
-                                valueAxisX.max += 0.1;
+                            if((count_volt*2/10) > (valueAxisX.max - ((valueAxisX.max - valueAxisX.min) * 0.12))){
+                                valueAxisX.max = valueAxisX.max + ((valueAxisX.max - valueAxisX.min) * 0.12)
                             }
                         }
 
                         if(cur.checked)
                         {
                             //масштабирование по у
-                            if(curr < valueYMin){
+                            if(curr <= valueYMin){
                               valueYMin = curr;
                                 //опустить ниже на 20 часть масштаба
-                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
+                                valueYMin = valueYMin - ((valueYMax - valueYMin) * 0.12);
+                                valueAxisY.min = valueYMin;
                             }
-                            if(curr > valueYMax){
+                            if(curr >= valueYMax){
                               valueYMax = curr;
                                 //поднять выше на 20 часть масштаба
-                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
+                                valueYMax = valueYMax + ((valueYMax - valueYMin) * 0.12);
+                                valueAxisY.max = valueYMax;
                             }
                             line2.append(count_cur*2/10, curr);
                             count_cur++;
 
-                            if((count_cur*2/10) > valueAxisX.max){
-                                valueAxisX.max += 0.1;
+                            if((count_cur*2/10) > (valueAxisX.max - ((valueAxisX.max - valueAxisX.min) * 0.12))){
+                                valueAxisX.max = valueAxisX.max + ((valueAxisX.max - valueAxisX.min) * 0.12)
                             }
                         }
 
                         if(tilt_angle.checked)
                         {
                             //масштабирование по у
-                            if(tilt_anglee < valueYMin){
+                            if(tilt_anglee <= valueYMin){
                               valueYMin = tilt_anglee;
                                 //опустить ниже на 20 часть масштаба
-                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
+                                valueYMin = valueYMin - ((valueYMax - valueYMin) * 0.12);
+                                valueAxisY.min = valueYMin;
                             }
-                            if(tilt_anglee > valueYMax){
+                            if(tilt_anglee >= valueYMax){
                               valueYMax = tilt_anglee;
                                 //поднять выше на 20 часть масштаба
-                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
+                                valueYMax = valueYMax + ((valueYMax - valueYMin) * 0.12);
+                                valueAxisY.max = valueYMax;
                             }
                             line3.append(count_tilt_angle*2/10, tilt_anglee);
                             count_tilt_angle++;
 
-                            if((count_tilt_angle*2/10) > valueAxisX.max){
-                                valueAxisX.max += 0.1;
+                            if((count_tilt_angle*2/10) > (valueAxisX.max - ((valueAxisX.max - valueAxisX.min) * 0.12))){
+                                valueAxisX.max = valueAxisX.max + ((valueAxisX.max - valueAxisX.min) * 0.12)
                             }
                         }
 
                         if(tilt_direction.checked)
                         {
                             //масштабирование по у
-                            if(tilt_directionn < valueYMin){
+                            if(tilt_directionn <= valueYMin){
                               valueYMin = tilt_directionn;
                                 //опустить ниже на 20 часть масштаба
-                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
+                                valueYMin = valueYMin - ((valueYMax - valueYMin) * 0.12);
+                                valueAxisY.min = valueYMin;
                             }
-                            if(tilt_directionn > valueYMax){
+                            if(tilt_directionn >= valueYMax){
                               valueYMax = tilt_directionn;
                                 //поднять выше на 20 часть масштаба
-                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
+                                valueYMax = valueYMax + ((valueYMax - valueYMin) * 0.12);
+                                valueAxisY.max = valueYMax;
                             }
                             line4.append(count_tilt_direction*2/10, tilt_directionn);
                             count_tilt_direction++;
 
-                            if((count_tilt_direction*2/10) > valueAxisX.max){
-                                valueAxisX.max += 0.1;
+                            if((count_tilt_direction*2/10) > (valueAxisX.max - ((valueAxisX.max - valueAxisX.min) * 0.12))){
+                                valueAxisX.max = valueAxisX.max + ((valueAxisX.max - valueAxisX.min) * 0.12)
                             }
                         }
 
                         if(boost.checked)
                         {
                             //масштабирование по у
-                            if(boostt < valueYMin){
+                            if(boostt <= valueYMin){
                               valueYMin = boostt;
                                 //опустить ниже на 20 часть масштаба
-                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
+                                valueYMin = valueYMin - ((valueYMax - valueYMin) * 0.12);
+                                valueAxisY.min = valueYMin;
                             }
-                            if(boostt > valueYMax){
+                            if(boostt >= valueYMax){
                               valueYMax = boostt;
                                 //поднять выше на 20 часть масштаба
-                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
+                                valueYMax = valueYMax + ((valueYMax - valueYMin) * 0.12);
+                                valueAxisY.max = valueYMax;
                             }
                             line5.append(count_boost*2/10, boostt);
                             count_boost++;
 
-                            if((count_boost*2/10) > valueAxisX.max){
-                                valueAxisX.max += 0.1;
+                            if((count_boost*2/10) > (valueAxisX.max - ((valueAxisX.max - valueAxisX.min) * 0.12))){
+                                valueAxisX.max = valueAxisX.max + ((valueAxisX.max - valueAxisX.min) * 0.12)
                             }
                         }
 
                         if(angular_velocity.checked)
                         {
                             //масштабирование по у
-                            if(angular_velocityy < valueYMin){
+                            if(angular_velocityy <= valueYMin){
                               valueYMin = angular_velocityy;
                                 //опустить ниже на 20 часть масштаба
-                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
+                                valueYMin = valueYMin - ((valueYMax - valueYMin) * 0.12);
+                                valueAxisY.min = valueYMin;
                             }
-                            if(angular_velocityy > valueYMax){
+                            if(angular_velocityy >= valueYMax){
                               valueYMax = angular_velocityy;
                                 //поднять выше на 20 часть масштаба
-                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
+                                valueYMax = valueYMax + ((valueYMax - valueYMin) * 0.12);
+                                valueAxisY.max = valueYMax;
                             }
                             line6.append(count_angular_velocity*2/10, angular_velocityy);
                             count_angular_velocity++;
 
-                            if((count_angular_velocity*2/10) > valueAxisX.max){
-                                valueAxisX.max += 0.1;
+                            if((count_angular_velocity*2/10) > (valueAxisX.max - ((valueAxisX.max - valueAxisX.min) * 0.12))){
+                                valueAxisX.max = valueAxisX.max + ((valueAxisX.max - valueAxisX.min) * 0.12)
                             }
                         }
 
                         if(angleX.checked)
                         {
                             //масштабирование по у
-                            if(angleXX < valueYMin){
+                            if(angleXX <= valueYMin){
                               valueYMin = angleXX;
                                 //опустить ниже на 20 часть масштаба
-                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
+                                valueYMin = valueYMin - ((valueYMax - valueYMin) * 0.12);
+                                valueAxisY.min = valueYMin;
                             }
-                            if(angleXX > valueYMax){
+                            if(angleXX >= valueYMax){
                               valueYMax = angleXX;
                                 //поднять выше на 20 часть масштаба
-                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
+                                valueYMax = valueYMax + ((valueYMax - valueYMin) * 0.12);
+                                valueAxisY.max = valueYMax;
                             }
                             line7.append(count_angleX*2/10, angleXX);
                             count_angleX++;
 
-                            if((count_angleX*2/10) > valueAxisX.max){
-                                valueAxisX.max += 0.1;
+                            if((count_angleX*2/10) > (valueAxisX.max - ((valueAxisX.max - valueAxisX.min) * 0.12))){
+                                valueAxisX.max = valueAxisX.max + ((valueAxisX.max - valueAxisX.min) * 0.12)
                             }
                         }
 
                         if(angleY.checked)
                         {
                             //масштабирование по у
-                            if(angleYY < valueYMin){
+                            if(angleYY <= valueYMin){
                               valueYMin = angleYY;
                                 //опустить ниже на 20 часть масштаба
-                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
+                                valueYMin = valueYMin - ((valueYMax - valueYMin) * 0.12);
+                                valueAxisY.min = valueYMin;
                             }
-                            if(angleYY > valueYMax){
+                            if(angleYY >= valueYMax){
                               valueYMax = angleYY;
                                 //поднять выше на 20 часть масштаба
-                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
+                                valueYMax = valueYMax + ((valueYMax - valueYMin) * 0.12);
+                                valueAxisY.max = valueYMax;
                             }
                             line8.append(count_angleY*2/10, angleYY);
                             count_angleY++;
 
-                            if((count_angleY*2/10) > valueAxisX.max){
-                                valueAxisX.max += 0.1;
+                            if((count_angleY*2/10) > (valueAxisX.max - ((valueAxisX.max - valueAxisX.min) * 0.12))){
+                                valueAxisX.max = valueAxisX.max + ((valueAxisX.max - valueAxisX.min) * 0.12)
                             }
                         }
 
                         if(angleZ.checked)
                         {
                             //масштабирование по у
-                            if(angleZZ < valueYMin){
+                            if(angleZZ <= valueYMin){
                               valueYMin = angleZZ;
                                 //опустить ниже на 20 часть масштаба
-                              valueAxisY.min = valueYMin - ((valueYMax - valueYMin) * 0.05);
+                                valueYMin = valueYMin - ((valueYMax - valueYMin) * 0.12);
+                                valueAxisY.min = valueYMin;
                             }
-                            if(angleZZ > valueYMax){
+                            if(angleZZ >= valueYMax){
                               valueYMax = angleZZ;
                                 //поднять выше на 20 часть масштаба
-                              valueAxisY.max = valueYMax + ((valueYMax - valueYMin) * 0.05);
+                                valueYMax = valueYMax + ((valueYMax - valueYMin) * 0.12);
+                                valueAxisY.max = valueYMax;
                             }
                             line9.append(count_angleZ*2/10, angleZZ);
                             count_angleZ++;
 
-                            if((count_angleZ*2/10) > valueAxisX.max){
-                                valueAxisX.max += 0.1;
+                            if((count_angleZ*2/10) > (valueAxisX.max - ((valueAxisX.max - valueAxisX.min) * 0.12))){
+                                valueAxisX.max = valueAxisX.max + ((valueAxisX.max - valueAxisX.min) * 0.12)
                             }
                         }
+                        chartView.visible = true
                      }
                  }
 
              }
-
              Column {
                  id: column_check
                  spacing: 5

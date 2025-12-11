@@ -147,10 +147,9 @@ ApplicationWindow {
                     Action {
                         text: "Поиск устройств"
                         onTriggered: {
-
                             devicesDialog.open()
                             //добавление в список последнее подключенное устройство
-                            device.get_last_device()
+                         //   device.get_last_device()
                         }
                     }
 
