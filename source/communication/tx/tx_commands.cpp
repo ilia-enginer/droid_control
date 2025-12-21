@@ -46,9 +46,11 @@ Tx_commands::joysticActivity(quint8 mode, float azimut, float amplitude, float l
     quint16 level16 = level;
     QString s;
 
-
     switch(mode)
     {
+        case 0:
+            comand = 0x00;
+            break;
         case 1:
             comand = 0x0A;
             break;

@@ -458,13 +458,11 @@ SwipeView {
             text: "Высота"
         }
 
-
         //режим работы
         ButtonGroup {
             id: radioGroup
-            onClicked: mode = Number(RadioButton.text)
             Component.onCompleted: {
-                mode = Number("1")
+                mode = Number("0")
             }
         }
         Column {
@@ -474,24 +472,36 @@ SwipeView {
             anchors.verticalCenter: joystick.verticalCenter
 
              RadioButton {
-                 checked: true
                  text: qsTr("1")
                  ButtonGroup.group: radioGroup
+                 onClicked: {
+                     mode = Number("1")
+                 }
              }
 
              RadioButton {
                  text: qsTr("2")
                  ButtonGroup.group: radioGroup
+                 onClicked: {
+                     mode = Number("2")
+                 }
              }
 
              RadioButton {
                  text: qsTr("3")
                  ButtonGroup.group: radioGroup
+                 onClicked: {
+                     mode = Number("3")
+                 }
              }
 
              RadioButton {
+                 checked: true
                  text: qsTr("0")
                  ButtonGroup.group: radioGroup
+                 onClicked: {
+                     mode = Number("0")
+                 }
              }
 
              Label {
