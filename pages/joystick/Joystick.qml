@@ -37,6 +37,8 @@ SwipeView {
     property int count_angleZ: 0
     property int temp: 0
 
+    property bool logStop_: false
+
 
     //страница управления
     Item {
@@ -87,9 +89,8 @@ SwipeView {
                        target: commun_display
                       function onLogJoy(type, msg) {
                            logListModel_2.append({msg: type + msg})
-                           listView1.positionViewAtEnd()
+                          if(!logStop_) listView1.positionViewAtEnd()
                        }
-
                    }
 
                    delegate: Column {
@@ -108,6 +109,65 @@ SwipeView {
                }
         }
 
+        //очистка лога
+        Button {
+            id: clearButton
+            width: senderBackground_2.width * 0.08
+            height: senderBackground_2.height
+            anchors.top: senderBackground_2.top
+            anchors.left: senderBackground_2.right
+
+            contentItem: Text{
+                horizontalAlignment: Qt.AlignHCenter
+                text: "Clear"
+                font.pointSize: 6
+            }
+
+            onClicked: {
+                logListModel.clear()
+            }
+        }
+
+        //остановка лога
+        Button {
+            id: logStop
+            width: senderBackground_2.width * 0.4
+            height: senderBackground_2.height * 0.3
+            anchors.top: senderBackground_2.top
+            anchors.right: clearButton.left
+
+            contentItem: Text{
+                horizontalAlignment: Qt.AlignHCenter
+                text: "Log Stop"
+                font.pointSize: 8
+            }
+            onClicked: {
+                logStop_ = true;
+                logStop.visible = false;
+                logGo.visible = true;
+            }
+        }
+
+        //остановка лога
+        Button {
+            id: logGo
+            width: senderBackground_2.width * 0.4
+            height: senderBackground_2.height * 0.3
+            anchors.top: senderBackground_2.top
+            anchors.right: clearButton.left
+            visible: false
+
+            contentItem: Text{
+                horizontalAlignment: Qt.AlignHCenter
+                text: "Log Go"
+                font.pointSize: 8
+            }
+            onClicked: {
+                logStop_ = false;
+                logGo.visible = false;
+                logStop.visible = true;
+            }
+        }
 
         //напруга
         ProgressBar{
