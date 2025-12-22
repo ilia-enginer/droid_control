@@ -6,6 +6,8 @@ import QtQuick.Controls.Material
 Page {
     id: page
 
+    property bool logStop_: false
+
         Label {
             id: senderPageLabel
             anchors.top: parent.top
@@ -41,7 +43,7 @@ Page {
                        target: commun_display
                        function onLogServis(type, msg) {
                            logListModel.append({msg: type + msg})
-                           listView1.positionViewAtEnd()
+                           if(!logStop_)  listView1.positionViewAtEnd()
                        }
                    }
                    delegate: Column {
@@ -76,6 +78,47 @@ Page {
 
             onClicked: {
                 logListModel.clear()
+            }
+        }
+
+        //остановка лога
+        Button {
+            id: logStop
+            width: senderBackground.width * 0.4
+            height: senderBackground.height * 0.3
+            anchors.top: senderBackground.top
+            anchors.right: clearButton_1.left
+
+            contentItem: Text{
+                horizontalAlignment: Qt.AlignHCenter
+                text: "Log Stop"
+                font.pointSize: 8
+            }
+            onClicked: {
+                logStop_ = true;
+                logStop.visible = false;
+                logGo.visible = true;
+            }
+        }
+
+        //остановка лога
+        Button {
+            id: logGo
+            width: senderBackground.width * 0.4
+            height: senderBackground.height * 0.3
+            anchors.top: senderBackground.top
+            anchors.right: clearButton_1.left
+            visible: false
+
+            contentItem: Text{
+                horizontalAlignment: Qt.AlignHCenter
+                text: "Log Go"
+                font.pointSize: 8
+            }
+            onClicked: {
+                logStop_ = false;
+                logGo.visible = false;
+                logStop.visible = true;
             }
         }
 
