@@ -116,7 +116,7 @@ SwipeView {
             height: senderBackground_2.height
             anchors.top: senderBackground_2.top
             anchors.left: senderBackground_2.right
-
+            opacity: 0.2
             contentItem: Text{
                 horizontalAlignment: Qt.AlignHCenter
                 text: "Clear"
@@ -124,7 +124,7 @@ SwipeView {
             }
 
             onClicked: {
-                logListModel.clear()
+                logListModel_2.clear()
             }
         }
 
@@ -135,7 +135,7 @@ SwipeView {
             height: senderBackground_2.height * 0.3
             anchors.top: senderBackground_2.top
             anchors.right: clearButton.left
-
+            opacity: 0.2
             contentItem: Text{
                 horizontalAlignment: Qt.AlignHCenter
                 text: "Log Stop"
@@ -156,7 +156,7 @@ SwipeView {
             anchors.top: senderBackground_2.top
             anchors.right: clearButton.left
             visible: false
-
+            opacity: 0.2
             contentItem: Text{
                 horizontalAlignment: Qt.AlignHCenter
                 text: "Log Go"
@@ -429,7 +429,6 @@ SwipeView {
                 onPressed: {
                     amplitude = 0.5
                     azimuth = 1.57
-                    tx_commands.joysticActivity(mode, 1.57, 1, level);
                 }
 
                 onReleased: {
@@ -446,7 +445,6 @@ SwipeView {
                 onPressed: {
                     amplitude = 0.5
                     azimuth = -1.57
-                    tx_commands.joysticActivity(mode, -1.57, 1, level);
                 }
 
                 onReleased: {
@@ -463,7 +461,6 @@ SwipeView {
                 onPressed: {
                     amplitude = 0.5
                     azimuth = -3.14
-                    tx_commands.joysticActivity(mode, -3.14, 1, level);
                 }
 
                 onReleased: {
@@ -480,7 +477,6 @@ SwipeView {
                 onPressed: {
                     amplitude = 0.5
                     azimuth = 0
-                    tx_commands.joysticActivity(mode, 0, 1, level);
                 }
 
                 onReleased: {
@@ -488,7 +484,6 @@ SwipeView {
                     azimuth = 0
                 }
             }
-
         }
 
         //высота

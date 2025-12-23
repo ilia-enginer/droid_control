@@ -88,7 +88,7 @@ Page {
             height: senderBackground.height * 0.3
             anchors.top: senderBackground.top
             anchors.right: clearButton_1.left
-
+            opacity: 0.2
             contentItem: Text{
                 horizontalAlignment: Qt.AlignHCenter
                 text: "Log Stop"
@@ -109,7 +109,7 @@ Page {
             anchors.top: senderBackground.top
             anchors.right: clearButton_1.left
             visible: false
-
+            opacity: 0.2
             contentItem: Text{
                 horizontalAlignment: Qt.AlignHCenter
                 text: "Log Go"
