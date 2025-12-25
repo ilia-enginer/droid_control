@@ -149,7 +149,7 @@ private:
     QList<QObject *> m_services;
     QList<QObject *> m_characteristics;
     QString m_previousAddress;
-    bool connected = false;
+    bool connected = false;             //флаг подключенного устройства
     QLowEnergyController *controller = nullptr;
     bool m_deviceScanState = false;
     bool randomAddress = false;

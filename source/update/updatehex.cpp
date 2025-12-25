@@ -419,7 +419,7 @@ UpdateHex::on_pbStop_clicked(QString error)
     }
 
     //выключить таймер
-    _timer->stop();
+    if(_timer)  _timer->stop();
 
     _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
     _commun_display->setCurrenUpd(error + "Проверьте обновление");

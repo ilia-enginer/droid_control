@@ -101,7 +101,6 @@ Dialog {
 
     contentItem: ListView {
         id: devicesListView
-
         focus: true
         clip: true
         currentIndex: -1
@@ -109,21 +108,13 @@ Dialog {
         anchors.left: devicesDialog.Left
         anchors.right: devicesDialog.Right
         anchors.bottom: devicesDialog.footer.top
-
         model: device.devicesList
         spacing : 5
 
         add: Transition {
             NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 500 }
         }
-
-//        populate: Transition {
-//               NumberAnimation { properties: "x,y"; duration: 200 }
-//               NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 500 }
-//        }
-
         delegate: dragDelegate
-
         ScrollIndicator.vertical: ScrollIndicator { }
     }
 
@@ -190,7 +181,6 @@ Dialog {
             anchors.margins: 8
             visible: false
             height: searchButton.height - 5
-
             anchors.horizontalCenter: parent.horizontalCenter
         }
     }

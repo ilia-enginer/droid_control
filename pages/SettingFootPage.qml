@@ -263,26 +263,37 @@ Page {
                 }
             }
 
-
             //////////ток/////////////
-              Button {
+              DelayButton {
               id: cur_calibr_auto
               anchors.top: set_full_param.bottom
               width: page_settings.width
               height: page_settings.height * 0.08
-              text: "автокалибровка датчика тока"
-              background: Rectangle{
-                  property var normalColor: "#d66364"
-                  property var pressedColor: "#800909"
-                  color: cur_calibr_auto.pressed ? pressedColor : normalColor
-              }
-               onClicked: {
-                   getcurtimer.running = false
+              delay: 3000     //3000 ms
+
+               onActivated: {
+                  getcurtimer.running = false;
                   tx_commands.curAutoCalibration();
-                  listView1.positionViewAtEnd()
-                   getcurtimer.running = true
+                  listView1.positionViewAtEnd();
+                  getcurtimer.running = true;
+                  cur_calibr_auto.progress = 0.0;
                }
             }
+              Rectangle{
+                  property var normalColor: "#d66364"
+                  property var pressedColor: "#800909"
+                  anchors.top: cur_calibr_auto.top
+                  anchors.right: cur_calibr_auto.right
+                  anchors.left: cur_calibr_auto.left
+                  height: cur_calibr_auto.height * 0.67
+                  Text {
+                      id: name_cur_calibr_auto
+                      anchors.verticalCenter: parent.verticalCenter
+                      anchors.horizontalCenter: parent.horizontalCenter
+                      text: qsTr("автокалибровка датчика тока")
+                  }
+                  color: cur_calibr_auto.pressed ? pressedColor : normalColor
+              }
 
             //////////сервы/////////////
             Button {

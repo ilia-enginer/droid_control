@@ -228,24 +228,19 @@ Device::connectToDevice(const QString &dAddress, const QString &name, const QStr
 
     if(!blt_on())   return;
 
+    //если уже подключен к этому устройству
+    if((nameDevice_ == name) && (connected))    return;
+
     discoveryAgent->stop();
     deviceScanFinished();
 
     lastConnectedDevice_ = dAddress;
     nameDevice_ = name;
 
-    if (config == "BR") {
-        class_ = "2";
-    }
-    else if (config == "LE") {
-        class_ = "1";
-    }
-    else if (config == "BRLE") {
-        class_ = "3";
-    }
-    else{
-        class_ = "0";
-    }
+    if (config == "BR")         class_ = "2";
+    else if (config == "LE")    class_ = "1";
+    else if (config == "BRLE")  class_ = "3";
+    else                        class_ = "0";
 
     _commun_display->setUpdatee("Подключение к " + nameDevice_);
     _commun_display->statusDevicee(_commun_display->statusDevic::searchInProgr);
@@ -269,10 +264,10 @@ Device::deviceConnected()
     //! [les-service-2]
     _commun_display->setUpdatee("Подключено");
     _commun_display->statusDevicee(_commun_display->statusDevic::searchFinish);
+    setCurrentDeviceName(nameDevice_);
 
     //сохранение последнего подключенного устройства
     QSettings setting;
-    setCurrentDeviceName(nameDevice_);
     setting.setValue("dName", nameDevice_);
     setting.setValue("dClass", class_);
     setting.setValue("dAdres", lastConnectedDevice_);
@@ -516,7 +511,6 @@ Device::get_last_device()
         _commun_display->setUpdatee("Сохраненное устройство добавлено.");
     }
 }
-
 
 
 

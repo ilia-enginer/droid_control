@@ -203,6 +203,7 @@ Page {
                                 flag_cur_but_on.visible         = false
                                 flag_cur_but_off.visible        = false
                                 cur_calibr_auto.visible         = false
+                                cur_calibr_auto_.visible        = false
 
                                 //напряжение
                                 get_voltage.visible             = false
@@ -258,6 +259,7 @@ Page {
                                 flag_cur_but_on.visible         = false
                                 flag_cur_but_off.visible        = false
                                 cur_calibr_auto.visible         = false
+                                cur_calibr_auto_.visible        = false
 
                                 //напряжение
                                 get_voltage.visible             = false
@@ -313,6 +315,7 @@ Page {
                                 flag_cur_but_on.visible         = false
                                 flag_cur_but_off.visible        = false
                                 cur_calibr_auto.visible         = false
+                                cur_calibr_auto_.visible        = false
 
                                 //напряжение
                                 get_voltage.visible             = false
@@ -368,6 +371,7 @@ Page {
                                 flag_cur_but_on.visible         = true
                                 flag_cur_but_off.visible        = true
                                 cur_calibr_auto.visible         = true
+                                cur_calibr_auto_.visible        = true
 
                                 //напряжение
                                 get_voltage.visible             = false
@@ -423,6 +427,7 @@ Page {
                                 flag_cur_but_on.visible         = false
                                 flag_cur_but_off.visible        = false
                                 cur_calibr_auto.visible         = false
+                                cur_calibr_auto_.visible        = false
 
                                 //напряжение
                                 get_voltage.visible             = true
@@ -478,6 +483,7 @@ Page {
                                 flag_cur_but_on.visible         = false
                                 flag_cur_but_off.visible        = false
                                 cur_calibr_auto.visible         = false
+                                cur_calibr_auto_.visible        = false
 
                                 //напряжение
                                 get_voltage.visible             = false
@@ -533,6 +539,7 @@ Page {
                                 flag_cur_but_on.visible         = false
                                 flag_cur_but_off.visible        = false
                                 cur_calibr_auto.visible         = false
+                                cur_calibr_auto_.visible        = false
 
                                 //напряжение
                                 get_voltage.visible             = false
@@ -1040,21 +1047,33 @@ Page {
                     }
                 }
 
-                Button {
+                DelayButton {
                   id: cur_calibr_auto
                   anchors.top: flag_cur_but_off.bottom
                   width: parent.width
-                  height: parent.height * 0.075
-                  text: "автокалибр. датчика тока"
-                  background: Rectangle{
-                      property var normalColor: "#14deca"
-                      property var pressedColor: "#0b7d72"
-                      color: cur_calibr_auto.pressed ? pressedColor : normalColor
-                  }
-                   onClicked: {
+                  height: parent.height * 0.06
+                  delay: 3000     //3000 ms
+                   onActivated: {
                       tx_commands.curAutoCalibration();
-                      listView1.positionViewAtEnd()
+                      listView1.positionViewAtEnd();
+                      cur_calibr_auto.progress = 0.0;
                    }
+                }
+                Rectangle{
+                    id: cur_calibr_auto_
+                    property var normalColor: "#14deca"
+                    property var pressedColor: "#0b7d72"
+                    anchors.top: cur_calibr_auto.top
+                    anchors.right: cur_calibr_auto.right
+                    anchors.left: cur_calibr_auto.left
+                    height: cur_calibr_auto.height * 0.67
+                    Text {
+                        id: name_cur_calibr_auto
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: qsTr("автокалибр. датчика тока")
+                    }
+                    color: cur_calibr_auto.pressed ? pressedColor : normalColor
                 }
 
                 ///////////напряжение//////////////
