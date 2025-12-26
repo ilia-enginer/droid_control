@@ -354,6 +354,28 @@ Page {
                     getcurtimer.running = true
                 }
             }
+            Label {
+                id: brightnessOLEDlabel
+                anchors.top: serv_on_but.bottom
+                width: parent.width
+                wrapMode: Label.Wrap
+                horizontalAlignment: Qt.AlignHCenter
+                text: "яркость oled  " + Math.round(brightnessOLED.value)
+            }
+            Slider {
+                id: brightnessOLED
+                value: 255
+                from: 0
+                to: 255
+                anchors.top: brightnessOLEDlabel.bottom
+                width: parent.width
+                onPressedChanged: {
+                    if(!pressed)
+                    {
+                        tx_commands.setBrightness(Math.round(brightnessOLED.value));
+                    }
+                }
+            }
         }
 
         //страница калибровок углов конечностей

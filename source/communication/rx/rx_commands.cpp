@@ -135,6 +135,7 @@ Rx_commands::searchCommand(QByteArray dat)
         break;
     case 0xA9:
         getParamsChart(Data);
+        break;
     case 0xAA:
         setBrightness();
         break;
