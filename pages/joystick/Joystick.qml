@@ -37,7 +37,7 @@ SwipeView {
     property int count_angleZ: 0
     property int temp: 0
 
-    property bool logStop_: false
+    property bool logStop_: true
 
 
     //страница управления
@@ -115,7 +115,7 @@ SwipeView {
             width: senderBackground_2.width * 0.08
             height: senderBackground_2.height
             anchors.top: senderBackground_2.top
-            anchors.left: senderBackground_2.right
+            anchors.right: senderBackground_2.right
             opacity: 0.2
             contentItem: Text{
                 horizontalAlignment: Qt.AlignHCenter
@@ -128,46 +128,46 @@ SwipeView {
             }
         }
 
-        //остановка лога
-        Button {
-            id: logStop
-            width: senderBackground_2.width * 0.4
-            height: senderBackground_2.height * 0.3
-            anchors.top: senderBackground_2.top
-            anchors.right: clearButton.left
-            opacity: 0.2
-            contentItem: Text{
-                horizontalAlignment: Qt.AlignHCenter
-                text: "Log Stop"
-                font.pointSize: 8
-            }
-            onClicked: {
-                logStop_ = true;
-                logStop.visible = false;
-                logGo.visible = true;
-            }
-        }
+//        //остановка лога
+//        Button {
+//            id: logStop
+//            width: senderBackground_2.width * 0.4
+//            height: senderBackground_2.height * 0.3
+//            anchors.top: senderBackground_2.top
+//            anchors.right: clearButton.left
+//            opacity: 0.3
+//            contentItem: Text{
+//                horizontalAlignment: Qt.AlignHCenter
+//                text: "Log Stop"
+//                font.pointSize: 10
+//            }
+//            onClicked: {
+//                logStop_ = true;
+//                logStop.visible = false;
+//                logGo.visible = true;
+//            }
+//        }
 
-        //остановка лога
-        Button {
-            id: logGo
-            width: senderBackground_2.width * 0.4
-            height: senderBackground_2.height * 0.3
-            anchors.top: senderBackground_2.top
-            anchors.right: clearButton.left
-            visible: false
-            opacity: 0.2
-            contentItem: Text{
-                horizontalAlignment: Qt.AlignHCenter
-                text: "Log Go"
-                font.pointSize: 8
-            }
-            onClicked: {
-                logStop_ = false;
-                logGo.visible = false;
-                logStop.visible = true;
-            }
-        }
+//        //остановка лога
+//        Button {
+//            id: logGo
+//            width: senderBackground_2.width * 0.4
+//            height: senderBackground_2.height * 0.3
+//            anchors.top: senderBackground_2.top
+//            anchors.right: clearButton.left
+//            visible: false
+//            opacity: 0.3
+//            contentItem: Text{
+//                horizontalAlignment: Qt.AlignHCenter
+//                text: "Log Go"
+//                font.pointSize: 10
+//            }
+//            onClicked: {
+//                logStop_ = false;
+//                logGo.visible = false;
+//                logStop.visible = true;
+//            }
+//        }
 
         //напруга
         ProgressBar{

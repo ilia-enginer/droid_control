@@ -15,7 +15,7 @@ Page {
     property int tibaL : 0
     property int tibaH : 0
 
-    property bool logStop_: false
+    property bool logStop_: true
 
     Label {
         id: senderPageLabel
@@ -100,46 +100,46 @@ Page {
         }
     }
 
-    //остановка лога
-    Button {
-        id: logStop
-        width: senderBackground.width * 0.4
-        height: senderBackground.height * 0.3
-        anchors.top: senderBackground.top
-        anchors.right: clearButton_1.left
-        opacity: 0.2
-        contentItem: Text{
-            horizontalAlignment: Qt.AlignHCenter
-            text: "Log Stop"
-            font.pointSize: 6
-        }
-        onClicked: {
-            logStop_ = true;
-            logStop.visible = false;
-            logGo.visible = true;
-        }
-    }
+//    //остановка лога
+//    Button {
+//        id: logStop
+//        width: senderBackground.width * 0.4
+//        height: senderBackground.height * 0.3
+//        anchors.top: senderBackground.top
+//        anchors.right: clearButton_1.left
+//        opacity: 0.3
+//        contentItem: Text{
+//            horizontalAlignment: Qt.AlignHCenter
+//            text: "Log Stop"
+//            font.pointSize: 8
+//        }
+//        onClicked: {
+//            logStop_ = true;
+//            logStop.visible = false;
+//            logGo.visible = true;
+//        }
+//    }
 
-    //остановка лога
-    Button {
-        id: logGo
-        width: senderBackground.width * 0.4
-        height: senderBackground.height * 0.3
-        anchors.top: senderBackground.top
-        anchors.right: clearButton_1.left
-        visible: false
-        opacity: 0.2
-        contentItem: Text{
-            horizontalAlignment: Qt.AlignHCenter
-            text: "Log Go"
-            font.pointSize: 6
-        }
-        onClicked: {
-            logStop_ = false;
-            logGo.visible = false;
-            logStop.visible = true;
-        }
-    }
+//    //остановка лога
+//    Button {
+//        id: logGo
+//        width: senderBackground.width * 0.4
+//        height: senderBackground.height * 0.3
+//        anchors.top: senderBackground.top
+//        anchors.right: clearButton_1.left
+//        visible: false
+//        opacity: 0.3
+//        contentItem: Text{
+//            horizontalAlignment: Qt.AlignHCenter
+//            text: "Log Go"
+//            font.pointSize: 8
+//        }
+//        onClicked: {
+//            logStop_ = false;
+//            logGo.visible = false;
+//            logStop.visible = true;
+//        }
+//    }
 
 
 

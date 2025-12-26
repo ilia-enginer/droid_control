@@ -6,7 +6,7 @@ import QtQuick.Controls.Material
 Page {
     id: page
 
-    property bool logStop_: false
+    property bool logStop_: true
 
         Label {
             id: senderPageLabel
@@ -81,46 +81,46 @@ Page {
             }
         }
 
-        //остановка лога
-        Button {
-            id: logStop
-            width: senderBackground.width * 0.4
-            height: senderBackground.height * 0.3
-            anchors.top: senderBackground.top
-            anchors.right: clearButton_1.left
-            opacity: 0.2
-            contentItem: Text{
-                horizontalAlignment: Qt.AlignHCenter
-                text: "Log Stop"
-                font.pointSize: 8
-            }
-            onClicked: {
-                logStop_ = true;
-                logStop.visible = false;
-                logGo.visible = true;
-            }
-        }
+//        //остановка лога
+//        Button {
+//            id: logStop
+//            width: senderBackground.width * 0.4
+//            height: senderBackground.height * 0.3
+//            anchors.top: senderBackground.top
+//            anchors.right: clearButton_1.left
+//            opacity: 0.3
+//            contentItem: Text{
+//                horizontalAlignment: Qt.AlignHCenter
+//                text: "Log Stop"
+//                font.pointSize: 10
+//            }
+//            onClicked: {
+//                logStop_ = true;
+//                logStop.visible = false;
+//                logGo.visible = true;
+//            }
+//        }
 
-        //остановка лога
-        Button {
-            id: logGo
-            width: senderBackground.width * 0.4
-            height: senderBackground.height * 0.3
-            anchors.top: senderBackground.top
-            anchors.right: clearButton_1.left
-            visible: false
-            opacity: 0.2
-            contentItem: Text{
-                horizontalAlignment: Qt.AlignHCenter
-                text: "Log Go"
-                font.pointSize: 8
-            }
-            onClicked: {
-                logStop_ = false;
-                logGo.visible = false;
-                logStop.visible = true;
-            }
-        }
+//        //остановка лога
+//        Button {
+//            id: logGo
+//            width: senderBackground.width * 0.4
+//            height: senderBackground.height * 0.3
+//            anchors.top: senderBackground.top
+//            anchors.right: clearButton_1.left
+//            visible: false
+//            opacity: 0.3
+//            contentItem: Text{
+//                horizontalAlignment: Qt.AlignHCenter
+//                text: "Log Go"
+//                font.pointSize: 10
+//            }
+//            onClicked: {
+//                logStop_ = false;
+//                logGo.visible = false;
+//                logStop.visible = true;
+//            }
+//        }
 
         CheckBox {
           id: loging
