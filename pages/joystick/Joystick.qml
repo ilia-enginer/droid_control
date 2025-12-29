@@ -23,8 +23,8 @@ SwipeView {
 
     signal joystick_moved(double x, double y);
 
-    property int valueYMin: -1
-    property int valueYMax: 1
+    property double valueYMin: -1.0
+    property double valueYMax: 1.0
 
     property int count_volt: 0
     property int count_cur: 0
@@ -36,7 +36,7 @@ SwipeView {
     property int count_angleY: 0
     property int count_angleZ: 0
     property int temp: 0
-
+    property bool chartViewVisible : true
     property bool logStop_: true
 
 
@@ -881,7 +881,20 @@ SwipeView {
                  Connections {
                      target: commun_display
                      function  onChart_data(voltt, curr, tilt_anglee, tilt_directionn, boostt, angular_velocityy, angleXX, angleYY, angleZZ) {
-                         chartView.visible = false
+
+                         if((volt.checked) ||
+                                 (cur.checked) ||
+                                 (tilt_angle.checked) ||
+                                 (tilt_direction.checked) ||
+                                 (boost.checked) ||
+                                 (angular_velocity.checked) ||
+                                 (angleX.checked) ||
+                                 (angleY.checked) ||
+                                 (angleZ.checked) )
+                         {
+                             chartViewVisible = false;
+                             chartView.visible = false;
+                         }
 
                         if(volt.checked)
                         {
@@ -1089,7 +1102,11 @@ SwipeView {
                                 valueAxisX.max = valueAxisX.max + ((valueAxisX.max - valueAxisX.min) * 0.12)
                             }
                         }
-                        chartView.visible = true
+                        if(chartViewVisible === false)
+                        {
+                            chartViewVisible = true;
+                            chartView.visible = true;
+                        }
                      }
                  }
 

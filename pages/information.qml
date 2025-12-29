@@ -22,6 +22,7 @@ Page {
                ListElement { text: "Выключение" }
                ListElement { text: "Возможные ошибки" }
                ListElement { text: "Зарядка" }
+               ListElement { text: "Меры предосторожности" }
            }
         onCurrentIndexChanged: {
             info.infoIndexMenu_ = paramBox.currentIndex
@@ -44,6 +45,8 @@ Page {
             else if(currentIndex === 7) info.possibleErrors();
             //Зарядка
             else if(currentIndex === 8) info.charging();
+            //Меры предосторожности
+            else if(currentIndex === 9) info.precautionaryMeasures();
         }
     }
 

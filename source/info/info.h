@@ -31,6 +31,7 @@ public slots:
     void shutdown();
     void possibleErrors();
     void charging();
+    void precautionaryMeasures();
 
 
 Q_SIGNALS:

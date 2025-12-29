@@ -97,7 +97,7 @@ private:
     int timer1 = 100;
     float joystickAmplitude = 100;
     float heightAmplitudemin = 20;
-    float heightAmplitude = 55;
+    float heightAmplitude = 60;
 
     float Vmin = 9.0;
     float Vmax = 12.4;

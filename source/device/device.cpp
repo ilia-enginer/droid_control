@@ -226,13 +226,13 @@ Device::connectToDevice(const QString &dAddress, const QString &name, const QStr
 {
     QBluetoothDeviceInfo info;
 
-    if(!blt_on())   return;
-
-    //если уже подключен к этому устройству
-    if((nameDevice_ == name) && (connected))    return;
+    if(!blt_on())   return; 
 
     discoveryAgent->stop();
     deviceScanFinished();
+
+    //если уже подключен к этому устройству
+    if((nameDevice_ == name) && (connected))    return;
 
     lastConnectedDevice_ = dAddress;
     nameDevice_ = name;

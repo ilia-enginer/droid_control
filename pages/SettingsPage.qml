@@ -88,7 +88,7 @@ ScrollablePage {
         RangeSlider {
             id: heightSlider
             from: 0
-            to: 60
+            to: 100
             first.value: settParam.heightAmplitudemin
             second.value: settParam.heightAmplitude
             anchors.left: parent.left
