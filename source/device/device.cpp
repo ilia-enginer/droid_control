@@ -229,12 +229,7 @@ Device::connectToDevice(const QString &dAddress, const QString &name, const QStr
     if(!blt_on())   return; 
 
     //если уже подключен к этому устройству - отключить
-    if((nameDevice_ == name) && (connected))
-    {
-        discoveryAgent->disconnect();
-        disconnectFromDevice();
-        return;
-    }
+    if((nameDevice_ == name) && (connected))        return;
 
     discoveryAgent->stop();
     deviceScanFinished();
