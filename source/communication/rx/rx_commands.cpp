@@ -103,6 +103,9 @@ Rx_commands::searchCommand(QByteArray dat)
     case 0x50:
         idleTimeExceeded();
         break;
+    case 0x51:
+        idleTimeLift();
+        break;
     case 0x55:
         errorMath();
         break;
@@ -406,6 +409,14 @@ Rx_commands::idleTimeExceeded()
 {
     _commun_display->logJoy("<- ошибка математики", " ");
     _commun_display->logServis("<- ошибка математики", " ");
+}
+
+//превышено время попытки подняться     0x51
+void
+Rx_commands::idleTimeLift()
+{
+    _commun_display->logJoy("<- превышено время попытки подняться", " ");
+    _commun_display->logServis("<- превышено время попытки подняться", " ");
 }
 
 //ошибка математики                     0x55

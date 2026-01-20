@@ -57,6 +57,7 @@ private:
     void errorAutoCalibrations();           //ошибка автокалибровки                 0x45
     void autocalibrationCompleted();        //автокалибровка выполнена              0x48
     void idleTimeExceeded();                //превышено время бездействия           0x50
+    void idleTimeLift();                    //превышено время попытки подняться     0x51
     void errorMath();                      //ошибка математики                     0x55
     void leds_read(QByteArray leds);       //чтение состояния светодиодов     0xA0
     void voltage_read(QByteArray Volt);       //чтение напряжения                 0xA1
