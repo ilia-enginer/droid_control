@@ -164,7 +164,7 @@ Rx_commands::searchCommand(QByteArray dat)
         getSettingServo(Data);
         break;
     case 0xE7:
-        servoAutoCalibration();
+        servoAutoCalibration(Data);
         break;
     case 0xE8:
         curAutoCalibration(Data);
@@ -213,6 +213,15 @@ Rx_commands::searchCommand(QByteArray dat)
         break;
     case 0xF7:
         getIntendifier(Data);
+        break;
+    case 0xF8:
+        getInclinationAngle(Data);
+        break;
+    case 0xFA:
+        getAzimutAngle(Data);
+        break;
+    case 0xFC:
+        calibrServsFoot(Data);
         break;
     default:
         //если не найдено совпадение
@@ -766,10 +775,18 @@ Rx_commands::getSettingServo(QByteArray Params)
 
 //выполнить авто калибровку серв     0xE7
 void
-Rx_commands::servoAutoCalibration()
+Rx_commands::servoAutoCalibration(QByteArray flag)
 {
-   _commun_display->logServis("<- калибровка серв ок", " ");
-   _commun_display->logJoy("<- калибровка серв ок", " ");
+    if(flag[0] == 0)
+    {
+        _commun_display->logServis("<- калибровка серв остановлена", " ");
+        _commun_display->logJoy("<- калибровка серв остановлена", " ");
+    }
+    else if(flag[0] == 1)
+    {
+        _commun_display->logServis("<- калибровка серв запущена", " ");
+        _commun_display->logJoy("<- калибровка серв запущена", " ");
+    }
 }
 
 //выполнить калибровку датчика тока     0xE8
@@ -994,6 +1011,16 @@ Rx_commands::getAzimutAngle(QByteArray Angle)
 void
 Rx_commands::calibrServsFoot(QByteArray Num)
 {
-    qint8 footNum = Num[0] + 1;
-    _commun_display->logServis("<- старт/стоп автокалибровки ноги № ",  QString(QString::number(footNum)));
+    if(Num.size() >= 1)
+    {
+        qint8 footNum = Num[0] + 1;
+        _commun_display->logServis("<- старт автокалибровки ноги № ",  QString(QString::number(footNum)));
+        _commun_display->logJoy("<- старт автокалибровки ноги № ",  QString(QString::number(footNum)));
+    }
+    else
+    {
+        _commun_display->logServis("<- стоп автокалибровки ноги", "");
+        _commun_display->logJoy("<- стоп автокалибровки ноги", "");
+    }
 }
+

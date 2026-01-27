@@ -77,7 +77,7 @@ private:
     void setCurBlock(QByteArray flag);  //установка флага включения/отключения блокировки сброса параметров тока       0xE4
     void getCheck();                     //запрос ошибок                    0xE5
     void getSettingServo(QByteArray Params);//запрос предустановок сервы        0xE6
-    void servoAutoCalibration();        //выполнить авто калибровку серв     0xE7
+    void servoAutoCalibration(QByteArray flag); //выполнить авто калибровку серв     0xE7
     void curAutoCalibration(QByteArray Cur);//выполнить калибровку датчика тока     0xE8
     void setCurCalibration();           //записать значение калибровки тока  0xE9
     void getCurCalibration(QByteArray Cur); //запрос значений калибровки тока  0xEA
