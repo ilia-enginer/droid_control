@@ -891,8 +891,136 @@ Tx_commands::getIntendifier()
     QByteArray data;
     int res = -1;
     QString s;
-    s = "Запрос ID";
+    s = "запрос ID";
     quint8 comand = 0xF7;
+
+    //вписывание команды
+    data.prepend(comand);
+
+    //отправка команды, вывод лога
+    res = Sending(data, s);
+
+    return res;
+}
+
+//запрос поправочного угла наклона 0xF8
+int
+Tx_commands::getInclinationAngle()
+{
+    QByteArray data;
+    int res = -1;
+    QString s;
+    s = "запрос смещения угла наклона";
+    quint8 comand = 0xF8;
+
+    //вписывание команды
+    data.prepend(comand);
+
+    //отправка команды, вывод лога
+    res = Sending(data, s);
+
+    return res;
+}
+
+//запись поправочного угла наклона 0xF8
+int
+Tx_commands::setInclinationAngle(QString msg)
+{
+    QByteArray data;
+    int res = -1;
+    QString s;
+    s = "запись смещения угла наклона" + msg;
+    quint8 comand = 0xF8;
+
+    //раскладывание строки по float числам
+    StringToFloatToByte(msg, &data);
+
+    //вписывание команды
+    data.prepend(comand);
+
+    //отправка команды, вывод лога
+    res = Sending(data, s);
+
+    return res;
+}
+
+//запрос поправочного угла азимута 0xFA
+int
+Tx_commands::getAzimutAngle()
+{
+    QByteArray data;
+    int res = -1;
+    QString s;
+    s = "запрос поправочного угла азимута";
+    quint8 comand = 0xFA;
+
+    //вписывание команды
+    data.prepend(comand);
+
+    //отправка команды, вывод лога
+    res = Sending(data, s);
+
+    return res;
+}
+
+//запись поправочного угла азимута 0xFA
+int
+Tx_commands::setAzimutAngle(QString msg)
+{
+    QByteArray data;
+    int res = -1;
+    QString s;
+    s = "запись поправочного угла азимута" + msg;
+    quint8 comand = 0xFA;
+
+    //раскладывание строки по float числам
+    StringToFloatToByte(msg, &data);
+
+    //вписывание команды
+    data.prepend(comand);
+
+    //отправка команды, вывод лога
+    res = Sending(data, s);
+
+    return res;
+}
+
+//откалибровать сервы ноги №.. 0xFC
+int
+Tx_commands::calibrServsFoot(QString msg)
+{
+    QByteArray data;
+    int res = -1;
+    QString s;
+    s = "старт/стоп калибровки ноги № " + msg;
+    quint8 comand = 0xFC;
+
+    //раскладывание строки по float числам
+    StringToFloatToByte(msg, &data);
+
+    //вписывание команды
+    data.prepend(comand);
+
+    //отправка команды, вывод лога
+    res = Sending(data, s);
+
+    return res;
+}
+
+//откалибровать сервы ноги №.. 0xFC
+int
+Tx_commands::calibrServsFoot(int num)
+{
+    QByteArray data;
+    int res = -1;
+    QString s;
+    qint32 numFoot = num + 1;
+
+    s = "старт/стоп калибровки ноги № " + QString::number(numFoot);
+    quint8 comand = 0xFC;
+
+    //раскладывание строки по float числам
+    IntToByte(num, &data);
 
     //вписывание команды
     data.prepend(comand);
@@ -929,6 +1057,17 @@ Tx_commands::StringToFloatToByte(QString msg, QByteArray *data)
         data->append(val.data[2]);
         data->append(val.data[3]);
     }
+}
+
+void
+Tx_commands::IntToByte(qint32 num, QByteArray *data)
+{
+    f_value val;
+    val.int32 = num;
+    data->append(val.data[0]);
+    data->append(val.data[1]);
+    data->append(val.data[2]);
+    data->append(val.data[3]);
 }
 
 int

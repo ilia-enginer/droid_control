@@ -301,7 +301,7 @@ Page {
               anchors.top: cur_calibr_auto.bottom
               width: page_settings.width
               height: page_settings.height * 0.08
-              text: "автокалибровка серв"
+              text: "старт/стоп автокалибровки серв"
               background: Rectangle{
                   property var normalColor: "#1fc2b2"
                   property var pressedColor: "#17d47f"
@@ -733,7 +733,7 @@ Page {
                to: 270
                anchors.left: parent.left
                anchors.right: parent.right
-               anchors.topMargin: left_left_coxa.height * 0.5       ///??
+               anchors.topMargin: left_left_coxa.height * 0.8       ///??
                onMoved: {settParam.coxaAngl = value}
 
 
@@ -879,7 +879,7 @@ Page {
            Slider {
                id: slider2
                anchors.top: left_left_femur.top
-               anchors.topMargin: left_left_femur.height * 0.5
+               anchors.topMargin: left_left_femur.height * 0.8
                value: settParam.femurAngl
                from: 0
                to: 270
@@ -1029,7 +1029,7 @@ Page {
            Slider {
                id: slider3
                anchors.top: left_left_tiba.top
-               anchors.topMargin: left_left_tiba.height * 0.5
+               anchors.topMargin: left_left_tiba.height * 0.8
                value: settParam.tibaAngl
                from: 0
                to: 270
@@ -1059,6 +1059,23 @@ Page {
            }
 
            Button {
+               id: calibr_foot
+               anchors.bottom: reset_foot_param.top
+               width: page_setting_foot.width
+               height: page_setting_foot.height * 0.08
+               text: "старт/стоп калибровки ноги"
+               background: Rectangle{
+                   property var normalColor: "#7387d1"
+                   property var pressedColor: "#052bb3"
+                   color: calibr_foot.pressed ? pressedColor : normalColor
+               }
+               onClicked: {
+                    tx_commands.calibrServsFoot(butClick);
+                   listView1.positionViewAtEnd();
+               }
+           }
+
+           Button {
                id: reset_foot_param
                anchors.bottom: parent.bottom
                width: page_setting_foot.width
@@ -1077,7 +1094,7 @@ Page {
                    getcurtimer.running = true
                }
            }
-            }
+       }
 
     }
     PageIndicator {
@@ -1087,7 +1104,7 @@ Page {
         currentIndex: swipeView.currentIndex
         anchors.bottom: swipeView.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottomMargin: parent.height*0.06
+        anchors.bottomMargin: parent.height * 0.12
     }
 
 }

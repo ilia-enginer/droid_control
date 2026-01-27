@@ -93,7 +93,13 @@ private:
     void writeBootloader(QByteArray Num); //команда начала передачи загрузчика, передача загрузчика  0xF4
     void writeLabel();                   //подпись программы 0xF5
     void shutdown();                     //выключить шар     0xF6
-    void getIntendifier(QByteArray Num); //ответ запроса ID устройства 0xF7
+    void getIntendifier(QByteArray Num); //ответ запроса ID устройства 0xF7 
+    void getInclinationAngle(QByteArray Angle); //ответ запроса/установки поправочного угла наклона 0xF8
+
+    void getAzimutAngle(QByteArray Angle);      //ответ запроса/установки поправочного угла азимута 0xFA
+
+    void calibrServsFoot(QByteArray Num);    //ответ старт/стоп автокалибровки серв ноги №.. 0xFC
+
 
 
     bool _f_Admin = false;               ///флаг режима админа

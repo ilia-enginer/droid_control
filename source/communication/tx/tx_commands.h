@@ -58,11 +58,20 @@ public slots:
     int writeLabel();                   //подпись программы 0xF5
     int shutdown();                     //выключить шар     0xF6  
     int getIntendifier();               //запрос ID устройства 0xF7
+    int getInclinationAngle();          //запрос поправочного угла наклона 0xF8
+    int setInclinationAngle(QString msg);//запись поправочного угла наклона 0xF8
+
+    int getAzimutAngle();               //запрос поправочного угла азимута 0xFA
+    int setAzimutAngle(QString msg);    //запись поправочного угла азимута 0xFA
+
+    int calibrServsFoot(QString msg);    //откалибровать сервы ноги №.. 0xFC
+    int calibrServsFoot(int num);       //откалибровать сервы ноги №.. 0xFC
 
 
 private:
     void StringToIntToByte(QString msg, QByteArray *data);
     void StringToFloatToByte(QString msg, QByteArray *data);
+    void IntToByte(qint32 num, QByteArray *data);
     int Sending(QByteArray, QString);
 
 

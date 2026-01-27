@@ -194,6 +194,8 @@ Page {
                                 set_serv_min_angl_but.visible    = false
                                 serv_on_but.visible             = false
                                 serv_off_but.visible             = false
+                                numFootCalibr.visible           = false
+                                numFootCalibrBut.visible        = false
 
                                 //ток
                                 get_cur.visible                 = false
@@ -211,6 +213,12 @@ Page {
                                 //акселерометр
                                 get_angl_giroscope.visible      = false
                                 get_acsel.visible               = false
+                                get_azim.visible                = false
+                                setAzimAngl.visible             = false
+                                setAzimAnglBut.visible          = false
+                                get_inclination.visible         = false
+                                setInclination.visible          = false
+                                setInclinationBut.visible       = false
 
                                 //светодиоды
                                 get_led.visible                 = false
@@ -250,6 +258,8 @@ Page {
                                 set_serv_min_angl_but.visible    = false
                                 serv_on_but.visible             = false
                                 serv_off_but.visible             = false
+                                numFootCalibr.visible           = false
+                                numFootCalibrBut.visible        = false
 
                                 //ток
                                 get_cur.visible                 = false
@@ -267,6 +277,12 @@ Page {
                                 //акселерометр
                                 get_angl_giroscope.visible      = false
                                 get_acsel.visible               = false
+                                get_azim.visible                = false
+                                setAzimAngl.visible             = false
+                                setAzimAnglBut.visible          = false
+                                get_inclination.visible         = false
+                                setInclination.visible          = false
+                                setInclinationBut.visible       = false
 
                                 //светодиоды
                                 get_led.visible                 = false
@@ -306,6 +322,8 @@ Page {
                                 set_serv_min_angl_but.visible    = true
                                 serv_on_but.visible             = true
                                 serv_off_but.visible             = true
+                                numFootCalibr.visible           = true
+                                numFootCalibrBut.visible        = true
 
                                 //ток
                                 get_cur.visible                 = false
@@ -323,6 +341,12 @@ Page {
                                 //акселерометр
                                 get_angl_giroscope.visible      = false
                                 get_acsel.visible               = false
+                                get_azim.visible                = false
+                                setAzimAngl.visible             = false
+                                setAzimAnglBut.visible          = false
+                                get_inclination.visible         = false
+                                setInclination.visible          = false
+                                setInclinationBut.visible       = false
 
                                 //светодиоды
                                 get_led.visible                 = false
@@ -362,6 +386,8 @@ Page {
                                 set_serv_min_angl_but.visible    = false
                                 serv_on_but.visible             = false
                                 serv_off_but.visible             = false
+                                numFootCalibr.visible           = false
+                                numFootCalibrBut.visible        = false
 
                                 //ток
                                 get_cur.visible                 = true
@@ -379,6 +405,12 @@ Page {
                                 //акселерометр
                                 get_angl_giroscope.visible      = false
                                 get_acsel.visible               = false
+                                get_azim.visible                = false
+                                setAzimAngl.visible             = false
+                                setAzimAnglBut.visible          = false
+                                get_inclination.visible         = false
+                                setInclination.visible          = false
+                                setInclinationBut.visible       = false
 
                                 //светодиоды
                                 get_led.visible                 = false
@@ -418,6 +450,8 @@ Page {
                                 set_serv_min_angl_but.visible    = false
                                 serv_on_but.visible             = false
                                 serv_off_but.visible             = false
+                                numFootCalibr.visible           = false
+                                numFootCalibrBut.visible        = false
 
                                 //ток
                                 get_cur.visible                 = false
@@ -435,6 +469,12 @@ Page {
                                 //акселерометр
                                 get_angl_giroscope.visible      = false
                                 get_acsel.visible               = false
+                                get_azim.visible                = false
+                                setAzimAngl.visible             = false
+                                setAzimAnglBut.visible          = false
+                                get_inclination.visible         = false
+                                setInclination.visible          = false
+                                setInclinationBut.visible       = false
 
                                 //светодиоды
                                 get_led.visible                 = false
@@ -473,7 +513,9 @@ Page {
                                 set_serv_min_angl.visible       = false
                                 set_serv_min_angl_but.visible    = false
                                 serv_on_but.visible             = false
-                                serv_off_but.visible             = false
+                                serv_off_but.visible            = false
+                                numFootCalibr.visible           = false
+                                numFootCalibrBut.visible        = false
 
                                 //ток
                                 get_cur.visible                 = false
@@ -491,6 +533,12 @@ Page {
                                 //акселерометр
                                 get_angl_giroscope.visible      = true
                                 get_acsel.visible               = true
+                                get_azim.visible                = true
+                                setAzimAngl.visible             = true
+                                setAzimAnglBut.visible          = true
+                                get_inclination.visible         = true
+                                setInclination.visible          = true
+                                setInclinationBut.visible       = true
 
                                 //светодиоды
                                 get_led.visible                 = false
@@ -529,7 +577,9 @@ Page {
                                 set_serv_min_angl.visible       = false
                                 set_serv_min_angl_but.visible    = false
                                 serv_on_but.visible             = false
-                                serv_off_but.visible             = false
+                                serv_off_but.visible            = false
+                                numFootCalibr.visible           = false
+                                numFootCalibrBut.visible        = false
 
                                 //ток
                                 get_cur.visible                 = false
@@ -547,6 +597,12 @@ Page {
                                 //акселерометр
                                 get_angl_giroscope.visible      = false
                                 get_acsel.visible               = false
+                                get_azim.visible                = false
+                                setAzimAngl.visible             = false
+                                setAzimAnglBut.visible          = false
+                                get_inclination.visible         = false
+                                setInclination.visible          = false
+                                setInclinationBut.visible       = false
 
                                 //светодиоды
                                 get_led.visible                 = true
@@ -757,7 +813,7 @@ Page {
                   anchors.top: paramBox.bottom
                   width: parent.width
                   height: parent.height * 0.075
-                  text: "автокалибровка серв"
+                  text: "старт/стоп автокалибровки серв"
                   background: Rectangle{
                       property var normalColor: "#7387d1"
                       property var pressedColor: "#052bb3"
@@ -948,6 +1004,34 @@ Page {
                     }
                 }
 
+                TextField {
+                    id: numFootCalibr
+                    placeholderText: "автокалибровка ноги №"
+                    anchors.top: serv_off_but.bottom
+                    color: "#7387d1"
+                    validator: RegularExpressionValidator {regularExpression: /[ 0-9]+/}
+                    width: parent.width * 0.75
+                }
+                Button {
+                    id: numFootCalibrBut
+                    anchors.top: numFootCalibr.top
+                    width: parent.width * 0.25
+                    anchors.bottom: numFootCalibr.bottom
+                    anchors.left: numFootCalibr.right
+                    anchors.leftMargin: 5
+                    text: "отпр."
+                    background: Rectangle{
+                        property var normalColor: "#7387d1"
+                        property var pressedColor: "#052bb3"
+                        color: numFootCalibrBut.pressed ? pressedColor : normalColor
+                    }
+                    onClicked: {
+                        tx_commands.calibrServsFoot(numFootCalibr.text);
+                        listView1.positionViewAtEnd();
+                    }
+                }
+
+
                 //////////////ток///////////////
 
                 Button {
@@ -1130,6 +1214,94 @@ Page {
                       tx_commands.readAcceleration();
                       listView1.positionViewAtEnd()
                    }
+                }
+
+                Button {
+                  id: get_azim
+                  anchors.top: get_acsel.bottom
+                  width: parent.width
+                  height: parent.height * 0.075
+                  text: "запрос уст. азимута"
+                  background: Rectangle{
+                      property var normalColor: "#6ac714"
+                      property var pressedColor: "#529415"
+                      color: get_azim.pressed ? pressedColor : normalColor
+                  }
+                   onClicked: {
+                      tx_commands.getAzimutAngle();
+                      listView1.positionViewAtEnd();
+                   }
+                }
+
+                TextField {
+                    id: setAzimAngl
+                    placeholderText: "корректировка азимута"
+                    anchors.top: get_azim.bottom
+                    color: "#7387d1"
+                    validator: RegularExpressionValidator {regularExpression: /[ 0-9]+/}
+                    width: parent.width * 0.75
+                }
+                Button {
+                    id: setAzimAnglBut
+                    anchors.top: setAzimAngl.top
+                    width: parent.width * 0.25
+                    anchors.bottom: setAzimAngl.bottom
+                    anchors.left: setAzimAngl.right
+                    anchors.leftMargin: 5
+                    text: "отпр."
+                    background: Rectangle{
+                        property var normalColor: "#6ac714"
+                        property var pressedColor: "#529415"
+                        color: setAzimAnglBut.pressed ? pressedColor : normalColor
+                    }
+                    onClicked: {
+                        tx_commands.setAzimutAngle(setAzimAngl.text);
+                        listView1.positionViewAtEnd();
+                    }
+                }
+
+                Button {
+                  id: get_inclination
+                  anchors.top: setAzimAngl.bottom
+                  width: parent.width
+                  height: parent.height * 0.075
+                  text: "запрос уст. угла наклона"
+                  background: Rectangle{
+                      property var normalColor: "#6ac714"
+                      property var pressedColor: "#529415"
+                      color: get_inclination.pressed ? pressedColor : normalColor
+                  }
+                   onClicked: {
+                      tx_commands.getInclinationAngle();
+                      listView1.positionViewAtEnd();
+                   }
+                }
+
+                TextField {
+                    id: setInclination
+                    placeholderText: "корректировка угл. наклона"
+                    anchors.top: get_inclination.bottom
+                    color: "#7387d1"
+                    validator: RegularExpressionValidator {regularExpression: /[ 0-9]+/}
+                    width: parent.width * 0.75
+                }
+                Button {
+                    id: setInclinationBut
+                    anchors.top: setInclination.top
+                    width: parent.width * 0.25
+                    anchors.bottom: setInclination.bottom
+                    anchors.left: setInclination.right
+                    anchors.leftMargin: 5
+                    text: "отпр."
+                    background: Rectangle{
+                        property var normalColor: "#6ac714"
+                        property var pressedColor: "#529415"
+                        color: setInclinationBut.pressed ? pressedColor : normalColor
+                    }
+                    onClicked: {
+                        tx_commands.setInclinationAngle(setInclination.text);
+                        listView1.positionViewAtEnd();
+                    }
                 }
 
                 ///////////светодиоды//////////////

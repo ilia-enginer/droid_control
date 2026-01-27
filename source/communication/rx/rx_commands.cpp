@@ -458,7 +458,7 @@ Rx_commands::voltage_read(QByteArray Volt)
         {
             _commun_display->logServis("<- напряжение ",  QString(QString::number(val.f)));
             _setVreal = false;
-    }
+        }
     }
 }
 
@@ -958,4 +958,42 @@ void
 Rx_commands::getIntendifier(QByteArray Num)
 {
     _commun_display->logServis("<- ", QString(Num));
+}
+
+//ответ запроса/установки поправочного угла наклона 0xF8
+void
+Rx_commands::getInclinationAngle(QByteArray Angle)
+{
+    f_value val;
+    val.data[0] = Angle[0];
+    val.data[1] = Angle[1];
+    val.data[2] = Angle[2];
+    val.data[3] = Angle[3];
+    if(val.f == val.f)
+    {
+        _commun_display->logServis("<- поправочного угла наклона ",  QString(QString::number(val.f)));
+    }
+}
+
+//ответ запроса/установки поправочного угла азимута 0xFA
+void
+Rx_commands::getAzimutAngle(QByteArray Angle)
+{
+    f_value val;
+    val.data[0] = Angle[0];
+    val.data[1] = Angle[1];
+    val.data[2] = Angle[2];
+    val.data[3] = Angle[3];
+    if(val.f == val.f)
+    {
+        _commun_display->logServis("<- поправочного угла азимута ",  QString(QString::number(val.f)));
+    }
+}
+
+//ответ старт/стоп автокалибровки серв ноги №.. 0xFC
+void
+Rx_commands::calibrServsFoot(QByteArray Num)
+{
+    qint8 footNum = Num[0] + 1;
+    _commun_display->logServis("<- старт/стоп автокалибровки ноги № ",  QString(QString::number(footNum)));
 }
