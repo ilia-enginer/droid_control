@@ -1238,7 +1238,7 @@ Page {
                     placeholderText: "корректировка азимута"
                     anchors.top: get_azim.bottom
                     color: "#7387d1"
-                    validator: RegularExpressionValidator {regularExpression: /[ 0-9]+/}
+                    validator: RegularExpressionValidator {regularExpression: /[-.0-9]+/}
                     width: parent.width * 0.75
                 }
                 Button {
@@ -1282,7 +1282,7 @@ Page {
                     placeholderText: "корректировка угл. наклона"
                     anchors.top: get_inclination.bottom
                     color: "#7387d1"
-                    validator: RegularExpressionValidator {regularExpression: /[ 0-9]+/}
+                    validator: RegularExpressionValidator {regularExpression: /[-.0-9]+/}
                     width: parent.width * 0.75
                 }
                 Button {

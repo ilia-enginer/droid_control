@@ -929,7 +929,7 @@ Tx_commands::setInclinationAngle(QString msg)
     QByteArray data;
     int res = -1;
     QString s;
-    s = "запись смещения угла наклона" + msg;
+    s = "запись смещения угла наклона " + msg;
     quint8 comand = 0xF8;
 
     //раскладывание строки по float числам
@@ -951,7 +951,7 @@ Tx_commands::getAzimutAngle()
     QByteArray data;
     int res = -1;
     QString s;
-    s = "запрос поправочного угла азимута";
+    s = "запрос поправочного угла азимута ";
     quint8 comand = 0xFA;
 
     //вписывание команды

@@ -988,7 +988,7 @@ Rx_commands::getInclinationAngle(QByteArray Angle)
     val.data[3] = Angle[3];
     if(val.f == val.f)
     {
-        _commun_display->logServis("<- поправочного угла наклона ",  QString(QString::number(val.f)));
+        _commun_display->logServis("<- установка поправочного угла наклона ",  QString(QString::number(val.f)));
     }
 }
 
@@ -1003,7 +1003,7 @@ Rx_commands::getAzimutAngle(QByteArray Angle)
     val.data[3] = Angle[3];
     if(val.f == val.f)
     {
-        _commun_display->logServis("<- поправочного угла азимута ",  QString(QString::number(val.f)));
+        _commun_display->logServis("<- установка поправочного угла азимута ",  QString(QString::number(val.f)));
     }
 }
 
