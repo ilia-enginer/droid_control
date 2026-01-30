@@ -118,6 +118,7 @@ public slots:
 
     QString getLastConnectedDevice(void);
 
+    void set_last_device(void);
     void get_last_device(void);
 
 private slots:

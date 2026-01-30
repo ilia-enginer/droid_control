@@ -33,7 +33,7 @@ public slots:
     int readAllParams();                //запросить все параметры(точка восстановления) 0xA7
     int writeAllParams();                //отправить все параметры(точка восстановления)    0xA8
     int setBrightness(QString msg);      //установить яркость светодиодной ленты
-    int fullReset();                    //сброс до заводских нистроек                       0xE0
+    int fullReset();                    //сброс до заводских настроек                       0xE0
     int writeMinAngleServo(QString msg);//запись мин угла сервы во флеш, остальные углы рассчитываются     0xE1
     int writeSettingLeds(QString msg);  //запись установок для светодиодов      0xE2
     int setServoAngle(QString msg);     //установить серву в угол               0xE3
