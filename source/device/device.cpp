@@ -481,7 +481,7 @@ void Device::setCurrentDeviceName(QString name)
     _commun_display->setCurDeviceName(currenDeviceName_);
 }
 
-//добавление в список последнего подключенного устройства
+//добавление сохраненных устройств в список устройств
 void
 Device::get_last_device()
 {
@@ -497,7 +497,6 @@ Device::get_last_device()
 
         QVector<QStringList> lastDevices;
         int deviceNum = 0;
-         deviceNum = 0;
         while (true)
         {
             if (setting.contains(QString("last%1").arg(deviceNum))) {
@@ -506,7 +505,8 @@ Device::get_last_device()
             } else break;
         }
 
-        for(int i = 0; i < deviceNum; i++)
+        //добавятся в порядке сохранения
+        for(int i = deviceNum - 1; i >= 0; i--)
         {
             dName = lastDevices[i].at(0);
             dClass = lastDevices[i].at(1).toInt();

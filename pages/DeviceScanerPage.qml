@@ -145,11 +145,8 @@ Dialog {
             anchors.bottom: searchButton.top
             anchors.margins: 5
             highlighted: true
+            visible: false
             text: "Последнее подключенное"
-
-            Component.onCompleted: {
-                get_devise.visible = false
-            }
 
             onClicked: {
                 get_devise.visible = false
