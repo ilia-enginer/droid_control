@@ -485,20 +485,9 @@ void Device::setCurrentDeviceName(QString name)
 void
 Device::get_last_device()
 {
-       QSettings setting;
-       int deviceNum = 0;
-       nameDevice_ = "ABC";
-       class_ = "1";
-       lastConnectedDevice_ = "AS:AS:AS";
-
-        //сохраняю новое устройство
-        QString device = QStringList({nameDevice_, class_, lastConnectedDevice_}).join(";");
-        setting.setValue(QString("last%1").arg(deviceNum), device);    // запись нового устройства
-
-
     if(!connected)
     {
-  //      QSettings setting;
+        QSettings setting;
         QString dName;
         quint32 dClass;
         QString dAdres;
@@ -507,18 +496,12 @@ Device::get_last_device()
         clearDeviceDiscovery();
 
         QVector<QStringList> lastDevices;
-      //  int deviceNum = 0;
-           deviceNum = 0;
+        int deviceNum = 0;
+         deviceNum = 0;
         while (true)
         {
             if (setting.contains(QString("last%1").arg(deviceNum))) {
-
-                //lastDevices[deviceNum] = setting.value(QString("last%1").arg(deviceNum)).toString().split(";");
-
-                dName = setting.value("last1", QString()).toString();
-
-lastDevices[deviceNum] = setting.value(QString("last%1").arg(deviceNum)).toString().split(";");
-
+                lastDevices.append(setting.value(QString("last%1").arg(deviceNum)).toString().split(";"));
                 ++deviceNum;    // следующий номер прибора для сохранения в истории
             } else break;
         }
@@ -548,7 +531,7 @@ Device::set_last_device()
     while (true)
     {
         if (setting.contains(QString("last%1").arg(deviceNum))) {
-            lastDevices[deviceNum] = setting.value(QString("last%1").arg(deviceNum)).toString().split(";");
+            lastDevices.append(setting.value(QString("last%1").arg(deviceNum)).toString().split(";"));
             ++deviceNum;    // следующий номер прибора для сохранения в истории
         } else break;
     }
