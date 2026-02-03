@@ -266,7 +266,7 @@ Device::deviceConnected()
     //! [les-service-2]
     //    controller->discoverServices();
     //! [les-service-2]
-    _commun_display->setUpdatee("Подключено");
+    _commun_display->setUpdatee("Подключено к " + nameDevice_);
     _commun_display->statusDevicee(_commun_display->statusDevic::searchFinish);
     setCurrentDeviceName(nameDevice_);
 
