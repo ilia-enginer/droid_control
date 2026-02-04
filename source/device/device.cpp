@@ -224,8 +224,6 @@ Device::getCharacteristics()
 void
 Device::connectToDevice(const QString &dAddress, const QString &name, const QString &config)
 {
-    QBluetoothDeviceInfo info;
-
     if(!blt_on())   return; 
 
     //если уже подключен к этому устройству - отключить
@@ -241,16 +239,17 @@ Device::connectToDevice(const QString &dAddress, const QString &name, const QStr
     lastConnectedDevice_ = dAddress;
     nameDevice_ = name;
 
-    if (config == "BR")         class_ = "2";
-    else if (config == "LE")    class_ = "1";
-    else if (config == "BRLE")  class_ = "3";
-    else                        class_ = "0";
+    qint32 i;
+    if (config == "BR")         i = 0x02;   // class_ = "2";
+    else if (config == "LE")    i = 0x01;   //class_ = "1";
+    else if (config == "BRLE")  i = 0x03;   //class_ = "3";
+    else                        i = 0x00;   //class_ = "0";
+    class_ = QString("%1").arg(i);
 
     _commun_display->setUpdatee("Подключение к " + nameDevice_);
     _commun_display->statusDevicee(_commun_display->statusDevic::searchInProgr);
 
     socket = new QBluetoothSocket(QBluetoothServiceInfo::Protocol::RfcommProtocol, this);
-
     socket->connectToService(QBluetoothAddress(dAddress), QBluetoothUuid(QBluetoothUuid::ServiceClassUuid::SerialPort));
 
     connect(socket, SIGNAL(error(QBluetoothSocket::SocketError)), this, SLOT(socketError(QBluetoothSocket::SocketError)));
