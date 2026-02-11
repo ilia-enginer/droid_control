@@ -1,10 +1,20 @@
 <RCC>
     <qresource prefix="/">
-        <file>pages/joystick/Back.qml</file>
-        <file>pages/joystick/Groove.qml</file>
-        <file>pages/joystick/Handle.qml</file>
         <file>pages/joystick/Joystick.qml</file>
-        <file>pages/joystick/Lights.qml</file>
-        <file>pages/joystick/SparseLight.qml</file>
+        <file>pages/AboutPage.qml</file>
+        <file>pages/BluetoothScanner.qml</file>
+        <file>pages/DeviceScanerPage.qml</file>
+        <file>pages/firmware_update.qml</file>
+        <file>pages/information.qml</file>
+        <file>pages/ScrollablePage.qml</file>
+        <file>pages/SenderPage.qml</file>
+        <file>pages/ServicePage.qml</file>
+        <file>pages/SettingFootPage.qml</file>
+        <file>pages/SettingsPage.qml</file>
+        <file>pages/ToolBar.qml</file>
+        <file>pages/Update_Hex.qml</file>
+        <file>pages/UpdateAppPage.qml</file>
+        <file>pages/UpdateDialogPage.qml</file>
+        <file>pages/Main.qml</file>
     </qresource>
 </RCC>

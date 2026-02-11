@@ -46,15 +46,17 @@ SOURCES += \
 
 RESOURCES += \
     Resurs.qrc \
-    pages/UpdateDialogPage.qml \
-    pages/DeviceScanerPage.qml \
-    pages/main.qml \
-    pages/SenderPage.qml \
-    pages/SettingsPage.qml \
-    pages/SettingFootPage.qml \
-    pages/firmware_update.qml \
-    pages/ServicePage.qml \
-    pages/ScrollablePage.qml \
+    pages/main/ApkSettings.qml \
+    pages/shar/Firmware_update.qml \
+    pages/shar/Information.qml \
+    pages/main/Main.qml \
+    pages/main/UpdateDialogPage.qml \
+    pages/main/DeviceScanerPage.qml \
+    pages/main/SenderPage.qml \
+    pages/main/SettingsPage.qml \
+    pages/shar/SettingFootPage.qml \
+    pages/shar/ServicePage.qml \
+    pages/main/ScrollablePage.qml \
     qtquickcontrols2.conf \
     icons/gallery/index.theme \
     icons/gallery/20x20/back.png \
@@ -82,24 +84,27 @@ RESOURCES += \
     images/qt-logo@2x.png \
     images/qt-logo@3x.png \
     images/qt-logo@4x.png \
-    pages/ToolBar.qml \
+    pages/main/ToolBar.qml \
     +Material/ToolBar.qml \
     images/bluetooth-512.png \
-    pages/joystick/Joystick.qml \
-    pages/joystick/finger.png \
-    pages/joystick/background.png \
-    pages/AboutPage.qml \
-    pages/UpdateAppPage.qml \
-    pages/Update_Hex.qml \
-    pages/information.qml
+    pages/shar/joystick/Joystick.qml \
+    pages/shar/joystick/finger.png \
+    pages/shar/joystick/background.png \
+    pages/main/AboutPage.qml \
+    pages/main/UpdateAppPage.qml \
+    pages/shar/Update_Hex.qml
 
 target.path = $$[QT_INSTALL_EXAMPLES]/quickcontrols2/gallery
 INSTALLS += target
 
 DISTFILES += \
     android/src/org/qtproject/example/QtAndroidService.java \
-    pages/UpdateAppPage.qml \
-    pages/Update_Hex.qml \
+    pages/main/Main.qml \
+    pages/main/ApkSettings.qml \
+    pages/shar/Firmware_update.qml \
+    pages/shar/Information.qml \
+    pages/main/UpdateAppPage.qml \
+    pages/shar/Update_Hex.qml \
     android/AndroidManifest.xml \
     android/src/org/qtproject/example/InstallAPK.java \
     android/build.gradle \
@@ -117,9 +122,7 @@ DISTFILES += \
     android/res/values/libs.xml \
     android/res/xml/provider_paths.xml \
     android/src/org/qtproject/example/InstallAPK.java \
-    pages/SettingFootPage.qml \
-    pages/firmware_update.qml \
-    pages/information.qml
+    pages/shar/SettingFootPage.qml
 
 
 HEADERS += \
