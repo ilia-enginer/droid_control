@@ -891,7 +891,7 @@ Tx_commands::getIntendifier()
     QByteArray data;
     int res = -1;
     QString s;
-    s = "запрос ID";
+    s = "";
     quint8 comand = 0xF7;
 
     //вписывание команды

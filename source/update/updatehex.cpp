@@ -142,6 +142,7 @@ UpdateHex::checkingUpdates(void)
     int a = 0;
 
     if (!_commun_display->get_connected()) {
+      emit navigateBackActionON();
       return;
     }
 
@@ -163,6 +164,7 @@ UpdateHex::checkingUpdates(void)
         {
             _commun_display->setCurrenUpd("Непредвиденная ошибка. Попробуйте еще раз.");
             _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
+            emit navigateBackActionON();
             return;
         }
     }
@@ -173,6 +175,7 @@ UpdateHex::checkingUpdates(void)
         {
             _commun_display->setCurrenUpd("Слишком низкое напряжение. Обновление невозможно");
             _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
+            emit navigateBackActionON();
             return;
         }
         else
@@ -196,14 +199,23 @@ UpdateHex::checkingUpdates(void)
         {
             _commun_display->setCurrenUpd("Ошибка\nпроверьте подключение к устройству");
             _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
+            emit navigateBackActionON();
             return;
         }
         delay(90);
     }
     #endif
 
-    if(!openBootloaderUpdate()) return;
-    if(!open_Update()) return;
+    if(!openBootloaderUpdate())
+    {
+        emit navigateBackActionON();
+        return;
+    }
+    if(!open_Update())
+    {
+        emit navigateBackActionON();
+        return;
+    }
 
    //если обычный режим
     if(!_f_Admin)

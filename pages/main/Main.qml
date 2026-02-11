@@ -95,6 +95,7 @@ ApplicationWindow {
     Action {
         id: navigateBackAction
         icon.name: stackView.depth > 1 ? "back" : "drawer"
+        enabled: false
 //        icon.name: "drawer"
         onTriggered: {
 
@@ -204,6 +205,7 @@ ApplicationWindow {
              }
 
             model: ListModel {
+                //сохранил для отладки
 //                ListElement { title: "Джойстик"; source: "qrc:/pages/shar/joystick/Joystick.qml" }
 //                ListElement { title: "Окно настроек\nи калибровок";  source: "qrc:/pages/shar/SettingFootPage.qml" }
 //                ListElement { title: "Обновление прошивки"; source: "qrc:/pages/shar/Firmware_update.qml" }
@@ -211,7 +213,6 @@ ApplicationWindow {
             }
 
             Component.onCompleted: {
-                navigateBackAction.enabled = false;
                 settParam.clearDevice.connect(clearDev)
                 settParam.deviceShar.connect(devShar)
             }

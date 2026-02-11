@@ -178,7 +178,10 @@ Settings::setIdDevice(int id)
             emit deviceShar();
             break;
 
-        default:    break;
+        default:
+            idDevice = NONE;
+            emit clearDevice();
+            break;
     }
 }
 

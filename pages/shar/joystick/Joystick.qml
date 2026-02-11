@@ -399,6 +399,7 @@ SwipeView {
                 highlighted: true
                 anchors.bottom: parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottomMargin: 30
 
                 onPressed: {
                     amplitude = 0.5
@@ -415,6 +416,7 @@ SwipeView {
                 highlighted: true
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
+                anchors.bottomMargin: 15
 
                 onPressed: {
                     amplitude = 0.5
@@ -431,6 +433,7 @@ SwipeView {
                 highlighted: true
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
+                anchors.bottomMargin: 15
 
                 onPressed: {
                     amplitude = 0.5
@@ -489,6 +492,9 @@ SwipeView {
                  ButtonGroup.group: radioGroup
                  onClicked: {
                      mode = Number("1")
+                     ctrl_check.enabled = true
+                     settParam.ctrl_ = ctrl
+                     ctrl_check.checked = ctrl
                  }
              }
 
@@ -497,6 +503,9 @@ SwipeView {
                  ButtonGroup.group: radioGroup
                  onClicked: {
                      mode = Number("2")
+                     settParam.ctrl_ = false
+                     ctrl_check.checked = false
+                     ctrl_check.enabled = false
                  }
              }
 
@@ -505,6 +514,9 @@ SwipeView {
                  ButtonGroup.group: radioGroup
                  onClicked: {
                      mode = Number("3")
+                     ctrl_check.enabled = true
+                     settParam.ctrl_ = ctrl
+                     ctrl_check.checked = ctrl
                  }
              }
 
@@ -514,6 +526,9 @@ SwipeView {
                  ButtonGroup.group: radioGroup
                  onClicked: {
                      mode = Number("0")
+                     settParam.ctrl_ = false
+                     ctrl_check.checked = false
+                     ctrl_check.enabled = false
                  }
              }
 
@@ -571,6 +586,7 @@ SwipeView {
           anchors.left: parent.left
           anchors.leftMargin: 15
           checked: settParam.ctrl_
+          enabled: false
           text: qsTr("Вкл. стабилизацию")
 
           onClicked: {
