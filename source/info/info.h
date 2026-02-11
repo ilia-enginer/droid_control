@@ -13,13 +13,13 @@ public:
     ~Info();
 
     Q_PROPERTY(QString info_str_ READ getInfo_str WRITE setInfo_str NOTIFY onInfo_strChanged)
-    Q_PROPERTY(int infoIndexMenu_ READ getInfoIndexMenu WRITE setInfoIndexMenu NOTIFY infoIndexMenuChanged)
+//    Q_PROPERTY(int infoIndexMenu_ READ getInfoIndexMenu WRITE setInfoIndexMenu NOTIFY infoIndexMenuChanged)
 
     void setInfo_str(QString name);
     QString getInfo_str();
 
-    int getInfoIndexMenu() const;
-    void setInfoIndexMenu(int newInfoIndexMenu);
+//    int getInfoIndexMenu() const;
+//    void setInfoIndexMenu(int newInfoIndexMenu);
 
 public slots:
     void clear();
@@ -36,11 +36,11 @@ public slots:
 
 Q_SIGNALS:
     void onInfo_strChanged(QString name);
-    void infoIndexMenuChanged();
+//    void infoIndexMenuChanged();
 
 private:
     QString info_str_ = " ";
-    int infoIndexMenu_ = 0;
+//    int infoIndexMenu_ = 0;
 
 };
 

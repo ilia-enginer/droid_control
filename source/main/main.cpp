@@ -139,6 +139,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("feedback", &feedback);
     engine.rootContext()->setContextProperty("info", &info);
     engine.rootContext()->setContextProperty("appManager", &appManager);
+    engine.rootContext()->setContextProperty("appManager", &appManager);
 
     packing.setCrc(&crc);
     packing.setCommun_display(&commun_display);
@@ -209,7 +210,7 @@ int main(int argc, char *argv[])
     #endif
 
     engine.setInitialProperties({{ "builtInStyles", builtInStyles }});
-    engine.load(QUrl("qrc:/pages/main.qml"));
+    engine.load(QUrl("qrc:/pages/main/Main.qml"));
 
     if (engine.rootObjects().isEmpty()) {
         return -1;

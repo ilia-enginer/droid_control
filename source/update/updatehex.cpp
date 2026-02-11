@@ -136,6 +136,8 @@ UpdateHex::f_AdminChange(bool f)
 void
 UpdateHex::checkingUpdates(void)
 {
+    emit navigateBackActionOFF();
+
     #if defined(Q_QDOC) || (defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED))
     int a = 0;
 
@@ -229,6 +231,7 @@ UpdateHex::checkingUpdates(void)
         //включить кнопку загрузки бутлоадера
         _commun_display->statusUpdate(_commun_display->statusUpd::updateBootloaderAvailab);
     }
+    emit navigateBackActionON();
 }
 
 
@@ -252,6 +255,8 @@ UpdateHex::versionToString(quint32 vers)
 void
 UpdateHex::on_pbWrite_clicked(bool flag)
 {
+    emit navigateBackActionOFF();
+
     //если обычный режим
     if(!_f_Admin)
     {
@@ -412,6 +417,8 @@ UpdateHex::openBootloaderUpdate()
 void
 UpdateHex::on_pbStop_clicked(QString error)
 {
+    emit navigateBackActionON();
+
     if(_appManager)
     {
         _appManager->keepScreenOn(false);
@@ -422,7 +429,7 @@ UpdateHex::on_pbStop_clicked(QString error)
     if(_timer)  _timer->stop();
 
     _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
-    _commun_display->setCurrenUpd(error + "Проверьте обновление");
+    _commun_display->setCurrenUpd(error);
 }
 
 //вызов по таймеру
@@ -439,29 +446,20 @@ UpdateHex::write_page()
         }
         else if(_pageTx > _page)
         {
-            _commun_display->setCurrenUpd("Неизвестная ошибка передачи");
-            _timer->stop();
-
-            _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
+            on_pbStop_clicked("Неизвестная ошибка передачи");
             return;
         }
         _unsuccessful_transfers++;
         if(_unsuccessful_transfers > 45)
         {
-            _commun_display->setCurrenUpd("Ошибка: превышено количество попыток передачи");
-            _timer->stop();
-
-            _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
+           on_pbStop_clicked("Ошибка: превышено количество попыток передачи");
             return;
         }
         sendPage();
     }
     else if(_pageTx > _pages)
     {
-        _commun_display->setCurrenUpd("Странная ошибка передачи");
-        _timer->stop();
-
-        _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
+        on_pbStop_clicked("Странная ошибка передачи");
         return;
     }
 
@@ -494,13 +492,7 @@ UpdateHex::write_page()
                     _tx_commands->getVersion();
                     if(a++ > 15)
                     {
-                        _commun_display->setCurrenUpd("Что-то поломалось. Попробуйте еще раз");
-                        _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
-                        if(_appManager)
-                        {
-                            _appManager->keepScreenOn(false);
-                            _appManager->stopBackgroundService();
-                        }
+                        on_pbStop_clicked("Что-то поломалось. Попробуйте еще раз");
                         return;
                     }
                     delay(70);
@@ -515,13 +507,7 @@ UpdateHex::write_page()
                 }
                 else
                 {
-                    _commun_display->setCurrenUpd("Обновление установлено");
-                    _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
-                    if(_appManager)
-                    {
-                        _appManager->keepScreenOn(false);
-                        _appManager->stopBackgroundService();
-                    }
+                    on_pbStop_clicked("Обновление установлено");
                     return;
                 }
             }
@@ -542,25 +528,13 @@ UpdateHex::write_page()
                     _tx_commands->getVersion();
                     if(a++ > 15)
                     {
-                        _commun_display->setCurrenUpd("Ошибка установки. Попробуйте еще раз");
-                        _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
-                        if(_appManager)
-                        {
-                            _appManager->keepScreenOn(false);
-                            _appManager->stopBackgroundService();
-                        }
+                        on_pbStop_clicked("Ошибка установки. Попробуйте еще раз");
                         return;
                     }
                     delay(70);
                 }
-                _commun_display->setCurrenUpd("Обновление установлено");
-                _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
-
-                if(_appManager)
-                {
-                    _appManager->keepScreenOn(false);
-                    _appManager->stopBackgroundService();
-                }
+                on_pbStop_clicked("Обновление установлено");
+                return;
             }
         }
         //если режим админа
@@ -586,7 +560,7 @@ UpdateHex::write_page()
                     _tx_commands->getVersion();
                     if(a++ > 15)
                     {
-                        _commun_display->setCurrenUpd("Что-то поломалось. Попробуйте еще раз\n"
+                        on_pbStop_clicked("Что-то поломалось. Попробуйте еще раз\n"
                                         "Версия шара:\n" +
                                         versionToString(versionExternalProgram.u32) +
                                         "\nДоступна версия:\n" +
@@ -594,17 +568,11 @@ UpdateHex::write_page()
                                          "Версия загрузчика:\n" +
                                         versionToString(version_BootLoader_ExternalProgram.u32) +
                                         "\nДоступна версия:\n" + versionToString(version_BootLoader_InternalProgram.u32));
-                        _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
-                        if(_appManager)
-                        {
-                            _appManager->keepScreenOn(false);
-                            _appManager->stopBackgroundService();
-                        }
                         return;
                     }
                     delay(70);
                 }
-                _commun_display->setCurrenUpd("Загрузчик установлен\n"
+                on_pbStop_clicked("Загрузчик установлен\n"
                                 "Версия шара:\n" +
                                 versionToString(versionExternalProgram.u32) +
                                 "\nДоступна версия:\n" +
@@ -612,13 +580,6 @@ UpdateHex::write_page()
                                  "Версия загрузчика:\n" +
                                 versionToString(version_BootLoader_ExternalProgram.u32) +
                                 "\nДоступна версия:\n" + versionToString(version_BootLoader_InternalProgram.u32));
-
-                _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
-                if(_appManager)
-                {
-                    _appManager->keepScreenOn(false);
-                    _appManager->stopBackgroundService();
-                }
                 return;
 
             }
@@ -639,7 +600,7 @@ UpdateHex::write_page()
                     _tx_commands->getVersion();
                     if(a++ > 15)
                     {
-                        _commun_display->setCurrenUpd("Что-то поломалось. Попробуйте еще раз\n"
+                        on_pbStop_clicked("Что-то поломалось. Попробуйте еще раз\n"
                                         "Версия шара:\n" +
                                         versionToString(versionExternalProgram.u32) +
                                         "\nДоступна версия:\n" +
@@ -647,18 +608,11 @@ UpdateHex::write_page()
                                          "Версия загрузчика:\n" +
                                         versionToString(version_BootLoader_ExternalProgram.u32) +
                                         "\nДоступна версия:\n" + versionToString(version_BootLoader_InternalProgram.u32));
-
-                        _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
-                        if(_appManager)
-                        {
-                            _appManager->keepScreenOn(false);
-                            _appManager->stopBackgroundService();
-                        }
                         return;
                     }
                     delay(70);
                 }
-                _commun_display->setCurrenUpd("Обновление установлено\n"
+                on_pbStop_clicked("Обновление установлено\n"
                                 "Версия шара:\n" +
                                 versionToString(versionExternalProgram.u32) +
                                 "\nДоступна версия:\n" +
@@ -666,12 +620,7 @@ UpdateHex::write_page()
                                  "Версия загрузчика:\n" +
                                 versionToString(version_BootLoader_ExternalProgram.u32) +
                                 "\nДоступна версия:\n" + versionToString(version_BootLoader_InternalProgram.u32));
-                _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
-                if(_appManager)
-                {
-                    _appManager->keepScreenOn(false);
-                    _appManager->stopBackgroundService();
-                }
+                return;
             }
         }
     }

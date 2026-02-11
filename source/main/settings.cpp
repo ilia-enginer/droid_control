@@ -164,6 +164,30 @@ Settings::setctrl(bool newctrl)
     ctrl_ = newctrl;
 }
 
+void
+Settings::setIdDevice(int id)
+{
+    switch(id){
+        case 0 :
+            idDevice = NONE;
+            emit clearDevice();
+            break;
+
+        case 1 :
+            idDevice = SHAR;
+            emit deviceShar();
+            break;
+
+        default:    break;
+    }
+}
+
+int
+Settings::getIdDevice()
+{
+    return idDevice;
+}
+
 bool
 Settings::getLoging()
 {

@@ -33,7 +33,6 @@ private:
     UpdateHex *_updatehex = nullptr;
     Settings *_settings = nullptr;
 
-
     QByteArray Data;
 
     void errorCrc();                        //ошибка срс                            0x01

@@ -16,7 +16,7 @@ class MainModel: public QObject
     Q_OBJECT
 public:
     Q_PROPERTY(int adminTapCount READ getAdminTapCount WRITE incAdminTapCount NOTIFY onAdminTapCountChanged)
-    Q_PROPERTY(int servisIndexMenu READ getservisIndexMenu WRITE setservisIndexMenu NOTIFY servisIndexMenuChanged)
+//    Q_PROPERTY(int servisIndexMenu READ getservisIndexMenu WRITE setservisIndexMenu NOTIFY servisIndexMenuChanged)
 
     MainModel();
     void setDevice(Device *device);
@@ -26,17 +26,18 @@ public:
     void setUpdateHex(UpdateHex *newUpdateHex);
     void setCommun_display(Commun_display *newCommun_display);
 
-    int getservisIndexMenu() const;
-    void setservisIndexMenu(int newservisIndexMenu);
+//    int getservisIndexMenu() const;
+//    void setservisIndexMenu(int newservisIndexMenu);
 
     int checkingParameters();
 
 public slots:
+
     void incAdminTapCount(int value);
     int  getAdminTapCount();  
 
 Q_SIGNALS:
-    void servisIndexMenuChanged();
+//    void servisIndexMenuChanged();
     void onAdminTapCountChanged();
 
 private:
@@ -48,7 +49,7 @@ private:
     Rx_commands *_rx_commands = nullptr;
 
 
-    int servisIndexMenu = 0;
+//    int servisIndexMenu = 0;
     int adminTapCount = 0;      ///флаг админа
                                 /// если -1, то полный доступ ко всем функциям
 };

@@ -18,6 +18,14 @@ class Settings : public QObject
 {
     Q_OBJECT
 public:
+
+    // список устройств
+    typedef enum {
+        NONE,
+        SHAR = 1
+    } ID_Devices;
+
+
     Q_PROPERTY(int timer1 READ getTimer1 WRITE setTimer1 NOTIFY timer1Changed)
     Q_PROPERTY(float joystickAmplitude READ getJoystickAmplitude WRITE setJoystickAmplitude NOTIFY joystickAmplitudeChanged)
     Q_PROPERTY(float heightAmplitude READ getheightAmplitude WRITE setheightAmplitude NOTIFY heightAmplitudeChanged)
@@ -69,6 +77,9 @@ public:
     bool getctrl() const;
     void setctrl(bool newctrl);
 
+    void setIdDevice(int id);
+    int getIdDevice();
+
 public slots:
     bool getLoging();
     void setLoging(bool newloging);
@@ -91,6 +102,9 @@ Q_SIGNALS:
 
     void logingChanged();
 
+    void clearDevice();
+    void deviceShar();
+
 private:
     Commun_display * _commun_display = nullptr;
 
@@ -111,6 +125,8 @@ private:
     bool loging = false;                //флаг логирования
 
     QByteArray _full_Param;         ///массив с полными параметрами
+
+    int idDevice = NONE;        ///хранит id подключенного устройства
 };
 
 #endif // SETTINGS_H

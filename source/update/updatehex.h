@@ -60,6 +60,10 @@ public slots:
     void on_pbStop_clicked(QString error);
     void write_page(void);
 
+Q_SIGNALS:
+    void navigateBackActionOFF();
+    void navigateBackActionON();
+
 private:
     void sendPage(void);
 

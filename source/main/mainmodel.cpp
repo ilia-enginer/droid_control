@@ -7,21 +7,36 @@ MainModel::MainModel()
 {  
 }
 
-int
-MainModel::getservisIndexMenu() const
-{
-    return servisIndexMenu;
-}
+//int
+//MainModel::getservisIndexMenu() const
+//{
+//    return servisIndexMenu;
+//}
 
-void
-MainModel::setservisIndexMenu(int newservisIndexMenu)
-{
-    servisIndexMenu = newservisIndexMenu;
-}
+//void
+//MainModel::setservisIndexMenu(int newservisIndexMenu)
+//{
+//    servisIndexMenu = newservisIndexMenu;
+//}
 
 int
 MainModel::checkingParameters()
 {
+    // запрос ID устройства
+    _settings->setIdDevice(_settings->NONE);
+    _tx_commands->getIntendifier();
+    delay(150);
+    for(qint8 i = 0; i < 7; i++)
+    {
+        if(_settings->getIdDevice() == _settings->NONE)
+        {
+            _tx_commands->getIntendifier();
+            if(i == 6) return -1;
+        }
+        else                        i = 7;
+        delay(90);
+    }
+
     //запрос точки восстановления
     //если нет сохраненной точки - запросить
     if(!_settings->full_param_check())
@@ -62,12 +77,13 @@ MainModel::incAdminTapCount(int value)
         adminTapCount = -1;
         _updateHex->f_AdminChange(true);
         _rx_commands->f_AdminChange(true);
+ //       emit onAdminTapCountChanged();
+        _settings->setIdDevice(_settings->getIdDevice());
     }
     else if(adminTapCount >= 0)
     {
      adminTapCount ++;
     }
-    emit onAdminTapCountChanged();
 }
 
 int
