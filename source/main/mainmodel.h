@@ -30,6 +30,8 @@ public:
 //    void setservisIndexMenu(int newservisIndexMenu);
 
     int checkingParameters();
+    int checkID();
+    int checkUpdate();
 
 public slots:
 

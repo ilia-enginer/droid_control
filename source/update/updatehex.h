@@ -76,7 +76,7 @@ private:
 
     f_value version_BootLoader_ExternalProgram;     //версия загрузчика
     f_value version_BootLoader_InternalProgram;     //версия загрузчика из apk
-    f_value versionExternalProgram;     //версия шара
+    f_value versionExternalProgram;     //версия HEX
     f_value versionInternalProgram;     //версия из apk
     f_value _crc32_Internal;
     bool load_param_ = false;           ///флаг того что загружается

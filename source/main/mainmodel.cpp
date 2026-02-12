@@ -22,48 +22,50 @@ MainModel::MainModel()
 int
 MainModel::checkingParameters()
 {
-    // запрос ID устройства
-    _settings->setIdDevice(_settings->NONE);
-    _tx_commands->getIntendifier();
-    delay(150);
-    for(qint8 i = 0; i < 7; i++)
-    {
-        if(_settings->getIdDevice() == _settings->NONE)
-        {
-            _tx_commands->getIntendifier();
-            if(i == 6) return -1;
-        }
-        else                        i = 7;
-        delay(90);
-    }
-
     //запрос точки восстановления
     //если нет сохраненной точки - запросить
     if(!_settings->full_param_check())
     {
-        //на всякий. вдруг шар еще не включен, жду
+        //на всякий. вдруг прибор еще не включен, жду
         delay(500);
-       //запрашиваю параметры с шара если их нет
-        if(!_settings->full_param_check())
+       //запрашиваю параметры
+        _tx_commands->readAllParams();
+        delay(150);
+        for(qint8 i = 0; i < 6; i++)
         {
-            _tx_commands->readAllParams();
-            delay(150);
-            for(qint8 i = 0; i < 6; i++)
-            {
-                if(!_settings->full_param_check()) _tx_commands->readAllParams();
-                else                        i = 6;
-                delay(90);
-            }
-         }
+            if(!_settings->full_param_check()) _tx_commands->readAllParams();
+            else                                return 1;
+            delay(120);
+        }
     }
+    return 0;
+}
 
+int
+MainModel::checkID()
+{
+    // запрос ID устройства
+    _settings->setIdDevice(0);
+    _tx_commands->getIntendifier();
+    delay(150);
+    for(qint8 i = 0; i < 7; i++)
+    {
+        if(_settings->getIdDevice() == _settings->NONE) _tx_commands->getIntendifier();
+        else                                            return 1;
+        delay(90);
+    }
+    return 0;
+}
+
+int
+MainModel::checkUpdate()
+{
     //проверка обновлений
     if(_updateHex->checkUpdateHex() == 1)
     {
         //открыть всплывающее окно с предложением обновиться
         _commun_display->windloadHexOpen();
     }
-
     return 0;
 }
 

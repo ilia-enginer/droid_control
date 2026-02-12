@@ -10,11 +10,10 @@ Dialog {
     modal: true
     focus: true
     title: "О программе..."
-    width: window.width * 0.6
+    width: window.width * 0.8
     height: window.height * 0.4
     x: (window.width - aboutDialog.width) / 2
     y: (window.height - aboutDialog.height) / 5
-
 
     Column {
         width: parent.width

@@ -10,6 +10,22 @@ SwipeView {
     id: joystick_shar
     interactive: false
     currentIndex: 0
+    focus: false
+
+    onActiveFocusChanged: {
+        if (!activeFocus) {
+            // Пользователь нажал или перешёл away от этого поля
+      //      console.log("!!!!!!!!!!No active.")
+            joystick_timer.running = false
+            radioGroup.checkState = Qt.Unchecked
+        } else {
+            // Пользователь сосредоточился на этом поле
+      //      console.log("!!!!!!!!Focus active.")
+            tx_commands.getCheck();
+            joystick_timer.running = true
+        }
+     }
+
 
     property bool verticalOnly : false
     property bool horizontalOnly : false
@@ -48,15 +64,7 @@ SwipeView {
             interval: settParam.timer1
             running: false
             repeat: true
-
-            Component.onCompleted: {
-                tx_commands.getCheck();
-                joystick_timer.running = true
-            }
-
-            onTriggered: {
-                tx_commands.joysticActivity(mode, azimuth, amplitude, level, ctrl);
-            }
+            onTriggered: { tx_commands.joysticActivity(mode, azimuth, amplitude, level, ctrl); }
         }
 
         //окно лога
@@ -379,6 +387,7 @@ SwipeView {
             visible: false
 
             Button {
+                id: upBut
                 text: "UP"
                 highlighted: true
                 anchors.top: parent.top
@@ -395,6 +404,7 @@ SwipeView {
                 }
             }
             Button {
+                id: downBut
                 text: "DOWN"
                 highlighted: true
                 anchors.bottom: parent.bottom
@@ -415,8 +425,8 @@ SwipeView {
                 text: "LEFT"
                 highlighted: true
                 anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.bottomMargin: 15
+                anchors.top: upBut.bottom
+                anchors.topMargin: 30
 
                 onPressed: {
                     amplitude = 0.5
@@ -432,8 +442,8 @@ SwipeView {
                 text: "RIGHT"
                 highlighted: true
                 anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.bottomMargin: 15
+                anchors.top: upBut.bottom
+                anchors.topMargin: 30
 
                 onPressed: {
                     amplitude = 0.5
@@ -521,7 +531,6 @@ SwipeView {
              }
 
              RadioButton {
-                 checked: true
                  text: qsTr("0")
                  ButtonGroup.group: radioGroup
                  onClicked: {

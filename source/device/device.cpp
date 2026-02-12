@@ -275,7 +275,11 @@ Device::deviceConnected()
     _packing->setSocket(socket);
     _commun_display->set_connected(connected);
 
-    mainModel_->checkingParameters();
+    if(mainModel_->checkID())
+    {
+        mainModel_->checkingParameters();
+        mainModel_->checkUpdate();
+    }
 }
 
 void

@@ -962,12 +962,12 @@ Rx_commands::writeLabel()
     _commun_display->logServis("<- Подпись ок","");
 }
 
-//выключить шар     0xF6
+//выключить      0xF6
 void
 Rx_commands::shutdown()
 {
-    _commun_display->logJoy("<- выключение шара","");
-    _commun_display->logServis("<- выключение шара","");
+    _commun_display->logJoy("<- выключение","");
+    _commun_display->logServis("<- выключение","");
 }
 
 //ответ запроса ID устройства 0xF7

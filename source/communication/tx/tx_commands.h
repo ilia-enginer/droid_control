@@ -56,7 +56,7 @@ public slots:
     int writeProgram(QByteArray data); //команда начала передачи основной программы, передача основной программы  0xF3
     int writeBootloader(QByteArray data); //команда начала передачи загрузчика, передача загрузчика  0xF4
     int writeLabel();                   //подпись программы 0xF5
-    int shutdown();                     //выключить шар     0xF6  
+    int shutdown();                     //выключить      0xF6
     int getIntendifier();               //запрос ID устройства 0xF7
     int getInclinationAngle();          //запрос поправочного угла наклона 0xF8
     int setInclinationAngle(QString msg);//запись поправочного угла наклона 0xF8

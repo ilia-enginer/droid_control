@@ -6,6 +6,27 @@ import QtQuick.Controls.Material
 
 Page {
     id: settingFoot
+    focus: false
+
+    onActiveFocusChanged: {
+        if (!activeFocus) {
+            // Пользователь нажал или перешёл away от этого поля
+      //      console.log("No active.")
+            getcurtimer.running = false
+            get_foot_param.visible = false
+            set_foot_param.visible = false
+            box1.checked = false
+            box2.checked = false
+            box3.checked = false
+            box4.checked = false
+            box5.checked = false
+            box6.checked = false
+        } else {
+            // Пользователь сосредоточился на этом поле
+      //      console.log("Focus active.!")
+            getcurtimer.running = true
+        }
+    }
 
     property int butClick : 0
     property int coxaL : 0
@@ -339,7 +360,7 @@ Page {
 
             Timer {
                 id: getcurtimer
-                interval: 250; running: true; repeat: true
+                interval: 250; running: false; repeat: true
                 onTriggered: {
                     tx_commands.current_read(false);
                 }
@@ -1061,7 +1082,6 @@ Page {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottomMargin: parent.height * 0.12
     }
-
 }
 
 

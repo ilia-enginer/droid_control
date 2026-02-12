@@ -206,7 +206,7 @@ ApplicationWindow {
 
             model: ListModel {
                 //сохранил для отладки
-//                ListElement { title: "Джойстик"; source: "qrc:/pages/shar/joystick/Joystick.qml" }
+//                ListElement { title: "Джойстик"; source: "qrc:/pages/shar/joystick/Joystick.qml" }//???
 //                ListElement { title: "Окно настроек\nи калибровок";  source: "qrc:/pages/shar/SettingFootPage.qml" }
 //                ListElement { title: "Обновление прошивки"; source: "qrc:/pages/shar/Firmware_update.qml" }
 //                ListElement { title: "Справка"; source: "qrc:/pages/shar/Information.qml" }
@@ -238,20 +238,19 @@ ApplicationWindow {
                     listView.model.append({ title: "Настройки", source: "qrc:/pages/shar/SettingsPage.qml" })
                 }
             }
-        }
-
-        //включение режима админа
-        Button {
-            id: admin
-            width: Math.min(window.width, window.height) / 3 * 2
-            height: parent.height * 0.2
-            anchors.bottom: listView.bottom
-            opacity: 0.0
-            enabled: true
-            Component.onCompleted: { mainModel.onAdminTapCountChanged.connect(adminModeChanged) }
-            onClicked: { mainModel.incAdminTapCount(0) }
-            function adminModeChanged(){ admin.enabled = false }
-        }
+            //включение режима админа
+            Button {
+                id: admin
+                width: Math.min(window.width, window.height) / 3 * 2
+                height: parent.height * 0.2
+                anchors.bottom: listView.bottom
+                opacity: 0.0
+                enabled: true
+                Component.onCompleted: { mainModel.onAdminTapCountChanged.connect(adminModeChanged) }
+                onClicked: { mainModel.incAdminTapCount(0) }
+                function adminModeChanged(){ admin.enabled = false }
+            }
+        }       
     }
 
     StackView {
@@ -268,6 +267,16 @@ ApplicationWindow {
                 fillMode: Image.PreserveAspectFit
                 source: "../../images/play_store_512.png"
             }
+            //имя приемника
+            Text {
+                id: devName
+                width: parent.width
+                wrapMode: Label.Wrap
+                horizontalAlignment: Qt.AlignHCenter
+                text: commun_display.curDeviceName_
+                font.pixelSize: 14
+            }
+            QtObject { id: keyModel }
         }
     }
 
@@ -299,10 +308,7 @@ ApplicationWindow {
 
  ///////////////PAGES/////////////////
 
-    Joystick {
-        id: joystick_shar
-        visible: false
-    }
+    /////////MAIN/////////
     AboutPage {
         id: aboutDialog
     }
@@ -313,24 +319,11 @@ ApplicationWindow {
     DeviceScanerPage {
        id: devicesDialog
     }
-    Firmware_update{
-        id: firmwareUpdate
-        visible: false
-    }
-    Information{
-        id: informationPage
-        visible: false
+    Key{
+        id: keyPage
     }
     SenderPage {
         id: terminalPage
-        visible: false
-    }
-    ServicePage {
-        id: pageService
-        visible: false
-    }
-    SettingFootPage{
-        id: settingFoot
         visible: false
     }
     SettingsPage{
@@ -349,5 +342,27 @@ ApplicationWindow {
     }
     UpdateDialogPage {
         id: updateDialog
+    }
+
+    ////////SHAR/////////
+    Joystick {
+        id: joystick_shar
+        visible: false
+    }
+    Firmware_update{
+        id: firmwareUpdate
+        visible: false
+    }
+    Information{
+        id: informationPage
+        visible: false
+    }
+    ServicePage {
+        id: pageService
+        visible: false
+    }
+    SettingFootPage{
+        id: settingFoot
+        visible: false
     }
 }

@@ -120,7 +120,7 @@ private:
     int femurAngl = 0;
     int tibaAngl = 0;
 
-    bool ctrl_ = false;              //стабилизация шара
+    bool ctrl_ = false;              // режим стабилизации
 
     bool loging = false;                //флаг логирования
 

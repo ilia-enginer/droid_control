@@ -95,7 +95,7 @@ UpdateHex::setPageTx(qint32 num)
 int
 UpdateHex::checkUpdateHex()
 {
-    //запрос версии прошивки шара
+    //запрос версии прошивки
     _tx_commands->getVersion();
     //ожидание ответа
     delay(90);
@@ -149,7 +149,7 @@ UpdateHex::checkingUpdates(void)
     _commun_display->setCurrenUpd("Подготовка к обновлению...");
     _commun_display->statusUpdate(_commun_display->statusUpd::checkUpdateProgr);
 
-    ///запрос напряжения шара
+    ///запрос напряжения
     _commun_display->vrealChang(0.0);
     _tx_commands->voltage_read(false);
     delay(100);
@@ -188,7 +188,7 @@ UpdateHex::checkingUpdates(void)
     _commun_display->setCurrenUpd("Проверка обновлений...");
     versionExternalProgram.u32 = 0;
     version_BootLoader_ExternalProgram.u32 = 0;
-    //запрос версии прошивки шара
+    //запрос версии прошивки
     _tx_commands->getVersion();
     //ожидание ответа
     delay(90);
@@ -237,7 +237,7 @@ UpdateHex::checkingUpdates(void)
     //если режим админа
     else
     {
-        _commun_display->setCurrenUpd("Версия шара:\n" + versionToString(versionExternalProgram.u32) + "\nДоступна версия:\n" + versionToString(versionInternalProgram.u32) + "\n"
+        _commun_display->setCurrenUpd("Версия:\n" + versionToString(versionExternalProgram.u32) + "\nДоступна версия:\n" + versionToString(versionInternalProgram.u32) + "\n"
                             "Версия загрузчика:\n" + versionToString(version_BootLoader_ExternalProgram.u32) + "\nДоступна версия:\n" + versionToString(version_BootLoader_InternalProgram.u32));
 
         //включить кнопку загрузки бутлоадера
@@ -493,7 +493,7 @@ UpdateHex::write_page()
                 delay(1500);
                 _commun_display->setCurrenUpd("Ещё чуть-чуть");
                 delay(1500);
-                //запрос версии прошивки шара
+                //запрос версии прошивки
                 _tx_commands->getVersion();
                 delay(100);
                 int a = 0;
@@ -529,7 +529,7 @@ UpdateHex::write_page()
                 _commun_display->setCurrenUpd("Установка обновления");
                 delay(7000);    //7c
 
-                //запрос версии прошивки шара
+                //запрос версии прошивки
                 _tx_commands->getVersion();
                 delay(100);
                 int a = 0;
@@ -561,7 +561,7 @@ UpdateHex::write_page()
                 delay(1500);
                 _commun_display->setCurrenUpd("Ещё чуть-чуть");
                 delay(1500);
-                //запрос версии прошивки шара
+                //запрос версии прошивки
                 _tx_commands->getVersion();
                 delay(100);
                 int a = 0;
@@ -573,7 +573,7 @@ UpdateHex::write_page()
                     if(a++ > 15)
                     {
                         on_pbStop_clicked("Что-то поломалось. Попробуйте еще раз\n"
-                                        "Версия шара:\n" +
+                                        "Версия:\n" +
                                         versionToString(versionExternalProgram.u32) +
                                         "\nДоступна версия:\n" +
                                         versionToString(versionInternalProgram.u32) + "\n\n"
@@ -585,7 +585,7 @@ UpdateHex::write_page()
                     delay(70);
                 }
                 on_pbStop_clicked("Загрузчик установлен\n"
-                                "Версия шара:\n" +
+                                "Версия:\n" +
                                 versionToString(versionExternalProgram.u32) +
                                 "\nДоступна версия:\n" +
                                 versionToString(versionInternalProgram.u32) + "\n\n"
@@ -601,7 +601,7 @@ UpdateHex::write_page()
                 _commun_display->setCurrenUpd("Установка обновления");
                 delay(7000);    //7c
 
-                //запрос версии прошивки шара
+                //запрос версии прошивки
                 _tx_commands->getVersion();
                 delay(100);
                 int a = 0;
@@ -613,7 +613,7 @@ UpdateHex::write_page()
                     if(a++ > 15)
                     {
                         on_pbStop_clicked("Что-то поломалось. Попробуйте еще раз\n"
-                                        "Версия шара:\n" +
+                                        "Версия:\n" +
                                         versionToString(versionExternalProgram.u32) +
                                         "\nДоступна версия:\n" +
                                         versionToString(versionInternalProgram.u32) + "\n\n"
@@ -625,7 +625,7 @@ UpdateHex::write_page()
                     delay(70);
                 }
                 on_pbStop_clicked("Обновление установлено\n"
-                                "Версия шара:\n" +
+                                "Версия:\n" +
                                 versionToString(versionExternalProgram.u32) +
                                 "\nДоступна версия:\n" +
                                 versionToString(versionInternalProgram.u32) + "\n\n"

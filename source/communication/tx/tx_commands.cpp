@@ -865,7 +865,7 @@ Tx_commands::writeLabel()
     return res;
 }
 
-//выключить шар     0xF6
+//выключить      0xF6
 int
 Tx_commands::shutdown()
 {
