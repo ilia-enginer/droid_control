@@ -274,7 +274,7 @@ ApplicationWindow {
                 wrapMode: Label.Wrap
                 horizontalAlignment: Qt.AlignHCenter
                 text: commun_display.curDeviceName_
-                font.pixelSize: 14
+                font.pixelSize: 16
             }
             QtObject { id: keyModel }
         }
