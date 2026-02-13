@@ -247,8 +247,8 @@ ApplicationWindow {
             id: pane
             Image {
                 id: logo
-                width: pane.availableWidth / 1.9
-                height: pane.availableHeight / 1.9
+                width: pane.availableWidth / 1.65
+                height: pane.availableHeight / 1.65
                 anchors.centerIn: parent
                 anchors.verticalCenterOffset: -(parent.height * 0.08)
                 fillMode: Image.PreserveAspectFit
