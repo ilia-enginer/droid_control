@@ -75,6 +75,7 @@ MainModel::setAdminFlag(bool value)
     adminFlag = value;
     _rx_commands->f_AdminChange(value);
     _updateHex->f_AdminChange(value);
+    emit onAdminFlagChanged();
 }
 
 bool
