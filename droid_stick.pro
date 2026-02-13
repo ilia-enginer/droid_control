@@ -46,6 +46,7 @@ SOURCES += \
 
 RESOURCES += \
     Resurs.qrc \
+    pages/main/DeviceSelection.qml \
     pages/main/ApkSettings.qml \
     pages/shar/Firmware_update.qml \
     pages/shar/Information.qml \
@@ -100,6 +101,7 @@ INSTALLS += target
 
 DISTFILES += \
     android/src/org/qtproject/example/QtAndroidService.java \
+    pages/main/DeviceSelection.qml \
     pages/main/Main.qml \
     pages/main/Key.qml \
     pages/main/ApkSettings.qml \

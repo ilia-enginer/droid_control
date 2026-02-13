@@ -199,11 +199,7 @@ Page {
       anchors.right: parent.right
       checked: false
       text: qsTr("Вкл. экран")
-      visible: false
-
-      Component.onCompleted: {
-                if(mainModel.adminTapCount)   loging_visible.visible = true
-            }
+      visible: true //???mainModel.adminFlag
 
       onClicked: {
           loging.visible = loging_visible.checked

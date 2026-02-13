@@ -96,7 +96,6 @@ ApplicationWindow {
         id: navigateBackAction
         icon.name: stackView.depth > 1 ? "back" : "drawer"
         enabled: false
-//        icon.name: "drawer"
         onTriggered: {
 
             if (stackView.depth > 1) {
@@ -206,7 +205,7 @@ ApplicationWindow {
 
             model: ListModel {
                 //сохранил для отладки
-//                ListElement { title: "Джойстик"; source: "qrc:/pages/shar/joystick/Joystick.qml" }//???
+//                ListElement { title: "Джойстик"; source: "qrc:/pages/shar/joystick/Joystick.qml" }
 //                ListElement { title: "Окно настроек\nи калибровок";  source: "qrc:/pages/shar/SettingFootPage.qml" }
 //                ListElement { title: "Обновление прошивки"; source: "qrc:/pages/shar/Firmware_update.qml" }
 //                ListElement { title: "Справка"; source: "qrc:/pages/shar/Information.qml" }
@@ -232,23 +231,11 @@ ApplicationWindow {
                 listView.model.append({ title: "Окно настроек\nи калибровок", source: "qrc:/pages/shar/SettingFootPage.qml" })
                 listView.model.append({ title: "Обновление прошивки", source: "qrc:/pages/shar/Firmware_update.qml" })
                 listView.model.append({ title: "Справка", source: "qrc:/pages/shar/Information.qml" })
-                if (mainModel.adminTapCount === 1){
+                if (mainModel.adminFlag === true){
                     listView.model.append({ title: "Сервис", source: "qrc:/pages/shar/ServicePage.qml" })
                     listView.model.append({ title: "Терминал", source: "qrc:/pages/shar/SenderPage.qml" })
                     listView.model.append({ title: "Настройки", source: "qrc:/pages/shar/SettingsPage.qml" })
                 }
-            }
-            //включение режима админа
-            Button {
-                id: admin
-                width: Math.min(window.width, window.height) / 3 * 2
-                height: parent.height * 0.2
-                anchors.bottom: listView.bottom
-                opacity: 0.0
-                enabled: true
-                Component.onCompleted: { mainModel.onAdminTapCountChanged.connect(adminModeChanged) }
-                onClicked: { mainModel.incAdminTapCount(0) }
-                function adminModeChanged(){ admin.enabled = false }
             }
         }       
     }
@@ -260,8 +247,8 @@ ApplicationWindow {
             id: pane
             Image {
                 id: logo
-                width: pane.availableWidth / 2
-                height: pane.availableHeight / 2
+                width: pane.availableWidth / 1.9
+                height: pane.availableHeight / 1.9
                 anchors.centerIn: parent
                 anchors.verticalCenterOffset: -(parent.height * 0.08)
                 fillMode: Image.PreserveAspectFit

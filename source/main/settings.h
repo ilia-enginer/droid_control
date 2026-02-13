@@ -77,12 +77,12 @@ public:
     bool getctrl() const;
     void setctrl(bool newctrl);
 
-    void setIdDevice(int id);
-    int getIdDevice();
-
 public slots:
     bool getLoging();
     void setLoging(bool newloging);
+
+    void setIdDevice(int id);
+    int getIdDevice();
 
 Q_SIGNALS:
     void timer1Changed(int value);

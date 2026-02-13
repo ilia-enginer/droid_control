@@ -70,30 +70,17 @@ MainModel::checkUpdate()
 }
 
 void
-MainModel::incAdminTapCount(int value)
+MainModel::setAdminFlag(bool value)
 {
-    Q_UNUSED(value)
-
-    if(adminTapCount > 4)
-    {
-        adminTapCount = -1;
-        _updateHex->f_AdminChange(true);
-        _rx_commands->f_AdminChange(true);
- //       emit onAdminTapCountChanged();
-        _settings->setIdDevice(_settings->getIdDevice());
-    }
-    else if(adminTapCount >= 0)
-    {
-     adminTapCount ++;
-    }
+    adminFlag = value;
+    _rx_commands->f_AdminChange(value);
+    _updateHex->f_AdminChange(value);
 }
 
-int
-MainModel::getAdminTapCount()
+bool
+MainModel::getAdminFlag()
 {
-    if(adminTapCount == -1)
-        return 1;
-    return 0;
+    return adminFlag;
 }
 
 void

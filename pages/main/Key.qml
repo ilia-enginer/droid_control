@@ -1,12 +1,10 @@
 
-import QtQuick
-import QtQuick.Layouts
-import QtQuick.Controls
-import Qt.labs.settings
+import QtQuick 2.7
+import QtQuick.Controls 2.0
+import QtCharts 2.15
+import QtQml
 import QtQuick.Controls.Material
 
-
-/**58632***/
 
 Item {
     id: pageKey
@@ -15,156 +13,135 @@ Item {
     anchors.centerIn: parent
     anchors.verticalCenterOffset: -(parent.height * 0.08)
 
-    property int cnt : 0
-    property int but : -1
+    property string key : "159"
+    property string inputKey : ""
+
+    function addNumber(num){
+        inputKey = inputKey + num;
+        console.log("inputKey = " + inputKey)
+    }
+    function checkKey(){
+        if(key === inputKey){ deviceSelectionDialog.open(); inputKey = "" }
+        else{
+            console.log("key OFF")
+            inputKey = ""
+        }
+    }
 
     //1 строка
     //1
     MouseArea {
         id: zone1
-        width: pageKey.width * 0.1
-        height: pageKey.height * 0.1
+        width: pageKey.width * 0.3
+        height: pageKey.height * 0.3
         anchors.left: parent.left
         anchors.top: parent.top
         hoverEnabled: true
-        onEntered: {
-            but = -1
-            cnt = 0
-        }
+
+        onPressed: { addNumber("1") }
+        onPressAndHold: { checkKey() }
     }
     //2
     MouseArea {
         id: zone2
-        width: pageKey.width * 0.1
-        height: pageKey.height * 0.1
+        width: pageKey.width * 0.3
+        height: pageKey.height * 0.3
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         hoverEnabled: true
-        onEntered: {
-            if((but === 3) && (cnt === 5)){
-                but = 3
-                cnt++
-            }
-            else{
-                but = -1
-                cnt = 0
-            }
-        }
+
+        onPressed: { addNumber("2") }
+        onPressAndHold: { checkKey() }
     }
     //3
     MouseArea {
         id: zone3
-        width: pageKey.width * 0.1
-        height: pageKey.height * 0.1
+        width: pageKey.width * 0.3
+        height: pageKey.height * 0.3
         anchors.right: parent.right
         anchors.top: parent.top
         hoverEnabled: true
-        onEntered: {
-            if((but === 6) && (cnt === 4)){
-                but = 3
-                cnt++
-            }
-            else{
-                but = -1
-                cnt = 0
-            }
-        }
+
+        onPressed: { addNumber("3") }
+        onPressAndHold: { checkKey() }
     }
     //2 строка
     //4
     MouseArea {
         id: zone4
-        width: pageKey.width * 0.1
-        height: pageKey.height * 0.1
+        width: pageKey.width * 0.3
+        height: pageKey.height * 0.3
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
         hoverEnabled: true
-        onEntered: {
-            but = -1
-            cnt = 0
-        }
+
+        onPressed: { addNumber("4") }
+        onPressAndHold: { checkKey() }
     }
     //5
     MouseArea {
         id: zone5
-        width: pageKey.width * 0.1
-        height: pageKey.height * 0.1
+        width: pageKey.width * 0.3
+        height: pageKey.height * 0.3
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         hoverEnabled: true
-        onEntered: {
-            if((but === -1) && (cnt === 0)){
-                but = 5
-                cnt++
-            }
-            else{
-                but = -1
-                cnt = 0
-            }
-        }
+
+        onPressed: { addNumber("5") }
+        onPressAndHold: { checkKey() }
     }
     //6
     MouseArea {
         id: zone6
-        width: pageKey.width * 0.1
-        height: pageKey.height * 0.1
+        width: pageKey.width * 0.3
+        height: pageKey.height * 0.3
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        onEntered: {
-            if((but === 8) && (cnt === 2)){
-                but = 6
-                cnt++
-            }
-            else{
-                but = -1
-                cnt = 0
-            }
-        }
+
+        onPressed: { addNumber("6") }
+        onPressAndHold: { checkKey() }
     }
     // 3 строчка
     //7
     MouseArea {
         id: zone7
-        width: pageKey.width * 0.1
-        height: pageKey.height * 0.1
+        width: pageKey.width * 0.3
+        height: pageKey.height * 0.3
         anchors.left: parent.left
         anchors.bottom: parent.bottom
         hoverEnabled: true
-        onEntered: {
-            but = -1
-            cnt = 0
-        }
+
+        onPressed: { addNumber("7") }
+        onPressAndHold: { checkKey() }
     }
     //8
     MouseArea {
         id: zone8
-        width: pageKey.width * 0.1
-        height: pageKey.height * 0.1
+        width: pageKey.width * 0.3
+        height: pageKey.height * 0.3
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         hoverEnabled: true
-        onEntered: {
-            if((but === 5) && (cnt === 1)){
-                but = 8
-                cnt++
-            }
-            else{
-                but = -1
-                cnt = 0
-            }
-        }
+
+        onPressed: { addNumber("8") }
+        onPressAndHold: { checkKey() }
     }
     //9
     MouseArea {
         id: zone9
-        width: pageKey.width * 0.1
-        height: pageKey.height * 0.1
+        width: pageKey.width * 0.3
+        height: pageKey.height * 0.3
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         hoverEnabled: true
-        onEntered: {
-            but = -1
-            cnt = 0
-        }
+
+        onPressed: { addNumber("9") }
+        onPressAndHold: { checkKey() }
+    }
+
+
+    DeviceSelection{
+        id: deviceSelectionDialog
+        visible: false
     }
 }

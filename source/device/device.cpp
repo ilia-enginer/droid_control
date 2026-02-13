@@ -363,7 +363,7 @@ Device::socketRead()
    //если превышена длина пакета приема
    if(res == -1)
    {
-       if(mainModel_->getAdminTapCount())
+       if(mainModel_->getAdminFlag())
        {
            _commun_display->logJoy("<- ", "Ошибка. Превышена длина входящего сообщения");
        }

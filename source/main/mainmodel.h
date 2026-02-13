@@ -15,7 +15,7 @@ class MainModel: public QObject
 {
     Q_OBJECT
 public:
-    Q_PROPERTY(int adminTapCount READ getAdminTapCount WRITE incAdminTapCount NOTIFY onAdminTapCountChanged)
+    Q_PROPERTY(bool adminFlag READ getAdminFlag WRITE setAdminFlag NOTIFY onAdminFlagChanged)
 //    Q_PROPERTY(int servisIndexMenu READ getservisIndexMenu WRITE setservisIndexMenu NOTIFY servisIndexMenuChanged)
 
     MainModel();
@@ -35,12 +35,12 @@ public:
 
 public slots:
 
-    void incAdminTapCount(int value);
-    int  getAdminTapCount();  
+    void setAdminFlag(bool value);
+    bool  getAdminFlag();
 
 Q_SIGNALS:
 //    void servisIndexMenuChanged();
-    void onAdminTapCountChanged();
+    void onAdminFlagChanged();
 
 private:
     Device *device_ = nullptr;
@@ -52,7 +52,7 @@ private:
 
 
 //    int servisIndexMenu = 0;
-    int adminTapCount = 0;      ///флаг админа
+    bool adminFlag = false;      ///флаг админа
                                 /// если -1, то полный доступ ко всем функциям
 };
 #endif // MAINMODEL_H
