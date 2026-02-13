@@ -877,9 +877,9 @@ SwipeView {
                                  (angleY.checked) ||
                                  (angleZ.checked) )
                          {
+                             joystick_timer.running = false;
                              chartViewVisible = false;
                       //       chartView.visible = false;
-                             joystick_timer.running = false;
 
                              line1.visible = false;
                              line2.visible = false;
@@ -1100,10 +1100,8 @@ SwipeView {
                         }
                         if(chartViewVisible === false)
                         {
-                            chartViewVisible = true;
-                      //      chartView.visible = true;
-                            if(runTimer === true) joystick_timer.running = true;
 
+                      //      chartView.visible = true;
                             if(!line1.visible) line1.visible = true;
                             if(!line2.visible) line2.visible = true;
                             if(!line3.visible) line3.visible = true;
@@ -1113,6 +1111,9 @@ SwipeView {
                             if(!line7.visible) line7.visible = true;
                             if(!line8.visible) line8.visible = true;
                             if(!line9.visible) line9.visible = true;
+
+                            chartViewVisible = true;
+                            if(runTimer === true) joystick_timer.running = true;
                         }
                      }
                  }
