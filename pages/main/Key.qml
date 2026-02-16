@@ -12,6 +12,35 @@ Item {
     height: parent.height / 3
     anchors.centerIn: parent
     anchors.verticalCenterOffset: -(parent.height * 0.08)
+    focus: true
+
+    onActiveFocusChanged: {
+        if (!activeFocus) {
+            // Пользователь нажал или перешёл away от этого поля
+        //    console.log("!!!!!!!!!!No active.")
+            zone1.enabled = false
+            zone2.enabled = false
+            zone3.enabled = false
+            zone4.enabled = false
+            zone5.enabled = false
+            zone6.enabled = false
+            zone7.enabled = false
+            zone8.enabled = false
+            zone9.enabled = false
+        } else {
+            // Пользователь сосредоточился на этом поле
+        //    console.log("!!!!!!!!Focus active.")
+            zone1.enabled = true
+            zone2.enabled = true
+            zone3.enabled = true
+            zone4.enabled = true
+            zone5.enabled = true
+            zone6.enabled = true
+            zone7.enabled = true
+            zone8.enabled = true
+            zone9.enabled = true
+        }
+     }
 
     property string key : "159"
     property string inputKey : ""
@@ -36,7 +65,7 @@ Item {
         height: pageKey.height * 0.3
         anchors.left: parent.left
         anchors.top: parent.top
-        hoverEnabled: true
+       hoverEnabled: true
 
         onPressed: { addNumber("1") }
         onPressAndHold: { checkKey() }
@@ -97,6 +126,7 @@ Item {
         height: pageKey.height * 0.3
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
+        hoverEnabled: true
 
         onPressed: { addNumber("6") }
         onPressAndHold: { checkKey() }

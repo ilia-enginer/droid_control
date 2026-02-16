@@ -54,6 +54,7 @@
 #include <QSettings>
 #include <QQuickStyle>
 #include <QIcon>
+#include <QClipboard>
 #include "source/device/device.h"
 #include "source/main/mainmodel.h"
 #include "source/main/appmanager.h"
@@ -189,12 +190,14 @@ int main(int argc, char *argv[])
     //вывод версии в сообщении для изменения txt файла
     #if defined(Q_OS_WINDOWS)    
         AppVersion *AppVer = new AppVersion();
+        QClipboard *clipboard = QGuiApplication::clipboard();
+        QMessageBox msgBox;
+
         qint32 ver = AppVer->getAppVersion();
 
-        QMessageBox msgBox;
-        msgBox.setWindowModality(Qt::ApplicationModal);
+        msgBox.setWindowModality(Qt::WindowModal);
         msgBox.setWindowTitle("Версия приложения.");
-        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setIcon(QMessageBox::Information);
         ver = AppVer->getAppVersion();
         msgBox.setText(QString("%1\n\n%2.%3.%4.%5.%6.%7")
                        .arg(ver)                                         //версия полным числом
@@ -205,8 +208,18 @@ int main(int argc, char *argv[])
                        .arg((ver >> 6) & 0x01F, 2, 10, QChar('0'))       // час
                        .arg(ver & 0x3F, 2, 10, QChar('0')));             // минуты
 
-        msgBox.setDetailedText(QString("%1").arg(ver));                   //версия полным числом для копирования
-        msgBox.exec();
+        msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Ok );
+
+        int ret = msgBox.exec();
+        switch (ret) {
+          case QMessageBox::Save:
+              // Save was clicked
+            clipboard->setText(QString::number(ver), QClipboard::Clipboard);    //скопирует в буфер
+              break;
+          default:
+              // should never be reached
+              break;
+        }
     #endif
 
     engine.setInitialProperties({{ "builtInStyles", builtInStyles }});

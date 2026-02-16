@@ -34,9 +34,9 @@ public:
     int checkUpdate();
 
 public slots:
-    void setAdminFlag(bool value);
-    bool getAdminFlag();
 
+    void setAdminFlag(bool value);
+    bool  getAdminFlag();
 
 Q_SIGNALS:
 //    void servisIndexMenuChanged();

@@ -247,8 +247,8 @@ ApplicationWindow {
             id: pane
             Image {
                 id: logo
-                width: pane.availableWidth / 1.65
-                height: pane.availableHeight / 1.65
+                width: pane.availableWidth / 1.9
+                height: pane.availableHeight / 1.9
                 anchors.centerIn: parent
                 anchors.verticalCenterOffset: -(parent.height * 0.08)
                 fillMode: Image.PreserveAspectFit
@@ -263,7 +263,8 @@ ApplicationWindow {
                 text: commun_display.curDeviceName_
                 font.pixelSize: 16
             }
-            QtObject { id: keyModel }
+
+            QtObject {  }
         }
     }
 
@@ -307,7 +308,7 @@ ApplicationWindow {
        id: devicesDialog
     }
     Key{
-        id: keyPage
+  //      id: pageKey
     }
     SenderPage {
         id: terminalPage

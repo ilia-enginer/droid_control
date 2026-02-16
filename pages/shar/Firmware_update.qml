@@ -199,7 +199,7 @@ Page {
       anchors.right: parent.right
       checked: false
       text: qsTr("Вкл. экран")
-      visible: mainModel.adminFlag
+      visible: true //???mainModel.adminFlag
 
       onClicked: {
           loging.visible = loging_visible.checked

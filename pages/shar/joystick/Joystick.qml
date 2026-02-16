@@ -17,18 +17,16 @@ SwipeView {
             // Пользователь нажал или перешёл away от этого поля
       //      console.log("!!!!!!!!!!No active.")
             joystick_timer.running = false
-            runTimer = false
             radioGroup.checkState = Qt.Unchecked
         } else {
             // Пользователь сосредоточился на этом поле
       //      console.log("!!!!!!!!Focus active.")
             tx_commands.getCheck();
             joystick_timer.running = true
-            runTimer = true
         }
      }
 
-    property bool runTimer : false
+
     property bool verticalOnly : false
     property bool horizontalOnly : false
     property real offsetX : 0
@@ -877,9 +875,9 @@ SwipeView {
                                  (angleY.checked) ||
                                  (angleZ.checked) )
                          {
-                             joystick_timer.running = false;
                              chartViewVisible = false;
                       //       chartView.visible = false;
+                             joystick_timer.running = false;
 
                              line1.visible = false;
                              line2.visible = false;
@@ -1100,8 +1098,10 @@ SwipeView {
                         }
                         if(chartViewVisible === false)
                         {
-
+                            chartViewVisible = true;
                       //      chartView.visible = true;
+                            joystick_timer.running = true;
+
                             if(!line1.visible) line1.visible = true;
                             if(!line2.visible) line2.visible = true;
                             if(!line3.visible) line3.visible = true;
@@ -1111,9 +1111,6 @@ SwipeView {
                             if(!line7.visible) line7.visible = true;
                             if(!line8.visible) line8.visible = true;
                             if(!line9.visible) line9.visible = true;
-
-                            chartViewVisible = true;
-                            if(runTimer === true) joystick_timer.running = true;
                         }
                      }
                  }

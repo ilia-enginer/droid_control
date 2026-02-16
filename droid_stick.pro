@@ -2,10 +2,10 @@ TEMPLATE = app
 TARGET = droid_stick
 
 #версия на главном экране
-VERSION = "1.1.5"
+VERSION = "1.1.4"
 DEFINES += INSERT_VERSION_CODE=\\\"$$VERSION\\\"
 
-QT += quick charts qml quickcontrols2 bluetooth core positioning widgets core-private network  #androidextras
+QT += quick charts qml quickcontrols2 bluetooth core positioning widgets core-private network gui  #androidextras
 
 SOURCES += \
     source/communication/crc.cpp \
