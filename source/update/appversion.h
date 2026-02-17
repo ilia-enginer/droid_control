@@ -81,7 +81,7 @@
 //#define VERSION ((VERSION_MAJOR << 28) + ((BUILD_YEAR % 100) << 20) + ((BUILD_MONTH & 0x0f) << 16) + (BUILD_DAY << 8) + BUILD_HOUR)	// версия ПО в формате: версия(4бит).год(8бит).месяц(4бит).день(8бит).час(8бит)
 
 // версия ПО в формате: версия(4бит).год(8бит).месяц(4бит).день(5бит).час(5бит).минуты(6бит)
-#define VERSION ((VERSION_MAJOR << 28) + ((BUILD_YEAR % 100) << 20) + ((BUILD_MONTH & 0x0f) << 16) + ((BUILD_DAY & 0x1f) << 11) + ((BUILD_HOUR & 0x1f) << 6) + (BUILD_MIN & 0x3f))
+#define VERSIONAPK ((VERSION_MAJOR << 28) + ((BUILD_YEAR % 100) << 20) + ((BUILD_MONTH & 0x0f) << 16) + ((BUILD_DAY & 0x1f) << 11) + ((BUILD_HOUR & 0x1f) << 6) + (BUILD_MIN & 0x3f))
 
 
 
@@ -105,9 +105,9 @@ Q_SIGNALS:
     void version_appChanged();
 
 private:
-    qint32 _appVersion = VERSION;
+    qint32 _appVersion = VERSIONAPK;
 
-    QString version_app = INSERT_VERSION_CODE;
+    QString version_app = INSERT_VERSION_NAME;
 
 };
 

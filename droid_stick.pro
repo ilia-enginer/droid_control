@@ -1,9 +1,10 @@
 TEMPLATE = app
 TARGET = droid_stick
 
-#версия на главном экране
-VERSION = "1.1.5"
-DEFINES += INSERT_VERSION_CODE=\\\"$$VERSION\\\"
+
+VERSION = "1.1.5"   #версия на главном экране
+DEFINES += INSERT_VERSION_NAME=\\\"$$VERSION\\\"
+#DEFINES += INSERT_VERSION_CODE = 2 ??? хз как присвоить. требуется для плей маркета
 
 QT += quick charts qml quickcontrols2 bluetooth core positioning widgets core-private network gui  #androidextras
 
