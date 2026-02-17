@@ -197,10 +197,8 @@ Commun_display::graphsOutput(float volt, float cur, float tilt_angle, float tilt
 int
 Commun_display::statusUpdateApp(int status)
 {
-    f_value val;
     int res = -1;  
-    val.u32 = status;
-    statusUpdApp.append(val.data[0]);
+    statusUpdApp.append(status);
     res = statusUpdateAppRefresh();
     return res;
 }
@@ -417,9 +415,7 @@ Commun_display::statusUpdateAppRefresh()
 
         while(!statusUpdApp.isEmpty())
         {
-           f_value val;
-           val.data[0] = statusUpdApp[0];
-            switch(val.u32)
+            switch(statusUpdApp[0])
             {
                 case updApp::startloadStat:
                     emit startload();         //включение ползунка загрузки
@@ -438,6 +434,9 @@ Commun_display::statusUpdateAppRefresh()
                     break;
                 case updApp::but_Ok_OnStat:
                     emit but_Ok_On();            //включение кнопки повторной установки
+                    break;
+                case updApp::but_Yes_OnStat:
+                    emit but_Yes_On();            //включение кнопки повторного скачивания
                     break;
 
                 default:

@@ -282,8 +282,11 @@ UpdateApp::on_CancelDownload()
 {
     qDebug() << "on_CancelDownload";
 
-    _commun_display->statusUpdateApp(_commun_display->updApp::statusLoadOFFStat);
+    setUpdateText("Проверка обновлений... Загрузить?");
     setLoadText("");
+    _commun_display->statusUpdateApp(_commun_display->updApp::statusLoadOFFStat);
+    _commun_display->statusUpdateApp(_commun_display->updApp::but_Yes_OnStat);
+    on_UpdateDataReadProgress(0.0, 0.0);
 
     if(!mHttpRequestAborted)
     {
@@ -407,10 +410,7 @@ UpdateApp::on_UpdateDataReadProgress(
     qint64 inBytesRead,
     qint64 inTotalBytes)
 {
-    if (mHttpRequestAborted)
-    {
-        return;
-    }
+    if (mHttpRequestAborted)    return;
 
     qint64 Mbyte = inBytesRead / 1024 / 1024;
     qint64 Mbytes = inTotalBytes / 1024 / 1024;

@@ -12,7 +12,7 @@ Dialog {
     x: (window.width - updateDialog.width) / 2
     y: (window.height - updateDialog.height) / 4
     width: window.width * 0.8
-    height: window.height * 0.5
+    height: window.height * 0.55
 
 
     Column {
@@ -63,7 +63,6 @@ Dialog {
 
 
         Button {
-
             id: coppy
             anchors.horizontalCenter: parent.horizontalCenter
             height: parent.height * 0.12
@@ -81,6 +80,21 @@ Dialog {
                 coppy.text = "Скопировано"
                 color_.normalColor = "#5e560d"
             }
+        }
+        Button {
+            id: butLoadUpdateApp
+            anchors.horizontalCenter: parent.horizontalCenter
+            height: parent.height * 0.12
+            width: parent.width * 0.9
+            anchors.top: coppy.bottom
+            visible: mainModel.adminFlag
+            text: "Загрузить обновление"
+            background: Rectangle{
+                property var normalColor: "#9dcf0a"
+                property var pressedColor: "#cfc10a"
+                color: butLoadUpdateApp.pressed ? pressedColor : normalColor
+            }
+            onClicked: { updateAppWindow.open() }
         }
     }
 }

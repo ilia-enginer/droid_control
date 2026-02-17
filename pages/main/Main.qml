@@ -308,7 +308,6 @@ ApplicationWindow {
        id: devicesDialog
     }
     Key{
-  //      id: pageKey
     }
     SenderPage {
         id: terminalPage

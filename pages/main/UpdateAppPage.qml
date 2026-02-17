@@ -56,12 +56,10 @@ Dialog {
             Material.accent: Material.Light
             anchors.horizontalCenter: parent.horizontalCenter
             height: parent.height * 0.2
-
+            visible: false
             Component.onCompleted: {
                         commun_display.onBusyIndicatorON.connect(onBusyIndicatorON)
-                        commun_display.onBusyIndicatorOFF.connect(onBusyIndicatorOFF)
-
-                        visible = false
+                        commun_display.onBusyIndicatorOFF.connect(onBusyIndicatorOFF)   
                     }
 
             function onBusyIndicatorON(){
@@ -101,7 +99,6 @@ Dialog {
                 load.visible = false
                 loadLabel.visible = false
             }
-
 
             contentItem: Item {
                 Rectangle {
@@ -147,6 +144,8 @@ Dialog {
             color: yes.pressed ? pressedColor : normalColor
         }
 
+        Component.onCompleted: { commun_display.onBut_Yes_On.connect(onBut_Yes_On) }
+        function onBut_Yes_On(){ yes.visible = true }
         onClicked: {
             yes.visible = false
             busyIndicator.visible = true;
@@ -160,25 +159,17 @@ Dialog {
         anchors.left: parent.left
         height: parent.height * 0.25
         width: parent.width * 0.4
+        visible: false
         text: "Да"
         background: Rectangle{
             property var normalColor: "#07e67a"
             property var pressedColor: "#0b6b3d"
             color: ok.pressed ? pressedColor : normalColor
         }
-        Component.onCompleted: {
-                    commun_display.onBut_Ok_On.connect(onBut_Ok_On)
-                    visible = false
-                }
-
-        function onBut_Ok_On(){
-                ok.visible = true
-        }
-        onClicked: {
-            updateApp.install();
-        }
+        Component.onCompleted: { commun_display.onBut_Ok_On.connect(onBut_Ok_On) }
+        function onBut_Ok_On(){ ok.visible = true }
+        onClicked: { updateApp.install() }
     }
-
 
     Button {
         id: no

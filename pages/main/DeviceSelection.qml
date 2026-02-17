@@ -7,8 +7,8 @@ import QtQuick.Controls.Material
 
 Dialog {
     id: deviceSelectionDialog
-    width: window.width * 0.6
-    height: window.height * 0.5
+    width: window.width * 0.7
+    height: window.height * 0.4
     anchors.centerIn: parent
     modal: false
     focus: true
@@ -26,7 +26,7 @@ Dialog {
         spacing: 20
 
         RowLayout {
-            spacing: 10
+            spacing: 7
 
             Label {
                 text: "Type:"

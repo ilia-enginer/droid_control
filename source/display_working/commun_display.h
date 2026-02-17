@@ -34,7 +34,8 @@ public:
         busyIndicatorONStat,    //включает крутилку загрузки
         busyIndicatorOFFStat,   //отключает крутилку загрузки
         windowloadOpenStat,     //открывает окно обновления app
-        but_Ok_OnStat           //включение кнопки повторной установки
+        but_Ok_OnStat,          //включение кнопки повторной установки
+        but_Yes_OnStat          //включение кнопки повторного скачивания
     };
 
     Q_PROPERTY(QString currUpd READ getCurrenUpd WRITE setCurrenUpd NOTIFY CurrenUpdateChanged)
@@ -135,6 +136,7 @@ Q_SIGNALS:
     void busyIndicatorOFF();    //отключает крутилку загрузки
     void windowloadOpen();           //открывает окно обновления app
     void but_Ok_On();            //включение кнопки повторной установки
+    void but_Yes_On();            //включение кнопки повторного скачивания
 
     void totalBytesChanged();
     void bytesReadChanged();
@@ -166,7 +168,7 @@ private:
     QString messagee = " ";
     QString curDeviceName_ = "Устройство отключено";
 
-    QString updateAppText_ = "Проверка обновлений...";
+    QString updateAppText_ = "Проверка обновлений... Загрузить?";
     QString loadTextApp_ = "";
 
     int statusUpd = statusUpd::checkUpd;
