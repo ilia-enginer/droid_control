@@ -159,6 +159,7 @@ Page {
                                 get_cur_calibr.visible          = false
                                 set_cur_value.visible           = false
                                 set_cur_value_but.visible       = false
+                                set_cur_value_but_text.visible  = false
                                 flag_cur_but_on.visible         = false
                                 flag_cur_but_off.visible        = false
                                 cur_calibr_auto.visible         = false
@@ -223,6 +224,7 @@ Page {
                                 get_cur_calibr.visible          = false
                                 set_cur_value.visible           = false
                                 set_cur_value_but.visible       = false
+                                set_cur_value_but_text.visible  = false
                                 flag_cur_but_on.visible         = false
                                 flag_cur_but_off.visible        = false
                                 cur_calibr_auto.visible         = false
@@ -287,6 +289,7 @@ Page {
                                 get_cur_calibr.visible          = false
                                 set_cur_value.visible           = false
                                 set_cur_value_but.visible       = false
+                                set_cur_value_but_text.visible  = false
                                 flag_cur_but_on.visible         = false
                                 flag_cur_but_off.visible        = false
                                 cur_calibr_auto.visible         = false
@@ -351,6 +354,7 @@ Page {
                                 get_cur_calibr.visible          = true
                                 set_cur_value.visible           = true
                                 set_cur_value_but.visible       = true
+                                set_cur_value_but_text.visible  = true
                                 flag_cur_but_on.visible         = true
                                 flag_cur_but_off.visible        = true
                                 cur_calibr_auto.visible         = true
@@ -415,6 +419,7 @@ Page {
                                 get_cur_calibr.visible          = false
                                 set_cur_value.visible           = false
                                 set_cur_value_but.visible       = false
+                                set_cur_value_but_text.visible  = false
                                 flag_cur_but_on.visible         = false
                                 flag_cur_but_off.visible        = false
                                 cur_calibr_auto.visible         = false
@@ -479,6 +484,7 @@ Page {
                                 get_cur_calibr.visible          = false
                                 set_cur_value.visible           = false
                                 set_cur_value_but.visible       = false
+                                set_cur_value_but_text.visible  = false
                                 flag_cur_but_on.visible         = false
                                 flag_cur_but_off.visible        = false
                                 cur_calibr_auto.visible         = false
@@ -543,6 +549,7 @@ Page {
                                 get_cur_calibr.visible          = false
                                 set_cur_value.visible           = false
                                 set_cur_value_but.visible       = false
+                                set_cur_value_but_text.visible  = false
                                 flag_cur_but_on.visible         = false
                                 flag_cur_but_off.visible        = false
                                 cur_calibr_auto.visible         = false
@@ -1034,23 +1041,33 @@ Page {
                     validator: RegularExpressionValidator {regularExpression: /[.0-9]+/}
                     width: parent.width * 0.75
                 }
-                Button {
+                DelayButton {
                     id: set_cur_value_but
                     anchors.top: set_cur_value.top
                     width: parent.width * 0.25
                     anchors.bottom: set_cur_value.bottom
                     anchors.left: set_cur_value.right
                     anchors.leftMargin: 5
-                    text: "отпр."
-                    background: Rectangle{
-                        property var normalColor: "#14deca"
-                        property var pressedColor: "#0b7d72"
-                        color: set_cur_value_but.pressed ? pressedColor : normalColor
-                    }
+                    delay: 3000     //3000 ms
                     onClicked: {
                         tx_commands.setCurCalibration(set_cur_value.text);
                         listView1.positionViewAtEnd()
                     }
+                }
+                Rectangle{
+                    id: set_cur_value_but_text
+                    property var normalColor: "#14deca"
+                    property var pressedColor: "#0b7d72"
+                    anchors.top: set_cur_value_but.top
+                    anchors.right: set_cur_value_but.right
+                    anchors.left: set_cur_value_but.left
+                    height: set_cur_value_but.height * 0.70
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: qsTr("отпр.")
+                    }
+                    color: set_cur_value_but.pressed ? pressedColor : normalColor
                 }
 
                 Button {
@@ -1109,7 +1126,6 @@ Page {
                     anchors.left: cur_calibr_auto.left
                     height: cur_calibr_auto.height * 0.67
                     Text {
-                        id: name_cur_calibr_auto
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.horizontalCenter: parent.horizontalCenter
                         text: qsTr("автокалибр. датчика тока")
