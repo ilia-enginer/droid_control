@@ -416,8 +416,8 @@ Rx_commands::autocalibrationCompleted()
 void
 Rx_commands::idleTimeExceeded()
 {
-    _commun_display->logJoy("<- ошибка математики", " ");
-    _commun_display->logServis("<- ошибка математики", " ");
+    _commun_display->logJoy("<- превышено время бездействия", " ");
+    _commun_display->logServis("<- превышено время бездействия", " ");
 }
 
 //превышено время попытки подняться     0x51
@@ -432,8 +432,8 @@ Rx_commands::idleTimeLift()
 void
 Rx_commands::errorMath()
 {
-    if(_f_Admin)    _commun_display->logJoy("<- превышено время бездействия", " ");
-    _commun_display->logServis("<- превышено время бездействия", " ");
+    if(_f_Admin)    _commun_display->logJoy("<- ошибка математики", " ");
+    _commun_display->logServis("<- ошибка математики", " ");
 }
 
 //чтение состояния светодиодов     0xA0

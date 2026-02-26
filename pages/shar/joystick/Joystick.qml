@@ -620,6 +620,7 @@ SwipeView {
                 tx_commands.shutdown();
 
                 power_off.progress = 0.0
+                radioGroup.checkState = Qt.Unchecked
             }
 
         }
