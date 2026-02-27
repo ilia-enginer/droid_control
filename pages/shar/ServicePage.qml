@@ -1048,8 +1048,9 @@ Page {
                     anchors.bottom: set_cur_value.bottom
                     anchors.left: set_cur_value.right
                     anchors.leftMargin: 5
-                    delay: 3000     //3000 ms
+                    delay: 1000
                     onClicked: {
+                        set_cur_value_but.progress = 0.0
                         tx_commands.setCurCalibration(set_cur_value.text);
                         listView1.positionViewAtEnd()
                     }
@@ -1061,7 +1062,7 @@ Page {
                     anchors.top: set_cur_value_but.top
                     anchors.right: set_cur_value_but.right
                     anchors.left: set_cur_value_but.left
-                    height: set_cur_value_but.height * 0.70
+                    height: set_cur_value_but.height * 0.75
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.horizontalCenter: parent.horizontalCenter

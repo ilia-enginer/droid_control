@@ -167,6 +167,8 @@ Settings::setctrl(bool newctrl)
 void
 Settings::setIdDevice(int id)
 {
+    if(idDevice == id)  return;
+
     switch(id){
         case 0 :
             idDevice = NONE;
