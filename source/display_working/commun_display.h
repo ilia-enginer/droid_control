@@ -4,7 +4,8 @@
 #include <QObject>
 #include <QWidget>
 #include <QString>
-#include "../communication/crc.h"
+#include "../main/notificationclient.h"
+
 
 class Commun_display: public QObject
 {
@@ -47,6 +48,8 @@ public:
     Q_PROPERTY(QString loadTextApp READ getLoadTextApp WRITE setLoadTextApp NOTIFY onLoadTextAppChanged)
     Q_PROPERTY(double TotalBytes READ get_TotalBytes WRITE set_TotalBytes NOTIFY totalBytesChanged)
     Q_PROPERTY(double BytesRead READ get_BytesRead WRITE set_BytesRead NOTIFY bytesReadChanged)
+
+    void setNotificationClient(NotificationClient *newNotificationClient);
 
     int get_rendering_flag();
     void set_rendering_flag(int flag);
@@ -163,6 +166,8 @@ private:
 
     double TotalBytes = 0.0;             //кол-во байтов всего загружаемого приложения
     double BytesRead = 0.0;              //сколько уже загружено
+
+    NotificationClient * _notificationClient = nullptr;
 
     QString currUpd = "Проверьте обновление";
     QString messagee = " ";

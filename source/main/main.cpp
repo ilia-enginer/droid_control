@@ -72,6 +72,7 @@
 #include "source/update/appversion.h"
 #include "source/main/feedback.h"
 #include "source/info/info.h"
+#include "source/main/notificationclient.h"
 
 
 
@@ -125,6 +126,7 @@ int main(int argc, char *argv[])
     AppVersion appversion;
     Feedback feedback;
     Info info;
+    NotificationClient notificationClient;
 
 
     engine.rootContext()->setContextProperty("device", &d);
@@ -184,6 +186,8 @@ int main(int argc, char *argv[])
 
     updateApp.setAppManager(&appManager);
     updateApp.setCommun_display(&commun_display);
+
+    commun_display.setNotificationClient(&notificationClient);
 
     QObject::connect(&app, &QApplication::applicationStateChanged, &appManager, &AppManager::onApplicationStateChanged);
 

@@ -64,7 +64,7 @@ Page {
             get_firmware_update.visible = true
         }
         onClicked: {
-              updateHexx.checkingUpdates();
+             updateHexx.checkingUpdates();
         }
     }
 

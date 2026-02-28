@@ -17,6 +17,12 @@ Commun_display::~Commun_display()
 
 }
 
+void
+Commun_display::setNotificationClient(NotificationClient *newNotificationClient)
+{
+    _notificationClient = newNotificationClient;
+}
+
 int
 Commun_display::get_rendering_flag()
 {
@@ -267,6 +273,8 @@ Commun_display::get_BytesRead() const
 int
 Commun_display::allUpdate()
 {
+    _notificationClient->setNotification("The user is happy!");   //???
+
     vrealUpdate();      //напряжение
     curRealUpdate();    //ток
     currenUpd();        //строка на странице обновления hex

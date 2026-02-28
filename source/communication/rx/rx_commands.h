@@ -92,7 +92,8 @@ private:
     void writeBootloader(QByteArray Num); //команда начала передачи загрузчика, передача загрузчика  0xF4
     void writeLabel();                   //подпись программы 0xF5
     void shutdown();                     //выключить      0xF6
-    void getIntendifier(QByteArray Num); //ответ запроса ID устройства 0xF7 
+    void getIntendifier(QByteArray Num); //ответ запроса ID устройства 0xF7
+
     void getInclinationAngle(QByteArray Angle); //ответ запроса/установки поправочного угла наклона 0xF8
 
     void getAzimutAngle(QByteArray Angle);      //ответ запроса/установки поправочного угла азимута 0xFA

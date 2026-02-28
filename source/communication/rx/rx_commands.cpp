@@ -976,10 +976,13 @@ Rx_commands::getIntendifier(QByteArray Num)
 {
     f_value val;
 
-    val.data[3] = Num[0]; val.data[2] = Num[1]; val.data[1] = Num[2]; val.data[0] = Num[3];
+    val.data[3] = Num[0];
+    val.data[2] = Num[1];
+    val.data[1] = Num[2];
+    val.data[0] = Num[3];
     int id = val.int32;
 
-    _commun_display->logServis("<- ", QString(Num));
+    _commun_display->logServis(tr("<- ID %1").arg(id), "");
     _settings->setIdDevice(id);
 }
 

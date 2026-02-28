@@ -7,18 +7,6 @@ MainModel::MainModel()
 {  
 }
 
-//int
-//MainModel::getservisIndexMenu() const
-//{
-//    return servisIndexMenu;
-//}
-
-//void
-//MainModel::setservisIndexMenu(int newservisIndexMenu)
-//{
-//    servisIndexMenu = newservisIndexMenu;
-//}
-
 int
 MainModel::checkingParameters()
 {
@@ -45,16 +33,10 @@ int
 MainModel::checkID()
 {
     // запрос ID устройства
-    _settings->setIdDevice(0);
     _tx_commands->getIntendifier();
     delay(150);
-    for(qint8 i = 0; i < 7; i++)
-    {
-        if(_settings->getIdDevice() == _settings->NONE) _tx_commands->getIntendifier();
-        else                                            return 1;
-        delay(90);
-    }
-    return 0;
+    _tx_commands->getIntendifier();
+    return 1;
 }
 
 int
