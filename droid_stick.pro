@@ -1,9 +1,9 @@
 TEMPLATE = app
 TARGET = droid_stick
 
-
-VERSION = "1.1.5"   #версия на главном экране
-DEFINES += INSERT_VERSION_NAME=\\\"$$VERSION\\\"
+ANDROID_VERSION_NAME = "1.1.5"      #версия в apk
+#DEFINES += VERSION=\\\"$$ANDROID_VERSION_NAME\\\"   #версия в windows так не работает
+DEFINES += INSERT_VERSION_NAME=\\\"$$ANDROID_VERSION_NAME\\\"   #версия на главном экране
 #DEFINES += INSERT_VERSION_CODE = 2 ??? хз как присвоить. требуется для плей маркета
 
 QT += quick charts qml quickcontrols2 bluetooth core positioning widgets core-private network gui  #androidextras
@@ -18,6 +18,7 @@ SOURCES += \
     source/info/info.cpp \
     source/main/appmanager.cpp \
     source/main/feedback.cpp \
+    source/main/notificationclient.cpp \
     source/main/settings.cpp \
     source/smtp/emailaddress.cpp \
     source/smtp/mimeattachment.cpp \
@@ -98,9 +99,11 @@ RESOURCES += \
     pages/shar/Update_Hex.qml
 
 target.path = $$[QT_INSTALL_EXAMPLES]/quickcontrols2/gallery
+#target.path = $$[QT_INSTALL_EXAMPLES]/corelib/platform/androidnotifier
 INSTALLS += target
 
 DISTFILES += \
+    android/src/org/qtproject/example/NotificationClient.java \
     android/src/org/qtproject/example/QtAndroidService.java \
     pages/main/DeviceSelection.qml \
     pages/main/Main.qml \
@@ -140,6 +143,7 @@ HEADERS += \
     source/info/info.h \
     source/main/appmanager.h \
     source/main/feedback.h \
+    source/main/notificationclient.h \
     source/main/settings.h \
     source/smtp/emailaddress.h \
     source/smtp/mimeattachment.h \
@@ -169,11 +173,13 @@ HEADERS += \
 
 #RESOURCES += qml.qrc
 
+
 contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
     OTHER_FILES = \
     $$PWD/android/src/org/qtproject/example/InstallAPK.java\
     $$PWD/android/res/xml/provider_paths.xml\
     $$PWD/android/src/org/qtproject/example/QtAndroidService.java
+    $$PWD/android/src/org/qtproject/example/NotificationClient.java
 
     ANDROID_PACKAGE_SOURCE_DIR = \
         $$PWD/android
