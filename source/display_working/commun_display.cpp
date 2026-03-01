@@ -58,6 +58,17 @@ Commun_display::log_out_J(QString type, QString msg)
 }
 
 int
+Commun_display::log_out_T(QString type, QString msg)
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit logT(type, msg);
+        return 0;
+    }
+    return -1;
+}
+
+int
 Commun_display::vrealChang(float V)
 {
     int res = -1;
@@ -102,7 +113,9 @@ Commun_display::getCur()
     return Cur;
 }
 
-int Commun_display::setCurrenUpd(const QString &message)
+//строка обновления hex
+int
+Commun_display::setCurrenUpd(const QString &message)
 {
     int res = -1;
     if(message.isEmpty())
@@ -133,6 +146,7 @@ Commun_display::getUpdate()
     return messagee;
 }
 
+//строка связана с сканированием устройств
 int
 Commun_display::setUpdatee(const QString &message)
 {
@@ -151,6 +165,7 @@ Commun_display::statusDevicee(int status)
     return res;
 }
 
+//имя подключенного устройства или статус "отключено"
 int
 Commun_display::setCurDeviceName(QString name)
 {
@@ -209,6 +224,7 @@ Commun_display::statusUpdateApp(int status)
     return res;
 }
 
+//строка состояния при обновлении приложения
 int
 Commun_display::setUpdateAppText(const QString &message)
 {
@@ -232,6 +248,7 @@ Commun_display::getLoadTextApp()
     return loadTextApp_;
 }
 
+//сколько скачано при обновлении приложения
 int
 Commun_display::setLoadTextApp(QString text)
 {
@@ -273,8 +290,6 @@ Commun_display::get_BytesRead() const
 int
 Commun_display::allUpdate()
 {
-    _notificationClient->setNotification("The user is happy!");   //???
-
     vrealUpdate();      //напряжение
     curRealUpdate();    //ток
     currenUpd();        //строка на странице обновления hex
@@ -302,6 +317,7 @@ Commun_display::curRealUpdate()
     return -1;
 }
 
+//строка при обновлении hex
 int
 Commun_display::currenUpd()
 {
@@ -310,9 +326,13 @@ Commun_display::currenUpd()
         emit CurrenUpdateChanged(currUpd);
         return 0;
     }
+    else{
+        _notificationClient->setNotification(currUpd);
+    }
     return -1;
 }
 
+//окно состояний обновления hex
 int
 Commun_display::statusRefresh()
 {
@@ -346,6 +366,7 @@ Commun_display::statusRefresh()
     return -1;
 }
 
+//строка связана с сканированием устройств
 int
 Commun_display::updateRefresh()
 {
@@ -382,7 +403,9 @@ Commun_display::statusDeviceRefresh()
     return -1;
 }
 
-int Commun_display::CurDeviceNameRefresh()
+//имя подключенного устройства или статус "отключено"
+int
+Commun_display::CurDeviceNameRefresh()
 {
     if(rendering_flag == Qt::ApplicationState::ApplicationActive)
     {
@@ -392,6 +415,7 @@ int Commun_display::CurDeviceNameRefresh()
     return -1;
 }
 
+//строка состояния при обновлении приложения
 int
 Commun_display::updateAppTextRefresh()
 {
@@ -400,9 +424,13 @@ Commun_display::updateAppTextRefresh()
         emit UpdateAppTextChanged(updateAppText_);
         return 0;
     }
+    else{
+        _notificationClient->setNotification(updateAppText_);
+    }
     return -1;
 }
 
+//сколько скачано при обновлении приложения
 int
 Commun_display::LoadTextAppRefresh()
 {
@@ -410,6 +438,9 @@ Commun_display::LoadTextAppRefresh()
     {
         emit onLoadTextAppChanged(loadTextApp_);
         return 0;
+    }
+    else{
+        _notificationClient->setNotification(loadTextApp_);
     }
     return -1;
 }
@@ -481,13 +512,4 @@ Commun_display::BytesReadRefresh()
 }
 
 
-int
-Commun_display::log_out_T(QString type, QString msg)
-{
-    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
-    {
-        emit logT(type, msg);
-        return 0;
-    }
-    return -1;
-}
+

@@ -158,8 +158,8 @@ UpdateApp::downloadFile()
     _commun_display->statusUpdateApp(_commun_display->updApp::busyIndicatorOFFStat);
     _commun_display->statusUpdateApp(_commun_display->updApp::startloadStat);
 
-    setUpdateText("Загрузка...");
     setLoadText("");
+    setUpdateText("Загрузка...");
 
     _appManager->startBackgroundService();
 
@@ -282,8 +282,9 @@ UpdateApp::on_CancelDownload()
 {
     qDebug() << "on_CancelDownload";
 
-    setUpdateText("Проверка обновлений... Загрузить?");
     setLoadText("");
+    setUpdateText("Проверка обновлений... Загрузить?");
+
     _commun_display->statusUpdateApp(_commun_display->updApp::statusLoadOFFStat);
     _commun_display->statusUpdateApp(_commun_display->updApp::but_Yes_OnStat);
     on_UpdateDataReadProgress(0.0, 0.0);
