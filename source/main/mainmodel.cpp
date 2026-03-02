@@ -29,14 +29,31 @@ MainModel::checkingParameters()
     return 0;
 }
 
+// запрос ID устройства
 int
 MainModel::checkID()
-{
-    // запрос ID устройства
-    _tx_commands->getIntendifier();
-    delay(150);
-    _tx_commands->getIntendifier();
-    return 1;
+{ 
+    //если не админский режим - сначала сбросить приложение
+    if(!adminFlag)
+    {
+        _settings->setIdDevice(0);
+
+         _tx_commands->getIntendifier();
+         delay(150);
+         for(qint8 i = 0; i < 7; i++)
+         {
+             if(_settings->getIdDevice() == _settings->NONE) _tx_commands->getIntendifier();
+             else                                            return 1;
+             delay(90);
+         }
+         return 0;
+    }
+    else{
+        _tx_commands->getIntendifier();
+        delay(150);
+        _tx_commands->getIntendifier();
+        return 1;
+    }
 }
 
 int
