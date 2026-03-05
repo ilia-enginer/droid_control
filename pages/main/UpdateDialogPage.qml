@@ -86,7 +86,6 @@ Dialog {
             anchors.horizontalCenter: parent.horizontalCenter
             height: parent.height * 0.12
             width: parent.width * 0.9
-            anchors.top: coppy.bottom
             visible: mainModel.adminFlag
             text: "Загрузить обновление"
             background: Rectangle{

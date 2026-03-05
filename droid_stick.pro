@@ -96,7 +96,8 @@ RESOURCES += \
     pages/shar/joystick/background.png \
     pages/main/AboutPage.qml \
     pages/main/UpdateAppPage.qml \
-    pages/shar/Update_Hex.qml
+    pages/shar/Update_Hex.qml \
+    pages/main/MainView.qml
 
 target.path = $$[QT_INSTALL_EXAMPLES]/quickcontrols2/gallery
 #target.path = $$[QT_INSTALL_EXAMPLES]/corelib/platform/androidnotifier
@@ -109,6 +110,7 @@ DISTFILES += \
     pages/main/Main.qml \
     pages/main/Key.qml \
     pages/main/ApkSettings.qml \
+    pages/main/MainView.qml \
     pages/shar/Firmware_update.qml \
     pages/shar/Information.qml \
     pages/main/UpdateAppPage.qml \

@@ -64,33 +64,29 @@ ApplicationWindow {
     id: window
     width: 360
     height: 520
-
     visible: true
     title: qsTr("Droid Stick v.%1").arg(appversion.version_app)
 
     required property var builtInStyles
 
     //запуск механизма проверки обновлений
-    Component.onCompleted: {
-        //запуск механизма проверки обновлений
-        updateApp.checkForUpdates();
-    }
+    Component.onCompleted: { updateApp.checkForUpdates() }
 
-    Settings {
-        id: settings
-        property string style
-    }
+//    Shortcut {
+//        sequences: ["Esc", "Back"]
+//        enabled: stackView.depth > 1
+//        onActivated: navigateBackAction.trigger()
+//    }
 
-    Shortcut {
-        sequences: ["Esc", "Back"]
-        enabled: stackView.depth > 1
-        onActivated: navigateBackAction.trigger()
-    }
+//    Shortcut {
+//        sequence: StandardKey.HelpContents
+//        onActivated: help()
+//    }
 
-    Shortcut {
-        sequence: StandardKey.HelpContents
-        onActivated: help()
-    }
+//    Shortcut {
+//        sequence: "Menu"
+//        onActivated: optionsMenuAction.trigger()
+//    }
 
     Action {
         id: navigateBackAction
@@ -101,8 +97,10 @@ ApplicationWindow {
             if (stackView.depth > 1) {
                 stackView.pop()
                 listView.currentIndex = -1
+                mainView.focus = true
                 drawer.open()
-            } else { drawer.open() }
+                keyPage.visible = true
+            } else { drawer.open(); keyPage.visible = true }
         }
         Component.onCompleted: {
             updateHexx.navigateBackActionOFF.connect(navigateBackActionOFF)
@@ -114,11 +112,6 @@ ApplicationWindow {
         function navigateBackActionON(){
             navigateBackAction.enabled = true;
         }
-    }
-
-    Shortcut {
-        sequence: "Menu"
-        onActivated: optionsMenuAction.trigger()
     }
 
     Action {
@@ -183,8 +176,6 @@ ApplicationWindow {
 
         ListView {
             id: listView
-
-            focus: true
             currentIndex: -1
             anchors.fill: parent
 
@@ -243,32 +234,11 @@ ApplicationWindow {
     StackView {
         id: stackView
         anchors.fill: parent
-        initialItem: Pane {
-            id: pane
-            Image {
-                id: logo
-                width: pane.availableWidth / 1.9
-                height: pane.availableHeight / 1.9
-                anchors.centerIn: parent
-                anchors.verticalCenterOffset: -(parent.height * 0.08)
-                fillMode: Image.PreserveAspectFit
-                source: "../../images/play_store_512.png"
-            }
-            //имя приемника
-            Text {
-                id: devName
-                width: parent.width
-                wrapMode: Label.Wrap
-                horizontalAlignment: Qt.AlignHCenter
-                text: commun_display.curDeviceName_
-                font.pixelSize: 16
-            }
-
-            QtObject {  }
-        }
+        initialItem: mainView
     }
 
     function loadPage(page){
+        keyPage.visible = false
         switch(page){
             case 0 :
                stackView.push(joystick_shar)
@@ -297,6 +267,9 @@ ApplicationWindow {
  ///////////////PAGES/////////////////
 
     /////////MAIN/////////
+    MainView{
+        id: mainView
+    }
     AboutPage {
         id: aboutDialog
     }
@@ -308,6 +281,8 @@ ApplicationWindow {
        id: devicesDialog
     }
     Key{
+        id: keyPage
+        visible: true
     }
     SenderPage {
         id: terminalPage
@@ -330,7 +305,10 @@ ApplicationWindow {
     UpdateDialogPage {
         id: updateDialog
     }
-
+    Settings {
+        id: settings
+        property string style
+    }
     ////////SHAR/////////
     Joystick {
         id: joystick_shar
