@@ -10,6 +10,22 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
+    <!-- Android 13+ — уведомления (BLUETOOTH_SCAN/CONNECT добавляет androiddeployqt автоматически) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+    <!-- Foreground Service (KeepAliveService) -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <!-- Android 14+: тип сервиса connectedDevice (управление BT-устройствами) -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>
+    <!-- WakeLock: запрет засыпания CPU пока сервис активен -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <!-- Выключить батарейную оптимизацию для надёжной работы в фоне (Doze mode) -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+    
+    <!-- AlarmManager для фоновых уведомлений -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+
     <supports-screens android:anyDensity="true" android:largeScreens="true" android:normalScreens="true" android:smallScreens="true"/>
 
     <application android:name="org.qtproject.qt.android.bindings.QtApplication" android:extractNativeLibs="true" android:hardwareAccelerated="true" android:label="-- %%INSERT_APP_NAME%% --" android:requestLegacyExternalStorage="true" android:allowNativeHeapPointerTagging="false" android:icon="@drawable/icon">
@@ -52,6 +68,26 @@ android:parentActivityName="org.qtproject.qt.android.bindings.QtActivity"
             <meta-data android:name="android.app.static_init_classes" android:value="-- %%INSERT_INIT_CLASSES%% --"/>
             <meta-data android:name="android.app.lib_name" android:value="-- %%INSERT_APP_LIB_NAME%% --"/>
         </service>
+
+        <!--
+            KeepAliveService — НЕ Qt-сервис, работает в главном процессе (без android:process).
+            startForeground() внутри переводит главный процесс в foreground-service priority:
+            Qt event loop, QTimer и JNI работают без throttling со стороны Android.
+        -->
+        <service
+            android:name=".KeepAliveService"
+            android:foregroundServiceType="connectedDevice"
+            android:exported="false"/>
+
+        <!--
+            NotificationAlarmReceiver — BroadcastReceiver для AlarmManager.
+            Получает алармы и отправляет уведомления независимо от Qt event loop.
+        -->
+        <receiver
+            android:name=".NotificationAlarmReceiver"
+            android:enabled="true"
+            android:exported="false"/>
+
     </application>
 <!-- %%INSERT_PERMISSIONS -->
     <!-- %%INSERT_FEATURES -->

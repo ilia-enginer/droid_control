@@ -142,7 +142,8 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("feedback", &feedback);
     engine.rootContext()->setContextProperty("info", &info);
     engine.rootContext()->setContextProperty("appManager", &appManager);
-    engine.rootContext()->setContextProperty("appManager", &appManager);
+  engine.rootContext()->setContextProperty("notificationClient",
+                                           &notificationClient);
 
     packing.setCrc(&crc);
     packing.setCommun_display(&commun_display);

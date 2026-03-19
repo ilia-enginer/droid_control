@@ -6,7 +6,7 @@ ANDROID_VERSION_NAME = "1.1.5"      #версия в apk
 DEFINES += INSERT_VERSION_NAME=\\\"$$ANDROID_VERSION_NAME\\\"   #версия на главном экране
 #DEFINES += INSERT_VERSION_CODE = 2 ??? хз как присвоить. требуется для плей маркета
 
-QT += quick charts qml quickcontrols2 bluetooth core positioning widgets core-private network gui  #androidextras
+QT += quick charts qml quickcontrols2 bluetooth core positioning widgets core-private network gui concurrent  #androidextras
 
 SOURCES += \
     source/communication/crc.cpp \
@@ -106,6 +106,7 @@ INSTALLS += target
 DISTFILES += \
     android/src/org/qtproject/example/NotificationClient.java \
     android/src/org/qtproject/example/QtAndroidService.java \
+    android/src/org/qtproject/example/KeepAliveService.java \
     pages/main/DeviceSelection.qml \
     pages/main/Main.qml \
     pages/main/Key.qml \
