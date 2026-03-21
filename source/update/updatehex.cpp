@@ -333,7 +333,7 @@ UpdateHex::on_pbWrite_clicked(bool flag)
 
      if(_appManager)
      {
-         _appManager->keepScreenOn(true);
+//         _appManager->keepScreenOn(true);
          _appManager->startBackgroundService();
      }
 
@@ -433,7 +433,7 @@ UpdateHex::on_pbStop_clicked(QString error)
 
     if(_appManager)
     {
-        _appManager->keepScreenOn(false);
+//        _appManager->keepScreenOn(false);
         _appManager->stopBackgroundService();
     }
 

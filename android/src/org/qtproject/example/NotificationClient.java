@@ -90,6 +90,7 @@ public class NotificationClient
                    .setContentText(message)
                    .setPriority(Notification.PRIORITY_HIGH)  // для API < 26
               //     .setDefaults(Notification.DEFAULT_ALL)
+              //     .notificationChannel.setSound(null, null)
                    .setAutoCancel(true);
 
             Notification notification = builder.build();

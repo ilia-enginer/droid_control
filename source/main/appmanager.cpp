@@ -16,7 +16,8 @@
 
 AppManager::AppManager(QObject *parent) : QObject{parent} {}
 
-void AppManager::setCommun_display(Commun_display *newCommun_display) {
+void
+AppManager::setCommun_display(Commun_display *newCommun_display) {
     _commun_display = newCommun_display;
 }
 
@@ -25,7 +26,8 @@ AppManager::setNotificationclient(NotificationClient *newNotificationclient){
     _notificationClient = newNotificationclient;
 }
 
-void AppManager::onApplicationStateChanged(Qt::ApplicationState state) {
+void
+AppManager::onApplicationStateChanged(Qt::ApplicationState state) {
   //    qDebug() << state;
   _commun_display->set_rendering_flag(state);
 
@@ -85,7 +87,8 @@ void AppManager::keepScreenOn(bool on) {
 #endif
 }
 
-void AppManager::updateWakeLock(bool enable) {
+void
+AppManager::updateWakeLock(bool enable) {
 #if defined(Q_QDOC) ||                                                         \
     (defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED))
   using QNativeInterface::QAndroidApplication;
@@ -145,9 +148,11 @@ void AppManager::updateWakeLock(bool enable) {
 #endif
 }
 
-int AppManager::getStateApp() { return state_; }
+int
+AppManager::getStateApp() { return state_; }
 
-void AppManager::ensureBluetoothPermissions() {
+void
+AppManager::ensureBluetoothPermissions() {
 #if defined(Q_QDOC) ||                                                         \
     (defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED))
   if (QtAndroidPrivate::androidSdkVersion() < 31)
@@ -211,7 +216,8 @@ void AppManager::ensureBluetoothPermissions() {
 #endif
 }
 
-int AppManager::installApk(const QString &absPath) {
+int
+AppManager::installApk(const QString &absPath) {
 #if defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED)
   QJniObject jPath = QJniObject::fromString(absPath);
   jint res = QJniObject::callStaticMethod<jint>(
@@ -225,7 +231,8 @@ int AppManager::installApk(const QString &absPath) {
 #endif
 }
 
-void AppManager::startBackgroundService() {
+void
+AppManager::startBackgroundService() {
 #if defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED)
   ++_serviceClients;
   if (flagServiceStart) {
@@ -258,7 +265,8 @@ void AppManager::startBackgroundService() {
 #endif
 }
 
-void AppManager::stopBackgroundService() {
+void
+AppManager::stopBackgroundService() {
 #if defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED)
   if (_serviceClients == 0) {
     return;

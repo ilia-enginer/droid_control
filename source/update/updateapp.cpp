@@ -270,7 +270,7 @@ UpdateApp::startRequest(QUrl inUrl)
             this, SLOT(on_UpdateDataReadProgress(qint64, qint64)));
 
     //чтоб экран не гас
-    _appManager->keepScreenOn(true);
+//    _appManager->keepScreenOn(true);
 }
 
 
@@ -304,7 +304,7 @@ UpdateApp::on_CancelDownload()
     mHttpRequestAborted = true;
 
     //чтоб экран не гас
-    _appManager->keepScreenOn(false);
+//    _appManager->keepScreenOn(false);
     _appManager->stopBackgroundService();
 }
 
@@ -316,7 +316,7 @@ UpdateApp::on_HttpFinished()
     qDebug() << "on_HttpFinished";
 
     //чтоб экран не гас
-    _appManager->keepScreenOn(false);
+//    _appManager->keepScreenOn(false);
     _appManager->stopBackgroundService();
     setLoadText("");
 

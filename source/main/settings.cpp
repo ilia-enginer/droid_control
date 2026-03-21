@@ -231,7 +231,7 @@ Settings::set_full_param(QByteArray &param)
 }
 
 
-/////проверка сохранееных параметров
+///проверка сохранееных параметров
 int
 Settings::full_param_check()
 {

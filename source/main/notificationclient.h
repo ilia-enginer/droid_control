@@ -16,7 +16,7 @@ public:
   QString notification() const;
 
   // Тестовый таймер: запустить/остановить отправку уведомлений раз в минуту
-  Q_INVOKABLE void startTestTimer(int intervalMs = 60000);
+  Q_INVOKABLE void startTestTimer(int intervalMs = 1000);
   Q_INVOKABLE void stopTestTimer();
   
   // Callback метод, вызываемый из Java через JNI
