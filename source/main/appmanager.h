@@ -17,6 +17,7 @@ public:
     explicit AppManager(QObject *parent = nullptr);
 
     void setCommun_display(Commun_display *newCommun_display);
+    void setNotificationclient(NotificationClient *newNotificationclient);
 
     void keepScreenOn(bool on);
 
@@ -31,6 +32,7 @@ signals:
 
 private:
     Commun_display * _commun_display = nullptr;
+    NotificationClient * _notificationClient = nullptr;
 
     int state_;
     bool flagServiceStart = false;

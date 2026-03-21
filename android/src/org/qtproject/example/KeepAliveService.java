@@ -59,7 +59,7 @@ public class KeepAliveService extends Service
             }
         }
         
- //       Notification notification = buildForegroundNotification();
+        Notification notification = buildForegroundNotification();
         Log.i(TAG, "Calling startForeground() with ID: " + NOTIFICATION_ID);
         
         try {

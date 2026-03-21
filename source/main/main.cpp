@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("feedback", &feedback);
     engine.rootContext()->setContextProperty("info", &info);
     engine.rootContext()->setContextProperty("appManager", &appManager);
-  engine.rootContext()->setContextProperty("notificationClient",
+    engine.rootContext()->setContextProperty("notificationClient",
                                            &notificationClient);
 
     packing.setCrc(&crc);
@@ -181,6 +181,7 @@ int main(int argc, char *argv[])
     model.setTx_commands(&tx_commands);
 
     appManager.setCommun_display(&commun_display);
+    appManager.setNotificationclient(&notificationClient);
 #if defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED)
   //  appManager.ensureBluetoothPermissions();  //запуск при нажатии кнопки "Начать поиск"
 #endif

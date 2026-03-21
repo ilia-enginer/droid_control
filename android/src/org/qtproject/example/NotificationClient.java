@@ -85,11 +85,11 @@ public class NotificationClient
             }
 
             builder.setSmallIcon(R.drawable.icon)
-                   .setLargeIcon(icon)
+              //     .setLargeIcon(icon)
                    .setContentTitle("Droid Control")
                    .setContentText(message)
                    .setPriority(Notification.PRIORITY_HIGH)  // для API < 26
-                   .setDefaults(Notification.DEFAULT_ALL)
+              //     .setDefaults(Notification.DEFAULT_ALL)
                    .setAutoCancel(true);
 
             Notification notification = builder.build();

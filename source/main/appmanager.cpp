@@ -1,4 +1,5 @@
 #include "source/main/appmanager.h"
+#include "notificationclient.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -16,7 +17,12 @@
 AppManager::AppManager(QObject *parent) : QObject{parent} {}
 
 void AppManager::setCommun_display(Commun_display *newCommun_display) {
-  _commun_display = newCommun_display;
+    _commun_display = newCommun_display;
+}
+
+void
+AppManager::setNotificationclient(NotificationClient *newNotificationclient){
+    _notificationClient = newNotificationclient;
 }
 
 void AppManager::onApplicationStateChanged(Qt::ApplicationState state) {
@@ -25,12 +31,14 @@ void AppManager::onApplicationStateChanged(Qt::ApplicationState state) {
 
   if (state == Qt::ApplicationState::ApplicationActive) {
     state_ = Qt::ApplicationState::ApplicationActive;
+    _notificationClient->stopTestTimer();
     _commun_display->allUpdate();
   } else {
     state_ = Qt::ApplicationState::ApplicationInactive;
     if (_serviceClients == 0) {
 //      keepScreenOn(false);
     }
+    _notificationClient->startTestTimer(1000);  // проверка новых уведомлений раз в 1с
   }
 
   //    QString filename="Data.txt";

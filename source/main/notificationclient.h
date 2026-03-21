@@ -5,7 +5,6 @@
 #include <QTimer>
 #include <QStringList>
 
-class AppManager;
 
 class NotificationClient : public QObject {
   Q_OBJECT
@@ -19,9 +18,6 @@ public:
   // Тестовый таймер: запустить/остановить отправку уведомлений раз в минуту
   Q_INVOKABLE void startTestTimer(int intervalMs = 60000);
   Q_INVOKABLE void stopTestTimer();
-
-  // Привязка к AppManager для управления фоновым сервисом и WakeLock
-  void setAppManager(AppManager *am);
   
   // Callback метод, вызываемый из Java через JNI
   void onTestTimerTimeout();
@@ -36,7 +32,6 @@ private:
   QString m_notification;
   QTimer m_testTimer;
   int m_testCounter = 0;
-  AppManager *m_appManager = nullptr;
   
   // Массив фраз для тестовых уведомлений
   QStringList m_testPhrases = {

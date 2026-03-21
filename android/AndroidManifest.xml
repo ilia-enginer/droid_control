@@ -21,7 +21,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <!-- Выключить батарейную оптимизацию для надёжной работы в фоне (Doze mode) -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
-    
+
     <!-- AlarmManager для фоновых уведомлений -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
@@ -39,16 +39,6 @@
             <meta-data android:name="android.app.extract_android_style" android:value="minimal"/>
         </activity>
 
-<!-- MainActivity is the parent for ResultActivity. -->
-<!--
-<activity
-android:name="ResultActivity"
-android:parentActivityName="org.qtproject.qt.android.bindings.QtActivity"
- android:launchMode="singleTask"
-    android:taskAffinity=""
-    android:excludeFromRecents="true">
-</activity>
- -->
         <provider android:name="android.support.v4.content.FileProvider" android:authorities="org.qtproject.example.fileprovider" android:exported="false" android:grantUriPermissions="true">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/provider_paths"/>
         </provider>
@@ -68,26 +58,19 @@ android:parentActivityName="org.qtproject.qt.android.bindings.QtActivity"
             <meta-data android:name="android.app.static_init_classes" android:value="-- %%INSERT_INIT_CLASSES%% --"/>
             <meta-data android:name="android.app.lib_name" android:value="-- %%INSERT_APP_LIB_NAME%% --"/>
         </service>
-
         <!--
             KeepAliveService — НЕ Qt-сервис, работает в главном процессе (без android:process).
             startForeground() внутри переводит главный процесс в foreground-service priority:
             Qt event loop, QTimer и JNI работают без throttling со стороны Android.
         -->
-        <service
-            android:name=".KeepAliveService"
-            android:foregroundServiceType="connectedDevice"
-            android:exported="false"/>
-
+        <service android:name=".KeepAliveService">
+            <meta-data android:name="android.app.lib_name" android:value="-- %%INSERT_APP_LIB_NAME%% --"/>
+        </service>
         <!--
             NotificationAlarmReceiver — BroadcastReceiver для AlarmManager.
             Получает алармы и отправляет уведомления независимо от Qt event loop.
         -->
-        <receiver
-            android:name=".NotificationAlarmReceiver"
-            android:enabled="true"
-            android:exported="false"/>
-
+        <receiver android:name=".NotificationAlarmReceiver" android:enabled="true" android:exported="false"/>
     </application>
 <!-- %%INSERT_PERMISSIONS -->
     <!-- %%INSERT_FEATURES -->
