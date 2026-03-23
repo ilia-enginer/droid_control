@@ -107,6 +107,7 @@ DISTFILES += \
     android/src/org/qtproject/example/NotificationClient.java \
     android/src/org/qtproject/example/QtAndroidService.java \
     android/src/org/qtproject/example/KeepAliveService.java \
+    android/src/org/qtproject/example/InstallAPK.java \
     pages/main/DeviceSelection.qml \
     pages/main/Main.qml \
     pages/main/Key.qml \
@@ -117,7 +118,6 @@ DISTFILES += \
     pages/main/UpdateAppPage.qml \
     pages/shar/Update_Hex.qml \
     android/AndroidManifest.xml \
-    android/src/org/qtproject/example/InstallAPK.java \
     android/build.gradle \
     android/gradle.properties \
     android/gradle/wrapper/gradle-wrapper.jar \
@@ -132,7 +132,6 @@ DISTFILES += \
     android/res/drawable-xxxhdpi/icon.png \
     android/res/values/libs.xml \
     android/res/xml/provider_paths.xml \
-    android/src/org/qtproject/example/InstallAPK.java \
     pages/shar/SettingFootPage.qml
 
 
@@ -183,6 +182,7 @@ contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
     $$PWD/android/res/xml/provider_paths.xml\
     $$PWD/android/src/org/qtproject/example/QtAndroidService.java
     $$PWD/android/src/org/qtproject/example/NotificationClient.java
+    $$PWD/android/src/org/qtproject/example/KeepAliveService.java
 
     ANDROID_PACKAGE_SOURCE_DIR = \
         $$PWD/android

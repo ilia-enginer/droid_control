@@ -69,8 +69,10 @@ NotificationClient::~NotificationClient() {
 }
 
 void NotificationClient::setNotification(const QString &notification) {
-  if (notification.isEmpty())
-    return;
+
+    if (notification.isEmpty())
+        return;
+
   if (m_notification == notification)
     return;
 
@@ -213,21 +215,21 @@ void NotificationClient::stopTestTimer() {
 }
 
 void NotificationClient::onTestTimerTimeout() {
-  ++m_testCounter;
-  qDebug() << "[NotificationClient] ===== Timer callback from Java ===== Counter:" << m_testCounter;
-  qDebug() << "[NotificationClient] Current time:" << QDateTime::currentDateTime().toString("hh:mm:ss");
-  qDebug() << "[NotificationClient] Thread:" << QThread::currentThread();
+//  ++m_testCounter;
+//  qDebug() << "[NotificationClient] ===== Timer callback from Java ===== Counter:" << m_testCounter;
+//  qDebug() << "[NotificationClient] Current time:" << QDateTime::currentDateTime().toString("hh:mm:ss");
+//  qDebug() << "[NotificationClient] Thread:" << QThread::currentThread();
   
-  // Циклически перебираем фразы из массива
-  int phraseIndex = (m_testCounter - 1) % m_testPhrases.size();
-  QString message = m_testPhrases[phraseIndex] + QString(" #%1").arg(m_testCounter);
+//  // Циклически перебираем фразы из массива
+//  int phraseIndex = (m_testCounter - 1) % m_testPhrases.size();
+//  QString message = m_testPhrases[phraseIndex] + QString(" #%1").arg(m_testCounter);
   
-  qDebug() << "[NotificationClient] Using phrase[" << phraseIndex << "]:" << m_testPhrases[phraseIndex];
-  qDebug() << "[NotificationClient] Full message:" << message;
+//  qDebug() << "[NotificationClient] Using phrase[" << phraseIndex << "]:" << m_testPhrases[phraseIndex];
+//  qDebug() << "[NotificationClient] Full message:" << message;
 
-//    if(m_notification.isEmpty())    return;
-//    QString message = m_notification;
-//    m_notification = "";
+    if(m_notification.isEmpty())   return;
+    QString message = m_notification;
+    m_notification = "";
   
 #if defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED)
   // КРИТИЧНО: НЕ используем setNotification() и signal/slot!

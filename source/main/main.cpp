@@ -66,7 +66,6 @@
 #include "source/communication/rx/rx_commands.h"
 #include "source/display_working/commun_display.h"
 #include "source/communication/tx/tx_commands.h"
-#include "source/display_working/commun_display.h"
 #include "source/main/settings.h"
 #include "source/update/updatehex.h"
 #include "source/update/appversion.h"

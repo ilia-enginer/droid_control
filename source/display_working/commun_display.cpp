@@ -256,7 +256,7 @@ Commun_display::setLoadTextApp(QString text)
     if(text.isEmpty())
         return res;
     loadTextApp_ = text;
-    res = LoadTextAppRefresh();
+    res = LoadTextAppRefresh();    
     return res;
 }
 
