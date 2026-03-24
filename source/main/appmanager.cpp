@@ -20,7 +20,7 @@ void
 AppManager::setCommun_display(Commun_display *newCommun_display) {
     _commun_display = newCommun_display;
 }
-//???
+
 void
 AppManager::setNotificationclient(NotificationClient *newNotificationclient){
     _notificationClient = newNotificationclient;
@@ -33,14 +33,14 @@ AppManager::onApplicationStateChanged(Qt::ApplicationState state) {
 
   if (state == Qt::ApplicationState::ApplicationActive) {
     state_ = Qt::ApplicationState::ApplicationActive;
-//???    _notificationClient->stopTestTimer();
+//    _notificationClient->stopTestTimer();
     _commun_display->allUpdate();
   } else {
     state_ = Qt::ApplicationState::ApplicationInactive;
     if (_serviceClients == 0) {
 //      keepScreenOn(false);
     }
-//???    _notificationClient->startTestTimer(1000);  // проверка новых уведомлений раз в 1с
+//    _notificationClient->startTestTimer(1000);  // проверка новых уведомлений раз в 1с
   }
 
   //    QString filename="Data.txt";
@@ -249,7 +249,6 @@ AppManager::startBackgroundService() {
         QNativeInterface::QAndroidApplication::context());
   });
 
-  //???
 //  // Запускаем KeepAliveService в ГЛАВНОМ процессе — переводит его
 //  // в foreground-service priority: Qt event loop не throttlится Android-ом
 //  QAndroidApplication::runOnAndroidMainThread([] {
@@ -284,7 +283,7 @@ AppManager::stopBackgroundService() {
           "(Landroid/content/Context;)V",
           QNativeInterface::QAndroidApplication::context());
     });
-    //???
+
 //    QAndroidApplication::runOnAndroidMainThread([] {
 //      QJniObject::callStaticMethod<void>(
 //          "org/qtproject/example/KeepAliveService", "stopService",

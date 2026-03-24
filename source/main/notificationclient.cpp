@@ -70,9 +70,8 @@ NotificationClient::~NotificationClient() {
 
 void NotificationClient::setNotification(const QString &notification) {
 
-    if (notification.isEmpty())
-        return;
-
+  if (notification.isEmpty())
+    return;
   if (m_notification == notification)
     return;
 
