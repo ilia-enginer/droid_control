@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -61,12 +62,12 @@ public class NotificationClient
                     channel = new NotificationChannel(
                             CHANNEL_ID,
                             CHANNEL_NAME,
-                            NotificationManager.IMPORTANCE_HIGH  // было DEFAULT — менялось на HIGH
+                            NotificationManager.IMPORTANCE_LOW   // без звука, только иконка. IMPORTANCE_HIGH  // было DEFAULT — менялось на HIGH
                     );
                     channel.setDescription("Уведомления от Droid Control");
-                    channel.enableVibration(true);
+                    channel.enableVibration(true);            // вибрация
                     notificationManager.createNotificationChannel(channel);
-                    Log.d(TAG, "Notification channel created (IMPORTANCE_HIGH)");
+                    Log.d(TAG, "Notification channel created (IMPORTANCE_LOW)");
                 } else {
                     Log.d(TAG, "Channel already exists, importance: " + channel.getImportance());
                 }
@@ -75,8 +76,16 @@ public class NotificationClient
             Log.d(TAG, "Loading icon resource...");
             Bitmap icon = BitmapFactory.decodeResource(appContext.getResources(), R.drawable.icon);
             Log.d(TAG, "Icon loaded: " + (icon != null));
-
             Log.d(TAG, "Building notification...");
+
+            // чтоб приложение разворачивалось при нажатии на уведомление
+            Intent intent = new Intent(context, org.qtproject.qt.android.bindings.QtActivity.class);
+            intent.setAction(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            int flags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0;
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, flags);
+
             Notification.Builder builder;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 builder = new Notification.Builder(appContext, CHANNEL_ID);
@@ -85,12 +94,14 @@ public class NotificationClient
             }
 
             builder.setSmallIcon(R.drawable.icon)
-              //     .setLargeIcon(icon)
+              //     .setLargeIcon(icon)                // иконка справа уведомления
                    .setContentTitle("Droid Control")
                    .setContentText(message)
                    .setPriority(Notification.PRIORITY_HIGH)  // для API < 26
-                   .setDefaults(Notification.DEFAULT_ALL)
-              //     .notificationChannel.setSound(null, null)
+              //     .setDefaults(Notification.DEFAULT_ALL)
+                   .setContentIntent(pendingIntent)
+                   .setOnlyAlertOnce(true)       // отображать звук и вибрацию если уведомление еще не было активно
+                   .setShowWhen(false)           // без отображения временной метки
                    .setAutoCancel(true);
 
             Notification notification = builder.build();

@@ -70,12 +70,12 @@ public class QtAndroidService extends QtService
             builder.setPriority(Notification.PRIORITY_LOW);
         }
         builder.setContentTitle("Droid Control");
-        builder.setContentText("Передача активна");
+        builder.setContentText("Приложение работает в фоне");
         builder.setSmallIcon(android.R.drawable.stat_sys_upload);
         builder.setContentIntent(pendingIntent);
         builder.setOnlyAlertOnce(true);
-        builder.setOngoing(true);
-        builder.setShowWhen(false);
+        builder.setOngoing(true);       // уведомление нельзя смахнуть, оно управляется приложением
+        builder.setShowWhen(false);     // без отображения временной метки
         return builder.build();
     }
 
