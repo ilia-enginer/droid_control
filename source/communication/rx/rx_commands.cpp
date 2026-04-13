@@ -330,7 +330,7 @@ void
 Rx_commands::errorLowVoltage()
 {
     _commun_display->logJoy("<- низкое напряжение", " ");
-    _commun_display->logServis("<- ошибка записи во flash", " ");
+    _commun_display->logServis("<- низкое напряжение", " ");
 }
 
 // ошибка высокое напряжение            0x31
