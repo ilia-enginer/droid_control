@@ -149,7 +149,9 @@ ApplicationWindow {
 
                     Action {
                         text: "Поиск устройств"
-                        onTriggered: { devicesDialog.open() }
+                        onTriggered: {
+                                devicesDialog.open()
+                        }
                     }
                     Action {
                         text: "Настройки"

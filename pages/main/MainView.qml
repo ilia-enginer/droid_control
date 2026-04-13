@@ -27,6 +27,81 @@ Page{
         font.pixelSize: 16
     }
 
+  //─── COM - port ─────────────────────────────────────────
+    Rectangle {
+        visible: Qt.platform.os === "windows"
+        anchors {
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+            margins: 12
+        }
+        height: notifColumn.implicitHeight + 20
+        radius: 8
+        color: "#6040a1"
+        opacity: 0.9
+
+        Column {
+            id: notifColumn
+            spacing: 8
+            width: parent.width - 24
+            anchors.centerIn: parent
+
+            Label {
+                width: parent.width
+                text: "🔔 Настройка COM-port"
+                horizontalAlignment: Qt.AlignHCenter
+                font.bold: true
+                color: "white"
+            }
+
+            property bool testActive: false
+
+            Row {
+                spacing: 12
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                Button {
+                    text: "☣ Настройки"
+                    enabled: !notifColumn.testActive
+                    onClicked: {
+                        mainSerialPort.settingsWindowOpen();
+                    }
+                }
+
+                Button {
+                    text: "▶ Старт"
+                    enabled: !notifColumn.testActive
+                    onClicked: {
+                        notifColumn.testActive = true
+                        mainSerialPort.openSerialPort();
+                    }
+                }
+
+                Button {
+                    text: "■ Стоп"
+                    enabled: notifColumn.testActive
+                    onClicked: {
+                         notifColumn.testActive = false
+                         mainSerialPort.closeSerialPort();
+                    }
+                }
+            }
+
+            Label {
+                width: parent.width
+                horizontalAlignment: Qt.AlignHCenter
+                color: notifColumn.testActive ? "#A5D6A7" : "#EF9A9A"
+                text: notifColumn.testActive
+                      ? "✓ Активен"
+                      : "● Остановлен"
+                wrapMode: Label.Wrap
+            }
+        }
+    }
+    // ─────────────────────────────────────────────────────────────────────
+
+
     // ─── Тест уведомлений в фоне ─────────────────────────────────────────
 //    Rectangle {
 //        visible: Qt.platform.os === "android"
