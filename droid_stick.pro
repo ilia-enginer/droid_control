@@ -6,7 +6,7 @@ ANDROID_VERSION_NAME = "1.1.5"      #версия в apk
 DEFINES += INSERT_VERSION_NAME=\\\"$$ANDROID_VERSION_NAME\\\"   #версия на главном экране
 #DEFINES += INSERT_VERSION_CODE = 2 ??? хз как присвоить. требуется для плей маркета
 
-QT += quick charts qml quickcontrols2 bluetooth core positioning widgets core-private network gui concurrent  #androidextras
+QT += quick charts qml quickcontrols2 bluetooth core positioning widgets core-private network gui concurrent serialport #androidextras
 
 SOURCES += \
     source/communication/crc.cpp \
@@ -20,6 +20,8 @@ SOURCES += \
     source/main/feedback.cpp \
     source/main/notificationclient.cpp \
     source/main/settings.cpp \
+    source/serialPort/mainserialport.cpp \
+    source/serialPort/settingsdialog.cpp \
     source/smtp/emailaddress.cpp \
     source/smtp/mimeattachment.cpp \
     source/smtp/mimebase64encoder.cpp \
@@ -147,6 +149,8 @@ HEADERS += \
     source/main/feedback.h \
     source/main/notificationclient.h \
     source/main/settings.h \
+    source/serialPort/mainserialport.h \
+    source/serialPort/settingsdialog.h \
     source/smtp/emailaddress.h \
     source/smtp/mimeattachment.h \
     source/smtp/mimebase64encoder.h \
@@ -174,6 +178,9 @@ HEADERS += \
     source/update/updatehex.h
 
 #RESOURCES += qml.qrc
+
+FORMS += \
+    forms/settingsdialog.ui
 
 
 contains(ANDROID_TARGET_ARCH,armeabi-v7a) {

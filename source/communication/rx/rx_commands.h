@@ -58,6 +58,7 @@ private:
     void idleTimeExceeded();                //превышено время бездействия           0x50
     void idleTimeLift();                    //превышено время попытки подняться     0x51
     void errorMath();                      //ошибка математики                     0x55
+    void debugMess(QByteArray mess);       //сообщение дебага                       0x90
     void leds_read(QByteArray leds);       //чтение состояния светодиодов     0xA0
     void voltage_read(QByteArray Volt);       //чтение напряжения                 0xA1
     void current_read(QByteArray Cur);      //чтение тока                       0xA2

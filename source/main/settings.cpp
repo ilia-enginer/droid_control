@@ -168,6 +168,7 @@ void
 Settings::setIdDevice(int id)
 {
     if(idDevice == id)  return;
+    emit clearDevice();
 
     switch(id){
         case 0 :

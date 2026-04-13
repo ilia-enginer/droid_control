@@ -109,6 +109,9 @@ Rx_commands::searchCommand(QByteArray dat)
     case 0x55:
         errorMath();
         break;
+    case 0x90:
+        debugMess(Data);
+        break;
     case 0xA0:
         leds_read(Data);
         break;
@@ -434,6 +437,16 @@ Rx_commands::errorMath()
 {
     if(_f_Admin)    _commun_display->logJoy("<- ошибка математики", " ");
     _commun_display->logServis("<- ошибка математики", " ");
+}
+
+//сообщение дебага                       0x90
+void
+Rx_commands::debugMess(QByteArray mess)
+{
+    QString str = QString(mess);
+
+    if(_f_Admin)    _commun_display->logJoy("<- ", str);
+    _commun_display->logServis("<- ", str);
 }
 
 //чтение состояния светодиодов     0xA0

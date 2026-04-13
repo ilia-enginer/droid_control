@@ -285,7 +285,7 @@ Device::deviceConnected()
 void
 Device::errorReceived(QLowEnergyController::Error)
 {
-//     qWarning() << "Error: " << controller->errorString();
+     qWarning() << "Error: " << controller->errorString();
      _commun_display->setUpdatee(QString("Back\n(%1)").arg(controller->errorString()));
 }
 

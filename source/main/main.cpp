@@ -72,7 +72,7 @@
 #include "source/main/feedback.h"
 #include "source/info/info.h"
 #include "source/main/notificationclient.h"
-
+#include "source/serialPort/mainserialport.h"
 
 
 int main(int argc, char *argv[])
@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
     Feedback feedback;
     Info info;
     NotificationClient notificationClient;
-
+    MainSerialPort mainSerialPort;
 
     engine.rootContext()->setContextProperty("device", &d);
     engine.rootContext()->setContextProperty("mainModel", &model);
@@ -143,6 +143,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("appManager", &appManager);
     engine.rootContext()->setContextProperty("notificationClient",
                                            &notificationClient);
+    engine.rootContext()->setContextProperty("mainSerialPort", &mainSerialPort);
 
     packing.setCrc(&crc);
     packing.setCommun_display(&commun_display);

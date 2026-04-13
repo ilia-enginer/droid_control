@@ -88,7 +88,7 @@ Unpacking::unpack(QByteArray data, int size)
             if(_rx_commands->searchCommand(dataRes) == -1)
             {
                 //если не удалось распарсить ответ
-                _commDisplay->logServis("<- неизвестный ответ на команду", dataRes.toHex());
+                _commDisplay->logServis("<- неизвестный ответ на команду ", dataRes.toHex());
                 res = -3;
             }
         }
