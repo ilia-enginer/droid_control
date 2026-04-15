@@ -1,6 +1,7 @@
 #include "source/main/appmanager.h"
 #include "notificationclient.h"
 
+#include <QApplication>
 #include <QCoreApplication>
 #include <QDebug>
 #include <QFile>
@@ -8,13 +9,15 @@
 #include <QStringList>
 #include <QTextStream>
 
+
 #if defined(Q_QDOC) ||                                                         \
     (defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED))
 #include <QtCore/private/qandroidextras_p.h>
 #include <QtCore/qjniobject.h>
 #endif
 
-AppManager::AppManager(QObject *parent) : QObject{parent} {}
+AppManager::AppManager(QObject *parent) : QObject{parent} {
+}
 
 void
 AppManager::setCommun_display(Commun_display *newCommun_display) {
@@ -28,7 +31,7 @@ AppManager::setNotificationclient(NotificationClient *newNotificationclient){
 
 void
 AppManager::onApplicationStateChanged(Qt::ApplicationState state) {
-  //    qDebug() << state;
+   qDebug() << state;
   _commun_display->set_rendering_flag(state);
 
   if (state == Qt::ApplicationState::ApplicationActive) {

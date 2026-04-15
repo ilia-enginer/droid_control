@@ -57,6 +57,7 @@ public slots:
     void on_pbWrite_clicked(bool flag);
     qint32 open_Update(void);
     qint32 openBootloaderUpdate(void);
+    QString fileOpen(bool open);
     void on_pbStop_clicked(QString error);
     void write_page(void);
 
@@ -90,7 +91,16 @@ private:
     int _size = 512;               ///< размер пакета
     int _unsuccessful_transfers = 0;    ///считает кол-во неудачных передач
 
-    bool _f_Admin = false;               ///флаг режима админа
+    #ifdef Q_OS_WIN
+        bool _f_Admin = true;
+    #elif defined(Q_OS_MACOS)
+        bool _f_Admin = false;
+    #elif defined(Q_OS_ANDROID)
+        bool _f_Admin = false;
+    #elif defined(Q_OS_LINUX)
+        bool _f_Admin = true;
+    #endif
+
 };
 
 #endif // UPDATEHEX_H

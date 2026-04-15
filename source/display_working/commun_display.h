@@ -16,11 +16,11 @@ public:
     ~Commun_display();
 
     enum statusUpd {
-        checkUpdateProgr,        //индикатор загрузки
-        updateAvailab,            //включение кнопки загрузки
-        updateBootloaderAvailab,  //кнопка обновления бутлоадера
-        checkUpd,                //включение кнопки проверки обновления
-        stopUpd                 //включение кнопки остановки обновления
+        checkUpdateProgr,           //индикатор загрузки
+        updateAvailab,              //включение кнопки загрузки
+        updateBootloaderAvailab,    //кнопка обновления бутлоадера
+        checkUpd,                   //включение кнопки проверки обновления
+        stopUpd                     //включение кнопки остановки обновления
     };
 
     enum statusDevic {
@@ -78,7 +78,6 @@ public:
     int windloadHexOpen();
 
     void set_connected(bool connect);
-    bool get_connected(void);
 
     void graphsOutput(float volt, float cur, float tilt_angle,
                       float tilt_direction, float boost,
@@ -108,11 +107,11 @@ Q_SIGNALS:
     void curRealChanged(float Cur);
     void CurrenUpdateChanged(QString msg);
 
-    void checkUpdateProgress();     //индикатор загрузки
-    void updateAvailable();         //включение кнопки загрузки
-    void updateBootloaderAvailable();//кнопка обновления бутлоадера
-    void checkUpdate();             //включение кнопки проверки обновления
-    void stopUpdate();             //включение кнопки остановки обновления
+    void checkUpdateProgress();         //индикатор загрузки
+    void updateAvailable();             //включение кнопки загрузки
+    void updateBootloaderAvailable();   //кнопка обновления бутлоадера
+    void checkUpdate();                 //включение кнопки проверки обновления
+    void stopUpdate();                  //включение кнопки остановки обновления
 
     void updateChanged(QString msg);
 
@@ -133,13 +132,13 @@ Q_SIGNALS:
     void UpdateAppTextChanged(QString msg);
     void onLoadTextAppChanged(QString text);
 
-    void startload();         //включение ползунка загрузки
-    void statusLoadOFF();     //отключение ползунка загрузки
+    void startload();           //включение ползунка загрузки
+    void statusLoadOFF();       //отключение ползунка загрузки
     void busyIndicatorON();     //включает крутилку загрузки
     void busyIndicatorOFF();    //отключает крутилку загрузки
-    void windowloadOpen();           //открывает окно обновления app
-    void but_Ok_On();            //включение кнопки повторной установки
-    void but_Yes_On();            //включение кнопки повторного скачивания
+    void windowloadOpen();      //открывает окно обновления app
+    void but_Ok_On();           //включение кнопки повторной установки
+    void but_Yes_On();          //включение кнопки повторного скачивания
 
     void totalBytesChanged();
     void bytesReadChanged();
@@ -158,8 +157,7 @@ private:
     int TotalBytesRefresh();
     int BytesReadRefresh();
 
-    int rendering_flag;
-    bool connected = false;
+    int rendering_flag = 4;
 
     float Volt = 0.0;
     float Cur = 0.0;

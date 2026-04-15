@@ -1,5 +1,5 @@
 
-import QtQuick 2.7
+import QtQuick
 import QtQuick.Controls 2.0
 import QtCharts 2.15
 import QtQml
@@ -29,6 +29,46 @@ Page {
         }
     }
 
+    Shortcut{
+        sequence: "1"
+        onActivated: addNumber("1")
+    }
+    Shortcut{
+        sequence: "2"
+        onActivated: addNumber("2")
+    }
+    Shortcut{
+        sequence: "3"
+        onActivated: addNumber("3")
+    }
+    Shortcut{
+        sequence: "4"
+        onActivated: addNumber("4")
+    }
+    Shortcut{
+        sequence: "5"
+        onActivated: addNumber("5")
+    }
+    Shortcut{
+        sequence: "6"
+        onActivated: addNumber("6")
+    }
+    Shortcut{
+        sequence: "7"
+        onActivated: addNumber("7")
+    }
+    Shortcut{
+        sequence: "8"
+        onActivated: addNumber("8")
+    }
+    Shortcut{
+        sequence: "9"
+        onActivated: addNumber("9")
+    }
+    Shortcut{
+        sequence: "enter"
+        onActivated: checkKey()
+    }
     //1 строка
     //1
     MouseArea {

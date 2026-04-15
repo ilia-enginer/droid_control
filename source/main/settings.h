@@ -122,11 +122,11 @@ private:
 
     bool ctrl_ = false;              // режим стабилизации
 
-    bool loging = false;                //флаг логирования
+    bool loging = false;             //флаг логирования
 
     QByteArray _full_Param;         ///массив с полными параметрами
 
-    int idDevice = NONE;        ///хранит id подключенного устройства
+    int idDevice = NONE;            ///хранит id подключенного устройства
 };
 
 #endif // SETTINGS_H

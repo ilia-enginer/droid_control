@@ -170,6 +170,7 @@ int
 Commun_display::setCurDeviceName(QString name)
 {
     curDeviceName_ = name;
+//    qDebug() << "curDeviceName change " + curDeviceName_;
     return CurDeviceNameRefresh();
 }
 
@@ -193,13 +194,12 @@ Commun_display::windloadHexOpen()
 void
 Commun_display::set_connected(bool connect)
 {
-    connected = connect;
-}
-
-bool
-Commun_display::get_connected()
-{
-    return connected;
+    if(!connect)
+    {
+        //сбросить напряжение и ток
+        curRealChang(0.0f);
+        vrealChang(0.0f);
+    }
 }
 
 void
@@ -407,9 +407,12 @@ Commun_display::statusDeviceRefresh()
 int
 Commun_display::CurDeviceNameRefresh()
 {
+//    qDebug() << "curDeviceName_ 2 " + QString(curDeviceName_);
+
     if(rendering_flag == Qt::ApplicationState::ApplicationActive)
     {
         emit onCurDeviceNameChanged(curDeviceName_);
+//        qDebug() << "curDeviceName_ 4 " + QString(curDeviceName_);
         return 0;
     }
     return -1;

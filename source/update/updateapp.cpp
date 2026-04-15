@@ -3,9 +3,7 @@
 #include <QStandardPaths>
 #include <QDir>
 
-
 //------------------------------------------------------------------------------
-
 const QString UpdateApp::kVersionUrl =
     "https://github.com/ilia-enginer/droid_stick/blob/main/version.txt";
 
@@ -18,9 +16,7 @@ const QString UpdateApp::versionHeading =
 
 const QString UpdateApp::fileName =
         "droid_stick.apk";
-
 //------------------------------------------------------------------------------
-
 
 void
 UpdateApp::delayyy( int mill)

@@ -261,7 +261,7 @@ Page {
                   anchors.top: cur_calibr_auto.top
                   anchors.right: cur_calibr_auto.right
                   anchors.left: cur_calibr_auto.left
-                  height: cur_calibr_auto.height * 0.67
+                  height: cur_calibr_auto.height * 0.7
                   Text {
                       id: name_cur_calibr_auto
                       anchors.verticalCenter: parent.verticalCenter
@@ -272,24 +272,34 @@ Page {
               }
 
             //////////сервы/////////////
-            Button {
+
+            DelayButton {
               id: servscalibr
               anchors.top: cur_calibr_auto.bottom
               width: page_settings.width
               height: page_settings.height * 0.08
-              text: "старт/стоп автокалибровки серв"
-              background: Rectangle{
-                  property var normalColor: "#1fc2b2"
-                  property var pressedColor: "#17d47f"
-                  color: servscalibr.pressed ? pressedColor : normalColor
-              }
-               onClicked: {
+              delay: 1500
+               onActivated: {
                    getcurtimer.running = false
                   tx_commands.servoAutoCalibration();
                   listView1.positionViewAtEnd()
                    getcurtimer.running = true
                }
              }
+            Rectangle{
+                property var normalColor: "#1fc2b2"
+                property var pressedColor: "#17d47f"
+                anchors.top: servscalibr.top
+                anchors.right: servscalibr.right
+                anchors.left: servscalibr.left
+                height: servscalibr.height * 0.7
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: qsTr("старт/стоп автокалибровки серв")
+                }
+                color: servscalibr.pressed ? pressedColor : normalColor
+            }
 
             Button {
                 id: serv_off_but

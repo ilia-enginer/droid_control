@@ -1,21 +1,14 @@
 #include <QByteArray>
 #include <string.h>
-
-
 #include "packing.h"
-
-
-
 
 Packing::Packing(QObject *parent) :
     QObject(parent)
 {
-
 }
 
 Packing::~Packing()
 {
-
 }
 
 void
@@ -24,7 +17,6 @@ Packing::setCrc(Crc *newCrc)
     _crc = newCrc;
 }
 
-
 void
 Packing::setCommun_display(Commun_display *newCommun_display)
 {
@@ -32,49 +24,36 @@ Packing::setCommun_display(Commun_display *newCommun_display)
 }
 
 void
-Packing::setSocket(QBluetoothSocket *newSocket)
+Packing::setMainSerialPort(MainSerialPort *newMainSerialPort)
 {
-    _socket = newSocket;
+    _mainSerialPort = newMainSerialPort;
 }
 
 void
-Packing::delSocket()
+Packing::setDevice(Device *newDevice)
 {
-    _socket = nullptr;
+    _device = newDevice;
 }
 
+void
+Packing::setTypeTx(QString type)
+{
+    if(type.isEmpty())  return;
+    typeTx = type;
+}
 
 //отправить сообщение
 int
 Packing::sendMessage(QString msg, bool wrap)
 {
     QByteArray dataToSend = QByteArray::fromHex(msg.toUtf8());
-
-    //если надо обернуть протоколом
-    if(wrap) {
-        dataToSend = wrapData(dataToSend);
-    }
-
-    //если нет подключения - выйти
-    if (!_socket)   {
-        return -1;
-    }
-
-    int res = _socket->write(dataToSend);
-
-    //если не отправлено - выйти
-    if(res == -1)
-       return res;
-
-    //отправка лога для терминала
-    _commDisplay->log_out_T("-> ", QString ("%1 (%2 size)").arg(QString(dataToSend.toHex())).arg(res));
-
-    return res;
+    return sendMessage(dataToSend, wrap);
 }
 
 int
 Packing::sendMessage(QByteArray msg, bool wrap)
 {
+    int res = -1;
     QByteArray dataToSend = msg;
 
     //если надо обернуть протоколом
@@ -82,13 +61,9 @@ Packing::sendMessage(QByteArray msg, bool wrap)
         dataToSend = wrapData(dataToSend);
     }
 
-    //если нет подключения - выйти
-    if (!_socket)   {
-        return -1;
-    }
-
-    int res = _socket->write(dataToSend);
-
+    // если на связи компорт
+    if(typeTx == "comport")         res = _mainSerialPort->writeData(dataToSend);
+    else if(typeTx == "bluetooth")  res = _device->sendMessage(dataToSend);
 
     //если не отправлено - выйти
     if(res == -1)
@@ -99,7 +74,6 @@ Packing::sendMessage(QByteArray msg, bool wrap)
 
     return res;
 }
-
 
 //запаковать сообщение
 QByteArray

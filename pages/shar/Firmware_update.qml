@@ -45,7 +45,7 @@ Page {
         height: parent.height * 0.07
         anchors.top: senderPageLabel2.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        visible: true
+        visible: Qt.platform.os === "windows" ? false : true
         text: "Проверить обновление"
 
         background: Rectangle{
@@ -62,20 +62,36 @@ Page {
             update_bootloader_load.visible = false
             stop_load.visible = false
             get_firmware_update.visible = true
+
+            if(Qt.platform.os === "windows")
+            {
+                get_firmware_update.visible = false
+                update_bootloader_load.visible = true
+                update_load.visible = true
+            }
         }
         onClicked: {
              updateHexx.checkingUpdates();
         }
     }
 
+    Shortcut{
+        sequence: "F8"
+        onActivated: {
+            update_load.visible = false
+            update_bootloader_load.visible = false
+            busyIndicator.visible = true
+            updateHexx.on_pbWrite_clicked(true)
+        }
+    }
     Button {
         id: update_load
         width: parent.width * 0.8
         height: parent.height * 0.07
         anchors.top: senderPageLabel2.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        visible: false
-        text: "Загрузить обновление"
+        visible: Qt.platform.os === "windows" ? true : false
+        text: Qt.platform.os === "windows" ? "Загрузить обновление (F8)" : "Загрузить обновление"
 
         background: Rectangle{
             property var normalColor: "#c97424"
@@ -100,14 +116,23 @@ Page {
         }
     }
 
+    Shortcut{
+        sequence: "F9"
+        onActivated: {
+            update_load.visible = false
+            update_bootloader_load.visible = false
+            busyIndicator.visible = true
+            updateHexx.on_pbWrite_clicked(false)
+        }
+    }
     Button {
         id: update_bootloader_load
         width: parent.width * 0.8
         height: parent.height * 0.07
         anchors.top: update_load.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        visible: false
-        text: "Загрузить bootloader"
+        visible: Qt.platform.os === "windows" ? true : false
+        text: Qt.platform.os === "windows" ? "Загрузить bootloader (F9)" : "Загрузить bootloader"
 
         background: Rectangle{
             property var normalColor: "#c97424"
@@ -152,6 +177,11 @@ Page {
         }
     }
 
+    Shortcut{
+        sequence: "F10"
+        onActivated: updateHexx.on_pbStop_clicked("")
+    }
+
     Button {
         id: stop_load
         width: parent.width * 0.8
@@ -159,7 +189,7 @@ Page {
         anchors.top: busyIndicator.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         visible: false
-        text: "Остановить обновление"
+        text: Qt.platform.os === "windows" ? "Остановить обновление (F10)" : "Остановить обновление"
 
         background: Rectangle{
             property var normalColor: "#db0b3f"
@@ -274,6 +304,31 @@ Page {
 
         onClicked: {
             logListModel.clear()
+        }
+    }
+
+    Shortcut{
+        sequence: "F7"
+        onActivated: updateHexx.fileOpen(false);
+    }
+
+    Button {
+        id: open_file
+        width: parent.width * 0.8
+        height: parent.height * 0.07
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        visible: Qt.platform.os === "windows"
+        opacity: 0.7
+        text: "Открыть файл (F7)"
+
+        background: Rectangle{
+            property var normalColor: "#d0d413"
+            property var pressedColor: "#3c965a"
+            color: open_file.pressed ? pressedColor : normalColor
+        }
+        onClicked: {
+            updateHexx.fileOpen(true);
         }
     }
 }

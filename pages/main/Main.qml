@@ -72,21 +72,21 @@ ApplicationWindow {
     //запуск механизма проверки обновлений
     Component.onCompleted: { updateApp.checkForUpdates() }
 
-//    Shortcut {
-//        sequences: ["Esc", "Back"]
-//        enabled: stackView.depth > 1
-//        onActivated: navigateBackAction.trigger()
-//    }
+    Shortcut {
+        sequences: ["Esc", "Back"]
+        enabled: stackView.depth > 1
+        onActivated: navigateBackAction.trigger()
+    }
 
-//    Shortcut {
-//        sequence: StandardKey.HelpContents
-//        onActivated: help()
-//    }
+    Shortcut {
+        sequence: StandardKey.HelpContents
+        onActivated: help()
+    }
 
-//    Shortcut {
-//        sequence: "Menu"
-//        onActivated: optionsMenuAction.trigger()
-//    }
+    Shortcut {
+        sequence: "Menu"
+        onActivated: optionsMenuAction.trigger()
+    }
 
     Action {
         id: navigateBackAction

@@ -39,26 +39,74 @@ Unpacking::setSettings(Settings *newSettings)
     _settings = newSettings;
 }
 
+void
+Unpacking::setDevice(Device *newDevice)
+{
+    _device = newDevice;
+    connect(_device, &Device::messageReceived, this,
+                                 [this] (QByteArray mess) {
+                                //     qDebug() << "test";
+                                     messRes(mess);
+    });
+}
+
+void
+Unpacking::setMainSerialPort(MainSerialPort *newMainSerialPort)
+{
+    _mainSerialPort = newMainSerialPort;
+    connect(_mainSerialPort, &MainSerialPort::messageReceived, this,
+                                 [this] (QByteArray mess) {
+                                //     qDebug() << "test";
+                                     messRes(mess);
+    });
+}
+
+void
+Unpacking::messRes(QByteArray recievedData)
+{
+    int size = recievedData.size();
+    int res;
+
+    //если терминал - вывести в сыром виде
+    //в окно терминала
+    _commDisplay->log_out_T("<-", QString ("%1 (%2 size)").arg(QString(recievedData.toHex())).arg(size));
+
+    //распаковка
+    res = unpack(recievedData, size);
+    //если превышена длина пакета приема
+    if(res == -1)   if(_f_Admin)    _commDisplay->logJoy("<- ", "Ошибка. Превышена длина входящего сообщения");
+
+     res = 1;
+     while(res == 1)
+     {
+         QByteArray mess;
+         //проверка остатка в переменной темп
+         res = checkBalance();
+         if(res == 1)   unpack(mess, mess.size());
+     }
+}
+
 int
 Unpacking::unpack(QByteArray data, int size)
 {
     Q_UNUSED(size); 
-    int res;
+    int res = 0;
     const std::string empty;
 
-    if(!data.isEmpty())
+    if(data.isEmpty()) return -4;
+
+    dataRes = data;
+    //вывод лога, если надо
+    if(_settings->getLoging())
     {
-        dataRes = data;
-        //вывод лога, если надо
-        if(_settings->getLoging())
-        {
-            _commDisplay->logJoy("<- ", QString ("%1 (%2 size)").arg(QString(data.toHex())).arg(size));
-            _commDisplay->logServis("<- ", QString ("%1 (%2 size)").arg(QString(data.toHex())).arg(size));
-        }
+        _commDisplay->logJoy("<- ", QString ("%1 (%2 size)").arg(QString(dataRes.toHex())).arg(size));
+        _commDisplay->logServis("<- ", QString ("%1 (%2 size)").arg(QString(dataRes.toHex())).arg(size));
     }
 
     //склейка разорванных пакетов
     res = gluingPackages();
+
+    if(dataRes.isEmpty()) return -5;
 
     //превышена длина пакета
     if(res == -1)
@@ -71,6 +119,7 @@ Unpacking::unpack(QByteArray data, int size)
     {
         //удаление авроры
         auroraDelete();
+        if(dataRes.size() < 2)   return -5;
 
         //проверка crc
         size = dataRes.size();
@@ -139,11 +188,16 @@ Unpacking::checkBalance()
     return 0;
 }
 
+void
+Unpacking::f_AdminChange(bool adm)
+{
+    _f_Admin = adm;
+}
+
 //склейка разорванных пакетов
 int
 Unpacking::gluingPackages()
 {
-
    const std::string empty;
 
    for (quint8 i = 0; i < dataRes.size(); i++)
@@ -163,6 +217,7 @@ Unpacking::gluingPackages()
      {
        //если найден конец сообщения
        if (dataRes[i] == 0x55 &&
+           i != 0 &&
            dataRes[i - 1] == 0x2F &&
            !split &&
            dataRes.size() < max_rx_size)
@@ -184,7 +239,6 @@ Unpacking::gluingPackages()
                    dataRes[i+1] != 0x1F)
            {
                dataRes.replace(i+1, dataRes.size(), empty);
-
                split = false;
                return 1;
            }
@@ -196,11 +250,11 @@ Unpacking::gluingPackages()
        }
        //если найден конец сообщения, сообщение было разделено
        else if(dataRes[i] == 0x55 &&
+               i != 0 &&
                dataRes[i - 1] == 0x2F &&
                split &&
                (dataRes.size() + Temp.size()) < max_rx_size)
        {
-
             //переместить все из temp
            if(!Temp.isEmpty())
            {
@@ -225,7 +279,6 @@ Unpacking::gluingPackages()
                     dataRes.replace(k+1, dataRes.size(), empty);
                     return 1;
                 }
-
             }
        }
        //если превышена максимальная длина пакета
@@ -258,6 +311,7 @@ void
 Unpacking::auroraDelete()
 {
     const std::string empty;
+    if(dataRes.size() < 2)   return;
 
    //удаление старт байта, стоп байтов
    if(dataRes[0] == dataRes[1] &&

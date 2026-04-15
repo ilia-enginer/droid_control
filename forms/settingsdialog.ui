@@ -29,8 +29,20 @@
       </item>
       <item row="0" column="1">
        <widget class="QComboBox" name="baudRateBox">
-        <property name="currentIndex">
+        <property name="toolTipDuration">
          <number>-1</number>
+        </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="editable">
+         <bool>false</bool>
+        </property>
+        <property name="currentText">
+         <string/>
+        </property>
+        <property name="modelColumn">
+         <number>0</number>
         </property>
        </widget>
       </item>
@@ -163,11 +175,14 @@
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QCheckBox" name="localEchoCheckBox">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="text">
          <string>Local echo</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </item>

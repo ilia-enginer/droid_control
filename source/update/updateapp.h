@@ -14,15 +14,14 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 #include <QJniObject>
-#include "appversion.h"
-#include "../main/appmanager.h"
-#include "../display_working/commun_display.h"
-
 
 #if defined(Q_OS_ANDROID)
     #include <QtCore/private/qandroidextras_p.h>
 #endif
 
+#include "appversion.h"
+#include "../main/appmanager.h"
+#include "../display_working/commun_display.h"
 
 
 class UpdateApp : public QObject
@@ -35,7 +34,6 @@ class UpdateApp : public QObject
         static const QString versionHeading;
         static const QString fileName;
         static const QString downloadFolderAdress;
-
 
         explicit UpdateApp(QObject *parent = 0);
         ~UpdateApp();
@@ -75,7 +73,6 @@ class UpdateApp : public QObject
         QNetworkReply *mDownloaderReply;
         QFile *mFile;
         bool mHttpRequestAborted = true;
-
 
         QDir *dir;
         QFileInfo fileinfo;

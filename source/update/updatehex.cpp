@@ -1,6 +1,9 @@
+
+#include <QFileDialog>
+
 #include "updatehex.h"
 #include "../main/appmanager.h"
-#include "source/device/device.h"
+#include "source/communication/device/device.h"
 
 
 UpdateHex::UpdateHex(QObject *parent)
@@ -12,10 +15,8 @@ UpdateHex::UpdateHex(QObject *parent)
     version_BootLoader_InternalProgram.u32 = 0; 
 }
 
-
 UpdateHex::~UpdateHex()
 {
-
 }
 
 void
@@ -47,7 +48,6 @@ UpdateHex::setAppManager(AppManager *newAppManager)
 {
     _appManager = newAppManager;
 }
-
 
 void
 UpdateHex::setVersExt(quint32 version)
@@ -110,18 +110,22 @@ UpdateHex::checkUpdateHex()
         delay(90);
     }
 
-    //открываю файл и читаю версии прошивки и бутлоадера
-    if(!open_Update())  return -2;
-    if(!openBootloaderUpdate())  return -2;
+    #if defined(Q_QDOC) ||                                                         \
+        (defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED))
 
-    //если основная версия или версия загрузчика из apk новее - предложить обновить провишку
-    if(((versionInternalProgram.u32 > versionExternalProgram.u32)
-            || (version_BootLoader_InternalProgram.u32 > version_BootLoader_ExternalProgram.u32)) &&
-            (versionExternalProgram.u32 != 0))
-    {
-        //открыть всплывающее окно с предложением обновиться
-        return 1;
-    }
+        //открываю файл и читаю версии прошивки и бутлоадера
+        if(!open_Update())  return -2;
+        if(!openBootloaderUpdate())  return -2;
+
+        //если основная версия или версия загрузчика из apk новее - предложить обновить провишку
+        if(((versionInternalProgram.u32 > versionExternalProgram.u32)
+                || (version_BootLoader_InternalProgram.u32 > version_BootLoader_ExternalProgram.u32)) &&
+                (versionExternalProgram.u32 != 0))
+        {
+            //открыть всплывающее окно с предложением обновиться
+            return 1;
+        }
+    #endif
     return 0;
 }
 
@@ -269,6 +273,7 @@ UpdateHex::on_pbWrite_clicked(bool flag)
 {
     emit navigateBackActionOFF();
 
+#ifdef Q_OS_ANDROID
     //если обычный режим
     if(!_f_Admin)
     {
@@ -306,6 +311,22 @@ UpdateHex::on_pbWrite_clicked(bool flag)
         }
     }
 
+#elif defined Q_OS_WIN
+    //если надо записывать бутлоадер
+    if(flag == false)
+    {
+        if(!openBootloaderUpdate()) return;
+        load_param_ = false;
+    }
+    //если надо записывать основную прошивку
+    else
+    {
+        //открываю файл прошивки
+        if(!open_Update()) return;
+        load_param_ = true;
+    }
+#endif
+
     _pages = _bin.size() / _size;
     _page = 0;
     _pageTx = -1;
@@ -331,11 +352,7 @@ UpdateHex::on_pbWrite_clicked(bool flag)
         delay(3000);
     }
 
-     if(_appManager)
-     {
-//         _appManager->keepScreenOn(true);
-         _appManager->startBackgroundService();
-     }
+     if(_appManager)    _appManager->startBackgroundService();
 
      //включить индикатор загрузки
      //и кнопку остановки
@@ -353,9 +370,16 @@ UpdateHex::on_pbWrite_clicked(bool flag)
 qint32
 UpdateHex::open_Update()
 {
+    QString _fileName;
+
     //считывание основной вервии
     //открытие файла с прошивкой из apk
-    QString _fileName = ":/bin/roboshar_v.bin"; // (из ресурсов)
+    #ifdef defined(Q_OS_ANDROID)
+        _fileName = ":/bin/roboshar_v.bin"; // (из ресурсов)
+    #elif defined Q_OS_WIN
+        _fileName = fileOpen(false);
+    #endif
+
     if(!on_pbOpenFile_clicked(_fileName))
     {
         _commun_display->setCurrenUpd("Ошибка\nне удалось открыть файл прошивки");
@@ -389,9 +413,16 @@ UpdateHex::open_Update()
 qint32
 UpdateHex::openBootloaderUpdate()
 {
+    QString _fileName;
+
     //считывание бутлоадера
     //открытие файла с прошивкой из apk
-      QString _fileName = ":/bin/boot_loader.bin"; // (из ресурсов)
+    #ifdef defined(Q_OS_ANDROID)
+        _fileName = ":/bin/boot_loader.bin"; // (из ресурсов)
+    #elif defined Q_OS_WIN
+        _fileName = fileOpen(false);
+    #endif
+
     if(!on_pbOpenFile_clicked(_fileName))
     {
         _commun_display->setCurrenUpd("Ошибка\nне удалось открыть файл прошивки");
@@ -424,6 +455,30 @@ UpdateHex::openBootloaderUpdate()
     return true;
 }
 
+QString
+UpdateHex::fileOpen(bool open)
+{
+    static QString localPath;
+
+    if((open) || (localPath.isEmpty()))
+    {
+        QUrl fileUrl = QFileDialog::getOpenFileUrl(nullptr,
+                                                   "Выберите файл",
+                                                   QUrl("file:///roboshar_v.bin"),
+                                                   "Бинарный файл (*.bin);;All files (*)");
+        if (!fileUrl.isEmpty()) {
+            qDebug() << "Выбранный URL:" << fileUrl.toString();
+            if (fileUrl.isLocalFile()) {
+                localPath = fileUrl.toLocalFile();
+                qDebug() << "Локальный путь:" << localPath;
+                return localPath;
+            }
+        }
+    }
+    qDebug() << "Локальный путь:" << localPath;
+    return localPath;
+}
+
 
 //! Прервать запись
 void
@@ -431,11 +486,7 @@ UpdateHex::on_pbStop_clicked(QString error)
 {
     emit navigateBackActionON();
 
-    if(_appManager)
-    {
-//        _appManager->keepScreenOn(false);
-        _appManager->stopBackgroundService();
-    }
+    if(_appManager) _appManager->stopBackgroundService();
 
     //выключить таймер
     if(_timer)  _timer->stop();

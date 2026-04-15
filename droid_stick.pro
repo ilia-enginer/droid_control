@@ -17,32 +17,13 @@ SOURCES += \
     source/display_working/commun_display.cpp \
     source/info/info.cpp \
     source/main/appmanager.cpp \
-    source/main/feedback.cpp \
     source/main/notificationclient.cpp \
     source/main/settings.cpp \
-    source/serialPort/mainserialport.cpp \
-    source/serialPort/settingsdialog.cpp \
-    source/smtp/emailaddress.cpp \
-    source/smtp/mimeattachment.cpp \
-    source/smtp/mimebase64encoder.cpp \
-    source/smtp/mimebase64formatter.cpp \
-    source/smtp/mimebytearrayattachment.cpp \
-    source/smtp/mimecontentencoder.cpp \
-    source/smtp/mimecontentformatter.cpp \
-    source/smtp/mimefile.cpp \
-    source/smtp/mimehtml.cpp \
-    source/smtp/mimeinlinefile.cpp \
-    source/smtp/mimemessage.cpp \
-    source/smtp/mimemultipart.cpp \
-    source/smtp/mimepart.cpp \
-    source/smtp/mimeqpencoder.cpp \
-    source/smtp/mimeqpformatter.cpp \
-    source/smtp/mimetext.cpp \
-    source/smtp/quotedprintable.cpp \
-    source/smtp/smtpclient.cpp \
+    source/communication/serialComPort/mainSerialPort.cpp \
+    source/communication/serialComPort/settingsdialog.cpp \
     source/update/appversion.cpp \
-    source/device/device.cpp \
-    source/device/deviceinfo.cpp \
+    source/communication/device/device.cpp \
+    source/communication/device/deviceinfo.cpp \
     source/main/main.cpp \
     source/main/mainmodel.cpp \
     source/update/updateapp.cpp \
@@ -146,33 +127,13 @@ HEADERS += \
     source/display_working/commun_display.h \
     source/info/info.h \
     source/main/appmanager.h \
-    source/main/feedback.h \
     source/main/notificationclient.h \
     source/main/settings.h \
-    source/serialPort/mainserialport.h \
-    source/serialPort/settingsdialog.h \
-    source/smtp/emailaddress.h \
-    source/smtp/mimeattachment.h \
-    source/smtp/mimebase64encoder.h \
-    source/smtp/mimebase64formatter.h \
-    source/smtp/mimebytearrayattachment.h \
-    source/smtp/mimecontentencoder.h \
-    source/smtp/mimecontentformatter.h \
-    source/smtp/mimefile.h \
-    source/smtp/mimehtml.h \
-    source/smtp/mimeinlinefile.h \
-    source/smtp/mimemessage.h \
-    source/smtp/mimemultipart.h \
-    source/smtp/mimepart.h \
-    source/smtp/mimeqpencoder.h \
-    source/smtp/mimeqpformatter.h \
-    source/smtp/mimetext.h \
-    source/smtp/quotedprintable.h \
-    source/smtp/smtpclient.h \
-    source/smtp/smtpmime_global.h \
+    source/communication/serialComPort/mainSerialPort.h \
+    source/communication/serialComPort/settingsdialog.h \
     source/update/appversion.h \
-    source/device/device.h \
-    source/device/deviceinfo.h \
+    source/communication/device/device.h \
+    source/communication/device/deviceinfo.h \
     source/main/mainmodel.h \
     source/update/updateapp.h \
     source/update/updatehex.h

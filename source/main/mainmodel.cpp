@@ -1,10 +1,15 @@
 
 #include "source/main/mainmodel.h"
-#include "source/device/device.h"
+#include "source/communication/device/device.h"
 
+#include <QDebug>
 
-MainModel::MainModel()
+MainModel::MainModel(QObject *parent) : QObject{parent}
 {  
+}
+
+MainModel::~MainModel()
+{
 }
 
 int
@@ -69,11 +74,36 @@ MainModel::checkUpdate()
 }
 
 void
+MainModel::deviceConnect(QString type)
+{
+    qDebug() << "connect to device = " <<type;
+
+    if(type.isEmpty())  return;
+    if(type == "none")
+    {
+        _packing->setTypeTx(type);
+        _commun_display->set_connected(false);
+        return;
+    }
+
+    _packing->setTypeTx(type);
+    _commun_display->set_connected(true);
+
+    if(checkID())
+    {
+        checkingParameters();
+        checkUpdate();
+    }
+}
+
+void
 MainModel::setAdminFlag(bool value)
 {
     adminFlag = value;
     _rx_commands->f_AdminChange(value);
     _updateHex->f_AdminChange(value);
+    _unpacking->f_AdminChange(value);
+
     emit onAdminFlagChanged();
 }
 
@@ -87,6 +117,11 @@ void
 MainModel::setDevice(Device *device)
 {
     device_ = device;
+    connect(device_, &Device::connected, this,
+                                 [this] (QString typeDevice) {
+                                //     qDebug() << "test";
+                                     deviceConnect(typeDevice);
+    });
 }
 
 void
@@ -119,3 +154,25 @@ MainModel::setCommun_display(Commun_display *newCommun_display)
     _commun_display = newCommun_display;
 }
 
+void
+MainModel::setMainSerialComPort(MainSerialPort *newMainSerialPort)
+{
+    _mainserialport = newMainSerialPort;
+    connect(_mainserialport, &MainSerialPort::connected, this,
+                                 [this] (QString typeDevice) {
+                                //     qDebug() << "test";
+                                     deviceConnect(typeDevice);
+    });
+}
+
+void
+MainModel::setPacking(Packing *newPacking)
+{
+    _packing = newPacking;
+}
+
+void
+MainModel::setUnpacking(Unpacking *newUnpacking)
+{
+    _unpacking = newUnpacking;
+}

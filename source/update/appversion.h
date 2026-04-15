@@ -101,6 +101,8 @@ public:
     QString getversion_app();
     void setversion_app(QString &vers);
 
+    void appVersionVisible(void);
+
 Q_SIGNALS:
     void version_appChanged();
 

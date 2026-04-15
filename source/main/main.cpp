@@ -54,8 +54,8 @@
 #include <QSettings>
 #include <QQuickStyle>
 #include <QIcon>
-#include <QClipboard>
-#include "source/device/device.h"
+
+#include "source/communication/device/device.h"
 #include "source/main/mainmodel.h"
 #include "source/main/appmanager.h"
 #include "source/update/updateapp.h"
@@ -69,10 +69,11 @@
 #include "source/main/settings.h"
 #include "source/update/updatehex.h"
 #include "source/update/appversion.h"
-#include "source/main/feedback.h"
 #include "source/info/info.h"
 #include "source/main/notificationclient.h"
-#include "source/serialPort/mainserialport.h"
+#include "source/communication/serialComPort/mainSerialPort.h"
+
+#include <QDebug>
 
 
 int main(int argc, char *argv[])
@@ -112,8 +113,7 @@ int main(int argc, char *argv[])
 
     AppManager appManager;
     Commun_display commun_display;
-    MainModel model;
-    Device d(&model);
+    Device device;
     UpdateApp updateApp;
     Crc crc;
     Packing packing;
@@ -123,13 +123,13 @@ int main(int argc, char *argv[])
     Settings settings;
     UpdateHex updateHex;
     AppVersion appversion;
-    Feedback feedback;
     Info info;
     NotificationClient notificationClient;
     MainSerialPort mainSerialPort;
+    MainModel *model = new MainModel();
 
-    engine.rootContext()->setContextProperty("device", &d);
-    engine.rootContext()->setContextProperty("mainModel", &model);
+    engine.rootContext()->setContextProperty("device", &device);
+    engine.rootContext()->setContextProperty("mainModel", model);
     engine.rootContext()->setContextProperty("updateApp", &updateApp);
     engine.rootContext()->setContextProperty("packing", &packing);
     engine.rootContext()->setContextProperty("commun_display", &commun_display);
@@ -138,7 +138,6 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("updateHexx", &updateHex);
     engine.rootContext()->setContextProperty("appversion", &appversion);
     engine.rootContext()->setContextProperty("rx_commands", &rx_commands);
-    engine.rootContext()->setContextProperty("feedback", &feedback);
     engine.rootContext()->setContextProperty("info", &info);
     engine.rootContext()->setContextProperty("appManager", &appManager);
     engine.rootContext()->setContextProperty("notificationClient",
@@ -147,11 +146,15 @@ int main(int argc, char *argv[])
 
     packing.setCrc(&crc);
     packing.setCommun_display(&commun_display);
+    packing.setMainSerialPort(&mainSerialPort);
+    packing.setDevice(&device);
 
     unpacking.setCrc(&crc);
     unpacking.setCommun_display(&commun_display);
     unpacking.setRx_commands(&rx_commands);
     unpacking.setSettings(&settings);
+    unpacking.setDevice(&device);
+    unpacking.setMainSerialPort(&mainSerialPort);
 
     tx_commands.setPacking(&packing);
     tx_commands.setCommun_display(&commun_display);
@@ -163,9 +166,7 @@ int main(int argc, char *argv[])
 
     settings.setCommun_display(&commun_display);
 
-    d.setCommun_display(&commun_display);
-    d.setPacking(&packing);
-    d.setUnpacking(&unpacking);
+    device.setCommun_display(&commun_display);
 
     updateHex.setTx_commands(&tx_commands);
     updateHex.setCrc(&crc);
@@ -173,15 +174,19 @@ int main(int argc, char *argv[])
     updateHex.setSettings(&settings);
     updateHex.setAppManager(&appManager);
 
-    model.setDevice(&d);
-    model.setUpdateHex(&updateHex);
-    model.setCommun_display(&commun_display);
-    model.setRx_commands(&rx_commands);
-    model.setSettings(&settings);
-    model.setTx_commands(&tx_commands);
+    model->setDevice(&device);
+    model->setUpdateHex(&updateHex);
+    model->setCommun_display(&commun_display);
+    model->setRx_commands(&rx_commands);
+    model->setSettings(&settings);
+    model->setTx_commands(&tx_commands);
+    model->setMainSerialComPort(&mainSerialPort);
+    model->setPacking(&packing);
+    model->setUnpacking(&unpacking);
 
     appManager.setCommun_display(&commun_display);
     appManager.setNotificationclient(&notificationClient);
+
 #if defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED)
   //  appManager.ensureBluetoothPermissions();  //запуск при нажатии кнопки "Начать поиск"
 #endif
@@ -196,36 +201,7 @@ int main(int argc, char *argv[])
     //вывод версии в сообщении для изменения txt файла
     #if defined(Q_OS_WINDOWS)    
         AppVersion *AppVer = new AppVersion();
-        QClipboard *clipboard = QGuiApplication::clipboard();
-        QMessageBox msgBox;
-
-        qint32 ver = AppVer->getAppVersion();
-
-        msgBox.setWindowModality(Qt::WindowModal);
-        msgBox.setWindowTitle("Версия приложения.");
-        msgBox.setIcon(QMessageBox::Information);
-        ver = AppVer->getAppVersion();
-        msgBox.setText(QString("%1\n\n%2.%3.%4.%5.%6.%7")
-                       .arg(ver)                                         //версия полным числом
-                       .arg(ver >> 28, 1, 10)                            // версия
-                       .arg((ver >> 20) & 0x0FF, 2, 10, QChar('0'))      // год
-                       .arg((ver >> 16) & 0x0F, 2, 10, QChar('0'))       // месяц
-                       .arg((ver >> 11) & 0x1F, 2, 10, QChar('0'))       // день
-                       .arg((ver >> 6) & 0x01F, 2, 10, QChar('0'))       // час
-                       .arg(ver & 0x3F, 2, 10, QChar('0')));             // минуты
-
-        msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Ok );
-
-        int ret = msgBox.exec();
-        switch (ret) {
-          case QMessageBox::Save:
-              // Save was clicked
-            clipboard->setText(QString::number(ver), QClipboard::Clipboard);    //скопирует в буфер
-              break;
-          default:
-              // should never be reached
-              break;
-        }
+        AppVer->appVersionVisible();
     #endif
 
     engine.setInitialProperties({{ "builtInStyles", builtInStyles }});
