@@ -1,5 +1,6 @@
 
-import QtQuick
+import QtQuick 2.15
+import QtQuick.VirtualKeyboard 2.15
 import QtQuick.Layouts
 import QtQuick.Controls
 import Qt.labs.settings
@@ -25,6 +26,9 @@ Page{
         horizontalAlignment: Qt.AlignHCenter
         text: commun_display.curDeviceName_
         font.pixelSize: 16
+        //???
+        Component.onCompleted: commun_display.onOnCurDeviceNameChanged.connect(devNameCh)
+        function devNameCh(msg) { console.log("qml devName, " + devName.text); }
     }
 
   //─── COM - port ─────────────────────────────────────────

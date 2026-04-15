@@ -170,7 +170,6 @@ int
 Commun_display::setCurDeviceName(QString name)
 {
     curDeviceName_ = name;
-//    qDebug() << "curDeviceName change " + curDeviceName_;
     return CurDeviceNameRefresh();
 }
 
@@ -407,12 +406,11 @@ Commun_display::statusDeviceRefresh()
 int
 Commun_display::CurDeviceNameRefresh()
 {
-//    qDebug() << "curDeviceName_ 2 " + QString(curDeviceName_);
-
     if(rendering_flag == Qt::ApplicationState::ApplicationActive)
     {
         emit onCurDeviceNameChanged(curDeviceName_);
-//        qDebug() << "curDeviceName_ 4 " + QString(curDeviceName_);
+        //???
+        qDebug() << "c++ curDeviceName = " + QString(curDeviceName_);
         return 0;
     }
     return -1;

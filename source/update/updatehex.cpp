@@ -374,7 +374,7 @@ UpdateHex::open_Update()
 
     //считывание основной вервии
     //открытие файла с прошивкой из apk
-    #ifdef defined(Q_OS_ANDROID)
+    #ifdef Q_OS_ANDROID
         _fileName = ":/bin/roboshar_v.bin"; // (из ресурсов)
     #elif defined Q_OS_WIN
         _fileName = fileOpen(false);
@@ -417,7 +417,7 @@ UpdateHex::openBootloaderUpdate()
 
     //считывание бутлоадера
     //открытие файла с прошивкой из apk
-    #ifdef defined(Q_OS_ANDROID)
+    #ifdef Q_OS_ANDROID
         _fileName = ":/bin/boot_loader.bin"; // (из ресурсов)
     #elif defined Q_OS_WIN
         _fileName = fileOpen(false);

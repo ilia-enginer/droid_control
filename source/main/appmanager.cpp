@@ -36,23 +36,12 @@ AppManager::onApplicationStateChanged(Qt::ApplicationState state) {
 
   if (state == Qt::ApplicationState::ApplicationActive) {
     state_ = Qt::ApplicationState::ApplicationActive;
-//    _notificationClient->stopTestTimer();
     _commun_display->allUpdate();
   } else {
     state_ = Qt::ApplicationState::ApplicationInactive;
     if (_serviceClients == 0) {
-//      keepScreenOn(false);
     }
-//    _notificationClient->startTestTimer(1000);  // проверка новых уведомлений раз в 1с
   }
-
-  //    QString filename="Data.txt";
-  //    QFile file( filename );
-  //    if ( file.open(QIODevice::ReadWrite) )
-  //    {
-  //        QTextStream stream( &file );
-  //        stream << state << "\n";
-  //    }
 }
 
 void AppManager::keepScreenOn(bool on) {

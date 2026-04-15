@@ -2,7 +2,7 @@
 #define COMMUN_DISPLAY_H
 
 #include <QObject>
-#include <QWidget>
+//#include <QWidget>
 #include <QString>
 #include "../main/notificationclient.h"
 
@@ -98,7 +98,7 @@ public:
     double get_TotalBytes() const;
     double get_BytesRead() const;
 
-Q_SIGNALS:
+signals:
     void logT(QString type, QString msg);
     void logServis(QString type, QString msg);
     void logJoy(QString type, QString msg);
