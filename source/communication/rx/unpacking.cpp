@@ -74,7 +74,7 @@ Unpacking::messRes(QByteArray recievedData)
     //распаковка
     res = unpack(recievedData, size);
     //если превышена длина пакета приема
-    if(res == -1)   if(_f_Admin)    _commDisplay->logJoy("<- ", "Ошибка. Превышена длина входящего сообщения");
+    if(res == -1)   if(_f_Admin)    _commDisplay->log_out_J("<- ", "Ошибка. Превышена длина входящего сообщения");
 
      res = 1;
      while(res == 1)
@@ -99,8 +99,8 @@ Unpacking::unpack(QByteArray data, int size)
     //вывод лога, если надо
     if(_settings->getLoging())
     {
-        _commDisplay->logJoy("<- ", QString ("%1 (%2 size)").arg(QString(dataRes.toHex())).arg(size));
-        _commDisplay->logServis("<- ", QString ("%1 (%2 size)").arg(QString(dataRes.toHex())).arg(size));
+        _commDisplay->log_out_J("<- ", QString ("%1 (%2 size)").arg(QString(dataRes.toHex())).arg(size));
+        _commDisplay->log_out_S("<- ", QString ("%1 (%2 size)").arg(QString(dataRes.toHex())).arg(size));
     }
 
     //склейка разорванных пакетов
@@ -111,7 +111,7 @@ Unpacking::unpack(QByteArray data, int size)
     //превышена длина пакета
     if(res == -1)
     {
-        _commDisplay->logServis("<- превышена длина входящего пакета", dataRes.toHex());
+        _commDisplay->log_out_S("<- превышена длина входящего пакета", dataRes.toHex());
         dataRes.replace(0, dataRes.size(), empty);  //очистка массива
     }
     //проверка crc
@@ -137,14 +137,14 @@ Unpacking::unpack(QByteArray data, int size)
             if(_rx_commands->searchCommand(dataRes) == -1)
             {
                 //если не удалось распарсить ответ
-                _commDisplay->logServis("<- неизвестный ответ на команду ", dataRes.toHex());
+                _commDisplay->log_out_S("<- неизвестный ответ на команду ", dataRes.toHex());
                 res = -3;
             }
         }
         else
         {
             //ошибка crc
-            _commDisplay->logServis("<- no crc ", dataRes.toHex());
+            _commDisplay->log_out_S("<- no crc ", dataRes.toHex());
             res = -2;
         }
     }

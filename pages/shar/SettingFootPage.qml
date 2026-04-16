@@ -69,7 +69,7 @@ Page {
     ScrollView {
         id: scrolViewLogArea
         anchors.fill: senderBackground
-        ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+        ScrollBar.vertical.policy: ScrollBar.AlwaysOn
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         ScrollBar.vertical.interactive: true
 
@@ -89,9 +89,11 @@ Page {
                }
                delegate: Column {
                    Text {
+                       width: listView1.width * 0.95
                        text: msg
                        font.family: "Courier New"
                        font.pixelSize: 14
+                       wrapMode: Text.Wrap
                        color: "Orange"
                    }
                 }
@@ -101,13 +103,14 @@ Page {
                }
            }
     }
-
+    // очистка лога
     Button {
         id: clearButton_1
         width: senderBackground.width * 0.08
         height: senderBackground.height
         anchors.top: senderBackground.top
         anchors.right: senderBackground.right
+        anchors.rightMargin: Qt.platform.os === "windows" ? 30 : 0
         opacity: 0.2
         contentItem: Text{
             text: "Clear"

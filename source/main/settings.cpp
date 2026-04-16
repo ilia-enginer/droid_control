@@ -5,12 +5,10 @@
 Settings::Settings(QObject *parent)
     : QObject{parent}
 {
-
 }
 
 Settings::~Settings()
 {
-
 }
 
 void
@@ -33,13 +31,11 @@ Settings::getTimer1()
    return  timer1;
 }
 
-
 float
 Settings::getJoystickAmplitude() const
 {
     return joystickAmplitude;
 }
-
 
 void
 Settings::setJoystickAmplitude(float newJoystickAmplitude)
@@ -49,8 +45,6 @@ Settings::setJoystickAmplitude(float newJoystickAmplitude)
     joystickAmplitude = newJoystickAmplitude;
     emit joystickAmplitudeChanged();
 }
-
-
 
 float
 Settings::getheightAmplitude() const
@@ -112,7 +106,6 @@ Settings::setVmax(float newVmax)
     emit VmaxChanged();
 }
 
-
 int
 Settings::getcoxaAngl() const
 {
@@ -165,10 +158,9 @@ Settings::setctrl(bool newctrl)
 }
 
 void
-Settings::setIdDevice(int id)
+Settings::setIdDevice(int id, bool refresh)
 {
-//    if(idDevice == id)  return;
-    emit clearDevice();
+    if((idDevice == id) && (!refresh))  return;
 
     switch(id){
         case 0 :

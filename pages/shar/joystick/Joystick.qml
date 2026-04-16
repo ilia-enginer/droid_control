@@ -16,13 +16,13 @@ SwipeView {
         if (!activeFocus) {
             // Пользователь нажал или перешёл away от этого поля
       //      console.log("!!!!!!!!!!No active.")
-            joystick_timer.running = false
-            radioGroup.checkState = Qt.Unchecked
+            if(Qt.platform.os !== "windows") joystick_timer.running = false
+            if(Qt.platform.os !== "windows") radioGroup.checkState = Qt.Unchecked
         } else {
             // Пользователь сосредоточился на этом поле
       //      console.log("!!!!!!!!Focus active.")
-            tx_commands.getCheck();
-            joystick_timer.running = true
+            if(Qt.platform.os !== "windows") tx_commands.getCheck();
+            if(Qt.platform.os !== "windows") joystick_timer.running = true
         }
      }
 
@@ -62,7 +62,7 @@ SwipeView {
         Timer {
             id: joystick_timer
             interval: settParam.timer1
-            running: false
+            running: Qt.platform.os === "windows" ? true : false
             repeat: true
             onTriggered: { tx_commands.joysticActivity(mode, azimuth, amplitude, level, ctrl); }
         }
@@ -81,7 +81,7 @@ SwipeView {
         ScrollView {
             id: scrolViewLogArea_2
             anchors.fill: senderBackground_2
-            ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+            ScrollBar.vertical.policy: ScrollBar.AlwaysOn
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
             ScrollBar.vertical.interactive: true
 
@@ -102,9 +102,11 @@ SwipeView {
 
                    delegate: Column {
                        Text {
+                           width: listView1.width * 0.95
                            text: msg
                            font.family: "transparent"
                            font.pixelSize: 14
+                           wrapMode: Text.Wrap
                            color: "orange"
                        }
                     }
@@ -123,6 +125,7 @@ SwipeView {
             height: senderBackground_2.height
             anchors.top: senderBackground_2.top
             anchors.right: senderBackground_2.right
+            anchors.rightMargin: Qt.platform.os === "windows" ? 30 : 0
             opacity: 0.2
             contentItem: Text{
                 horizontalAlignment: Qt.AlignHCenter

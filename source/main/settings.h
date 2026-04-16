@@ -81,7 +81,7 @@ public slots:
     bool getLoging();
     void setLoging(bool newloging);
 
-    void setIdDevice(int id);
+    void setIdDevice(int id, bool refresh);
     int getIdDevice();
 
 Q_SIGNALS:

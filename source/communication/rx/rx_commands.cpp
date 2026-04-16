@@ -258,8 +258,8 @@ Rx_commands::setCurReal(bool Cur)
 void
 Rx_commands::errorCrc()
 {
-    if(_f_Admin)    _commun_display->logJoy("<- ошибка CRC", " ");
-    _commun_display->logServis("<- ошибка CRC", " ");
+    if(_f_Admin)    _commun_display->log_out_J("<- ошибка CRC", " ");
+    _commun_display->log_out_S("<- ошибка CRC", " ");
 }
 
 //не правильная команда загрузчика  0x04
@@ -273,16 +273,16 @@ Rx_commands::incorrectLoaderCommand()
 void
 Rx_commands::incorrectCommand()
 {
-    if(_f_Admin)    _commun_display->logJoy("<- не верная команда", " ");
-    _commun_display->logServis("<- не верная команда", " ");
+    if(_f_Admin)    _commun_display->log_out_J("<- не верная команда", " ");
+    _commun_display->log_out_S("<- не верная команда", " ");
 }
 
 //не правильные параметры команды       0x06
 void
 Rx_commands::incorrectCommandParameters()
 {
-    if(_f_Admin)    _commun_display->logJoy("<- не верные парам. команды", " ");
-    _commun_display->logServis("<- не верные парам. команды", " ");
+    if(_f_Admin)    _commun_display->log_out_J("<- не верные парам. команды", " ");
+    _commun_display->log_out_S("<- не верные парам. команды", " ");
 }
 
 //не правильная очередность пакетов     0x07
@@ -303,16 +303,16 @@ Rx_commands::errorFirmwareDownload()
 void
 Rx_commands::errorGyroscope()
 {
-    _commun_display->logJoy("<- ошибка гироскопа", " ");
-    _commun_display->logServis("<- ошибка гироскопа", " ");
+    _commun_display->log_out_J("<- ошибка гироскопа", " ");
+    _commun_display->log_out_S("<- ошибка гироскопа", " ");
 }
 
 //ошибка стирания флеш                  0x20
 void
 Rx_commands::errorErasingFlash()
 {
-    _commun_display->logJoy("<- ошибка стирания flash", " ");
-    _commun_display->logServis("<- ошибка стирания flash", " ");
+    _commun_display->log_out_J("<- ошибка стирания flash", " ");
+    _commun_display->log_out_S("<- ошибка стирания flash", " ");
     _updatehex->on_pbStop_clicked("Ошибка стирания flash. ");
 }
 
@@ -320,8 +320,8 @@ Rx_commands::errorErasingFlash()
 void
 Rx_commands::errorWritingFlash()
 {
-    _commun_display->logJoy("<- ошибка записи во flash", " ");
-    _commun_display->logServis("<- ошибка записи во flash", " ");
+    _commun_display->log_out_J("<- ошибка записи во flash", " ");
+    _commun_display->log_out_S("<- ошибка записи во flash", " ");
     _updatehex->on_pbStop_clicked("Ошибка записи во flash. ");
 }
 
@@ -329,56 +329,56 @@ Rx_commands::errorWritingFlash()
 void
 Rx_commands::errorLowVoltage()
 {
-    _commun_display->logJoy("<- низкое напряжение", " ");
-    _commun_display->logServis("<- низкое напряжение", " ");
+    _commun_display->log_out_J("<- низкое напряжение", " ");
+    _commun_display->log_out_S("<- низкое напряжение", " ");
 }
 
 // ошибка высокое напряжение            0x31
 void
 Rx_commands::errorHightVoltage()
 {
-    _commun_display->logJoy("<- высокое напряжение", " ");
-    _commun_display->logServis("<- высокое напряжение", " ");
+    _commun_display->log_out_J("<- высокое напряжение", " ");
+    _commun_display->log_out_S("<- высокое напряжение", " ");
 }
 
 //превышение допустимого тока           0x35
 void
 Rx_commands::errorExcessCurrent()
 {
-    _commun_display->logJoy("<- превышение доп. тока", " ");
-    _commun_display->logServis("<- превышение доп. тока", " ");
+    _commun_display->log_out_J("<- превышение доп. тока", " ");
+    _commun_display->log_out_S("<- превышение доп. тока", " ");
 }
 
 //отказ датчика тока                    0x38
 void
 Rx_commands::errorCurrentSensorFailure()
 {
-    _commun_display->logJoy("<- отказ датчика тока", " ");
-    _commun_display->logServis("<- отказ датчика тока", " ");
+    _commun_display->log_out_J("<- отказ датчика тока", " ");
+    _commun_display->log_out_S("<- отказ датчика тока", " ");
 }
 
 //ошибка калибровки датчика тока        0x39
 void
 Rx_commands::errorCurrentSensorCalibration()
 {
-    _commun_display->logJoy("<- ошибка калибр. дат. тока", " ");
-    _commun_display->logServis("<- ошибка калибр. дат. тока", " ");
+    _commun_display->log_out_J("<- ошибка калибр. дат. тока", " ");
+    _commun_display->log_out_S("<- ошибка калибр. дат. тока", " ");
 }
 
 //проверка исправности сервоприводов    0x40
 void
 Rx_commands::checkingServiceabilityServos()
 {
-    _commun_display->logJoy("<- проверка испр. серв", " ");
-    _commun_display->logServis("<- проверка испр. серв", " ");
+    _commun_display->log_out_J("<- проверка испр. серв", " ");
+    _commun_display->log_out_S("<- проверка испр. серв", " ");
 }
 
 //ошибка инициализации серв             0x41
 void
 Rx_commands::errorServsInitialization()
 {
-    _commun_display->logJoy("<- ошибка инициализации серв", " ");
-    _commun_display->logServis("<- ошибка инициализации серв", " ");
+    _commun_display->log_out_J("<- ошибка инициализации серв", " ");
+    _commun_display->log_out_S("<- ошибка инициализации серв", " ");
 }
 
 //отказ сервопривода (номер)            0x42
@@ -386,8 +386,8 @@ void
 Rx_commands::errorServoFailure(QByteArray Num)
 {
     quint8  u8 = Num[0];
-    _commun_display->logJoy("<- отказ сервы № ", QString(QString::number(u8)));
-    _commun_display->logServis("<- отказ сервы № ", QString(QString::number(u8)));
+    _commun_display->log_out_J("<- отказ сервы № ", QString(QString::number(u8)));
+    _commun_display->log_out_S("<- отказ сервы № ", QString(QString::number(u8)));
 }
 
 //отказ драйвера сервопривода (номер)  0x43
@@ -395,48 +395,48 @@ void
 Rx_commands::errorServoDriverFailure(QByteArray Num)
 {
     quint8  u8 = Num[0];
-    _commun_display->logJoy("<- отказ драйвера серв № ", QString(QString::number(u8)));
-    _commun_display->logServis("<- отказ драйвера серв № ", QString(QString::number(u8)));
+    _commun_display->log_out_J("<- отказ драйвера серв № ", QString(QString::number(u8)));
+    _commun_display->log_out_S("<- отказ драйвера серв № ", QString(QString::number(u8)));
 }
 
 //ошибка автокалибровки                 0x45
 void
 Rx_commands::errorAutoCalibrations()
 {
-    _commun_display->logJoy("<- ошибка автокалибр.", " ");
-    _commun_display->logServis("<- ошибка автокалибр.", " ");
+    _commun_display->log_out_J("<- ошибка автокалибр.", " ");
+    _commun_display->log_out_S("<- ошибка автокалибр.", " ");
 }
 
 //автокалибровка выполнена              0x48
 void
 Rx_commands::autocalibrationCompleted()
 {
-    _commun_display->logJoy("<- автокалибровка завершена", " ");
-    _commun_display->logServis("<- автокалибровка завершена", " ");
+    _commun_display->log_out_J("<- автокалибровка завершена", " ");
+    _commun_display->log_out_S("<- автокалибровка завершена", " ");
 }
 
 //превышено время бездействия           0x50
 void
 Rx_commands::idleTimeExceeded()
 {
-    _commun_display->logJoy("<- превышено время бездействия", " ");
-    _commun_display->logServis("<- превышено время бездействия", " ");
+    _commun_display->log_out_J("<- превышено время бездействия", " ");
+    _commun_display->log_out_S("<- превышено время бездействия", " ");
 }
 
 //превышено время попытки подняться     0x51
 void
 Rx_commands::idleTimeLift()
 {
-    _commun_display->logJoy("<- превышено время попытки подняться", " ");
-    _commun_display->logServis("<- превышено время попытки подняться", " ");
+    _commun_display->log_out_J("<- превышено время попытки подняться", " ");
+    _commun_display->log_out_S("<- превышено время попытки подняться", " ");
 }
 
 //ошибка математики                     0x55
 void
 Rx_commands::errorMath()
 {
-    if(_f_Admin)    _commun_display->logJoy("<- ошибка математики", " ");
-    _commun_display->logServis("<- ошибка математики", " ");
+    if(_f_Admin)    _commun_display->log_out_J("<- ошибка математики", " ");
+    _commun_display->log_out_S("<- ошибка математики", " ");
 }
 
 //сообщение дебага                       0x90
@@ -445,8 +445,8 @@ Rx_commands::debugMess(QByteArray mess)
 {
     QString str = QString(mess);
 
-    if(_f_Admin)    _commun_display->logJoy("<- ", str);
-    _commun_display->logServis("<- ", str);
+    if(_f_Admin)    _commun_display->log_out_J("<- ", str);
+    _commun_display->log_out_S("<- ", str);
 }
 
 //чтение состояния светодиодов     0xA0
@@ -457,7 +457,7 @@ Rx_commands::leds_read(QByteArray leds)
     quint8  u8_2 = leds[1];
     quint8  u8_3 = leds[2];
     quint8  u8_4 = leds[3];
-    _commun_display->logServis("<- гамма светодиода № ", QString(QString::number(u8)) + "\nR "
+    _commun_display->log_out_S("<- гамма светодиода № ", QString(QString::number(u8)) + "\nR "
                                                       + QString(QString::number(u8_2)) + "   G "
                                                       + QString(QString::number(u8_3)) + "   B "
                                                       + QString(QString::number(u8_4)));
@@ -478,7 +478,7 @@ Rx_commands::voltage_read(QByteArray Volt)
 
         if(_setVreal)
         {
-            _commun_display->logServis("<- напряжение ",  QString(QString::number(val.f)));
+            _commun_display->log_out_S("<- напряжение ",  QString(QString::number(val.f)));
             _setVreal = false;
         }
     }
@@ -498,7 +498,7 @@ Rx_commands::current_read(QByteArray Cur)
         _commun_display->curRealChang(val.f);
         if(_setCurReal)
         {
-            _commun_display->logServis("<- ток ", QString(QString::number(val.f)));
+            _commun_display->log_out_S("<- ток ", QString(QString::number(val.f)));
             _setCurReal = false;
         }
     }
@@ -524,7 +524,7 @@ Rx_commands::readGyroscopeAngles(QByteArray Gyr)
 
         if(val.f == val.f)
         {
-            _commun_display->logServis("<- азимут, наклон\n", QString(QString::number(f)) + ",   " + QString(QString::number(val.f)));
+            _commun_display->log_out_S("<- азимут, наклон\n", QString(QString::number(f)) + ",   " + QString(QString::number(val.f)));
         }
     }
 }
@@ -549,7 +549,7 @@ Rx_commands::readAcceleration(QByteArray Accel)
 
         if(val.f == val.f)
         {
-            _commun_display->logServis("<- ускорение, угловая скорость\n", QString(QString::number(f)) + ",   " + QString(QString::number(val.f)));
+            _commun_display->log_out_S("<- ускорение, угловая скорость\n", QString(QString::number(f)) + ",   " + QString(QString::number(val.f)));
         }
     }
 }
@@ -568,7 +568,7 @@ Rx_commands::readAngleServo(QByteArray Angle)
     val.u16[0] = Angle[1];
     angl = val.U16;
 
-    _commun_display->logServis("<- угол сервы № ", QString(QString::number(num)) + "   " + QString(QString::number(angl)));
+    _commun_display->log_out_S("<- угол сервы № ", QString(QString::number(num)) + "   " + QString(QString::number(angl)));
 }
 
 //вкл/выкл сервы                    0xA6
@@ -578,13 +578,13 @@ Rx_commands::on_offServo(QByteArray flag)
     quint8 u8 = flag[0];
     if(u8 == 0x00)
     {
-        _commun_display->logJoy("<- сервы OFF", "");
-        _commun_display->logServis("<- сервы OFF", "");
+        _commun_display->log_out_J("<- сервы OFF", "");
+        _commun_display->log_out_S("<- сервы OFF", "");
     }
     else if(u8 == 0x01)
     {
-        _commun_display->logJoy("<- сервы ON", "");
-        _commun_display->logServis("<- сервы ON", "");
+        _commun_display->log_out_J("<- сервы ON", "");
+        _commun_display->log_out_S("<- сервы ON", "");
     }
 }
 
@@ -596,17 +596,17 @@ Rx_commands::readAllParams(QByteArray Params)
     {
         if(!_settings->set_full_param(Data))
         {
-            _commun_display->logJoy("<- точка восстановления создана", "");
-            _commun_display->logServis("<- точка восстановления создана", "");
+            _commun_display->log_out_J("<- точка восстановления создана", "");
+            _commun_display->log_out_S("<- точка восстановления создана", "");
             return;
         }
-        _commun_display->logJoy("<- ошибка записи параметров", "");
-        _commun_display->logServis("<- ошибка записи параметров", "");
+        _commun_display->log_out_J("<- ошибка записи параметров", "");
+        _commun_display->log_out_S("<- ошибка записи параметров", "");
     }
     else
     {
-        _commun_display->logJoy("<- отсутствуют входящие параметры", "");
-        _commun_display->logServis("<- отсутствуют входящие параметры", "");
+        _commun_display->log_out_J("<- отсутствуют входящие параметры", "");
+        _commun_display->log_out_S("<- отсутствуют входящие параметры", "");
     }
 }
 
@@ -614,8 +614,8 @@ Rx_commands::readAllParams(QByteArray Params)
 void
 Rx_commands::writeAllParams()
 {
-   _commun_display->logJoy("<- параметры восстановленны", "");
-   _commun_display->logServis("<- параметры восстановленны", "");
+   _commun_display->log_out_J("<- параметры восстановленны", "");
+   _commun_display->log_out_S("<- параметры восстановленны", "");
 }
 
 //получение параметров для графика 0xA9
@@ -697,36 +697,36 @@ Rx_commands::getParamsChart(QByteArray Params)
 void
 Rx_commands::setBrightness()
 {
-    _commun_display->logServis("<- яркость oled изменена", " ");
+    _commun_display->log_out_S("<- яркость oled изменена", " ");
 }
 
 //сброс до заводских нистроек                       0xE0
 void
 Rx_commands::fullReset()
 {
-    _commun_display->logServis("<- сброс до заводских ок", " ");
-    _commun_display->logJoy("<- сброс до заводских ок", " ");
+    _commun_display->log_out_S("<- сброс до заводских ок", " ");
+    _commun_display->log_out_J("<- сброс до заводских ок", " ");
 }
 
 //запись мин угла сервы во флеш, остальные углы рассчитываются     0xE1
 void
 Rx_commands::writeMinAngleServo()
 {
-   _commun_display->logServis("<- установки сервы записаны", " ");
+   _commun_display->log_out_S("<- установки сервы записаны", " ");
 }
 
 //запись установок для светодиодов      0xE2
 void
 Rx_commands::writeSettingLeds()
 {
-   _commun_display->logServis("<- установки светодиода записаны", " ");
+   _commun_display->log_out_S("<- установки светодиода записаны", " ");
 }
 
 //установить серву в угол               0xE3
 void
 Rx_commands::setServoAngle()
 {
-    _commun_display->logServis("<- угол сервы установлен", " ");
+    _commun_display->log_out_S("<- угол сервы установлен", " ");
 }
 
 //установка флага включения/отключения блокировки сброса параметров тока       0xE4
@@ -736,11 +736,11 @@ Rx_commands::setCurBlock(QByteArray flag)
     quint8 u8 = flag[0];
     if(u8 == 0x00)
     {
-        _commun_display->logServis("<- флаг блокировки тока выкл.", " ");
+        _commun_display->log_out_S("<- флаг блокировки тока выкл.", " ");
     }
     else if(u8 == 0x01)
     {
-        _commun_display->logServis("<- флаг блокировки тока вкл.", " ");
+        _commun_display->log_out_S("<- флаг блокировки тока вкл.", " ");
     }
 }
 
@@ -748,8 +748,8 @@ Rx_commands::setCurBlock(QByteArray flag)
 void
 Rx_commands::getCheck()
 {
-    _commun_display->logServis("<- запрос ошибок ок", " ");
-    _commun_display->logJoy("<- запрос ошибок ок", " ");
+    _commun_display->log_out_S("<- запрос ошибок ок", " ");
+    _commun_display->log_out_J("<- запрос ошибок ок", " ");
 }
 
 //запрос предустановок сервы        0xE6
@@ -781,7 +781,7 @@ Rx_commands::getSettingServo(QByteArray Params)
     val.data[0] = Params[7];
     start = val.U16;
 
-    _commun_display->logServis("<- установки сервы №", QString(QString::number(num)) + "\nmin " + QString(QString::number(min))
+    _commun_display->log_out_S("<- установки сервы №", QString(QString::number(num)) + "\nmin " + QString(QString::number(min))
                    + "   max " + QString(QString::number(max)) + "   home " + QString(QString::number(home))
                    + "   start " + QString(QString::number(start)));
 }
@@ -792,13 +792,13 @@ Rx_commands::servoAutoCalibration(QByteArray flag)
 {
     if(flag[0] == 0)
     {
-        _commun_display->logServis("<- калибровка серв остановлена", " ");
-        _commun_display->logJoy("<- калибровка серв остановлена", " ");
+        _commun_display->log_out_S("<- калибровка серв остановлена", " ");
+        _commun_display->log_out_J("<- калибровка серв остановлена", " ");
     }
     else if(flag[0] == 1)
     {
-        _commun_display->logServis("<- калибровка серв запущена", " ");
-        _commun_display->logJoy("<- калибровка серв запущена", " ");
+        _commun_display->log_out_S("<- калибровка серв запущена", " ");
+        _commun_display->log_out_J("<- калибровка серв запущена", " ");
     }
 }
 
@@ -813,8 +813,8 @@ Rx_commands::curAutoCalibration(QByteArray Cur)
     val.data[3] = Cur[3];
     if(val.f == val.f)
     {
-        _commun_display->logServis("<- калибровка тока ок ", QString(QString::number(val.f)));
-        _commun_display->logJoy("<- калибровка тока ок ", QString(QString::number(val.f)));
+        _commun_display->log_out_S("<- калибровка тока ок ", QString(QString::number(val.f)));
+        _commun_display->log_out_J("<- калибровка тока ок ", QString(QString::number(val.f)));
     }
 }
 
@@ -822,7 +822,7 @@ Rx_commands::curAutoCalibration(QByteArray Cur)
 void
 Rx_commands::setCurCalibration()
 {
-     _commun_display->logServis("<- знач. калибр. тока записаны", " ");
+     _commun_display->log_out_S("<- знач. калибр. тока записаны", " ");
 }
 
 //запрос значений калибровки тока  0xEA
@@ -836,7 +836,7 @@ Rx_commands::getCurCalibration(QByteArray Cur)
     val.data[3] = Cur[3];
     if(val.f == val.f)
     {
-        _commun_display->logServis("<- знач. калибр. тока ", QString(QString::number(val.f)));
+        _commun_display->log_out_S("<- знач. калибр. тока ", QString(QString::number(val.f)));
     }
 }
 
@@ -844,46 +844,46 @@ Rx_commands::getCurCalibration(QByteArray Cur)
 void
 Rx_commands::checkReset()
 {
-    _commun_display->logJoy("<- ошибки стерты", " ");
-    _commun_display->logServis("<- ошибки стерты", " ");
+    _commun_display->log_out_J("<- ошибки стерты", " ");
+    _commun_display->log_out_S("<- ошибки стерты", " ");
 }
 
 //установить сервы в стартовое положение  0xEC
 void
 Rx_commands::setServosStartAngle()
 {
-    _commun_display->logServis("<- сервы установлены", " ");
+    _commun_display->log_out_S("<- сервы установлены", " ");
 }
 
 //установить сервы в домашнее положение  0xED
 void
 Rx_commands::setServosHomeAngle()
 {
-     _commun_display->logServis("<- сервы установлены", " ");
+     _commun_display->log_out_S("<- сервы установлены", " ");
 }
 
 //запись домашних углов всех серв ноги во флеш, остальные углы рассчитываются     0xEE
 void
 Rx_commands::writeHomeAngleFoot()
 {
-    _commun_display->logServis("<- Углы записаны", " ");
-    _commun_display->logJoy("<- Углы записаны", " ");
+    _commun_display->log_out_S("<- Углы записаны", " ");
+    _commun_display->log_out_J("<- Углы записаны", " ");
 }
 
 //сброс до заводских параметры серв ноги №     0xEF
 void
 Rx_commands::resetServsFoot()
 {
-    _commun_display->logServis("<- Reset angl OK", " ");
-    _commun_display->logJoy("<- Reset angl OK", " ");
+    _commun_display->log_out_S("<- Reset angl OK", " ");
+    _commun_display->log_out_J("<- Reset angl OK", " ");
 }
 
 //перезагрузить контроллер     0xF0
 void
 Rx_commands::reboot()
 {
-    _commun_display->logServis("<- перезагрузка", " ");
-    _commun_display->logJoy("<- перезагрузка", " ");
+    _commun_display->log_out_S("<- перезагрузка", " ");
+    _commun_display->log_out_J("<- перезагрузка", " ");
 }
 
 //запрос параметров серв ноги №     0xF1
@@ -914,8 +914,8 @@ Rx_commands::getParamServsFoot(QByteArray Angle)
     _settings->setfemurAngl(femur);
     _settings->settibaAngl(tiba);
 
-    _commun_display->logServis("<- Углы ноги № " + QString(QString::number(num)), " прочитаны");
-    _commun_display->logJoy("<- Углы ноги № " + QString(QString::number(num)), " прочитаны");
+    _commun_display->log_out_S("<- Углы ноги № " + QString(QString::number(num)), " прочитаны");
+    _commun_display->log_out_J("<- Углы ноги № " + QString(QString::number(num)), " прочитаны");
 }
 
 //запрос версии  0xF2
@@ -929,15 +929,15 @@ Rx_commands::getVersion(QByteArray Ver)
 
     if(_f_Admin)
     {
-        _commun_display->logServis("<- Версия загрузчика:\n", _updatehex->versionToString(val.u32));
-        _commun_display->logJoy("<- Версия загрузчика:\n", _updatehex->versionToString(val.u32));
+        _commun_display->log_out_S("<- Версия загрузчика:\n", _updatehex->versionToString(val.u32));
+        _commun_display->log_out_J("<- Версия загрузчика:\n", _updatehex->versionToString(val.u32));
     }
 
     val.data[3] = Ver[4]; val.data[2] = Ver[5]; val.data[1] = Ver[6]; val.data[0] = Ver[7];
     _updatehex->setVersExt(val.u32);
 
-    _commun_display->logServis("<- Версия прошивки:\n", _updatehex->versionToString(val.u32));
-    _commun_display->logJoy("<- Версия прошивки:\n", _updatehex->versionToString(val.u32));
+    _commun_display->log_out_S("<- Версия прошивки:\n", _updatehex->versionToString(val.u32));
+    _commun_display->log_out_J("<- Версия прошивки:\n", _updatehex->versionToString(val.u32));
 }
 
 //команда начала передачи основной программы, передача основной программы  0xF3
@@ -948,8 +948,8 @@ Rx_commands::writeProgram(QByteArray Num)
     //номер успешно полученного пакета основной прошивки
     val.data[1] = Num[0]; val.data[0] = Num[1];
     qint32 num = val.int32;
-    _commun_display->logServis(tr("<- подтверждение приема пакета №  %1").arg(num), "");
-    _commun_display->logJoy(tr("<- подтверждение приема пакета №  %1").arg(num), "");
+    _commun_display->log_out_S(tr("<- подтверждение приема пакета №  %1").arg(num), "");
+    _commun_display->log_out_J(tr("<- подтверждение приема пакета №  %1").arg(num), "");
 
     _updatehex->setPageTx(val.int32);
 }
@@ -962,8 +962,8 @@ Rx_commands::writeBootloader(QByteArray Num)
     //номер успешно полученного пакета загрузчика
     val.data[1] = Num[0]; val.data[0] = Num[1];
     qint32 num = val.int32;
-    _commun_display->logServis(tr("<- подтверждение приема пакета №  %1").arg(num), "");
-    _commun_display->logJoy(tr("<- подтверждение приема пакета №  %1").arg(num), "");
+    _commun_display->log_out_S(tr("<- подтверждение приема пакета №  %1").arg(num), "");
+    _commun_display->log_out_J(tr("<- подтверждение приема пакета №  %1").arg(num), "");
 
     _updatehex->setPageTx(val.int32);
 }
@@ -972,15 +972,15 @@ Rx_commands::writeBootloader(QByteArray Num)
 void
 Rx_commands::writeLabel()
 {
-    _commun_display->logServis("<- Подпись ок","");
+    _commun_display->log_out_S("<- Подпись ок","");
 }
 
 //выключить      0xF6
 void
 Rx_commands::shutdown()
 {
-    _commun_display->logJoy("<- выключение","");
-    _commun_display->logServis("<- выключение","");
+    _commun_display->log_out_J("<- выключение","");
+    _commun_display->log_out_S("<- выключение","");
 }
 
 //ответ запроса ID устройства 0xF7
@@ -995,8 +995,8 @@ Rx_commands::getIntendifier(QByteArray Num)
     val.data[0] = Num[3];
     int id = val.int32;
 
-    _commun_display->logServis(tr("<- ID %1").arg(id), "");
-    _settings->setIdDevice(id);
+    _commun_display->log_out_S(tr("<- ID %1").arg(id), "");
+    _settings->setIdDevice(id, false);
 }
 
 //ответ запроса/установки поправочного угла наклона 0xF8
@@ -1010,7 +1010,7 @@ Rx_commands::getInclinationAngle(QByteArray Angle)
     val.data[3] = Angle[3];
     if(val.f == val.f)
     {
-        _commun_display->logServis("<- установка поправочного угла наклона ",  QString(QString::number(val.f)));
+        _commun_display->log_out_S("<- установка поправочного угла наклона ",  QString(QString::number(val.f)));
     }
 }
 
@@ -1025,7 +1025,7 @@ Rx_commands::getAzimutAngle(QByteArray Angle)
     val.data[3] = Angle[3];
     if(val.f == val.f)
     {
-        _commun_display->logServis("<- установка поправочного угла азимута ",  QString(QString::number(val.f)));
+        _commun_display->log_out_S("<- установка поправочного угла азимута ",  QString(QString::number(val.f)));
     }
 }
 
@@ -1036,13 +1036,13 @@ Rx_commands::calibrServsFoot(QByteArray Num)
     if(Num.size() >= 1)
     {
         qint8 footNum = Num[0] + 1;
-        _commun_display->logServis("<- старт автокалибровки ноги № ",  QString(QString::number(footNum)));
-        _commun_display->logJoy("<- старт автокалибровки ноги № ",  QString(QString::number(footNum)));
+        _commun_display->log_out_S("<- старт автокалибровки ноги № ",  QString(QString::number(footNum)));
+        _commun_display->log_out_J("<- старт автокалибровки ноги № ",  QString(QString::number(footNum)));
     }
     else
     {
-        _commun_display->logServis("<- стоп автокалибровки ноги", "");
-        _commun_display->logJoy("<- стоп автокалибровки ноги", "");
+        _commun_display->log_out_S("<- стоп автокалибровки ноги", "");
+        _commun_display->log_out_J("<- стоп автокалибровки ноги", "");
     }
 }
 

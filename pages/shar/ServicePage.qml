@@ -26,7 +26,7 @@ Page {
         ScrollView {
             id: scrolViewLogArea
             anchors.fill: senderBackground
-            ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+            ScrollBar.vertical.policy: ScrollBar.AlwaysOn
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
             ScrollBar.vertical.interactive: true
 
@@ -68,12 +68,12 @@ Page {
             height: senderBackground.height
             anchors.top: senderBackground.top
             anchors.right: senderBackground.right
+            anchors.rightMargin: Qt.platform.os === "windows" ? 30 : 0
             opacity: 0.2
             contentItem: Text{
                 text: "Clear"
                 font.pointSize: 6
             }
-
             onClicked: {
                 logListModel.clear()
             }

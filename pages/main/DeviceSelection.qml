@@ -16,7 +16,7 @@ Dialog {
     standardButtons: Dialog.Ok | Dialog.Cancel
 
     onAccepted: {
-        settParam.setIdDevice(styleBox.currentIndex)
+        settParam.setIdDevice(styleBox.currentIndex, true)
         deviceSelectionDialog.close()
     }
     onRejected: { deviceSelectionDialog.close() }

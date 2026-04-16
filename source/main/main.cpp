@@ -126,10 +126,10 @@ int main(int argc, char *argv[])
     Info info;
     NotificationClient notificationClient;
     MainSerialPort mainSerialPort;
-    MainModel *model = new MainModel();
+    MainModel model;
 
     engine.rootContext()->setContextProperty("device", &device);
-    engine.rootContext()->setContextProperty("mainModel", model);
+    engine.rootContext()->setContextProperty("mainModel", &model);
     engine.rootContext()->setContextProperty("updateApp", &updateApp);
     engine.rootContext()->setContextProperty("packing", &packing);
     engine.rootContext()->setContextProperty("commun_display", &commun_display);
@@ -174,15 +174,15 @@ int main(int argc, char *argv[])
     updateHex.setSettings(&settings);
     updateHex.setAppManager(&appManager);
 
-    model->setDevice(&device);
-    model->setUpdateHex(&updateHex);
-    model->setCommun_display(&commun_display);
-    model->setRx_commands(&rx_commands);
-    model->setSettings(&settings);
-    model->setTx_commands(&tx_commands);
-    model->setMainSerialComPort(&mainSerialPort);
-    model->setPacking(&packing);
-    model->setUnpacking(&unpacking);
+    model.setDevice(&device);
+    model.setUpdateHex(&updateHex);
+    model.setCommun_display(&commun_display);
+    model.setRx_commands(&rx_commands);
+    model.setSettings(&settings);
+    model.setTx_commands(&tx_commands);
+    model.setMainSerialComPort(&mainSerialPort);
+    model.setPacking(&packing);
+    model.setUnpacking(&unpacking);
 
     appManager.setCommun_display(&commun_display);
     appManager.setNotificationclient(&notificationClient);

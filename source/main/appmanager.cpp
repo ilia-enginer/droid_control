@@ -32,16 +32,23 @@ AppManager::setNotificationclient(NotificationClient *newNotificationclient){
 void
 AppManager::onApplicationStateChanged(Qt::ApplicationState state) {
    qDebug() << state;
-  _commun_display->set_rendering_flag(state);
+   #if defined(Q_QDOC) ||                                             \
+    (defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED)) ||     \
+    (defined (QT_DEBUG))
 
-  if (state == Qt::ApplicationState::ApplicationActive) {
-    state_ = Qt::ApplicationState::ApplicationActive;
-    _commun_display->allUpdate();
-  } else {
-    state_ = Qt::ApplicationState::ApplicationInactive;
-    if (_serviceClients == 0) {
-    }
-  }
+      _commun_display->set_rendering_flag(state);
+
+      if (state == Qt::ApplicationState::ApplicationActive) {
+        state_ = Qt::ApplicationState::ApplicationActive;
+        _commun_display->allUpdate();
+      } else {
+        state_ = Qt::ApplicationState::ApplicationInactive;
+        if (_serviceClients == 0) {
+        }
+      }
+  #elif defined(Q_OS_WINDOWS)
+    _commun_display->set_rendering_flag(Qt::ApplicationState::ApplicationActive);
+  #endif
 }
 
 void AppManager::keepScreenOn(bool on) {

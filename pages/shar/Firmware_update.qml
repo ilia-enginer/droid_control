@@ -251,7 +251,7 @@ Page {
     ScrollView {
         id: scrolViewLogArea
         anchors.fill: senderBackground
-        ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+        ScrollBar.vertical.policy: ScrollBar.AlwaysOn
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         ScrollBar.vertical.interactive: true
         visible: false
@@ -288,12 +288,14 @@ Page {
            }
     }
 
+    // очистка лога
     Button {
         id: clearButton_1
         width: senderBackground.width * 0.08
         height: senderBackground.height
         anchors.top: senderBackground.top
         anchors.right: senderBackground.right
+        anchors.rightMargin: Qt.platform.os === "windows" ? 30 : 0
         opacity: 0.2
         visible: false
 

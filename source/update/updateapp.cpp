@@ -77,11 +77,8 @@ UpdateApp::setCommun_display(Commun_display *newCommun_display)
 void
 UpdateApp::checkForUpdates(void)
 {
-    #ifdef Q_OS_WIN
-        #ifdef QT_DEBUG
-        #else
-            return;
-        #endif
+    #if defined (Q_OS_WIN) && !defined (QT_DEBUG)
+      return;
     #endif
 
     AppVersion *AppVer = new AppVersion();

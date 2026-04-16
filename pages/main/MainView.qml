@@ -28,7 +28,7 @@ Page{
         font.pixelSize: 16
         //???
         Component.onCompleted: commun_display.onOnCurDeviceNameChanged.connect(devNameCh)
-        function devNameCh(msg) { console.log("qml devName, " + devName.text); }
+        function devNameCh(name) { console.log("qml devName, " + devName.text); }
     }
 
   //─── COM - port ─────────────────────────────────────────

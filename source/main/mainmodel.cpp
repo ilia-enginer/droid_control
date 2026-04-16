@@ -41,8 +41,6 @@ MainModel::checkID()
     //если не админский режим - сначала сбросить приложение
     if(!adminFlag)
     {
-        _settings->setIdDevice(0);
-
          _tx_commands->getIntendifier();
          delay(150);
          for(qint8 i = 0; i < 7; i++)

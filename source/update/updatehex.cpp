@@ -95,10 +95,13 @@ UpdateHex::setPageTx(qint32 num)
 int
 UpdateHex::checkUpdateHex()
 {
-    //запрос версии прошивки
-    _tx_commands->getVersion();
-    //ожидание ответа
-    delay(90);
+    if(!versionExternalProgram.u32)
+    {
+        //запрос версии прошивки
+        _tx_commands->getVersion();
+        //ожидание ответа
+        delay(90);
+    }
     qint32 a = 0;
     while(versionExternalProgram.u32 == 0)
     {
