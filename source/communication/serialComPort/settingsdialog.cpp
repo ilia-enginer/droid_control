@@ -225,3 +225,4 @@ void SettingsDialog::updateSettings()
 
     m_currentSettings.localEchoEnabled = m_ui->localEchoCheckBox->isChecked();
 }
+

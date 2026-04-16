@@ -77,17 +77,20 @@ UpdateApp::setCommun_display(Commun_display *newCommun_display)
 void
 UpdateApp::checkForUpdates(void)
 {
+    #ifdef Q_OS_WIN
+        #ifdef QT_DEBUG
+        #else
+            return;
+        #endif
+    #endif
+
     AppVersion *AppVer = new AppVersion();
     qint32 ver = AppVer->getAppVersion();
 
     if(ver == 0)    return;
-
     _verAppIn = ver;
-
 //    qDebug() << _verAppIn;
-
     QUrl tUrl(kVersionUrl);
-
     mNamChecker->get(QNetworkRequest(tUrl));
 }
 
