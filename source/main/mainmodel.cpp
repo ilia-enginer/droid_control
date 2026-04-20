@@ -98,9 +98,7 @@ void
 MainModel::setAdminFlag(bool value)
 {
     adminFlag = value;
-    _rx_commands->f_AdminChange(value);
     _updateHex->f_AdminChange(value);
-    _unpacking->f_AdminChange(value);
 
     emit onAdminFlagChanged();
 }
@@ -135,12 +133,6 @@ MainModel::setTx_commands(Tx_commands *newTx_commands)
 }
 
 void
-MainModel::setRx_commands(Rx_commands *newRx_commands)
-{
-    _rx_commands = newRx_commands;
-}
-
-void
 MainModel::setUpdateHex(UpdateHex *newUpdateHex)
 {
     _updateHex = newUpdateHex;
@@ -169,8 +161,3 @@ MainModel::setPacking(Packing *newPacking)
     _packing = newPacking;
 }
 
-void
-MainModel::setUnpacking(Unpacking *newUnpacking)
-{
-    _unpacking = newUnpacking;
-}

@@ -26,9 +26,6 @@ Page{
         horizontalAlignment: Qt.AlignHCenter
         text: commun_display.curDeviceName_
         font.pixelSize: 16
-        //???
-        Component.onCompleted: commun_display.onOnCurDeviceNameChanged.connect(devNameCh)
-        function devNameCh(name) { console.log("qml devName, " + devName.text); }
     }
 
   //─── COM - port ─────────────────────────────────────────

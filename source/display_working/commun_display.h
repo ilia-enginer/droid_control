@@ -41,7 +41,7 @@ public:
 
     Q_PROPERTY(QString currUpd READ getCurrenUpd WRITE setCurrenUpd NOTIFY CurrenUpdateChanged)
     Q_PROPERTY(QString update READ getUpdate WRITE setUpdatee NOTIFY updateChanged)
-    Q_PROPERTY(QString curDeviceName_ READ getCurDeviceName WRITE setCurDeviceName NOTIFY onCurDeviceNameChanged)
+    Q_PROPERTY(QString curDeviceName_ READ getCurDeviceName WRITE setCurDeviceName NOTIFY curDeviceNameChanged)
     Q_PROPERTY(float Volt READ getVolt WRITE vrealChang NOTIFY vrealChanged)
     Q_PROPERTY(float Cur READ getCur WRITE curRealChang NOTIFY curRealChanged)
     Q_PROPERTY(QString updateAppText READ getUpdateAppText WRITE setUpdateAppText NOTIFY UpdateAppTextChanged)
@@ -115,7 +115,7 @@ signals:
 
     void updateChanged(QString msg);
 
-    void onCurDeviceNameChanged(QString name);
+    void curDeviceNameChanged(QString name);
 
     void disconnected();
     void searchInProgress();
@@ -144,6 +144,7 @@ signals:
     void bytesReadChanged();
 
 private:
+    QString getTime();
     int vrealUpdate();
     int curRealUpdate();
     int currenUpd();

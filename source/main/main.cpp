@@ -54,6 +54,7 @@
 #include <QSettings>
 #include <QQuickStyle>
 #include <QIcon>
+#include <QDebug>
 
 #include "source/communication/device/device.h"
 #include "source/main/mainmodel.h"
@@ -73,8 +74,6 @@
 #include "source/main/notificationclient.h"
 #include "source/communication/serialComPort/mainSerialPort.h"
 
-#include <QDebug>
-
 
 int main(int argc, char *argv[])
 {
@@ -85,7 +84,6 @@ int main(int argc, char *argv[])
     QIcon::setThemeName("gallery");
 
     QSettings qsettings;
-
     // If this is the first time we're running the application,
     // we need to set a style in the settings so that the QML
     // can find it in the list of built-in styles.
@@ -100,8 +98,6 @@ int main(int argc, char *argv[])
         QQuickStyle::setStyle(qsettings.value("style").toString());
     }
 
-    QQmlApplicationEngine engine;
-
     QStringList builtInStyles = { QLatin1String("Fusion"), QLatin1String("Imagine"),
                                 QLatin1String("Material"), QLatin1String("Universal")};
 #if defined(Q_OS_MACOS)
@@ -111,98 +107,98 @@ int main(int argc, char *argv[])
     builtInStyles << QLatin1String("Windows");
 #endif
 
-    AppManager appManager;
-    Commun_display commun_display;
-    Device device;
-    UpdateApp updateApp;
-    Crc crc;
-    Packing packing;
-    Unpacking unpacking;
-    Tx_commands tx_commands;
-    Rx_commands rx_commands;
-    Settings settings;
-    UpdateHex updateHex;
-    AppVersion appversion;
-    Info info;
-    NotificationClient notificationClient;
-    MainSerialPort mainSerialPort;
-    MainModel model;
+    AppManager          * appManager            = new AppManager();
+    MainModel           * model                 = new MainModel();
+    Device              * device                = new Device();
+    UpdateApp           * updateApp             = new UpdateApp();
+    Crc                 * crc                   = new Crc();
+    Packing             * packing               = new Packing();
+    Unpacking           * unpacking             = new Unpacking();
+    Tx_commands         * tx_commands           = new Tx_commands();
+    Rx_commands         * rx_commands           = new Rx_commands();
+    Settings            * settings              = new Settings();
+    UpdateHex           * updateHex             = new UpdateHex();
+    AppVersion          * appversion            = new AppVersion();
+    Info                * info                  = new Info();
+    NotificationClient  * notificationClient    = new NotificationClient();
+    MainSerialPort      * mainSerialPort        = new MainSerialPort();
+    Commun_display      * commun_display        = new Commun_display();
 
-    engine.rootContext()->setContextProperty("device", &device);
-    engine.rootContext()->setContextProperty("mainModel", &model);
-    engine.rootContext()->setContextProperty("updateApp", &updateApp);
-    engine.rootContext()->setContextProperty("packing", &packing);
-    engine.rootContext()->setContextProperty("commun_display", &commun_display);
-    engine.rootContext()->setContextProperty("tx_commands", &tx_commands);
-    engine.rootContext()->setContextProperty("settParam", &settings);
-    engine.rootContext()->setContextProperty("updateHexx", &updateHex);
-    engine.rootContext()->setContextProperty("appversion", &appversion);
-    engine.rootContext()->setContextProperty("rx_commands", &rx_commands);
-    engine.rootContext()->setContextProperty("info", &info);
-    engine.rootContext()->setContextProperty("appManager", &appManager);
-    engine.rootContext()->setContextProperty("notificationClient",
-                                           &notificationClient);
-    engine.rootContext()->setContextProperty("mainSerialPort", &mainSerialPort);
+    packing->setCrc(crc);
+    packing->setCommun_display(commun_display);
+    packing->setMainSerialPort(mainSerialPort);
+    packing->setDevice(device);
 
-    packing.setCrc(&crc);
-    packing.setCommun_display(&commun_display);
-    packing.setMainSerialPort(&mainSerialPort);
-    packing.setDevice(&device);
+    unpacking->setCrc(crc);
+    unpacking->setCommun_display(commun_display);
+    unpacking->setRx_commands(rx_commands);
+    unpacking->setSettings(settings);
+    unpacking->setDevice(device);
+    unpacking->setMainSerialPort(mainSerialPort);
 
-    unpacking.setCrc(&crc);
-    unpacking.setCommun_display(&commun_display);
-    unpacking.setRx_commands(&rx_commands);
-    unpacking.setSettings(&settings);
-    unpacking.setDevice(&device);
-    unpacking.setMainSerialPort(&mainSerialPort);
+    tx_commands->setPacking(packing);
+    tx_commands->setCommun_display(commun_display);
+    tx_commands->setSettings(settings);
 
-    tx_commands.setPacking(&packing);
-    tx_commands.setCommun_display(&commun_display);
-    tx_commands.setSettings(&settings);
+    rx_commands->setCommun_display(commun_display);
+    rx_commands->setUpdateHex(updateHex);
+    rx_commands->setSettings(settings);
 
-    rx_commands.setCommun_display(&commun_display);
-    rx_commands.setUpdateHex(&updateHex);
-    rx_commands.setSettings(&settings);
+    settings->setCommun_display(commun_display);
 
-    settings.setCommun_display(&commun_display);
+    device->setCommun_display(commun_display);
 
-    device.setCommun_display(&commun_display);
+    updateHex->setTx_commands(tx_commands);
+    updateHex->setCrc(crc);
+    updateHex->setCommun_display(commun_display);
+    updateHex->setSettings(settings);
+    updateHex->setAppManager(appManager);
 
-    updateHex.setTx_commands(&tx_commands);
-    updateHex.setCrc(&crc);
-    updateHex.setCommun_display(&commun_display);
-    updateHex.setSettings(&settings);
-    updateHex.setAppManager(&appManager);
+    model->setDevice(device);
+    model->setUpdateHex(updateHex);
+    model->setCommun_display(commun_display);
+    model->setSettings(settings);
+    model->setTx_commands(tx_commands);
+    model->setMainSerialComPort(mainSerialPort);
+    model->setPacking(packing);
 
-    model.setDevice(&device);
-    model.setUpdateHex(&updateHex);
-    model.setCommun_display(&commun_display);
-    model.setRx_commands(&rx_commands);
-    model.setSettings(&settings);
-    model.setTx_commands(&tx_commands);
-    model.setMainSerialComPort(&mainSerialPort);
-    model.setPacking(&packing);
-    model.setUnpacking(&unpacking);
+    appManager->setCommun_display(commun_display);
+    appManager->setNotificationclient(notificationClient);
 
-    appManager.setCommun_display(&commun_display);
-    appManager.setNotificationclient(&notificationClient);
+    updateApp->setAppManager(appManager);
+    updateApp->setCommun_display(commun_display);
+
+    commun_display->setNotificationClient(notificationClient);
+
+    mainSerialPort->setCommun_display(commun_display);
 
 #if defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED)
   //  appManager.ensureBluetoothPermissions();  //запуск при нажатии кнопки "Начать поиск"
 #endif
 
-    updateApp.setAppManager(&appManager);
-    updateApp.setCommun_display(&commun_display);
-
-    commun_display.setNotificationClient(&notificationClient);
-
-    QObject::connect(&app, &QApplication::applicationStateChanged, &appManager, &AppManager::onApplicationStateChanged);
+    QObject::connect(&app, &QApplication::applicationStateChanged, appManager, &AppManager::onApplicationStateChanged);
 
     //вывод версии в сообщении для изменения txt файла
     #if defined(Q_OS_WINDOWS)    
         AppVersion *AppVer = new AppVersion();
         AppVer->appVersionVisible();
     #endif
+
+    QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty("device", device);
+    engine.rootContext()->setContextProperty("mainModel", model);
+    engine.rootContext()->setContextProperty("updateApp", updateApp);
+    engine.rootContext()->setContextProperty("packing", packing);
+    engine.rootContext()->setContextProperty("commun_display", commun_display);
+    engine.rootContext()->setContextProperty("tx_commands", tx_commands);
+    engine.rootContext()->setContextProperty("settParam", settings);
+    engine.rootContext()->setContextProperty("updateHexx", updateHex);
+    engine.rootContext()->setContextProperty("appversion", appversion);
+    engine.rootContext()->setContextProperty("rx_commands", rx_commands);
+    engine.rootContext()->setContextProperty("info", info);
+    engine.rootContext()->setContextProperty("appManager", appManager);
+    engine.rootContext()->setContextProperty("notificationClient", notificationClient);
+    engine.rootContext()->setContextProperty("mainSerialPort", mainSerialPort);
 
     engine.setInitialProperties({{ "builtInStyles", builtInStyles }});
     engine.load(QUrl("qrc:/pages/main/Main.qml"));

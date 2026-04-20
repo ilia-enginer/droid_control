@@ -8,8 +8,7 @@
 MainSerialPort::MainSerialPort(QWidget *parent) :
     QWidget(parent),    //QMainWindow(parent),
     m_settings(new SettingsDialog),
-    m_serial(new QSerialPort(this)),
-    _commun_display(new Commun_display(this))
+    m_serial(new QSerialPort(this))
 {
     connect(m_serial, &QSerialPort::errorOccurred, this, &MainSerialPort::handleError);
 //! [2]
@@ -19,6 +18,12 @@ MainSerialPort::MainSerialPort(QWidget *parent) :
 MainSerialPort::~MainSerialPort()
 {
     delete m_settings;
+}
+
+void
+MainSerialPort::setCommun_display(Commun_display *newCommun_display)
+{
+    _commun_display = newCommun_display;
 }
 
 void MainSerialPort::settingsWindowOpen()
@@ -39,7 +44,7 @@ void MainSerialPort::openSerialPort()
     m_serial->setFlowControl(p.flowControl);
     if (m_serial->open(QIODevice::ReadWrite)) {
         _commun_display->set_connected(true);
-        showStatusMessage(tr("Connected to %1 : %2, %3, %4, %5, %6")
+        showStatusMessage(tr("Connected to\n%1 : %2, %3, %4, %5, %6")
                           .arg(p.name).arg(p.stringBaudRate).arg(p.stringDataBits)
                           .arg(p.stringParity).arg(p.stringStopBits).arg(p.stringFlowControl));
         emit connected("comport");

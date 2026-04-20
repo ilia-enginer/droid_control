@@ -83,8 +83,16 @@ Page {
                Connections {
                    target: commun_display
                    function onLogJoy(type, msg) {
-                       logListModel.append({msg: type + msg})
-                       listView1.positionViewAtEnd()
+                       if (mainModel.adminFlag === false){
+                            logListModel.append({msg: type + msg})
+                            listView1.positionViewAtEnd()
+                       }
+                    }
+                   function onLogServis(type, msg) {
+                       if (mainModel.adminFlag === true){
+                           logListModel.append({msg: type + msg})
+                           listView1.positionViewAtEnd()
+                       }
                    }
                }
                delegate: Column {

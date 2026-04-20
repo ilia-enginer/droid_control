@@ -28,8 +28,6 @@ public:
     int unpack(QByteArray data, int size);
     int checkBalance();
 
-    void f_AdminChange(bool adm);
-
 public slots:
     void messRes(QByteArray recievedData);
 
@@ -49,16 +47,6 @@ private:
     QByteArray Temp = 0;
     bool statys = false;
     bool split = false;
-
-    #ifdef Q_OS_WIN
-        bool _f_Admin = true;
-    #elif defined(Q_OS_MACOS)
-        bool _f_Admin = false;
-    #elif defined(Q_OS_ANDROID)
-        bool _f_Admin = false;
-    #elif defined(Q_OS_LINUX)
-        bool _f_Admin = true;
-    #endif
 
 };
 

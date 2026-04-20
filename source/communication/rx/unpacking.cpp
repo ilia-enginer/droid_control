@@ -74,7 +74,7 @@ Unpacking::messRes(QByteArray recievedData)
     //распаковка
     res = unpack(recievedData, size);
     //если превышена длина пакета приема
-    if(res == -1)   if(_f_Admin)    _commDisplay->log_out_J("<- ", "Ошибка. Превышена длина входящего сообщения");
+    if(res == -1)    _commDisplay->log_out_S("<- ", "Ошибка. Превышена длина входящего сообщения");
 
      res = 1;
      while(res == 1)
@@ -186,12 +186,6 @@ Unpacking::checkBalance()
     }
 
     return 0;
-}
-
-void
-Unpacking::f_AdminChange(bool adm)
-{
-    _f_Admin = adm;
 }
 
 //склейка разорванных пакетов

@@ -1,20 +1,20 @@
 #include "commun_display.h"
+
 #include "QDebug"
 #include <QList>
 #include <QByteArray>
 #include <QMetaEnum>
 #include <QCoreApplication>
+#include <QTime>
 
 
 Commun_display::Commun_display(QObject *parent) :
     QObject(parent)
 {
-
 }
 
 Commun_display::~Commun_display()
 {
-
 }
 
 void
@@ -37,10 +37,10 @@ Commun_display::set_rendering_flag(int flag)
 
 int
 Commun_display::log_out_S(QString type, QString msg)
-{
+{   
     if(rendering_flag == Qt::ApplicationState::ApplicationActive)
     {
-        emit logServis(type, msg);
+        emit logServis(getTime() + type, msg);
         return 0;
     }
     return -1;
@@ -62,7 +62,7 @@ Commun_display::log_out_T(QString type, QString msg)
 {
     if(rendering_flag == Qt::ApplicationState::ApplicationActive)
     {
-        emit logT(type, msg);
+        emit logT(getTime() + type, msg);
         return 0;
     }
     return -1;
@@ -285,6 +285,14 @@ Commun_display::get_BytesRead() const
     return BytesRead;
 }
 
+QString
+Commun_display::getTime()
+{
+    QTime currentTime = QTime::currentTime();
+    QString sTime = currentTime.toString("HH:mm:ss.zzz");
+    sTime.append(" ");
+    return sTime;
+}
 
 int
 Commun_display::allUpdate()
@@ -408,9 +416,8 @@ Commun_display::CurDeviceNameRefresh()
 {
     if(rendering_flag == Qt::ApplicationState::ApplicationActive)
     {
-        emit onCurDeviceNameChanged(curDeviceName_);
-        //???
-        qDebug() << "c++ curDeviceName = " + QString(curDeviceName_);
+        emit curDeviceNameChanged(curDeviceName_);
+    //    qDebug() << "c++ curDeviceName = " + QString(curDeviceName_) << this;
         return 0;
     }
     return -1;

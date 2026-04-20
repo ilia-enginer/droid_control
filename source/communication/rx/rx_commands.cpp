@@ -237,12 +237,6 @@ Rx_commands::searchCommand(QByteArray dat)
 }
 
 void
-Rx_commands::f_AdminChange(bool f)
-{
-    _f_Admin = f;
-}
-
-void
 Rx_commands::setVReal(bool V)
 {
     _setVreal = V;
@@ -258,7 +252,6 @@ Rx_commands::setCurReal(bool Cur)
 void
 Rx_commands::errorCrc()
 {
-    if(_f_Admin)    _commun_display->log_out_J("<- ошибка CRC", " ");
     _commun_display->log_out_S("<- ошибка CRC", " ");
 }
 
@@ -273,7 +266,6 @@ Rx_commands::incorrectLoaderCommand()
 void
 Rx_commands::incorrectCommand()
 {
-    if(_f_Admin)    _commun_display->log_out_J("<- не верная команда", " ");
     _commun_display->log_out_S("<- не верная команда", " ");
 }
 
@@ -281,7 +273,6 @@ Rx_commands::incorrectCommand()
 void
 Rx_commands::incorrectCommandParameters()
 {
-    if(_f_Admin)    _commun_display->log_out_J("<- не верные парам. команды", " ");
     _commun_display->log_out_S("<- не верные парам. команды", " ");
 }
 
@@ -435,7 +426,6 @@ Rx_commands::idleTimeLift()
 void
 Rx_commands::errorMath()
 {
-    if(_f_Admin)    _commun_display->log_out_J("<- ошибка математики", " ");
     _commun_display->log_out_S("<- ошибка математики", " ");
 }
 
@@ -444,8 +434,6 @@ void
 Rx_commands::debugMess(QByteArray mess)
 {
     QString str = QString(mess);
-
-    if(_f_Admin)    _commun_display->log_out_J("<- ", str);
     _commun_display->log_out_S("<- ", str);
 }
 
@@ -926,16 +914,10 @@ Rx_commands::getVersion(QByteArray Ver)
     //версия прошивки загрузчика
     val.data[3] = Ver[0]; val.data[2] = Ver[1]; val.data[1] = Ver[2]; val.data[0] = Ver[3];
     _updatehex->setVersBootLoaderExt(val.u32);
-
-    if(_f_Admin)
-    {
-        _commun_display->log_out_S("<- Версия загрузчика:\n", _updatehex->versionToString(val.u32));
-        _commun_display->log_out_J("<- Версия загрузчика:\n", _updatehex->versionToString(val.u32));
-    }
+    _commun_display->log_out_S("<- Версия загрузчика:\n", _updatehex->versionToString(val.u32));
 
     val.data[3] = Ver[4]; val.data[2] = Ver[5]; val.data[1] = Ver[6]; val.data[0] = Ver[7];
     _updatehex->setVersExt(val.u32);
-
     _commun_display->log_out_S("<- Версия прошивки:\n", _updatehex->versionToString(val.u32));
     _commun_display->log_out_J("<- Версия прошивки:\n", _updatehex->versionToString(val.u32));
 }

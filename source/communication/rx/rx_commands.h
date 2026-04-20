@@ -22,8 +22,6 @@ public:
 
     int searchCommand(QByteArray dat);
 
-    void f_AdminChange(bool f);
-
 public slots:
     void setVReal(bool V);      //флаг запроса - не отображать сообщений после прихода напряжения
     void setCurReal(bool Cur);  //флаг запроса - не отображать сообщений после прихода тока
@@ -101,16 +99,6 @@ private:
 
     void calibrServsFoot(QByteArray Num);    //ответ старт/стоп автокалибровки серв ноги №.. 0xFC
 
-
-    #ifdef Q_OS_WIN
-        bool _f_Admin = true;
-    #elif defined(Q_OS_MACOS)
-        bool _f_Admin = false;
-    #elif defined(Q_OS_ANDROID)
-        bool _f_Admin = false;
-    #elif defined(Q_OS_LINUX)
-        bool _f_Admin = true;
-    #endif
     bool _setVreal = false;              ///флаг запроса напряжения
     bool _setCurReal = false;            ///флаг запроса тока
 };

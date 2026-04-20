@@ -16,6 +16,7 @@ public:
     explicit MainSerialPort(QWidget *parent = nullptr);
     ~MainSerialPort();
 
+    void setCommun_display(Commun_display *newCommun_display);
     int writeData(const QByteArray &data);
 
 signals:
