@@ -8,6 +8,11 @@ DEFINES += INSERT_VERSION_NAME=\\\"$$ANDROID_VERSION_NAME\\\"   #версия н
 
 QT += quick charts qml quickcontrols2 bluetooth core positioning widgets core-private network gui concurrent serialport #androidextras
 
+win32 {
+    RC_FILE += file.rc
+    OTHER_FILES += file.rc
+}
+
 SOURCES += \
     source/communication/crc.cpp \
     source/communication/rx/rx_commands.cpp \
@@ -87,10 +92,13 @@ target.path = $$[QT_INSTALL_EXAMPLES]/quickcontrols2/gallery
 INSTALLS += target
 
 DISTFILES += \
+    file.rc \
+    file.rc \
     android/src/org/qtproject/example/NotificationClient.java \
     android/src/org/qtproject/example/QtAndroidService.java \
     android/src/org/qtproject/example/KeepAliveService.java \
     android/src/org/qtproject/example/InstallAPK.java \
+    icons/logo.ico \
     pages/main/DeviceSelection.qml \
     pages/main/Main.qml \
     pages/main/Key.qml \

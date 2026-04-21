@@ -28,8 +28,22 @@ Page {
     ScrollView {
         id: scrolViewLogArea
         anchors.fill: senderBackground
-        ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        ScrollBar.vertical: ScrollBar {
+            id: styledScrollBar
+          //  orientation: Qt.Vertical  // или Qt.Vertical Qt.Horizontal
+            parent: scrolViewLogArea
+            x: scrolViewLogArea.mirrored ? 0 : scrolViewLogArea.width - width
+            y: scrolViewLogArea.topPadding
+            height: scrolViewLogArea.availableHeight
+
+            contentItem: Rectangle {
+                implicitWidth: 6  // или implicitHeight в зависимости от ориентации
+                radius: 3
+                color: styledScrollBar.pressed ? "#2ecc71" : "#3498db"  // Меняем цвет при нажатии
+            }
+        }
 
         ListView {
                id: listView1
