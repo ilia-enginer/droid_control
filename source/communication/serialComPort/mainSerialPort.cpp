@@ -43,11 +43,12 @@ void MainSerialPort::openSerialPort()
     m_serial->setStopBits(p.stopBits);
     m_serial->setFlowControl(p.flowControl);
     if (m_serial->open(QIODevice::ReadWrite)) {
+        _connect = true;
         _commun_display->set_connected(true);
         showStatusMessage(tr("Connected to\n%1 : %2, %3, %4, %5, %6")
                           .arg(p.name).arg(p.stringBaudRate).arg(p.stringDataBits)
                           .arg(p.stringParity).arg(p.stringStopBits).arg(p.stringFlowControl));
-        emit connected("comport");
+        emit connected("comport"); 
     }
     else{
         QMessageBox::critical(this, tr("Error"), m_serial->errorString());
@@ -61,17 +62,19 @@ void MainSerialPort::closeSerialPort()
 {
     if (m_serial->isOpen())
         m_serial->close();
-
+    _connect = false;
     emit connected("none");
     showStatusMessage(tr("Устройство отключено"));
     _commun_display->set_connected(false);
+
 }
 //! [5]
 
 //! [6]
 int MainSerialPort::writeData(const QByteArray &data)
 {
-    return m_serial->write(data);
+    if(_connect) return m_serial->write(data);
+    return -1;
 }
 //! [6]
 
@@ -88,8 +91,8 @@ void MainSerialPort::readData()
 void MainSerialPort::handleError(QSerialPort::SerialPortError error)
 {
     if (error == QSerialPort::ResourceError) {
-        QMessageBox::critical(this, tr("Critical Error"), m_serial->errorString());
         closeSerialPort();
+        QMessageBox::critical(this, tr("Critical Error"), m_serial->errorString());
     }
 }
 

@@ -15,14 +15,14 @@ SwipeView {
     onActiveFocusChanged: {
         if (!activeFocus) {
             // Пользователь нажал или перешёл away от этого поля
-      //      console.log("!!!!!!!!!!No active.")
-            if(Qt.platform.os !== "windows") joystick_timer.running = false
-            if(Qt.platform.os !== "windows") radioGroup.checkState = Qt.Unchecked
+       //     console.log("!!!!!!!!!!No active.")
+            joystick_timer.running = false
+            radioGroup.checkState = Qt.Unchecked
         } else {
             // Пользователь сосредоточился на этом поле
-      //      console.log("!!!!!!!!Focus active.")
+       //     console.log("!!!!!!!!Focus active.")
             if(Qt.platform.os !== "windows") tx_commands.getCheck();
-            if(Qt.platform.os !== "windows") joystick_timer.running = true
+            joystick_timer.running = true
         }
      }
 
@@ -62,7 +62,7 @@ SwipeView {
         Timer {
             id: joystick_timer
             interval: settParam.timer1
-            running: Qt.platform.os === "windows" ? true : false
+            running: false
             repeat: true
             onTriggered: { tx_commands.joysticActivity(mode, azimuth, amplitude, level, ctrl); }
         }

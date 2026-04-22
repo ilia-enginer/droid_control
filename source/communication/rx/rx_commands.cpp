@@ -43,6 +43,12 @@ Rx_commands::searchCommand(QByteArray dat)
     case 0x01:
         errorCrc();
         break;
+    case 0x02:
+        errorHardFault();
+        break;
+    case 0x03:
+        errorWachDog();
+        break;
     case 0x04: //не правильная команда загрузчика
         incorrectLoaderCommand();
         break;
@@ -255,6 +261,22 @@ Rx_commands::errorCrc()
     _commun_display->log_out_S("<- ошибка CRC", " ");
 }
 
+//ошибка HardFault                      0x02
+void
+Rx_commands::errorHardFault()
+{
+    _commun_display->log_out_J("<- ошибка HardFault", " ");
+    _commun_display->log_out_S("<- ошибка HardFault", " ");
+}
+
+//ошибка сброс по WachDog               0x03
+void
+Rx_commands::errorWachDog()
+{
+    _commun_display->log_out_J("<- ошибка зависла прошивка", " ");
+    _commun_display->log_out_S("<- ошибка зависла прошивка", " ");
+}
+
 //не правильная команда загрузчика  0x04
 void
 Rx_commands::incorrectLoaderCommand()
@@ -434,6 +456,7 @@ void
 Rx_commands::debugMess(QByteArray mess)
 {
     QString str = QString(mess);
+    _commun_display->log_out_J("<- ", str);
     _commun_display->log_out_S("<- ", str);
 }
 

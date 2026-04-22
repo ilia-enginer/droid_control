@@ -34,6 +34,7 @@ private slots:
 
 private:
     void showStatusMessage(const QString &message);
+    bool _connect = false;
 
     SettingsDialog *m_settings = nullptr;
     QSerialPort *m_serial = nullptr;

@@ -34,6 +34,8 @@ private:
     QByteArray Data;
 
     void errorCrc();                        //ошибка срс                            0x01
+    void errorHardFault();                  //ошибка HardFault                      0x02
+    void errorWachDog();                    //ошибка сброс по WachDog               0x03
     void incorrectLoaderCommand();          //не правильная команда загрузчика      0x04
     void incorrectCommand();                //не правильная команда                 0x05
     void incorrectCommandParameters();      //не правильные параметры команды       0x06
