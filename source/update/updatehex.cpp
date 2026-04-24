@@ -148,17 +148,16 @@ UpdateHex::checkingUpdates(void)
     #if defined(Q_QDOC) || (defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED))
     int a = 0;
 
-    if (!_commun_display->get_connected()) {
-      emit navigateBackActionON();
-      return;
-    }
-
     _commun_display->setCurrenUpd("Подготовка к обновлению...");
     _commun_display->statusUpdate(_commun_display->statusUpd::checkUpdateProgr);
 
     ///запрос напряжения
     _commun_display->vrealChang(0.0);
-    _tx_commands->voltage_read(false);
+    // если устройство не подключенно
+    if(_tx_commands->voltage_read(false) == -1) {
+        emit navigateBackActionON();
+        return;
+    }
     delay(100);
     a = 0;
     ///ожидание ответа

@@ -88,6 +88,7 @@ ApplicationWindow {
         onActivated: optionsMenuAction.trigger()
     }
 
+    //иконка меню
     Action {
         id: navigateBackAction
         icon.name: stackView.depth > 1 ? "back" : "drawer"
