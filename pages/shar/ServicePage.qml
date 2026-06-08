@@ -604,6 +604,7 @@ Page {
                         property var normalColor: "#c759d4"
                         property var pressedColor: "#5813a1"
                         color: get_err.pressed ? pressedColor : normalColor
+                        radius: 8
                     }
                     onClicked: {
                         tx_commands.getCheck();
@@ -621,6 +622,7 @@ Page {
                       property var normalColor: "#c759d4"
                       property var pressedColor: "#5813a1"
                       color: clear_err.pressed ? pressedColor : normalColor
+                      radius: 8
                   }
                    onClicked: {
                       tx_commands.checkReset();
@@ -638,6 +640,7 @@ Page {
                       property var normalColor: "#c759d4"
                       property var pressedColor: "#5813a1"
                       color: reboot.pressed ? pressedColor : normalColor
+                      radius: 8
                   }
                    onClicked: {
                       tx_commands.reboot();
@@ -655,6 +658,7 @@ Page {
                       property var normalColor: "#c759d4"
                       property var pressedColor: "#5813a1"
                       color: get_vers.pressed ? pressedColor : normalColor
+                      radius: 8
                   }
                    onClicked: {
                       tx_commands.getVersion();
@@ -672,6 +676,7 @@ Page {
                       property var normalColor: "#c759d4"
                       property var pressedColor: "#5813a1"
                       color: set_signed.pressed ? pressedColor : normalColor
+                      radius: 8
                   }
                    onClicked: {
                       tx_commands.writeLabel();
@@ -689,6 +694,7 @@ Page {
                         property var normalColor: "#db1244"
                         property var pressedColor: "#5813a1"
                         color: resetButton.pressed ? pressedColor : normalColor
+                        radius: 8
                     }
                     onClicked: {
                         tx_commands.fullReset();
@@ -706,6 +712,7 @@ Page {
                         property var normalColor: "#c759d4"
                         property var pressedColor: "#5813a1"
                         color: get_full_param.pressed ? pressedColor : normalColor
+                        radius: 8
                     }
                     onClicked: {
                         tx_commands.readAllParams();
@@ -723,6 +730,7 @@ Page {
                         property var normalColor: "#c759d4"
                         property var pressedColor: "#5813a1"
                         color: set_full_param.pressed ? pressedColor : normalColor
+                        radius: 8
                     }
                     onClicked: {
                         tx_commands.writeAllParams();
@@ -755,6 +763,7 @@ Page {
                     anchors.right: power_off.right
                     anchors.left: power_off.left
                     height: power_off.height * 0.67
+                    radius: 8
                     Text {
                         id: name
                         anchors.verticalCenter: parent.verticalCenter
@@ -775,6 +784,7 @@ Page {
                         property var normalColor: "#c759d4"
                         property var pressedColor: "#5813a1"
                         color: get_ID.pressed ? pressedColor : normalColor
+                        radius: 8
                     }
                     onClicked: {
                         tx_commands.getIntendifier();
@@ -794,6 +804,7 @@ Page {
                       property var normalColor: "#7387d1"
                       property var pressedColor: "#052bb3"
                       color: servs_calibr.pressed ? pressedColor : normalColor
+                      radius: 8
                   }
                    onClicked: {
                       tx_commands.servoAutoCalibration();
@@ -811,6 +822,7 @@ Page {
                       property var normalColor: "#7387d1"
                       property var pressedColor: "#052bb3"
                       color: serv_start.pressed ? pressedColor : normalColor
+                      radius: 8
                   }
                    onClicked: {
                       tx_commands.setServosStartAngle();
@@ -828,6 +840,7 @@ Page {
                       property var normalColor: "#7387d1"
                       property var pressedColor: "#052bb3"
                       color: serv_home.pressed ? pressedColor : normalColor
+                      radius: 8
                   }
                    onClicked: {
                       tx_commands.setServosHomeAngle();
@@ -855,6 +868,7 @@ Page {
                         property var normalColor: "#7387d1"
                         property var pressedColor: "#052bb3"
                         color: get_install_serv_num_but.pressed ? pressedColor : normalColor
+                        radius: 8
                     }
                     onClicked: {
                         tx_commands.getSettingServo(get_install_serv_num.text);
@@ -882,6 +896,7 @@ Page {
                         property var normalColor: "#7387d1"
                         property var pressedColor: "#052bb3"
                         color: get_serv_angl_but.pressed ? pressedColor : normalColor
+                        radius: 8
                     }
                     onClicked: {
                         tx_commands.readAngleServo(get_serv_angl.text);
@@ -909,6 +924,7 @@ Page {
                         property var normalColor: "#7387d1"
                         property var pressedColor: "#052bb3"
                         color: set_serv_angl_but.pressed ? pressedColor : normalColor
+                        radius: 8
                     }
                     onClicked: {
                         tx_commands.setServoAngle(set_serv_angl.text);
@@ -937,6 +953,7 @@ Page {
                         property var normalColor: "#7387d1"
                         property var pressedColor: "#052bb3"
                         color: set_serv_min_angl_but.pressed ? pressedColor : normalColor
+                        radius: 8
                     }
                     onClicked: {
                         tx_commands.writeMinAngleServo(set_serv_min_angl.text);
@@ -955,6 +972,7 @@ Page {
                         property var normalColor: "#7387d1"
                         property var pressedColor: "#052bb3"
                         color: serv_off_but.pressed ? pressedColor : normalColor
+                        radius: 8
                     }
                     onClicked: {
                         tx_commands.on_offServo(0x00);
@@ -973,6 +991,7 @@ Page {
                         property var normalColor: "#7387d1"
                         property var pressedColor: "#052bb3"
                         color: serv_on_but.pressed ? pressedColor : normalColor
+                        radius: 8
                     }
                     onClicked: {
                         tx_commands.on_offServo(0x01);
@@ -1000,6 +1019,7 @@ Page {
                         property var normalColor: "#7387d1"
                         property var pressedColor: "#052bb3"
                         color: numFootCalibrBut.pressed ? pressedColor : normalColor
+                        radius: 8
                     }
                     onClicked: {
                         tx_commands.calibrServsFoot(numFootCalibr.text);
@@ -1020,6 +1040,7 @@ Page {
                       property var normalColor: "#14deca"
                       property var pressedColor: "#0b7d72"
                       color: get_cur.pressed ? pressedColor : normalColor
+                      radius: 8
                   }
                    onClicked: {
                       rx_commands.setCurReal(true);
@@ -1038,6 +1059,7 @@ Page {
                       property var normalColor: "#14deca"
                       property var pressedColor: "#0b7d72"
                       color: get_cur_calibr.pressed ? pressedColor : normalColor
+                      radius: 8
                   }
                    onClicked: {
                       tx_commands.getCurCalibration();
@@ -1075,6 +1097,7 @@ Page {
                     anchors.right: set_cur_value_but.right
                     anchors.left: set_cur_value_but.left
                     height: set_cur_value_but.height * 0.75
+                    radius: 8
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -1094,6 +1117,7 @@ Page {
                         property var normalColor: "#14deca"
                         property var pressedColor: "#0b7d72"
                         color: flag_cur_but_on.pressed ? pressedColor : normalColor
+                        radius: 8
                     }
                     onClicked: {
                         tx_commands.setCurBlock(0x01);
@@ -1111,6 +1135,7 @@ Page {
                         property var normalColor: "#14deca"
                         property var pressedColor: "#0b7d72"
                         color: flag_cur_but_off.pressed ? pressedColor : normalColor
+                        radius: 8
                     }
                     onClicked: {
                         tx_commands.setCurBlock(0x00);
@@ -1138,6 +1163,7 @@ Page {
                     anchors.right: cur_calibr_auto.right
                     anchors.left: cur_calibr_auto.left
                     height: cur_calibr_auto.height * 0.67
+                    radius: 8
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -1158,6 +1184,7 @@ Page {
                       property var normalColor: "#16e049"
                       property var pressedColor: "#10a335"
                       color: get_voltage.pressed ? pressedColor : normalColor
+                      radius: 8
                   }
                    onClicked: {
                       rx_commands.setVReal(true);
@@ -1178,6 +1205,7 @@ Page {
                       property var normalColor: "#6ac714"
                       property var pressedColor: "#529415"
                       color: get_angl_giroscope.pressed ? pressedColor : normalColor
+                      radius: 8
                   }
                    onClicked: {
                       tx_commands.readGyroscopeAngles();
@@ -1195,6 +1223,7 @@ Page {
                       property var normalColor: "#6ac714"
                       property var pressedColor: "#529415"
                       color: get_acsel.pressed ? pressedColor : normalColor
+                      radius: 8
                   }
                    onClicked: {
                       tx_commands.readAcceleration();
@@ -1212,6 +1241,7 @@ Page {
                       property var normalColor: "#6ac714"
                       property var pressedColor: "#529415"
                       color: get_azim.pressed ? pressedColor : normalColor
+                      radius: 8
                   }
                    onClicked: {
                       tx_commands.getAzimutAngle();
@@ -1239,6 +1269,7 @@ Page {
                         property var normalColor: "#6ac714"
                         property var pressedColor: "#529415"
                         color: setAzimAnglBut.pressed ? pressedColor : normalColor
+                        radius: 8
                     }
                     onClicked: {
                         tx_commands.setAzimutAngle(setAzimAngl.text);
@@ -1256,6 +1287,7 @@ Page {
                       property var normalColor: "#6ac714"
                       property var pressedColor: "#529415"
                       color: get_inclination.pressed ? pressedColor : normalColor
+                      radius: 8
                   }
                    onClicked: {
                       tx_commands.getInclinationAngle();
@@ -1283,6 +1315,7 @@ Page {
                         property var normalColor: "#6ac714"
                         property var pressedColor: "#529415"
                         color: setInclinationBut.pressed ? pressedColor : normalColor
+                        radius: 8
                     }
                     onClicked: {
                         tx_commands.setInclinationAngle(setInclination.text);
@@ -1312,6 +1345,7 @@ Page {
                         property var normalColor: "#a3a614"
                         property var pressedColor: "#ecf011"
                         color: get_led_but.pressed ? pressedColor : normalColor
+                        radius: 8
                     }
                     onClicked: {
                         tx_commands.leds_read(get_led.text);
@@ -1339,6 +1373,7 @@ Page {
                         property var normalColor:  "#a3a614"
                         property var pressedColor: "#ecf011"
                         color: set_led_but.pressed ? pressedColor : normalColor
+                        radius: 8
                     }
                     onClicked: {
                         tx_commands.writeSettingLeds(set_led.text);

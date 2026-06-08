@@ -133,8 +133,10 @@ SwipeView {
             height: senderBackground_2.height
             anchors.top: senderBackground_2.top
             anchors.right: senderBackground_2.right
-            anchors.rightMargin: Qt.platform.os === "windows" ? 30 : 0
-            opacity: 0.2
+          //  anchors.rightMargin: Qt.platform.os === "windows" ? 30 : 0
+            anchors.rightMargin: 30
+            opacity: 0.2            
+
             contentItem: Text{
                 horizontalAlignment: Qt.AlignHCenter
                 text: "Clear"
@@ -397,8 +399,9 @@ SwipeView {
             anchors.topMargin: 10
             visible: false
 
-            Button {
+            RoundButton {
                 id: upBut
+                radius: 8
                 text: "UP"
                 highlighted: true
                 anchors.top: parent.top
@@ -414,8 +417,9 @@ SwipeView {
                     azimuth = 0
                 }
             }
-            Button {
+            RoundButton {
                 id: downBut
+                radius: 8
                 text: "DOWN"
                 highlighted: true
                 anchors.bottom: parent.bottom
@@ -432,7 +436,8 @@ SwipeView {
                     azimuth = 0
                 }
             }
-            Button {
+            RoundButton {
+                radius: 8
                 text: "LEFT"
                 highlighted: true
                 anchors.left: parent.left
@@ -449,7 +454,8 @@ SwipeView {
                     azimuth = 0
                 }
             }
-            Button {
+            RoundButton {
+                radius: 8
                 text: "RIGHT"
                 highlighted: true
                 anchors.right: parent.right
@@ -642,6 +648,7 @@ SwipeView {
             anchors.right: power_off.right
             anchors.left: power_off.left
             height: power_off.height * 0.8
+            radius: 8
             Text {
                 id: name
                 anchors.verticalCenter: parent.verticalCenter
@@ -662,6 +669,7 @@ SwipeView {
             anchors.horizontalCenter: parent.horizontalCenter
             color:"#bdde1b"
             opacity: 0.3
+            radius: 8
             Label {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -1136,8 +1144,9 @@ SwipeView {
                  anchors.leftMargin: 10
 
                  //очистка графика
-                 Button {
+                 RoundButton {
                      id: clearButton_1
+                     radius: 8
                      text: "Очистить график"
 
                      onClicked: {
@@ -1179,6 +1188,7 @@ SwipeView {
                    text: qsTr("Напряжение (В)")
                    background: Rectangle {
                            opacity: 0.7
+                           radius: 8
                            color: "#BB4444"
                        }
                  }
@@ -1188,6 +1198,7 @@ SwipeView {
                    text: qsTr("Ток (А)")
                    background: Rectangle {
                            opacity: 0.7
+                           radius: 8
                            color: "#B38A4D"
                        }
                  }
@@ -1197,6 +1208,7 @@ SwipeView {
                    text: qsTr("Угол наклона (° град.)")
                    background: Rectangle {
                            opacity: 0.7
+                           radius: 8
                            color: "#61B34D"
                        }
                  }
@@ -1206,6 +1218,7 @@ SwipeView {
                    text: qsTr("Направление наклона (° град.)")
                    background: Rectangle {
                            opacity: 0.7
+                           radius: 8
                            color: "#4D8AB3"
                        }
                  }
@@ -1215,6 +1228,7 @@ SwipeView {
                    text: qsTr("Ускорение (мс²)")
                    background: Rectangle {
                            opacity: 0.7
+                           radius: 8
                            color: "#9E4DB3"
                        }
                  }
@@ -1224,6 +1238,7 @@ SwipeView {
                    text: qsTr("Угловая скорость (об./мин.)")
                    background: Rectangle {
                            opacity: 0.7
+                           radius: 8
                            color: "#AA5566"
                        }
                  }
@@ -1233,6 +1248,7 @@ SwipeView {
                    text: qsTr("Угол X (° град.)")
                    background: Rectangle {
                            opacity: 0.7
+                           radius: 8
                            color: "#808080"
                        }
                  }
@@ -1242,6 +1258,7 @@ SwipeView {
                    text: qsTr("Угол Y (° град.)")
                    background: Rectangle {
                            opacity: 0.7
+                           radius: 8
                            color: "#F79709"
                        }
                  }
@@ -1251,6 +1268,7 @@ SwipeView {
                    text: qsTr("Угол Z (° град.)")
                    background: Rectangle {
                            opacity: 0.7
+                           radius: 8
                            color: "#eb0cc5"
                        }
                  }
@@ -1268,6 +1286,7 @@ SwipeView {
             anchors.horizontalCenter: parent.horizontalCenter
             color:"#bdde1b"
             opacity: 0.3
+            radius: 8
             Label {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter

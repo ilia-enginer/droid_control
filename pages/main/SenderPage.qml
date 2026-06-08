@@ -98,6 +98,7 @@ Page {
             property var normalColor: "#17d47f"
             property var pressedColor: "#0fd93b"
             color: sendButton.pressed ? pressedColor : normalColor
+            radius: 8
         }
         onClicked: {
             packing.sendMessage(messageToSend.text, wrap);
@@ -120,6 +121,7 @@ Page {
             property var normalColor: "#cb0fd9"
             property var pressedColor: "#ff084e"
             color: clearButton.pressed ? pressedColor : normalColor
+            radius: 8
         }
         onClicked: {
             logListModel.clear()

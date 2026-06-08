@@ -52,6 +52,7 @@ Page {
             property var normalColor: "#d0d413"
             property var pressedColor: "#3c965a"
             color: get_firmware_update.pressed ? pressedColor : normalColor
+            radius: 8
         }
         Component.onCompleted: {
                     commun_display.onCheckUpdate.connect(onCheckUpdate)
@@ -97,6 +98,7 @@ Page {
             property var normalColor: "#c97424"
             property var pressedColor: "#88c918"
             color: update_load.pressed ? pressedColor : normalColor
+            radius: 8
         }
 
         Component.onCompleted: {
@@ -138,6 +140,7 @@ Page {
             property var normalColor: "#c97424"
             property var pressedColor: "#88c918"
             color: update_bootloader_load.pressed ? pressedColor : normalColor
+            radius: 8
         }
 
         Component.onCompleted: {
@@ -195,6 +198,7 @@ Page {
             property var normalColor: "#db0b3f"
             property var pressedColor: "#821f38"
             color: stop_load.pressed ? pressedColor : normalColor
+            radius: 8
         }
         Component.onCompleted: {
                     commun_display.onStopUpdate.connect(onStopUpdate)
@@ -340,6 +344,7 @@ Page {
             property var normalColor: "#d0d413"
             property var pressedColor: "#3c965a"
             color: open_file.pressed ? pressedColor : normalColor
+            radius: 8
         }
         onClicked: {
             updateHexx.fileOpen(true);

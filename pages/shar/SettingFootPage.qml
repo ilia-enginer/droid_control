@@ -1,8 +1,10 @@
 
-import QtQuick 2.6
+import QtQuick 2.7
 import QtQuick.Controls 2.0
-import QtQuick.Window 2.0
+import QtQuick.Layouts
+import Qt.labs.settings
 import QtQuick.Controls.Material
+import QtQml
 
 Page {
     id: settingFoot
@@ -118,13 +120,13 @@ Page {
         height: senderBackground.height
         anchors.top: senderBackground.top
         anchors.right: senderBackground.right
-        anchors.rightMargin: Qt.platform.os === "windows" ? 30 : 0
+        //anchors.rightMargin: Qt.platform.os === "windows" ? 30 : 0
+        anchors.rightMargin: 30
         opacity: 0.2
         contentItem: Text{
             text: "Clear"
             font.pointSize: 6
         }
-
         onClicked: {
             logListModel.clear()
         }
@@ -154,17 +156,19 @@ Page {
             }
 
             //////////система/////////////
-           Button {
+           RoundButton {
                 id: get_err
                 anchors.top: label_1.bottom
                 anchors.topMargin: 5
                 width: page_settings.width
                 height: parent.height * 0.08
+                radius: 8
                 text: "запрос ошибок"
                 background: Rectangle{
                     property var normalColor: "#c759d4"
                     property var pressedColor: "#5813a1"
                     color: get_err.pressed ? pressedColor : normalColor
+                    radius: 8
                 }
                 onClicked: {
                     getcurtimer.running = false
@@ -174,16 +178,18 @@ Page {
                 }
             }
 
-             Button {
+             RoundButton {
               id: clear_err
               anchors.top: get_err.bottom
               width: page_settings.width
               height: page_settings.height * 0.08
+              radius: 8
               text: "стереть ошибки"
               background: Rectangle{
                   property var normalColor: "#c759d4"
                   property var pressedColor: "#5813a1"
                   color: clear_err.pressed ? pressedColor : normalColor
+                  radius: 8
               }
                onClicked: {
                    getcurtimer.running = false
@@ -193,16 +199,18 @@ Page {
                }
             }
 
-            Button {
+            RoundButton {
               id: reboot
               anchors.top: clear_err.bottom
               width: page_settings.width
               height: page_settings.height * 0.08
+              radius: 8
               text: "перезагрузка шара"
               background: Rectangle{
                   property var normalColor: "#c759d4"
                   property var pressedColor: "#5813a1"
                   color: reboot.pressed ? pressedColor : normalColor
+                  radius: 8
               }
                onClicked: {
                    getcurtimer.running = false
@@ -212,16 +220,18 @@ Page {
                }
             }
 
-           Button {
+           RoundButton {
                 id: get_full_param
                 anchors.top: reboot.bottom
                 width: page_settings.width
                 height: page_settings.height * 0.08
+                radius: 8
                 text: "запрос точки восстановления"
                 background: Rectangle{
                     property var normalColor: "#c759d4"
                     property var pressedColor: "#5813a1"
                     color: get_full_param.pressed ? pressedColor : normalColor
+                    radius: 8
                 }
                 onClicked: {
                     getcurtimer.running = false
@@ -231,16 +241,18 @@ Page {
                 }
             }
 
-          Button {
+          RoundButton {
                 id: set_full_param
                 anchors.top: get_full_param.bottom
                 width: page_settings.width
                 height: page_settings.height * 0.08
+                radius: 8
                 text: "восстановить параметры"
                 background: Rectangle{
                     property var normalColor: "#c759d4"
                     property var pressedColor: "#5813a1"
                     color: set_full_param.pressed ? pressedColor : normalColor
+                    radius: 8
                 }
                 onClicked: {
                     getcurtimer.running = false
@@ -273,6 +285,7 @@ Page {
                   anchors.right: cur_calibr_auto.right
                   anchors.left: cur_calibr_auto.left
                   height: cur_calibr_auto.height * 0.7
+                  radius: 8
                   Text {
                       id: name_cur_calibr_auto
                       anchors.verticalCenter: parent.verticalCenter
@@ -304,6 +317,7 @@ Page {
                 anchors.right: servscalibr.right
                 anchors.left: servscalibr.left
                 height: servscalibr.height * 0.7
+                radius: 8
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -312,17 +326,19 @@ Page {
                 color: servscalibr.pressed ? pressedColor : normalColor
             }
 
-            Button {
+            RoundButton {
                 id: serv_off_but
                 anchors.top: servscalibr.bottom
                 width: page_settings.width * 0.47
                 height: page_settings.height * 0.08
                 anchors.left: page_settings.left
+                radius: 8
                 text: "откл. сервы"
                 background: Rectangle{
                     property var normalColor: "#7387d1"
                     property var pressedColor: "#052bb3"
                     color: serv_off_but.pressed ? pressedColor : normalColor
+                    radius: 8
                 }
                 onClicked: {
                     getcurtimer.running = false
@@ -332,17 +348,19 @@ Page {
                 }
             }
 
-            Button {
+            RoundButton {
                 id: serv_on_but
                 anchors.top: servscalibr.bottom
                 width: page_settings.width * 0.47
                 height: page_settings.height * 0.08
                 anchors.right: parent.right
+                radius: 8
                 text: "вкл. сервы"
                 background: Rectangle{
                     property var normalColor: "#7387d1"
                     property var pressedColor: "#052bb3"
                     color: serv_on_but.pressed ? pressedColor : normalColor
+                    radius: 8
                 }
                 onClicked: {
                     getcurtimer.running = false
@@ -397,12 +415,13 @@ Page {
                 text: "окно корректировки 'домашних' углов конечностей"
             }
 
-            Button {
+            RoundButton {
                 id: get_foot_param
                 anchors.top: label_2.bottom
                 anchors.left: page_setting_foot.left
                 width: page_setting_foot.width * 0.5
                 height: page_setting_foot.height * 0.075
+                radius: 8
                 text: "Прочитать парам."
                 visible: false
 
@@ -414,18 +433,20 @@ Page {
                 }
             }
 
-            Button {
+            RoundButton {
                 id: set_foot_param
                 anchors.top: label_2.bottom
                 width: page_setting_foot.width * 0.5
                 anchors.right: parent.right
                 height: page_setting_foot.height * 0.08
+                radius: 8
                 text: "Сохранить парам."
                 visible: false
                 background: Rectangle{
                     property var normalColor: "orange"
                     property var pressedColor: "green"
                     color: set_foot_param.pressed ? pressedColor : normalColor
+                    radius: 8
                 }
 
                 onClicked: {
@@ -616,6 +637,7 @@ Page {
                    property var normalColor: "#12c98c"
                    property var pressedColor: "#0c7854"
                    color: left_left_coxa.pressed ? pressedColor : normalColor
+                   radius: 8
                }
                text: "<<"
                onClicked: {
@@ -643,6 +665,7 @@ Page {
                    property var normalColor: "#12c98c"
                    property var pressedColor: "#0c7854"
                    color: left_coxa.pressed ? pressedColor : normalColor
+                   radius: 8
                }
                text: "<"
                onClicked: {
@@ -669,6 +692,7 @@ Page {
                    property var normalColor: "#12c98c"
                    property var pressedColor: "#0c7854"
                    color: right_right_coxa.pressed ? pressedColor : normalColor
+                   radius: 8
                }
                text: ">>"
                onClicked: {
@@ -696,6 +720,7 @@ Page {
                    property var normalColor: "#12c98c"
                    property var pressedColor: "#0c7854"
                    color: right_coxa.pressed ? pressedColor : normalColor
+                   radius: 8
                }
                text: ">"
                onClicked: {
@@ -768,6 +793,7 @@ Page {
                    property var normalColor: "#a0cf13"
                    property var pressedColor: "#70910a"
                    color: left_left_femur.pressed ? pressedColor : normalColor
+                   radius: 8
                }
                text: "<<"
                onClicked: {
@@ -795,6 +821,7 @@ Page {
                    property var normalColor: "#a0cf13"
                    property var pressedColor: "#70910a"
                    color: left_femur.pressed ? pressedColor : normalColor
+                   radius: 8
                }
                text: "<"
                onClicked: {
@@ -821,6 +848,7 @@ Page {
                    property var normalColor: "#a0cf13"
                    property var pressedColor: "#70910a"
                    color: right_right_femur.pressed ? pressedColor : normalColor
+                   radius: 8
                }
                text: ">>"
                onClicked: {
@@ -848,6 +876,7 @@ Page {
                    property var normalColor: "#a0cf13"
                    property var pressedColor: "#70910a"
                    color: right_femur.pressed ? pressedColor : normalColor
+                   radius: 8
                }
                text: ">"
                onClicked: {
@@ -917,6 +946,7 @@ Page {
                    property var normalColor: "#11a9d4"
                    property var pressedColor: "#0c6f8a"
                    color: left_left_tiba.pressed ? pressedColor : normalColor
+                   radius: 8
                }
                text: "<<"
                onClicked: {
@@ -944,6 +974,7 @@ Page {
                    property var normalColor: "#11a9d4"
                    property var pressedColor: "#0c6f8a"
                    color: left_tiba.pressed ? pressedColor : normalColor
+                   radius: 8
                }
                text: "<"
                onClicked: {
@@ -970,6 +1001,7 @@ Page {
                    property var normalColor: "#11a9d4"
                    property var pressedColor: "#0c6f8a"
                    color: right_right_tiba.pressed ? pressedColor : normalColor
+                   radius: 8
                }
                text: ">>"
                onClicked: {
@@ -997,6 +1029,7 @@ Page {
                    property var normalColor: "#11a9d4"
                    property var pressedColor: "#0c6f8a"
                    color: right_tiba.pressed ? pressedColor : normalColor
+                   radius: 8
                }
                text: ">"
                onClicked: {
@@ -1065,6 +1098,7 @@ Page {
                    property var normalColor: "#7387d1"
                    property var pressedColor: "#052bb3"
                    color: calibr_foot.pressed ? pressedColor : normalColor
+                   radius: 8
                }
                onClicked: {
                     tx_commands.calibrServsFoot(butClick);
@@ -1082,6 +1116,7 @@ Page {
                    property var normalColor: "#e31041"
                    property var pressedColor: "#f026dc"
                    color: reset_foot_param.pressed ? pressedColor : normalColor
+                   radius: 8
                }
 
                onClicked: {
@@ -1092,16 +1127,201 @@ Page {
                }
            }
        }
+       // настройка PCA
+       Item{
+           id: pca_Speed
+           Column {
+               id: notifColumn
+               spacing: 8
+               width: parent.width * 0.9
+               anchors.centerIn: parent
 
+               Row {
+                   spacing: 18
+                   anchors.horizontalCenter: parent.horizontalCenter
+
+                   RoundButton {
+                       text: "Прочитать настройки"
+                       background: Rectangle{
+                           property var normalColor: "#1fc2b2"
+                           property var pressedColor: "#17d47f"
+                           color: parent.pressed ? pressedColor : normalColor
+                           radius: 8
+                       }
+                       onClicked: {
+                       }
+                   }
+                   Button {
+                       text: "Сохранить настройки"
+                       background: Rectangle{
+                           property var normalColor: "#1fc2b2"
+                           property var pressedColor: "#17d47f"
+                           color: parent.pressed ? pressedColor : normalColor
+                           radius: 8
+                       }
+                       onClicked: {
+                       }
+                   }
+               }
+
+               Label {
+                   width: parent.width
+                   text: "Настройка частоты PCA"
+                   horizontalAlignment: Qt.AlignHCenter
+                   font.bold: true
+                   color: "black"
+               }
+
+               Row {
+                   id: row1
+                   spacing: 18
+                   anchors.horizontalCenter: parent.horizontalCenter
+                   Button {
+                       text: "-"
+                       background: Rectangle{
+                           property var normalColor: "#1fc2b2"
+                           property var pressedColor: "#17d47f"
+                           color: parent.pressed ? pressedColor : normalColor
+                           radius: 8
+                       }
+                       onClicked: {
+                           if(settParam.freqPCA_1 !== 0)
+                               settParam.freqPCA_1--;
+                       }
+                   }
+                   Label {
+                       anchors.verticalCenter: row1.verticalCenter
+                       text: "Частота PCA 1  " + "' " + settParam.freqPCA_1 + " '"
+                       font.bold: true
+                       color: "black"
+                   }
+                   Button {
+                       text: "+"
+                       background: Rectangle{
+                           property var normalColor: "#1fc2b2"
+                           property var pressedColor: "#17d47f"
+                           color: parent.pressed ? pressedColor : normalColor
+                           radius: 8
+                       }
+                       onClicked: {
+                           if(settParam.freqPCA_1 < 50)
+                               settParam.freqPCA_1++;
+                       }
+                   }
+               }
+               Row {
+                   id: row2
+                   spacing: 18
+                   anchors.horizontalCenter: parent.horizontalCenter
+                   Button {
+                       background: Rectangle{
+                           property var normalColor: "#1fc2b2"
+                           property var pressedColor: "#17d47f"
+                           color: parent.pressed ? pressedColor : normalColor
+                           radius: 8
+                       }
+                       text: "-"
+                       onClicked: {
+                           if(settParam.freqPCA_2 !== 0)
+                               settParam.freqPCA_2--;
+                       }
+                   }
+                   Label {
+                       anchors.verticalCenter: row2.verticalCenter
+                       text: "Частота PCA 2  " + "' " + settParam.freqPCA_2 + " '"
+                       font.bold: true
+                       color: "black"
+                   }
+                   Button {
+                       background: Rectangle{
+                           property var normalColor: "#1fc2b2"
+                           property var pressedColor: "#17d47f"
+                           color: parent.pressed ? pressedColor : normalColor
+                           radius: 8
+                       }
+                       text: "+"
+                       onClicked: {
+                           onClicked: {
+                               if(settParam.freqPCA_2 < 50)
+                                   settParam.freqPCA_2++;
+                           }
+                       }
+                   }
+               }
+               Row {
+                   id: row3
+                   spacing: 18
+                   anchors.horizontalCenter: parent.horizontalCenter
+                   Button {
+                       background: Rectangle{
+                           property var normalColor: "#1fc2b2"
+                           property var pressedColor: "#17d47f"
+                           color: parent.pressed ? pressedColor : normalColor
+                           radius: 8
+                       }
+                       text: "-"
+                       onClicked: {
+                           if(settParam.speed_servs !== 0)
+                               settParam.speed_servs--;
+                       }
+                   }
+                   Label {
+                       anchors.verticalCenter: row3.verticalCenter
+                       text: "Скорость сервоприводов  " + "' " + settParam.speed_servs + " '"
+                       font.bold: true
+                       color: "black"
+                   }
+                   Button {
+                       background: Rectangle{
+                           property var normalColor: "#1fc2b2"
+                           property var pressedColor: "#17d47f"
+                           color: parent.pressed ? pressedColor : normalColor
+                           radius: 8
+                       }
+                       text: "+"
+                       onClicked: {
+                           if(settParam.speed_servs < 50)
+                               settParam.speed_servs++;
+                       }
+                   }
+               }
+               Row {
+                   spacing: 18
+                   anchors.horizontalCenter: parent.horizontalCenter
+                   Button {
+                       background: Rectangle{
+                           property var normalColor: "#1fc2b2"
+                           property var pressedColor: "#17d47f"
+                           color: parent.pressed ? pressedColor : normalColor
+                           radius: 8
+                       }
+                       text: "Центр. полож. сервоприводов"
+                       onClicked: {
+                       }
+                   }
+                   Button {
+                       background: Rectangle{
+                           property var normalColor: "#1fc2b2"
+                           property var pressedColor: "#17d47f"
+                           color: parent.pressed ? pressedColor : normalColor
+                           radius: 8
+                       }
+                       text: "Проверка скорости"
+                       onClicked: {
+                       }
+                   }
+               }
+           }
+       }
     }
     PageIndicator {
         id: pageIndicator
         interactive: true
         count: swipeView.count
         currentIndex: swipeView.currentIndex
-        anchors.bottom: swipeView.bottom
+        anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottomMargin: parent.height * 0.12
+        anchors.bottomMargin: parent.height * 0.05
     }
 }
 

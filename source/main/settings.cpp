@@ -158,6 +158,45 @@ Settings::setctrl(bool newctrl)
 }
 
 void
+Settings::setFreqPCA_1(int newFreq)
+{
+    freqPCA_1 = newFreq;
+    emit change_freqPCA_1();
+}
+
+int
+Settings::getFreqPCA_1() const
+{
+    return freqPCA_1;
+}
+
+void
+Settings::setFreqPCA_2(int newFreq)
+{
+    freqPCA_2 = newFreq;
+    emit change_freqPCA_2();
+}
+
+int
+Settings::getFreqPCA_2() const
+{
+    return freqPCA_2;
+}
+
+void
+Settings::setSpeed_servs(int newSpeed)
+{
+    speed_servs = newSpeed;
+    emit change_speed_servs();
+}
+
+int
+Settings::getSpeed_servs() const
+{
+    return speed_servs;
+}
+
+void
 Settings::setIdDevice(int id, bool refresh)
 {
     if((idDevice == id) && (!refresh))  return;

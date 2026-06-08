@@ -131,17 +131,19 @@ Dialog {
     }
 
 
-    Button {
+    RoundButton {
         id: yes
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         height: parent.height * 0.25
         width: parent.width * 0.4
+        radius: 8
         text: "Да"
         background: Rectangle{
             property var normalColor: "#07e67a"
             property var pressedColor: "#0b6b3d"
             color: yes.pressed ? pressedColor : normalColor
+            radius: 8
         }
 
         Component.onCompleted: { commun_display.onBut_Yes_On.connect(onBut_Yes_On) }
@@ -153,35 +155,39 @@ Dialog {
         }
     }
 
-    Button {
+    RoundButton {
         id: ok
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         height: parent.height * 0.25
         width: parent.width * 0.4
         visible: false
+        radius: 8
         text: "Да"
         background: Rectangle{
             property var normalColor: "#07e67a"
             property var pressedColor: "#0b6b3d"
             color: ok.pressed ? pressedColor : normalColor
+            radius: 8
         }
         Component.onCompleted: { commun_display.onBut_Ok_On.connect(onBut_Ok_On) }
         function onBut_Ok_On(){ ok.visible = true }
         onClicked: { updateApp.install() }
     }
 
-    Button {
+    RoundButton {
         id: no
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         height: parent.height * 0.25
         width: parent.width * 0.4
+        radius: 8
         text: "Отмена"
         background: Rectangle{
             property var normalColor: "#ad4d1d"
             property var pressedColor: "#ff084e"
             color: no.pressed ? pressedColor : normalColor
+            radius: 8
         }
 
         onClicked: {

@@ -154,13 +154,14 @@ Dialog {
             }
         }
 
-        Button {
+        RoundButton  {
             id: searchButton
             anchors.left: footerContainer.left
             anchors.right: footerContainer.right
             anchors.bottom: footerContainer.bottom
             anchors.margins: 5
             highlighted: true
+            radius: 8
             text: "Начать поиск"
 
             onClicked: {

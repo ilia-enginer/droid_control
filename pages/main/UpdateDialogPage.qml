@@ -62,17 +62,19 @@ Dialog {
         }
 
 
-        Button {
+        RoundButton {
             id: coppy
             anchors.horizontalCenter: parent.horizontalCenter
             height: parent.height * 0.12
             width: parent.width * 0.9
+            radius: 8
             text: "Копировать ссылку"
             background: Rectangle{
                 id: color_
                 property var normalColor: "#9dcf0a"
                 property var pressedColor: "#cfc10a"
                 color: coppy.pressed ? pressedColor : normalColor
+                radius: 8
             }
             onClicked: {
                 inputLink.selectAll(); // выделить весь текст
@@ -81,17 +83,19 @@ Dialog {
                 color_.normalColor = "#5e560d"
             }
         }
-        Button {
+        RoundButton {
             id: butLoadUpdateApp
             anchors.horizontalCenter: parent.horizontalCenter
             height: parent.height * 0.12
             width: parent.width * 0.9
             visible: mainModel.adminFlag
+            radius: 8
             text: "Загрузить обновление"
             background: Rectangle{
                 property var normalColor: "#9dcf0a"
                 property var pressedColor: "#cfc10a"
                 color: butLoadUpdateApp.pressed ? pressedColor : normalColor
+                radius: 8
             }
             onClicked: { updateAppWindow.open() }
         }
