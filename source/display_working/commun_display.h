@@ -98,6 +98,9 @@ public:
     double get_TotalBytes() const;
     double get_BytesRead() const;
 
+    int pca1_pca2_speed_Ch(qint8 freqPca1, qint8 freqPca2, qint8 speedServo);
+
+
 signals:
     void logT(QString type, QString msg);
     void logServis(QString type, QString msg);
@@ -142,6 +145,8 @@ signals:
 
     void totalBytesChanged();
     void bytesReadChanged();
+
+    void pca1_pca2_speed_Changed(qint8 freqPca1, qint8 freqPca2, qint8 speedServo);
 
 private:
     QString getTime();

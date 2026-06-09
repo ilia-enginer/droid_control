@@ -26,6 +26,7 @@ public slots:
     void setVReal(bool V);      //флаг запроса - не отображать сообщений после прихода напряжения
     void setCurReal(bool Cur);  //флаг запроса - не отображать сообщений после прихода тока
 
+
 private:
     Commun_display * _commun_display = nullptr;
     UpdateHex *_updatehex = nullptr;
@@ -69,7 +70,12 @@ private:
     void readAllParams(QByteArray Params); //запросить все параметры(точка восстановления) 0xA7
     void writeAllParams();                //отправить все параметры(точка восстановления)    0xA8
     void getParamsChart(QByteArray Params); //получение параметров для графика 0xA9
-    void setBrightness();                //подтверждение установленной яркости светодиодной ленты
+    void setBrightness();                //подтверждение установленной яркости светодиодной ленты 0xAA
+    void getSettingsServs(QByteArray Params); // прочитать настройки частоты ПЦА и скорости серв 0xAB
+    void setSettingsServo();                // записать настройки частоты ПЦА и скорости серв без сохранения во флеш 0xAC
+    void saveFlashSettings();                // сохранить все настройки во флеш 0xAD
+    void setMidPwmServs();                   // задать средний импульс для серв (1500 мкс) 0xAE
+    void checkSpeedServs();                  // проверка скорости серв 0xAF
     void fullReset();                    //сброс до заводских нистроек                       0xE0
     void writeMinAngleServo();          //запись мин угла сервы во флеш, остальные углы рассчитываются     0xE1
     void writeSettingLeds();             //запись установок для светодиодов      0xE2

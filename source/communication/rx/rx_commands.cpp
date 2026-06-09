@@ -151,6 +151,21 @@ Rx_commands::searchCommand(QByteArray dat)
     case 0xAA:
         setBrightness();
         break;
+    case 0xAB:
+        getSettingsServs(Data);
+        break;
+    case 0xAC:
+        setSettingsServo();
+        break;
+    case 0xAD:
+        saveFlashSettings();
+        break;
+    case 0xAE:
+        setMidPwmServs();
+        break;
+    case 0xAF:
+        checkSpeedServs();
+        break;
     case 0xE0:
         fullReset();
         break;
@@ -708,7 +723,59 @@ Rx_commands::getParamsChart(QByteArray Params)
 void
 Rx_commands::setBrightness()
 {
+    _commun_display->log_out_J("<- яркость oled изменена", " ");
     _commun_display->log_out_S("<- яркость oled изменена", " ");
+}
+
+// прочитать настройки частоты ПЦА и скорости серв 0xAB
+void
+Rx_commands::getSettingsServs(QByteArray Params)
+{
+    qint8 freqPca1 = Params[0];
+    qint8 freqPca2 = Params[1];
+    qint8 speedServo = Params[2];
+    QString s;
+    s = tr("драйвер 1 ' %1 ' драйвер 2 ' %2 ' скорость ' %3 ' ")
+            .arg(freqPca1)
+            .arg(freqPca2)
+            .arg(speedServo);
+
+    _commun_display->log_out_J("<- ", s);
+    _commun_display->log_out_S("<- ", s);
+
+    _commun_display->pca1_pca2_speed_Ch(freqPca1, freqPca2, speedServo);
+}
+
+// записать настройки частоты ПЦА и скорости серв без сохранения во флеш 0xAC
+void
+Rx_commands::setSettingsServo()
+{
+    _commun_display->log_out_J("<- настройки записаны", " ");
+    _commun_display->log_out_S("<- настройки записаны", " ");
+}
+
+// сохранить все настройки во флеш 0xAD
+void
+Rx_commands::saveFlashSettings()
+{
+    _commun_display->log_out_J("<- настройки записаны в память", " ");
+    _commun_display->log_out_S("<- настройки записаны в память", " ");
+}
+
+// задать средний импульс для серв (1500 мкс) 0xAE
+void
+Rx_commands::setMidPwmServs()
+{
+    _commun_display->log_out_J("<- задан импульс 1500 мкс", " ");
+    _commun_display->log_out_S("<- задан импульс 1500 мкс", " ");
+}
+
+// проверка скорости серв 0xAF
+void
+Rx_commands::checkSpeedServs()
+{
+    _commun_display->log_out_J("<- началась проверка скорости серв", " ");
+    _commun_display->log_out_S("<- началась проверка скорости серв", " ");
 }
 
 //сброс до заводских нистроек                       0xE0

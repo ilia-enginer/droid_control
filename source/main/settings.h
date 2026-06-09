@@ -37,9 +37,7 @@ public:
     Q_PROPERTY(int tibaAngl READ gettibaAngl WRITE settibaAngl NOTIFY tibaAnglChanged)
     Q_PROPERTY(bool ctrl_ READ getctrl WRITE setctrl NOTIFY ctrlChanged)
     Q_PROPERTY(bool loging READ getLoging WRITE setLoging NOTIFY logingChanged) 
-    Q_PROPERTY(int freqPCA_1 READ getFreqPCA_1 WRITE setFreqPCA_1 NOTIFY change_freqPCA_1)
-    Q_PROPERTY(int freqPCA_2 READ getFreqPCA_2 WRITE setFreqPCA_2 NOTIFY change_freqPCA_2)
-    Q_PROPERTY(int speed_servs READ getSpeed_servs WRITE setSpeed_servs NOTIFY change_speed_servs)
+
 
     explicit Settings(QObject *parent = nullptr);
     ~Settings(); 
@@ -80,15 +78,6 @@ public:
     bool getctrl() const;
     void setctrl(bool newctrl);
 
-    void setFreqPCA_1(int newFreq);
-    int getFreqPCA_1() const;
-
-    void setFreqPCA_2(int newFreq);
-    int getFreqPCA_2() const;
-
-    void setSpeed_servs(int newSpeed);
-    int getSpeed_servs() const;
-
 
 public slots:
     bool getLoging();
@@ -118,9 +107,6 @@ Q_SIGNALS:
     void clearDevice();
     void deviceShar();
 
-    void change_freqPCA_1();
-    void change_freqPCA_2();
-    void change_speed_servs();
 
 private:
     Commun_display * _commun_display = nullptr;
@@ -133,16 +119,12 @@ private:
     float Vmin = 9.0;
     float Vmax = 12.4;
 
+    /// потом убрать, сделать на сигналах ///
     int coxaAngl = 0;
     int femurAngl = 0;
     int tibaAngl = 0;
-
-    int freqPCA_1 = 50;             // частота работы драйвера
-    int freqPCA_2 = 50;
-    int speed_servs = 10;           // скорость работы серв
-
-
     bool ctrl_ = false;              // режим стабилизации
+    ///         ///
 
     bool loging = false;             //флаг логирования
 

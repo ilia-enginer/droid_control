@@ -38,6 +38,10 @@ Page {
     property int tibaL : 0
     property int tibaH : 0
 
+    property int pca1 : 0
+    property int pca2 : 0
+    property int speedServs : 0
+
     Label {
         id: senderPageLabel
         anchors.top: parent.top
@@ -1130,6 +1134,16 @@ Page {
        // настройка PCA
        Item{
            id: pca_Speed
+
+           Component.onCompleted: {
+               commun_display.onPca1_pca2_speed_Changed.connect(settingsChanged)
+           }
+           function settingsChanged(freqPca1, freqPca2, speed){
+               pca1 = freqPca1;
+               pca2 = freqPca2;
+               speedServs = speed;
+           }
+
            Column {
                id: notifColumn
                spacing: 8
@@ -1149,6 +1163,8 @@ Page {
                            radius: 8
                        }
                        onClicked: {
+                           tx_commands.getSettingsServs();
+                           listView1.positionViewAtEnd();
                        }
                    }
                    Button {
@@ -1160,6 +1176,8 @@ Page {
                            radius: 8
                        }
                        onClicked: {
+                           tx_commands.saveFlashSettings();
+                           listView1.positionViewAtEnd();
                        }
                    }
                }
@@ -1185,13 +1203,15 @@ Page {
                            radius: 8
                        }
                        onClicked: {
-                           if(settParam.freqPCA_1 !== 0)
-                               settParam.freqPCA_1--;
+                           if(pca1 !== 24)
+                               pca1--;
+                           tx_commands.setSettingsServo(pca1, pca2, speedServs);
+                           listView1.positionViewAtEnd();
                        }
                    }
                    Label {
                        anchors.verticalCenter: row1.verticalCenter
-                       text: "Частота PCA 1  " + "' " + settParam.freqPCA_1 + " '"
+                       text: "Частота PCA 1  " + "' " + pca1 + " '"
                        font.bold: true
                        color: "black"
                    }
@@ -1204,8 +1224,10 @@ Page {
                            radius: 8
                        }
                        onClicked: {
-                           if(settParam.freqPCA_1 < 50)
-                               settParam.freqPCA_1++;
+                           if(pca1 < 150)
+                               pca1++;
+                           tx_commands.setSettingsServo(pca1, pca2, speedServs);
+                           listView1.positionViewAtEnd();
                        }
                    }
                }
@@ -1222,13 +1244,15 @@ Page {
                        }
                        text: "-"
                        onClicked: {
-                           if(settParam.freqPCA_2 !== 0)
-                               settParam.freqPCA_2--;
+                           if(pca2 !== 24)
+                               pca2--;
+                           tx_commands.setSettingsServo(pca1, pca2, speedServs);
+                           listView1.positionViewAtEnd();
                        }
                    }
                    Label {
                        anchors.verticalCenter: row2.verticalCenter
-                       text: "Частота PCA 2  " + "' " + settParam.freqPCA_2 + " '"
+                       text: "Частота PCA 2  " + "' " + pca2 + " '"
                        font.bold: true
                        color: "black"
                    }
@@ -1242,8 +1266,10 @@ Page {
                        text: "+"
                        onClicked: {
                            onClicked: {
-                               if(settParam.freqPCA_2 < 50)
-                                   settParam.freqPCA_2++;
+                               if(pca2 < 150)
+                                   pca2++;
+                               tx_commands.setSettingsServo(pca1, pca2, speedServs);
+                               listView1.positionViewAtEnd();
                            }
                        }
                    }
@@ -1261,13 +1287,15 @@ Page {
                        }
                        text: "-"
                        onClicked: {
-                           if(settParam.speed_servs !== 0)
-                               settParam.speed_servs--;
+                           if(speedServs !== 0)
+                               speedServs--;
+                           tx_commands.setSettingsServo(pca1, pca2, speedServs);
+                           listView1.positionViewAtEnd();
                        }
                    }
                    Label {
                        anchors.verticalCenter: row3.verticalCenter
-                       text: "Скорость сервоприводов  " + "' " + settParam.speed_servs + " '"
+                       text: "Скорость сервоприводов  " + "' " + speedServs + " '"
                        font.bold: true
                        color: "black"
                    }
@@ -1280,8 +1308,10 @@ Page {
                        }
                        text: "+"
                        onClicked: {
-                           if(settParam.speed_servs < 50)
-                               settParam.speed_servs++;
+                           if(speedServs < 70)
+                               speedServs++;
+                           tx_commands.setSettingsServo(pca1, pca2, speedServs);
+                           listView1.positionViewAtEnd();
                        }
                    }
                }
@@ -1297,6 +1327,8 @@ Page {
                        }
                        text: "Центр. полож. сервоприводов"
                        onClicked: {
+                           tx_commands.setMidPwmServs();
+                           listView1.positionViewAtEnd();
                        }
                    }
                    Button {
@@ -1308,12 +1340,15 @@ Page {
                        }
                        text: "Проверка скорости"
                        onClicked: {
+                           tx_commands.checkSpeedServs();
+                           listView1.positionViewAtEnd();
                        }
                    }
                }
            }
        }
     }
+
     PageIndicator {
         id: pageIndicator
         interactive: true

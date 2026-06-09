@@ -165,6 +165,7 @@ Page {
                                 serv_off_but.visible             = false
                                 numFootCalibr.visible           = false
                                 numFootCalibrBut.visible        = false
+                                saveParametrs.visible           = false
 
                                 //ток
                                 get_cur.visible                 = false
@@ -230,6 +231,7 @@ Page {
                                 serv_off_but.visible             = false
                                 numFootCalibr.visible           = false
                                 numFootCalibrBut.visible        = false
+                                saveParametrs.visible           = false
 
                                 //ток
                                 get_cur.visible                 = false
@@ -295,6 +297,7 @@ Page {
                                 serv_off_but.visible             = true
                                 numFootCalibr.visible           = true
                                 numFootCalibrBut.visible        = true
+                                saveParametrs.visible           = true
 
                                 //ток
                                 get_cur.visible                 = false
@@ -360,6 +363,7 @@ Page {
                                 serv_off_but.visible             = false
                                 numFootCalibr.visible           = false
                                 numFootCalibrBut.visible        = false
+                                saveParametrs.visible           = false
 
                                 //ток
                                 get_cur.visible                 = true
@@ -425,6 +429,7 @@ Page {
                                 serv_off_but.visible             = false
                                 numFootCalibr.visible           = false
                                 numFootCalibrBut.visible        = false
+                                saveParametrs.visible           = false
 
                                 //ток
                                 get_cur.visible                 = false
@@ -490,6 +495,7 @@ Page {
                                 serv_off_but.visible            = false
                                 numFootCalibr.visible           = false
                                 numFootCalibrBut.visible        = false
+                                saveParametrs.visible           = false
 
                                 //ток
                                 get_cur.visible                 = false
@@ -555,6 +561,7 @@ Page {
                                 serv_off_but.visible            = false
                                 numFootCalibr.visible           = false
                                 numFootCalibrBut.visible        = false
+                                saveParametrs.visible           = false
 
                                 //ток
                                 get_cur.visible                 = false
@@ -1023,6 +1030,23 @@ Page {
                     }
                     onClicked: {
                         tx_commands.calibrServsFoot(numFootCalibr.text);
+                        listView1.positionViewAtEnd();
+                    }
+                }
+                Button {
+                    id: saveParametrs
+                    anchors.top: numFootCalibr.bottom
+                    width: parent.width
+                    height: parent.height * 0.075
+                    text: "Сохранить настройки"
+                    background: Rectangle{
+                        property var normalColor: "#7387d1"
+                        property var pressedColor: "#052bb3"
+                        color: parent.pressed ? pressedColor : normalColor
+                        radius: 8
+                    }
+                    onClicked: {
+                        tx_commands.saveFlashSettings();
                         listView1.positionViewAtEnd();
                     }
                 }

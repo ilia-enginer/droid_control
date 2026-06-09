@@ -305,6 +305,113 @@ Tx_commands::setBrightness(QString msg)
     return res;
 }
 
+// прочитать настройки частоты ПЦА и скорости серв 0xAB
+int
+Tx_commands::getSettingsServs()
+{
+    QByteArray data;
+    int res = -1;
+    QString s;
+    quint8 comand = 0xAB;
+
+    s = "чтение настроек частоты драйверов и скорости серв ";
+
+    //вписывание команды
+    data.prepend(comand);
+
+    //отправка команды, вывод лога
+    res = Sending(data, s);
+
+    return res;
+}
+
+// записать настройки частоты ПЦА и скорости серв без сохранения во флеш 0xAC
+int
+Tx_commands::setSettingsServo(qint8 freq_pca1, qint8 freq_pca2, qint8 speedServs)
+{
+    QByteArray data;
+    int res = -1;
+    QString s;
+    quint8 comand = 0xAC;
+
+    s = tr("запись: драйвер 1 ' %1 ' драйвер 2 ' %2 ' скорость ' %3 ' ")
+            .arg(freq_pca1)
+            .arg(freq_pca2)
+            .arg(speedServs);
+
+    data.prepend(speedServs);
+    data.prepend(freq_pca2);
+    data.prepend(freq_pca1);
+
+    //вписывание команды
+    data.prepend(comand);
+
+    //отправка команды, вывод лога
+    res = Sending(data, s);
+
+    return res;
+}
+
+// сохранить все настройки во флеш 0xAD
+int
+Tx_commands::saveFlashSettings()
+{
+    QByteArray data;
+    int res = -1;
+    QString s;
+    quint8 comand = 0xAD;
+
+    s = "сохранение настроек в память ";
+
+    //вписывание команды
+    data.prepend(comand);
+
+    //отправка команды, вывод лога
+    res = Sending(data, s);
+
+    return res;
+}
+
+// задать средний импульс для серв (1500 мкс) 0xAE
+int
+Tx_commands::setMidPwmServs()
+{
+    QByteArray data;
+    int res = -1;
+    QString s;
+    quint8 comand = 0xAE;
+
+    s = "команда на средний импульс серв (1500 мкс) ";
+
+    //вписывание команды
+    data.prepend(comand);
+
+    //отправка команды, вывод лога
+    res = Sending(data, s);
+
+    return res;
+}
+
+// проверка скорости серв 0xAF
+int
+Tx_commands::checkSpeedServs()
+{
+    QByteArray data;
+    int res = -1;
+    QString s;
+    quint8 comand = 0xAF;
+
+    s = "команда проверки скорости серв ";
+
+    //вписывание команды
+    data.prepend(comand);
+
+    //отправка команды, вывод лога
+    res = Sending(data, s);
+
+    return res;
+}
+
 //сброс до заводских нистроек 0xE0
 int
 Tx_commands::fullReset()

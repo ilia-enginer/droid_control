@@ -32,7 +32,12 @@ public slots:
     int on_offServo(QString msg);       //вкл/выкл сервы                    0xA6
     int readAllParams();                //запросить все параметры(точка восстановления) 0xA7
     int writeAllParams();                //отправить все параметры(точка восстановления)    0xA8
-    int setBrightness(QString msg);      //установить яркость светодиодной ленты
+    int setBrightness(QString msg);      //установить яркость светодиодной ленты            0xAA
+    int getSettingsServs();             // прочитать настройки частоты ПЦА и скорости серв 0xAB
+    int setSettingsServo(qint8 freq_pca1, qint8 freq_pca2, qint8 speedServs);  // записать настройки частоты ПЦА и скорости серв без сохранения во флеш 0xAC
+    int saveFlashSettings();            // сохранить все настройки во флеш 0xAD
+    int setMidPwmServs();               // задать средний импульс для серв (1500 мкс) 0xAE
+    int checkSpeedServs();              // проверка скорости серв 0xAF
     int fullReset();                    //сброс до заводских настроек                       0xE0
     int writeMinAngleServo(QString msg);//запись мин угла сервы во флеш, остальные углы рассчитываются     0xE1
     int writeSettingLeds(QString msg);  //запись установок для светодиодов      0xE2

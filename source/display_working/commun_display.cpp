@@ -285,6 +285,17 @@ Commun_display::get_BytesRead() const
     return BytesRead;
 }
 
+int
+Commun_display::pca1_pca2_speed_Ch(qint8 freqPca1, qint8 freqPca2, qint8 speedServo)
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit pca1_pca2_speed_Changed(freqPca1, freqPca2, speedServo);
+        return 0;
+    }
+    return -1;
+}
+
 QString
 Commun_display::getTime()
 {
