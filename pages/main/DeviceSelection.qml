@@ -36,8 +36,9 @@ Dialog {
                 id: styleBox
                 Layout.fillWidth: true
                 model: ListModel {
-                    ListElement { name: "..."}//" title: "Джойстик"; source: "qrc:/pages/shar/joystick/Joystick.qml" }
-                    ListElement { name: "Шар"}//" title: "Джойстик"; source: "qrc:/pages/shar/joystick/Joystick.qml" }
+                    ListElement { name: "..."}
+                    ListElement { name: "Шар"}
+                    ListElement { name: "Пульт РУ"}
                 }
             }
         }

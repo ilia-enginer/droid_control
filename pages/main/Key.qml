@@ -180,10 +180,4 @@ Page {
         onPressed: { addNumber("9") }
         onPressAndHold: { checkKey() }
     }
-
-
-    DeviceSelection{
-        id: deviceSelectionDialog
-        visible: false
-    }
 }

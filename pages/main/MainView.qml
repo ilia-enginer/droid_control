@@ -28,6 +28,15 @@ Page{
         font.pixelSize: 16
     }
 
+    // выбор устройства
+    Button {
+        visible: Qt.platform.os === "windows"
+        text: "выбор устройства"
+        onClicked: {
+            deviceSelectionDialog.open();
+        }
+    }
+
   //─── COM - port ─────────────────────────────────────────
     Rectangle {
         visible: Qt.platform.os === "windows"

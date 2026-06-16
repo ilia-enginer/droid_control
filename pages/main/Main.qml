@@ -53,11 +53,12 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import Qt.labs.settings
 import QtQuick.Controls.Material
+import QtQuick.Window
 
 import "." as App
 
-import "../shar/joystick"
 import "../shar"
+import "../pylt"
 
 
 ApplicationWindow {
@@ -66,11 +67,16 @@ ApplicationWindow {
     height: 520
     visible: true
     title: qsTr("Droid Stick v.%1").arg(appversion.version_app)
+//    contentOrientation: Qt.LandscapeOrientation
 
     required property var builtInStyles
+    property int active_device : 0      // для какого устройства сейчас развернута программа
 
-    //запуск механизма проверки обновлений
-    Component.onCompleted: { updateApp.checkForUpdates() }
+
+    Component.onCompleted: {
+        //запуск механизма проверки обновлений
+        updateApp.checkForUpdates()
+    }
 
     Shortcut {
         sequences: ["Esc", "Back"]
@@ -122,7 +128,7 @@ ApplicationWindow {
     }
 
     header: App.ToolBar {
-        RowLayout {
+       RowLayout {
             spacing: 20
             anchors.fill: parent
 
@@ -150,9 +156,7 @@ ApplicationWindow {
 
                     Action {
                         text: "Поиск устройств"
-                        onTriggered: {
-                                devicesDialog.open()
-                        }
+                        onTriggered: devicesDialog.open()
                     }
                     Action {
                         text: "Настройки"
@@ -189,47 +193,20 @@ ApplicationWindow {
 
                 onClicked: {
                     listView.currentIndex = index
-                  //  stackView.push(model.source)
-
-                    //пока не придумал как лучше хранить состояние страницы
                     loadPage(index)
                     drawer.close()
                 }
              }
-
             model: ListModel {
-                //сохранил для отладки
-//                ListElement { title: "Джойстик"; source: "qrc:/pages/shar/joystick/Joystick.qml" }
-//                ListElement { title: "Окно настроек\nи калибровок";  source: "qrc:/pages/shar/SettingFootPage.qml" }
-//                ListElement { title: "Обновление прошивки"; source: "qrc:/pages/shar/Firmware_update.qml" }
-//                ListElement { title: "Справка"; source: "qrc:/pages/shar/Information.qml" }
             }
-
             Component.onCompleted: {
                 settParam.clearDevice.connect(clearDev)
-                settParam.deviceShar.connect(devShar)
             }
             function clearDev(){
                 navigateBackAction.enabled = false;
                 stackView.pop();
                 listView.model.clear();
                 listView.currentIndex = -1;
-            }
-            function devShar(){
-                stackView.pop();
-                listView.model.clear();
-                navigateBackAction.enabled = true;
-                listView.currentIndex = -1;
-
-                listView.model.append({ title: "Джойстик", source: "qrc:/pages/shar/joystick/Joystick.qml" })
-                listView.model.append({ title: "Окно настроек\nи калибровок", source: "qrc:/pages/shar/SettingFootPage.qml" })
-                listView.model.append({ title: "Обновление прошивки", source: "qrc:/pages/shar/Firmware_update.qml" })
-                listView.model.append({ title: "Справка", source: "qrc:/pages/shar/Information.qml" })
-                if (mainModel.adminFlag === true){
-                    listView.model.append({ title: "Сервис", source: "qrc:/pages/shar/ServicePage.qml" })
-                    listView.model.append({ title: "Терминал", source: "qrc:/pages/shar/SenderPage.qml" })
-                    listView.model.append({ title: "Настройки", source: "qrc:/pages/shar/SettingsPage.qml" })
-                }
             }
         }       
     }
@@ -242,29 +219,18 @@ ApplicationWindow {
 
     function loadPage(page){
         keyPage.visible = false
-        switch(page){
-            case 0 :
-               stackView.push(joystick_shar)
-                break
+
+        switch(settParam.getIdDevice()){
             case 1 :
-                stackView.push(settingFoot)
-                break
-            case 2:
-                stackView.push(firmwareUpdate)
-                break
-            case 3:
-                stackView.push(informationPage)
-                break
-            case 4:
-                stackView.push(pageService)
-                break
-            case 5:
-                stackView.push(terminalPage)
-                break
-            case 6:
-                stackView.push(settingPage)
-                break
-            }
+                mainShar.loadPageShar(page);
+            break;
+            case 2 :
+                mainPylt.loadPagePylt(page);
+            break;
+
+            default:
+                break;
+        }
     }
 
  ///////////////PAGES/////////////////
@@ -312,25 +278,18 @@ ApplicationWindow {
         id: settings
         property string style
     }
+    DeviceSelection{
+        id: deviceSelectionDialog
+        visible: false
+    }
+
     ////////SHAR/////////
-    Joystick {
-        id: joystick_shar
-        visible: false
+    MainPageShar{
+        id: mainShar
     }
-    Firmware_update{
-        id: firmwareUpdate
-        visible: false
-    }
-    Information{
-        id: informationPage
-        visible: false
-    }
-    ServicePage {
-        id: pageService
-        visible: false
-    }
-    SettingFootPage{
-        id: settingFoot
-        visible: false
+
+    ////////PYLT/////////
+    MainPagePylt{
+        id: mainPylt
     }
 }

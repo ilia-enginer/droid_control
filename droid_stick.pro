@@ -38,6 +38,7 @@ RESOURCES += \
     Resurs.qrc \
     pages/main/DeviceSelection.qml \
     pages/main/ApkSettings.qml \
+    pages/shar/MainPageShar.qml \
     pages/shar/Firmware_update.qml \
     pages/shar/Information.qml \
     pages/main/Main.qml \
@@ -85,7 +86,12 @@ RESOURCES += \
     pages/main/AboutPage.qml \
     pages/main/UpdateAppPage.qml \
     pages/shar/Update_Hex.qml \
-    pages/main/MainView.qml
+    pages/main/MainView.qml \
+    pages/pylt/MainPagePylt.qml \
+    pages/pylt/joystick/Joystick.qml \
+    pages/pylt/joystick/stick/Stick.qml \
+    pages/pylt/joystick/stick/finger.png \
+    pages/pylt/joystick/stick/background.png \
 
 target.path = $$[QT_INSTALL_EXAMPLES]/quickcontrols2/gallery
 #target.path = $$[QT_INSTALL_EXAMPLES]/corelib/platform/androidnotifier
@@ -104,9 +110,13 @@ DISTFILES += \
     pages/main/Key.qml \
     pages/main/ApkSettings.qml \
     pages/main/MainView.qml \
+    pages/pylt/MainPagePylt.qml \
+    pages/pylt/joystick/Joystick.qml \
+    pages/pylt/joystick/stick/Stick.qml \
     pages/shar/Firmware_update.qml \
     pages/shar/Information.qml \
     pages/main/UpdateAppPage.qml \
+    pages/shar/MainPageShar.qml \
     pages/shar/Update_Hex.qml \
     android/AndroidManifest.xml \
     android/build.gradle \

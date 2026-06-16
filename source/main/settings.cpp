@@ -172,6 +172,10 @@ Settings::setIdDevice(int id, bool refresh)
             idDevice = SHAR;
             emit deviceShar();
             break;
+        case 2 :
+            idDevice = PYLT;
+            emit devicePylt();
+            break;
 
         default:
             idDevice = NONE;

@@ -22,7 +22,8 @@ public:
     // список устройств
     typedef enum {
         NONE,
-        SHAR = 1
+        SHAR = 1,
+        PYLT = 2
     } ID_Devices;
 
 
@@ -106,6 +107,7 @@ Q_SIGNALS:
 
     void clearDevice();
     void deviceShar();
+    void devicePylt();
 
 
 private:

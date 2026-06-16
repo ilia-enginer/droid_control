@@ -410,11 +410,12 @@ SwipeView {
                 onPressed: {
                     amplitude = 0.5
                     azimuth = 1.57
+                    offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
                 }
-
                 onReleased: {
                     amplitude = 0
                     azimuth = 0
+                    offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
                 }
             }
             RoundButton {
@@ -429,11 +430,12 @@ SwipeView {
                 onPressed: {
                     amplitude = 0.5
                     azimuth = -1.57
+                    offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
                 }
-
                 onReleased: {
                     amplitude = 0
                     azimuth = 0
+                    offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
                 }
             }
             RoundButton {
@@ -447,11 +449,12 @@ SwipeView {
                 onPressed: {
                     amplitude = 0.5
                     azimuth = -3.14
+                    offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
                 }
-
                 onReleased: {
                     amplitude = 0
                     azimuth = 0
+                    offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
                 }
             }
             RoundButton {
@@ -465,11 +468,12 @@ SwipeView {
                 onPressed: {
                     amplitude = 0.5
                     azimuth = 0
+                    offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
                 }
-
                 onReleased: {
                     amplitude = 0
                     azimuth = 0
+                    offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
                 }
             }
         }
@@ -573,17 +577,7 @@ SwipeView {
             anchors.topMargin: 10
             anchors.horizontalCenter: joystick.horizontalCenter
             text: "0/0"
-            Component.onCompleted: {
-                if(mainModel.adiminTapCount)
-                {
-                    offsetInfo.visible = true
-                }
-                else
-                {
-                    offsetInfo.visible = false
-                }
-
-           }
+            visible: mainModel.adminFlag
         }
 
         Switch {
@@ -596,11 +590,6 @@ SwipeView {
             onCheckedChanged:  {
                joystick.visible = checked
                joystick_buttons.visible = !checked
-
-                if(mainModel.adiminTapCount)
-                {
-                    offsetInfo.visible = checked
-                }
             }
         }
 
