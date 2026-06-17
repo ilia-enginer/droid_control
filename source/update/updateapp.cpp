@@ -265,21 +265,66 @@ UpdateApp::startRequest(QUrl inUrl)
     connect(mDownloaderReply, SIGNAL(downloadProgress(qint64, qint64)),
             this, SLOT(on_UpdateDataReadProgress(qint64, qint64)));
 
+    // отслеживание скорости приема
+    timerStart();
     //чтоб экран не гас
-//    _appManager->keepScreenOn(true);
+    //    _appManager->keepScreenOn(true);
 }
 
+// отслеживание скорости приема
+void
+UpdateApp::timerStart()
+{
+    //включить таймер
+     _timer = new QTimer(this);
+     _timer->setInterval(_timerInterval);
+     connect(_timer, &QTimer::timeout, this, &UpdateApp::timerСallback);
+     _bytesReadDelta = 0;
+     _bytesRead = 0;
+     _timer->start();
+}
+
+void
+UpdateApp::timerStop()
+{
+    //выключить таймер
+    if(_timer)  _timer->stop();
+}
+
+void
+UpdateApp::timerСallback()
+{
+    qint64 speed;
+    speed = (_bytesRead - _bytesReadDelta) / _timerInterval;
+
+    // если скорость меньше 20 кбайт в сек - остановить процесс
+    if(speed < ((1024 * 20) * _timerInterval))
+    {
+        on_CancelDownload("Загрузка прервана из-за низкой скорости соединения. Попробуйте чуть позже");
+    }
+    _bytesReadDelta = _bytesRead;
+}
 
 
 //------------------------------------------------------------------------------
 
 void
-UpdateApp::on_CancelDownload()
+UpdateApp::on_CancelDownload(QString mess)
 {
     qDebug() << "on_CancelDownload";
 
-    setLoadText("");
-    setUpdateText("Проверка обновлений... Загрузить?");
+    timerStop();
+
+    if(mess.isEmpty())
+    {
+        setLoadText("");
+        setUpdateText("Проверка обновлений... Загрузить?");
+    }
+    else
+    {
+        setLoadText("");
+        setUpdateText("mess");
+    }
 
     _commun_display->statusUpdateApp(_commun_display->updApp::statusLoadOFFStat);
     _commun_display->statusUpdateApp(_commun_display->updApp::but_Yes_OnStat);
@@ -311,6 +356,7 @@ UpdateApp::on_HttpFinished()
 {
     qDebug() << "on_HttpFinished";
 
+    timerStop();
     //чтоб экран не гас
 //    _appManager->keepScreenOn(false);
     _appManager->stopBackgroundService();
@@ -409,6 +455,7 @@ UpdateApp::on_UpdateDataReadProgress(
 {
     if (mHttpRequestAborted)    return;
 
+    _bytesRead = inBytesRead;
     qint64 Mbyte = inBytesRead / 1024 / 1024;
     qint64 Mbytes = inTotalBytes / 1024 / 1024;
 

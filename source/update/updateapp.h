@@ -47,7 +47,7 @@ class UpdateApp : public QObject
     public slots:
         void checkForUpdates(void);
         void on_NetworkReply(QNetworkReply *inReply);
-        void on_CancelDownload();
+        void on_CancelDownload(QString mess);
         void on_HttpFinished();
         void on_HttpDataRead();
         void on_UpdateDataReadProgress(qint64 inBytesRead, qint64 inTotalBytes);
@@ -64,8 +64,13 @@ class UpdateApp : public QObject
         void checkVersion(QString inVersion);
         void startRequest(QUrl inUrl);
 
+        void timerStart(void);
+        void timerStop(void);
+        void timerСallback(void);
+
         AppManager * _appManager = nullptr;
         Commun_display *_commun_display = nullptr;
+        QTimer *_timer = nullptr;
 
         QProgressDialog *mProgressDialog;
         QNetworkAccessManager *mNamChecker;
@@ -76,6 +81,10 @@ class UpdateApp : public QObject
 
         QDir *dir;
         QFileInfo fileinfo;
+
+        int _timerInterval = 10000;      // 5c
+        qint64 _bytesReadDelta = 0;     // сколько принято между вызовами таймера для отслеживания скорости приема
+        qint64 _bytesRead = 0;          // сколько принято для отслеживания скорости приема
 
         qint32 _verAppIn;               //версия уже установленного приложения
 

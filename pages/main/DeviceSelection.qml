@@ -8,7 +8,7 @@ import QtQuick.Controls.Material
 Dialog {
     id: deviceSelectionDialog
     width: window.width * 0.7
-    height: window.height * 0.4
+    height: window.height * 0.45
     anchors.centerIn: parent
     modal: false
     focus: true

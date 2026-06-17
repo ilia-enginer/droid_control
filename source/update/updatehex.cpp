@@ -155,7 +155,7 @@ UpdateHex::checkingUpdates(void)
     _commun_display->vrealChang(0.0);
     // если устройство не подключенно
     if(_tx_commands->voltage_read(false) == -1) {
-        emit navigateBackActionON();
+        on_pbStop_clicked("Отсутствует подключение");
         return;
     }
     delay(100);
@@ -168,9 +168,7 @@ UpdateHex::checkingUpdates(void)
         delay(70);
         if(a++ > 10)
         {
-            _commun_display->setCurrenUpd("Непредвиденная ошибка. Попробуйте еще раз.");
-            _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
-            emit navigateBackActionON();
+            on_pbStop_clicked("Непредвиденная ошибка. Попробуйте еще раз.");
             return;
         }
     }
@@ -179,9 +177,7 @@ UpdateHex::checkingUpdates(void)
     {
         if(_f_Admin == false)
         {
-            _commun_display->setCurrenUpd("Слишком низкое напряжение. Обновление невозможно");
-            _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
-            emit navigateBackActionON();
+            on_pbStop_clicked("Слишком низкое напряжение. Обновление невозможно.");
             return;
         }
         else
@@ -203,9 +199,7 @@ UpdateHex::checkingUpdates(void)
         _tx_commands->getVersion();
         if(a++ > 7)
         {
-            _commun_display->setCurrenUpd("Ошибка\nпроверьте подключение к устройству");
-            _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
-            emit navigateBackActionON();
+            on_pbStop_clicked("Ошибка\nпроверьте подключение к устройству.");
             return;
         }
         delay(90);
@@ -214,12 +208,12 @@ UpdateHex::checkingUpdates(void)
 
     if(!openBootloaderUpdate())
     {
-        emit navigateBackActionON();
+        on_pbStop_clicked("Ошибка\nне удалось открыть файл прошивки.");
         return;
     }
     if(!open_Update())
     {
-        emit navigateBackActionON();
+        on_pbStop_clicked("Ошибка\nне удалось открыть файл прошивки.");
         return;
     }
 
@@ -382,12 +376,8 @@ UpdateHex::open_Update()
         _fileName = fileOpen(false);
     #endif
 
-    if(!on_pbOpenFile_clicked(_fileName))
-    {
-        _commun_display->setCurrenUpd("Ошибка\nне удалось открыть файл прошивки");
-        _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
-        return false;
-    }
+    if(!on_pbOpenFile_clicked(_fileName))   return false;
+
     //поиск версии прошивки в файле
     if (_bin.contains(getVersionLabel())) {
         QByteArray newVersion = _bin.mid(_bin.indexOf(getVersionLabel()) + getVersionLabel().size() + 1, 4);
@@ -425,12 +415,8 @@ UpdateHex::openBootloaderUpdate()
         _fileName = fileOpen(false);
     #endif
 
-    if(!on_pbOpenFile_clicked(_fileName))
-    {
-        _commun_display->setCurrenUpd("Ошибка\nне удалось открыть файл прошивки");
-        _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
-        return false;
-    }
+    if(!on_pbOpenFile_clicked(_fileName))   return false;
+
     //поиск версии прошивки в файле
     if (_bin.contains(getVersionLabel())) {
 //            qDebug() << "address" << _bin.indexOf(getVersionLabel());

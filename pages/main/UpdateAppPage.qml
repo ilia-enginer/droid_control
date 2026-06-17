@@ -191,7 +191,7 @@ Dialog {
         }
 
         onClicked: {
-            updateApp.on_CancelDownload();
+            updateApp.on_CancelDownload("");
             updateAppWindow.close()
         }
     }
