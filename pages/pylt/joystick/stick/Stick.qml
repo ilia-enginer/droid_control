@@ -11,24 +11,14 @@ Item {
     property bool verticalOnly : false
     property bool horizontalOnly : false
     property real angle : 0
-    property real offsetX : 0
-    property real offsetY : 0
-    property real azimuth : 0
-    property real amplitude : 0
-
-    property real mouseX2 : verticalOnly ? width * 0.5 : point1.x //mouseX
-    property real mouseY2 : horizontalOnly ? height * 0.5 : point1.y //mouseY
-    property real fingerAngle : Math.atan2(mouseX2, mouseY2)
-    property int mcx : mouseX2 - width * 0.5
-    property int mcy : mouseY2 - height * 0.5
-    property bool fingerInBounds : fingerDistance2 < distanceBound2
-    property real fingerDistance2 : mcx * mcx + mcy * mcy
-    property real distanceBound : width * 0.5 - thumb.width * 0.5
-    property real distanceBound2 : distanceBound * distanceBound
-    property double signal_x : (mouseX2 - joystick.width/2) / distanceBound
-    property double signal_y : -(mouseY2 - joystick.height/2) / distanceBound
 
     signal joystick_moved(double x, double y);
+
+    property real azimuth : 0
+    property real amplitude : 0
+    property real offsetX : 0
+    property real offsetY : 0
+
 
     //углы джойстика
     Label {
@@ -64,6 +54,18 @@ Item {
         id: mouse_touch
         anchors.fill: joystick
 
+        property real mouseX2 : verticalOnly ? width * 0.5 : point1.x //mouseX
+        property real mouseY2 : horizontalOnly ? height * 0.5 : point1.y //mouseY
+        property real fingerAngle : Math.atan2(mouseX2, mouseY2)
+        property int mcx : mouseX2 - width * 0.5
+        property int mcy : mouseY2 - height * 0.5
+        property bool fingerInBounds : fingerDistance2 < distanceBound2
+        property real fingerDistance2 : mcx * mcx + mcy * mcy
+        property real distanceBound : width * 0.5 - thumb.width * 0.5
+        property real distanceBound2 : distanceBound * distanceBound
+        property double signal_x : (mouseX2 - joystick.width/2) / distanceBound
+        property double signal_y : -(mouseY2 - joystick.height/2) / distanceBound
+
         minimumTouchPoints: 1
         maximumTouchPoints: 5
         touchPoints: [
@@ -78,18 +80,7 @@ Item {
             returnAnimation.stop();
         }
 
-        onReleased: {
-                if(!fixed.checked)
-                {
-                    returnAnimation.restart()
-                    joystick_moved(0, 0);
-                    offsetX = 0
-                    offsetY = 0
-                    amplitude = 0
-                    azimuth = 0
-                    offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
-                }
-        }
+        onReleased: { if(!fixed.checked) mouse_touch.joyReset(); }
         onUpdated: {
             if (fingerInBounds) {
                 thumb.anchors.horizontalCenterOffset = mcx
@@ -124,6 +115,15 @@ Item {
             offsetX = offX
             offsetY = offY
         }
+        function joyReset() {
+            returnAnimation.restart()
+            joystick_moved(0, 0);
+            offsetX = 0
+            offsetY = 0
+            amplitude = 0
+            azimuth = 0
+            offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
+        }
     }
 
     Image {
@@ -151,14 +151,7 @@ Item {
                 azimuth = 1.57
                 offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
             }
-            onReleased: {
-                if(!fixed.checked)
-                {
-                    amplitude = 0
-                    azimuth = 0
-                    offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
-                }
-            }
+            onReleased: { if(!fixed.checked)  mouse_touch.joyReset(); }
         }
         RoundButton {
             id: downBut
@@ -180,14 +173,7 @@ Item {
                 azimuth = -1.57
                 offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
             }
-            onReleased: {
-                if(!fixed.checked)
-                {
-                    amplitude = 0
-                    azimuth = 0
-                    offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
-                }
-            }
+            onReleased: { if(!fixed.checked)    mouse_touch.joyReset(); }
         }
         RoundButton {
             radius: 8
@@ -208,14 +194,7 @@ Item {
                 azimuth = -3.14
                 offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
             }
-            onReleased: {
-                if(!fixed.checked)
-                {
-                    amplitude = 0
-                    azimuth = 0
-                    offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
-                }
-            }
+            onReleased: { if(!fixed.checked)    mouse_touch.joyReset(); }
         }
         RoundButton {
             radius: 8
@@ -236,14 +215,7 @@ Item {
                 azimuth = 0
                 offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
             }
-            onReleased: {
-                if(!fixed.checked)
-                {
-                    amplitude = 0
-                    azimuth = 0
-                    offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
-                }
-            }
+            onReleased: { if(!fixed.checked)    mouse_touch.joyReset(); }
         }
     }
 
@@ -265,6 +237,7 @@ Item {
             id: fixed
             text: "фиксация"
             checked: false
+            onClicked: { if(!fixed.checked)  mouse_touch.joyReset(); }
         }
     }
 
@@ -282,17 +255,6 @@ Item {
             rotation: 270
             font.pixelSize: 17
         }
-        onPressed: {
-            if(fixed.checked)
-            {
-                returnAnimation.restart()
-                joystick_moved(0, 0);
-                offsetX = 0
-                offsetY = 0
-                amplitude = 0
-                azimuth = 0
-                offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
-            }
-        }
+        onPressed: { mouse_touch.joyReset(); }
     }
 }

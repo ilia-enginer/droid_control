@@ -295,10 +295,10 @@ void
 UpdateApp::timerСallback()
 {
     qint64 speed;
-    speed = (_bytesRead - _bytesReadDelta) / _timerInterval;
+    speed = (_bytesRead - _bytesReadDelta) / 1024;
 
-    // если скорость меньше 20 кбайт в сек - остановить процесс
-    if(speed < ((1024 * 20) * _timerInterval))
+    // если скачал меньше 5 кбайт за _timerInterval сек - остановить процесс
+    if(speed < 5)
     {
         on_CancelDownload("Загрузка прервана из-за низкой скорости соединения. Попробуйте чуть позже");
     }
@@ -319,15 +319,16 @@ UpdateApp::on_CancelDownload(QString mess)
     {
         setLoadText("");
         setUpdateText("Проверка обновлений... Загрузить?");
+        _commun_display->statusUpdateApp(_commun_display->updApp::but_Yes_OnStat);
     }
     else
     {
         setLoadText("");
-        setUpdateText("mess");
+        setUpdateText(mess);
     }
 
     _commun_display->statusUpdateApp(_commun_display->updApp::statusLoadOFFStat);
-    _commun_display->statusUpdateApp(_commun_display->updApp::but_Yes_OnStat);
+
     on_UpdateDataReadProgress(0.0, 0.0);
 
     if(!mHttpRequestAborted)

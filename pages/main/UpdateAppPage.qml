@@ -192,6 +192,7 @@ Dialog {
 
         onClicked: {
             updateApp.on_CancelDownload("");
+            yes.visible = true
             updateAppWindow.close()
         }
     }

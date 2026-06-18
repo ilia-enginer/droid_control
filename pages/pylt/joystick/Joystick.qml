@@ -34,12 +34,12 @@ Item {
 //            tx_commands.joysticActivity(mode, azimuth, amplitude, level, ctrl);
 //            stick1.azimuth
 //            stick1.amplitude
-//            stick1.signal_x
-//            stick1.signal_y
+//            stick1.offsetX
+//            stick1.offsetY
 //            stick2.azimuth
 //            stick2.amplitude
-//            stick2.signal_x
-//            stick2.signal_y
+//            stick2.offsetX
+//            stick2.offsetY
 //            but_1_Fixed
 //            but_2_Fixed
 
@@ -129,7 +129,7 @@ Item {
         anchors.top: stick1.top
         anchors.topMargin: 60
         anchors.left: stick1.right
-        anchors.leftMargin: 100
+        anchors.leftMargin: 120
         hoverEnabled: false             // отключаем стилизацию наведения
         text: "1"
         background:
@@ -153,7 +153,7 @@ Item {
         anchors.top: stick2.top
         anchors.topMargin: 60
         anchors.right: stick2.left
-        anchors.rightMargin: 100
+        anchors.rightMargin: 120
         hoverEnabled: false             // отключаем стилизацию наведения
         text: "2"
         background:
@@ -185,6 +185,7 @@ Item {
     Switch {
         id: butFixed
         anchors.top: voltage.bottom
+        anchors.topMargin: 15
         anchors.horizontalCenter: voltage.horizontalCenter
         checked: false
         Text {
