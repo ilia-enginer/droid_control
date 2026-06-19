@@ -82,7 +82,7 @@ class UpdateApp : public QObject
         QDir *dir;
         QFileInfo fileinfo;
 
-        int _timerInterval = 10000;      // 10c
+        int _timerInterval = 20000;      // 20c
         qint64 _bytesReadDelta = 0;     // сколько принято между вызовами таймера для отслеживания скорости приема
         qint64 _bytesRead = 0;          // сколько принято для отслеживания скорости приема
 

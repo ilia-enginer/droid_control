@@ -141,7 +141,7 @@ Item {
             width: joystick_buttons.width * 0.3
             Text {
                 anchors.centerIn: parent
-                text: qsTr("⭡")
+                text: qsTr("˄")
                 font.pixelSize: 25
                 color: "white"
             }
@@ -163,7 +163,7 @@ Item {
             width: joystick_buttons.width * 0.3
             Text {
                 anchors.centerIn: parent
-                text: qsTr("⭣")
+                text: qsTr("˅")
                 font.pixelSize: 25
                 color: "white"
             }
@@ -184,7 +184,7 @@ Item {
             width: joystick_buttons.width * 0.3
             Text {
                 anchors.centerIn: parent
-                text: qsTr("⭠")
+                text: qsTr("˂")
                 font.pixelSize: 25
                 color: "white"
             }
@@ -205,7 +205,7 @@ Item {
             width: joystick_buttons.width * 0.3
             Text {
                 anchors.centerIn: parent
-                text: qsTr("⭢")
+                text: qsTr("˃")
                 font.pixelSize: 25
                 color: "white"
             }
