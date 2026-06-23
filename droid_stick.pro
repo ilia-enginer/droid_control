@@ -14,13 +14,14 @@ win32 {
 }
 
 SOURCES += \
+    source/Pylt/communication/rx_commandsPylt.cpp \
     source/communication/crc.cpp \
-    source/communication/rx/rx_commands.cpp \
-    source/communication/tx/packing.cpp \
-    source/communication/rx/unpacking.cpp \
-    source/communication/tx/tx_commands.cpp \
-    source/display_working/commun_display.cpp \
-    source/info/info.cpp \
+    source/Shar/communication/rx_commands.cpp \
+    source/communication/packing.cpp \
+    source/communication/unpacking.cpp \
+    source/Shar/communication/tx_commands.cpp \
+    source/Shar/display_working/commun_display.cpp \
+    source/Shar/info/info.cpp \
     source/main/appmanager.cpp \
     source/main/notificationclient.cpp \
     source/main/settings.cpp \
@@ -137,13 +138,14 @@ DISTFILES += \
 
 
 HEADERS += \
+    source/Pylt/communication/rx_commandsPylt.h \
     source/communication/crc.h \
-    source/communication/rx/rx_commands.h \
-    source/communication/tx/packing.h \
-    source/communication/rx/unpacking.h \
-    source/communication/tx/tx_commands.h \
-    source/display_working/commun_display.h \
-    source/info/info.h \
+    source/Shar/communication/rx_commands.h \
+    source/communication/packing.h \
+    source/communication/unpacking.h \
+    source/Shar/communication/tx_commands.h \
+    source/Shar/display_working/commun_display.h \
+    source/Shar/info/info.h \
     source/main/appmanager.h \
     source/main/notificationclient.h \
     source/main/settings.h \

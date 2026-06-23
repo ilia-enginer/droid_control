@@ -230,7 +230,9 @@ Item {
             checked: true
             onCheckedChanged:  {
                joystick.visible = checked
+               mouse_touch.visible = checked
                joystick_buttons.visible = !checked
+               mouse_touch.joyReset();
             }
         }
         Switch {
