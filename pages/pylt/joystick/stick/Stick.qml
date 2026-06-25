@@ -14,10 +14,11 @@ Item {
 
     signal joystick_moved(double x, double y);
 
-    property real azimuth : 0
-    property real amplitude : 0
     property real offsetX : 0
     property real offsetY : 0
+
+    property real extX : 0
+    property real extY : 0
 
 
     //углы джойстика
@@ -100,29 +101,37 @@ Item {
             if(fingerInBounds) {
                 offX = verticalOnly ? 0 : Math.cos(angle) * Math.sqrt(fingerDistance2) / distanceBound
                 offY = horizontalOnly ? 0 : Math.sin(angle) * Math.sqrt(fingerDistance2) / distanceBound
-                amplitude  = Math.sqrt(fingerDistance2) / distanceBound
-                azimuth = angle
+
             } else {
                 offX = verticalOnly ? 0 : Math.cos(angle) * 1
                 offY = horizontalOnly ? 0 : Math.sin(angle) * 1
-
-                amplitude  = 1
-                azimuth = angle
             }
 
             joystick_moved(offX, offY)
-            offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
+            offsetInfo.text = Math.round(offsetX * 100) / 100 + "/" + Math.round(offsetY * 100) / 100 //Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
             offsetX = offX
             offsetY = offY
+            onRecalculatingValues();
         }
         function joyReset() {
             returnAnimation.restart()
             joystick_moved(0, 0);
             offsetX = 0
             offsetY = 0
-            amplitude = 0
-            azimuth = 0
-            offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
+            offsetInfo.text = Math.round(offsetX * 100) / 100 + "/" + Math.round(offsetY * 100) / 100
+        }
+
+        function onRecalculatingValues() {
+            extX = onRecalculatingValuesConversion(offsetX, settings_Pylt.joy1_x_min, settings_Pylt.joy1_x_max, joystick_pylt.txMin, joystick_pylt.txMax);
+            extY = onRecalculatingValuesConversion(offsetY, settings_Pylt.joy1_y_min, settings_Pylt.joy1_y_max, joystick_pylt.txMin, joystick_pylt.txMax);
+         }
+
+        property int converted : 0
+        function onRecalculatingValuesConversion(old, old_min, old_max, new_min, new_max){
+            if(old >= old_max)			converted = new_max;
+            else if (old <= old_min)	converted = new_min;
+            else		converted = ((old - old_min) * (new_max - new_min)) / (old_max - old_min) + new_min;
+            return converted;
         }
     }
 
@@ -147,9 +156,10 @@ Item {
             }
 
             onPressed: {
-                amplitude = 1.0
-                azimuth = 1.57
-                offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
+                offsetX = 0
+                offsetY = 1.0
+                onRecalculatingValues();
+                offsetInfo.text = Math.round(offsetX * 100) / 100 + "/" + Math.round(offsetY * 100) / 100
             }
             onReleased: { if(!fixed.checked)  mouse_touch.joyReset(); }
         }
@@ -169,9 +179,10 @@ Item {
             }
 
             onPressed: {
-                amplitude = 1.0
-                azimuth = -1.57
-                offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
+                offsetX = 0
+                offsetY = -1.0
+                onRecalculatingValues();
+                offsetInfo.text = Math.round(offsetX * 100) / 100 + "/" + Math.round(offsetY * 100) / 100
             }
             onReleased: { if(!fixed.checked)    mouse_touch.joyReset(); }
         }
@@ -190,9 +201,10 @@ Item {
             }
 
             onPressed: {
-                amplitude = 1.0
-                azimuth = -3.14
-                offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
+                offsetX = 1.0
+                offsetY = 0.0
+                onRecalculatingValues();
+                offsetInfo.text = Math.round(offsetX * 100) / 100 + "/" + Math.round(offsetY * 100) / 100
             }
             onReleased: { if(!fixed.checked)    mouse_touch.joyReset(); }
         }
@@ -211,9 +223,10 @@ Item {
             }
 
             onPressed: {
-                amplitude = 1.0
-                azimuth = 0
-                offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
+                offsetX = -1.0
+                offsetY = 0.0
+                onRecalculatingValues();
+                offsetInfo.text = Math.round(offsetX * 100) / 100 + "/" + Math.round(offsetY * 100) / 100
             }
             onReleased: { if(!fixed.checked)    mouse_touch.joyReset(); }
         }

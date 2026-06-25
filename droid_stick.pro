@@ -15,6 +15,7 @@ win32 {
 
 SOURCES += \
     source/Pylt/communication/rx_commandsPylt.cpp \
+    source/Pylt/communication/tx_commandsPylt.cpp \
     source/communication/crc.cpp \
     source/Shar/communication/rx_commands.cpp \
     source/communication/packing.cpp \
@@ -93,6 +94,7 @@ RESOURCES += \
     pages/pylt/joystick/stick/Stick.qml \
     pages/pylt/joystick/stick/finger.png \
     pages/pylt/joystick/stick/background.png \
+    pages/pylt/joystick/Settings_Pylt.qml
 
 target.path = $$[QT_INSTALL_EXAMPLES]/quickcontrols2/gallery
 #target.path = $$[QT_INSTALL_EXAMPLES]/corelib/platform/androidnotifier
@@ -113,6 +115,7 @@ DISTFILES += \
     pages/main/MainView.qml \
     pages/pylt/MainPagePylt.qml \
     pages/pylt/joystick/Joystick.qml \
+    pages/pylt/joystick/Settings_Pylt.qml \
     pages/pylt/joystick/stick/Stick.qml \
     pages/shar/Firmware_update.qml \
     pages/shar/Information.qml \
@@ -139,6 +142,7 @@ DISTFILES += \
 
 HEADERS += \
     source/Pylt/communication/rx_commandsPylt.h \
+    source/Pylt/communication/tx_commandsPylt.h \
     source/communication/crc.h \
     source/Shar/communication/rx_commands.h \
     source/communication/packing.h \

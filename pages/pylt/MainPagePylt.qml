@@ -20,10 +20,10 @@ Item {
         listView.currentIndex = -1;
 
         listView.model.append({ title: "Джойстик", source: "qrc:/pages/pylt/joystick/Joystick.qml" })
+        listView.model.append({ title: "Настройки", source: "qrc:/pages/pylt/Settings_Pylt" })
 
         if (mainModel.adminFlag === true){
-            listView.model.append({ title: "Терминал", source: "qrc:/pages/shar/SenderPage.qml" })
-            listView.model.append({ title: "Настройки", source: "qrc:/pages/shar/SettingsPage.qml" })
+            listView.model.append({ title: "Терминал", source: "qrc:/pages/shar/SenderPage.qml" })            
         }
     }
 
@@ -33,10 +33,10 @@ Item {
                stackView.push(joystick_pylt)
                 break
             case 1:
-                stackView.push(terminalPage)
+                stackView.push(settings_Pylt)
                 break
             case 2:
-                stackView.push(settingPage)
+                stackView.push(terminalPage)
                 break
             default:
                 break
@@ -46,6 +46,9 @@ Item {
     Joystick {
         id: joystick_pylt
         visible: false
+    }
+    Settings_Pylt{
+        id: settings_Pylt
     }
 
 }

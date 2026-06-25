@@ -74,6 +74,7 @@
 #include "source/main/notificationclient.h"
 #include "source/communication/serialComPort/mainSerialPort.h"
 #include "source/Pylt/communication/rx_commandsPylt.h"
+#include "source/Pylt/communication/tx_commandsPylt.h"
 
 
 int main(int argc, char *argv[])
@@ -118,6 +119,7 @@ int main(int argc, char *argv[])
     Tx_commands         * tx_commands           = new Tx_commands();
     Rx_commands         * rx_commands           = new Rx_commands();
     Rx_commands_Pylt    * rx_commands_Pylt      = new Rx_commands_Pylt();
+    Tx_commandsPylt     * tx_commandsPylt       = new Tx_commandsPylt();
     Settings            * settings              = new Settings();
     UpdateHex           * updateHex             = new UpdateHex();
     AppVersion          * appversion            = new AppVersion();
@@ -204,6 +206,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("appManager", appManager);
     engine.rootContext()->setContextProperty("notificationClient", notificationClient);
     engine.rootContext()->setContextProperty("mainSerialPort", mainSerialPort);
+    engine.rootContext()->setContextProperty("tx_commandsPylt", tx_commandsPylt);
 
     engine.setInitialProperties({{ "builtInStyles", builtInStyles }});
     engine.load(QUrl("qrc:/pages/main/Main.qml"));

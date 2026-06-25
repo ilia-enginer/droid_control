@@ -16,6 +16,9 @@ Item {
     transformOrigin: Item.Center
     rotation: 90
 
+    property int txMin : 0
+    property int txMax : 249
+
     property bool but_1_Fixed : false           // состояние кнопки 1
     property bool but_2_Fixed : false           // состояние кнопки 2
 
@@ -30,19 +33,7 @@ Item {
         running: false
         repeat: true
         onTriggered: {
-            // параметры для отправки
-//            tx_commands.joysticActivity(mode, azimuth, amplitude, level, ctrl);
-//            stick1.azimuth
-//            stick1.amplitude
-//            stick1.offsetX
-//            stick1.offsetY
-//            stick2.azimuth
-//            stick2.amplitude
-//            stick2.offsetX
-//            stick2.offsetY
-//            but_1_Fixed
-//            but_2_Fixed
-
+            tx_commandsPylt.joysticActivity(stick1.extY, stick1.extX, stick2.extY, stick2.extX, but_1_Fixed, but_2_Fixed);
         }
     }
 
