@@ -257,10 +257,6 @@ ApplicationWindow {
         id: terminalPage
         visible: false
     }
-    SettingsPage{
-        id: settingPage
-        visible: false
-    }
     Update_Hex {
         id: updateHex
         Component.onCompleted: { commun_display.onWindowloadHexOpen.connect(onWindowloadHexOpen) }

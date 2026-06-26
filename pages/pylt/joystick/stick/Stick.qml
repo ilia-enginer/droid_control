@@ -17,8 +17,10 @@ Item {
     property real offsetX : 0
     property real offsetY : 0
 
-    property real extX : 0
-    property real extY : 0
+    property real extX : txMid
+    property real extY : txMid
+    property real curX : 0
+    property real curY : 0
 
 
     //углы джойстика
@@ -118,19 +120,23 @@ Item {
             joystick_moved(0, 0);
             offsetX = 0
             offsetY = 0
+            onRecalculatingValues();
             offsetInfo.text = Math.round(offsetX * 100) / 100 + "/" + Math.round(offsetY * 100) / 100
         }
 
         function onRecalculatingValues() {
-            extX = onRecalculatingValuesConversion(offsetX, settings_Pylt.joy1_x_min, settings_Pylt.joy1_x_max, joystick_pylt.txMin, joystick_pylt.txMax);
-            extY = onRecalculatingValuesConversion(offsetY, settings_Pylt.joy1_y_min, settings_Pylt.joy1_y_max, joystick_pylt.txMin, joystick_pylt.txMax);
-         }
+            curX = onRecalculatingValuesConversion(offsetX, -1, 1, settings_Pylt.joy1_x_min, settings_Pylt.joy1_x_max);
+            curY = onRecalculatingValuesConversion(offsetY, -1, 1, settings_Pylt.joy1_y_min, settings_Pylt.joy1_y_max);
+
+            extX = onRecalculatingValuesConversion(curX, settings_Pylt.joy1_x_min, settings_Pylt.joy1_x_max, joystick_pylt.txMin, joystick_pylt.txMax);
+            extY = onRecalculatingValuesConversion(curY, settings_Pylt.joy1_y_min, settings_Pylt.joy1_y_max, joystick_pylt.txMin, joystick_pylt.txMax);
+        }
 
         property int converted : 0
         function onRecalculatingValuesConversion(old, old_min, old_max, new_min, new_max){
             if(old >= old_max)			converted = new_max;
             else if (old <= old_min)	converted = new_min;
-            else		converted = ((old - old_min) * (new_max - new_min)) / (old_max - old_min) + new_min;
+            else	converted = ((old - old_min) * (new_max - new_min)) / (old_max - old_min) + new_min;
             return converted;
         }
     }
@@ -158,7 +164,7 @@ Item {
             onPressed: {
                 offsetX = 0
                 offsetY = 1.0
-                onRecalculatingValues();
+                mouse_touch.onRecalculatingValues();
                 offsetInfo.text = Math.round(offsetX * 100) / 100 + "/" + Math.round(offsetY * 100) / 100
             }
             onReleased: { if(!fixed.checked)  mouse_touch.joyReset(); }
@@ -181,7 +187,7 @@ Item {
             onPressed: {
                 offsetX = 0
                 offsetY = -1.0
-                onRecalculatingValues();
+                mouse_touch.onRecalculatingValues();
                 offsetInfo.text = Math.round(offsetX * 100) / 100 + "/" + Math.round(offsetY * 100) / 100
             }
             onReleased: { if(!fixed.checked)    mouse_touch.joyReset(); }
@@ -203,7 +209,7 @@ Item {
             onPressed: {
                 offsetX = 1.0
                 offsetY = 0.0
-                onRecalculatingValues();
+                mouse_touch.onRecalculatingValues();
                 offsetInfo.text = Math.round(offsetX * 100) / 100 + "/" + Math.round(offsetY * 100) / 100
             }
             onReleased: { if(!fixed.checked)    mouse_touch.joyReset(); }
@@ -225,7 +231,7 @@ Item {
             onPressed: {
                 offsetX = -1.0
                 offsetY = 0.0
-                onRecalculatingValues();
+                mouse_touch.onRecalculatingValues();
                 offsetInfo.text = Math.round(offsetX * 100) / 100 + "/" + Math.round(offsetY * 100) / 100
             }
             onReleased: { if(!fixed.checked)    mouse_touch.joyReset(); }

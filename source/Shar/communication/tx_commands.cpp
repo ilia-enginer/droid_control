@@ -91,7 +91,7 @@ Tx_commands::joysticActivity(quint8 mode, float azimut, float amplitude, float l
     data.append(ctrl);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -114,7 +114,7 @@ Tx_commands::leds_read(QString msg)
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -133,7 +133,7 @@ Tx_commands::voltage_read(bool flagDisplay)
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -152,7 +152,7 @@ Tx_commands::current_read(bool flagDisplay)
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -171,7 +171,7 @@ Tx_commands::readGyroscopeAngles()
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -190,7 +190,7 @@ Tx_commands::readAcceleration()
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -212,7 +212,7 @@ Tx_commands::readAngleServo(QString msg)
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -236,7 +236,7 @@ Tx_commands::on_offServo(QString msg)
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -255,7 +255,7 @@ Tx_commands::readAllParams()
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -277,7 +277,7 @@ Tx_commands::writeAllParams()
     data.prepend(comand);  
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -300,7 +300,7 @@ Tx_commands::setBrightness(QString msg)
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -320,7 +320,7 @@ Tx_commands::getSettingsServs()
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -347,7 +347,7 @@ Tx_commands::setSettingsServo(qint8 freq_pca1, qint8 freq_pca2, qint8 speedServs
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -367,7 +367,7 @@ Tx_commands::saveFlashSettings()
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -387,7 +387,7 @@ Tx_commands::setMidPwmServs()
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -407,7 +407,7 @@ Tx_commands::checkSpeedServs()
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -426,7 +426,7 @@ Tx_commands::fullReset()
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -473,7 +473,7 @@ Tx_commands::writeMinAngleServo(QString msg)
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -503,7 +503,7 @@ Tx_commands::writeSettingLeds(QString msg)
                                                       + QString(QString::number(u8_4));
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -550,7 +550,7 @@ Tx_commands::setServoAngle(QString msg)
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -581,7 +581,7 @@ Tx_commands::setServoAnglee(QString msg)
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -605,7 +605,7 @@ Tx_commands::setCurBlock(QString msg)
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -624,7 +624,7 @@ Tx_commands::getCheck()
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -647,7 +647,7 @@ Tx_commands::getSettingServo(QString msg)
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -666,7 +666,7 @@ Tx_commands::servoAutoCalibration()
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -685,7 +685,7 @@ Tx_commands::curAutoCalibration()
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -707,7 +707,7 @@ Tx_commands::setCurCalibration(QString msg)
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -726,7 +726,7 @@ Tx_commands::getCurCalibration()
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -745,7 +745,7 @@ Tx_commands::checkReset()
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -764,7 +764,7 @@ Tx_commands::setServosStartAngle()
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -783,7 +783,7 @@ Tx_commands::setServosHomeAngle()
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -807,7 +807,7 @@ Tx_commands::writeHomeAngleFoot(QString msg)
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -831,7 +831,7 @@ Tx_commands::resetServsFoot(QString msg)
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -850,7 +850,7 @@ Tx_commands::reboot()
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -873,7 +873,7 @@ Tx_commands::getParamServsFoot(QString msg)
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -892,7 +892,7 @@ Tx_commands::getVersion()
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -917,7 +917,7 @@ Tx_commands::writeProgram(QByteArray data)
 
     data.prepend(0xF3);
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
     return res;
 }
 
@@ -940,7 +940,7 @@ Tx_commands::writeBootloader(QByteArray data)
     s = tr("передача пакета №  %1").arg(num);
     data.prepend(0xF4);
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
     return res;
 }
 
@@ -967,7 +967,7 @@ Tx_commands::writeLabel()
     data.append(val.data[0]);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -986,7 +986,7 @@ Tx_commands::shutdown()
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -1005,7 +1005,7 @@ Tx_commands::getIntendifier()
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -1024,7 +1024,7 @@ Tx_commands::getInclinationAngle()
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -1046,7 +1046,7 @@ Tx_commands::setInclinationAngle(QString msg)
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -1065,7 +1065,7 @@ Tx_commands::getAzimutAngle()
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -1087,7 +1087,7 @@ Tx_commands::setAzimutAngle(QString msg)
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -1109,7 +1109,7 @@ Tx_commands::calibrServsFoot(QString msg)
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -1133,7 +1133,7 @@ Tx_commands::calibrServsFoot(int num)
     data.prepend(comand);
 
     //отправка команды, вывод лога
-    res = Sending(data, s);
+    res = _packing->Sending(data, s);
 
     return res;
 }
@@ -1177,35 +1177,5 @@ Tx_commands::IntToByte(qint32 num, QByteArray *data)
     data->append(val.data[3]);
 }
 
-int
-Tx_commands::Sending(QByteArray data, QString s)
-{
-    int res = -1;
-    QByteArray dataToSend;
-
-    //обертывание в протокол
-    dataToSend = _packing->wrapData(data);
-
-    //отправка сообщения
-    res = _packing->sendMessage(dataToSend, false);
-
-    if(res == -1)
-        return res;
-
-    //вывод лога
-    if(_settings->getLoging())
-    {
-        _commun_display->log_out_J("-> ", QString ("%1 (%2 size)").arg(QString(dataToSend.toHex())).arg(res));
-        _commun_display->log_out_S("-> ", QString ("%1 (%2 size)").arg(QString(dataToSend.toHex())).arg(res));
-    }
-
-    //вывод расшифровки лога
-    if(!s.isEmpty())
-    {
-        res = _commun_display->log_out_S("-> ", s);
-        res = _commun_display->log_out_J("-> ", s);
-    }
-    return res;
-}
 
 

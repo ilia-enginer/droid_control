@@ -8,6 +8,7 @@
 #include "../Shar/display_working/commun_display.h"
 #include "../communication/serialComPort/mainSerialPort.h"
 #include "../communication/packing.h"
+#include "../Pylt/communication/tx_commandsPylt.h"
 
 
 class Device;
@@ -25,6 +26,7 @@ public:
     void setDevice(Device *device);
     void setSettings(Settings *newSettings);
     void setTx_commands(Tx_commands *newTx_commands);
+    void setTx_commandsPylt(Tx_commandsPylt *newTx_commandsPylt);
     void setUpdateHex(UpdateHex *newUpdateHex);
     void setCommun_display(Commun_display *newCommun_display);
     void setMainSerialComPort(MainSerialPort *newMainSerialPort);
@@ -43,13 +45,14 @@ Q_SIGNALS:
     void onAdminFlagChanged();
 
 private:
-    Device              *device_ = nullptr;
-    Settings            *_settings = nullptr;
-    Tx_commands         *_tx_commands = nullptr;
-    UpdateHex           *_updateHex = nullptr;
-    Commun_display      *_commun_display = nullptr;
-    MainSerialPort      *_mainserialport = nullptr;
-    Packing             *_packing;
+    Device              * device_ = nullptr;
+    Settings            * _settings = nullptr;
+    Tx_commands         * _tx_commands = nullptr;
+    Tx_commandsPylt     * _tx_commandsPylt = nullptr;
+    UpdateHex           * _updateHex = nullptr;
+    Commun_display      * _commun_display = nullptr;
+    MainSerialPort      * _mainserialport = nullptr;
+    Packing             * _packing;
 
 
     ///флаг админа

@@ -15,12 +15,12 @@ SwipeView {
     onActiveFocusChanged: {
         if (!activeFocus) {
             // Пользователь нажал или перешёл away от этого поля
-       //     console.log("!!!!!!!!!!No active.")
+            console.log("!!!!!!!!!!No active.")
             joystick_timer.running = false
             radioGroup.checkState = Qt.Unchecked
         } else {
             // Пользователь сосредоточился на этом поле
-       //     console.log("!!!!!!!!Focus active.")
+            console.log("!!!!!!!!Focus active.")
             if(Qt.platform.os !== "windows") tx_commands.getCheck();
             joystick_timer.running = true
         }

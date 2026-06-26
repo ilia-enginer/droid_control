@@ -72,12 +72,10 @@ public slots:
     int calibrServsFoot(QString msg);    //откалибровать сервы ноги №.. 0xFC
     int calibrServsFoot(int num);       //откалибровать сервы ноги №.. 0xFC
 
-
 private:
     void StringToIntToByte(QString msg, QByteArray *data);
     void StringToFloatToByte(QString msg, QByteArray *data);
     void IntToByte(qint32 num, QByteArray *data);
-    int Sending(QByteArray, QString);
 
 
     Packing * _packing = nullptr;

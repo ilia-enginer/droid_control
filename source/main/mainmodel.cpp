@@ -38,25 +38,15 @@ MainModel::checkingParameters()
 int
 MainModel::checkID()
 { 
-    //если не админский режим - сначала сбросить приложение
-    if(!adminFlag)
-    {
-         _tx_commands->getIntendifier();
-         delay(150);
-         for(qint8 i = 0; i < 7; i++)
-         {
-             if(_settings->getIdDevice() == _settings->NONE) _tx_commands->getIntendifier();
-             else                                            return 1;
-             delay(90);
-         }
-         return 0;
-    }
-    else{
-        _tx_commands->getIntendifier();
-        delay(150);
-        _tx_commands->getIntendifier();
-        return 1;
-    }
+     _tx_commands->getIntendifier();
+     delay(150);
+     for(qint8 i = 0; i < 7; i++)
+     {
+         if(_settings->getIdDevice() == _settings->NONE) _tx_commands->getIntendifier();
+         else                                            return _settings->getIdDevice();
+         delay(90);
+     }
+     return 0;
 }
 
 int
@@ -74,7 +64,7 @@ MainModel::checkUpdate()
 void
 MainModel::deviceConnect(QString type)
 {
-    qDebug() << "connect to device = " <<type;
+    qDebug() << "connect to device = " << type;
 
     if(type.isEmpty())  return;
     if(type == "none")
@@ -84,13 +74,30 @@ MainModel::deviceConnect(QString type)
         return;
     }
 
+    // установка типа передатчика
     _packing->setTypeTx(type);
     _commun_display->set_connected(true);
 
-    if(checkID())
+    // если устройство шар
+    if(checkID() == _settings->SHAR)
     {
+        // запрос точки восстановления
         checkingParameters();
+        // запрос версии прошивки
         checkUpdate();
+    }
+    // если устройство пульт
+    else if(checkID() == _settings->PYLT)
+    {
+        // запрос типа аккамулятора
+        _tx_commandsPylt->batteryTypeRequest();
+        delay(150);
+        for(qint8 i = 0; i < 7; i++)
+        {
+            if(_commun_display->getVolt() == 0.0) _tx_commandsPylt->batteryTypeRequest();
+            else                                  return;
+            delay(90);
+        }
     }
 }
 
@@ -130,6 +137,12 @@ void
 MainModel::setTx_commands(Tx_commands *newTx_commands)
 {
     _tx_commands = newTx_commands;
+}
+
+void
+MainModel::setTx_commandsPylt(Tx_commandsPylt *newTx_commandsPylt)
+{
+    _tx_commandsPylt = newTx_commandsPylt;
 }
 
 void

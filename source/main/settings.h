@@ -21,7 +21,7 @@ public:
 
     // список устройств
     typedef enum {
-        NONE,
+        NONE = 0,
         SHAR = 1,
         PYLT = 2
     } ID_Devices;

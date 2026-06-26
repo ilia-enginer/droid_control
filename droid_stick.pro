@@ -1,6 +1,8 @@
 TEMPLATE = app
 TARGET = droid_stick
 
+CONFIG += qml_debug
+
 ANDROID_VERSION_NAME = "1.1.5"      #версия в apk
 #DEFINES += VERSION=\\\"$$ANDROID_VERSION_NAME\\\"   #версия в windows так не работает
 DEFINES += INSERT_VERSION_NAME=\\\"$$ANDROID_VERSION_NAME\\\"   #версия на главном экране
@@ -48,7 +50,6 @@ RESOURCES += \
     pages/main/UpdateDialogPage.qml \
     pages/main/DeviceScanerPage.qml \
     pages/main/SenderPage.qml \
-    pages/main/SettingsPage.qml \
     pages/shar/SettingFootPage.qml \
     pages/shar/ServicePage.qml \
     pages/main/ScrollablePage.qml \
@@ -88,6 +89,7 @@ RESOURCES += \
     pages/main/AboutPage.qml \
     pages/main/UpdateAppPage.qml \
     pages/shar/Update_Hex.qml \
+    pages/shar/SettingsPageShar.qml \
     pages/main/MainView.qml \
     pages/pylt/MainPagePylt.qml \
     pages/pylt/joystick/Joystick.qml \
@@ -121,6 +123,7 @@ DISTFILES += \
     pages/shar/Information.qml \
     pages/main/UpdateAppPage.qml \
     pages/shar/MainPageShar.qml \
+    pages/shar/SettingsPageShar.qml \
     pages/shar/Update_Hex.qml \
     android/AndroidManifest.xml \
     android/build.gradle \

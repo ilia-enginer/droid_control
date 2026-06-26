@@ -4,6 +4,7 @@
 #include <QObject>
 #include "../../main/settings.h"
 #include "../../communication/crc.h"
+#include "../../Shar/display_working/commun_display.h"
 
 
 class Rx_commands_Pylt: public QObject
@@ -14,13 +15,16 @@ public:
     ~Rx_commands_Pylt();
 
     void setSettings(Settings *newSettings);
+    void setCommun_display(Commun_display *newCommun_display);
 
     int searchCommand(QByteArray dat);
 
 private:
     Settings *_settings = nullptr;
+    Commun_display * _commun_display = nullptr;
 
     void getIntendifier(QByteArray Num); //ответ запроса ID устройства 0xF7
+    void batteryTypeRequest(QByteArray Data);    // запрос типа аккамулятора 0xA1
 
 };
 

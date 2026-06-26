@@ -5,7 +5,6 @@ import QtQuick.Controls.Material
 
 
 ScrollView {
-    id: settings_Pylt
     width: parent.width
     height: parent.height
 

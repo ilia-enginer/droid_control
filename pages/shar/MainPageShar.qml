@@ -52,7 +52,7 @@ Item {
                 stackView.push(terminalPage)
                 break
             case 6:
-                stackView.push(settingPage)
+                stackView.push(settingsPageShar)
                 break
             default:
                 break
@@ -77,6 +77,10 @@ Item {
     }
     SettingFootPage{
         id: settingFoot
+        visible: false
+    }
+    SettingsPageShar{
+        id: settingsPageShar
         visible: false
     }
 }

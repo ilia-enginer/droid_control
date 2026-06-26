@@ -132,6 +132,7 @@ int main(int argc, char *argv[])
     packing->setCommun_display(commun_display);
     packing->setMainSerialPort(mainSerialPort);
     packing->setDevice(device);
+    packing->setSettings(settings);
 
     unpacking->setCrc(crc);
     unpacking->setCommun_display(commun_display);
@@ -149,7 +150,10 @@ int main(int argc, char *argv[])
     rx_commands->setUpdateHex(updateHex);
     rx_commands->setSettings(settings);
 
+    tx_commandsPylt->setPacking(packing);
+
     rx_commands_Pylt->setSettings(settings);
+    rx_commands_Pylt->setCommun_display(commun_display);
 
     settings->setCommun_display(commun_display);
 
@@ -166,6 +170,7 @@ int main(int argc, char *argv[])
     model->setCommun_display(commun_display);
     model->setSettings(settings);
     model->setTx_commands(tx_commands);
+    model->setTx_commandsPylt(tx_commandsPylt);
     model->setMainSerialComPort(mainSerialPort);
     model->setPacking(packing);
 
@@ -207,6 +212,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("notificationClient", notificationClient);
     engine.rootContext()->setContextProperty("mainSerialPort", mainSerialPort);
     engine.rootContext()->setContextProperty("tx_commandsPylt", tx_commandsPylt);
+    engine.rootContext()->setContextProperty("rx_commands_Pylt", rx_commands_Pylt);
 
     engine.setInitialProperties({{ "builtInStyles", builtInStyles }});
     engine.load(QUrl("qrc:/pages/main/Main.qml"));

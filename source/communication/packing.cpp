@@ -36,10 +36,47 @@ Packing::setDevice(Device *newDevice)
 }
 
 void
+Packing::setSettings(Settings *newSettings)
+{
+    _settings = newSettings;
+}
+
+void
 Packing::setTypeTx(QString type)
 {
     if(type.isEmpty())  return;
     typeTx = type;
+}
+
+int
+Packing::Sending(QByteArray data, QString s)
+{
+    int res = -1;
+    QByteArray dataToSend;
+
+    //обертывание в протокол
+    dataToSend = wrapData(data);
+
+    //отправка сообщения
+    res = sendMessage(dataToSend, false);
+
+    if(res == -1)
+        return res;
+
+    //вывод лога
+    if(_settings->getLoging())
+    {
+        _commDisplay->log_out_J("-> ", QString ("%1 (%2 size)").arg(QString(dataToSend.toHex())).arg(res));
+        _commDisplay->log_out_S("-> ", QString ("%1 (%2 size)").arg(QString(dataToSend.toHex())).arg(res));
+    }
+
+    //вывод расшифровки лога
+    if(!s.isEmpty())
+    {
+        res = _commDisplay->log_out_S("-> ", s);
+        res = _commDisplay->log_out_J("-> ", s);
+    }
+    return res;
 }
 
 //отправить сообщение

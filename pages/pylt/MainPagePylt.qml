@@ -49,6 +49,7 @@ Item {
     }
     Settings_Pylt{
         id: settings_Pylt
+        visible: false
     }
 
 }

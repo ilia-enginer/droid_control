@@ -9,23 +9,33 @@ import "stick"
 
 Item {
     id: joystick_pylt
-    focus: false
+    visible: false
     width: parent.height
     height: parent.width
     anchors.centerIn: parent
     transformOrigin: Item.Center
     rotation: 90
 
+    onVisibleChanged: {
+        if(visible === true){
+    //        console.log("!!!!!!!!!! Joy Pylt Visible.")
+            joystickPyltTimer.running = visible
+        }
+        else{
+    //        console.log("!!!!!!!!!! Joy Pylt NO visible.")
+            joystickPyltTimer.running = visible
+        }
+    }
+
     property int txMin : 0
+    property int txMid : 124
     property int txMax : 249
 
     property bool but_1_Fixed : false           // состояние кнопки 1
     property bool but_2_Fixed : false           // состояние кнопки 2
 
-    onActiveFocusChanged: {
-        if (!activeFocus) joystickPyltTimer.running = false
-        else joystickPyltTimer.running = true
-     }
+    property int but_1_tx : txMin           // показания кнопки 1
+    property int but_2_tx : txMin           // показания кнопки 2
 
     Timer {
         id: joystickPyltTimer
@@ -33,7 +43,7 @@ Item {
         running: false
         repeat: true
         onTriggered: {
-            tx_commandsPylt.joysticActivity(stick1.extY, stick1.extX, stick2.extY, stick2.extX, but_1_Fixed, but_2_Fixed);
+            tx_commandsPylt.joysticActivity(stick1.extY, stick1.extX, stick2.extY, stick2.extX, but_1_tx, but_2_tx);
         }
     }
 
@@ -134,9 +144,11 @@ Item {
         }
         onPressed : {
             but_1_Fixed = but_1_Fixed ? false : true
+            but_1_tx = but_1_Fixed ? txMax : txMin
         }
         onReleased : {
             if(!butFixed.checked && but_1_Fixed) but_1_Fixed = false
+            but_1_tx = but_1_Fixed ? txMax : txMin
         }
     }
 
@@ -158,9 +170,11 @@ Item {
         }
         onPressed : {
             but_2_Fixed = but_2_Fixed ? false : true
+            but_2_tx = but_2_Fixed ? txMax : txMin
         }
         onReleased : {
             if(!butFixed.checked && but_2_Fixed) but_2_Fixed = false
+            but_2_tx = but_2_Fixed ? txMax : txMin
         }
     }
 

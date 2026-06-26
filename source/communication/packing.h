@@ -7,6 +7,7 @@
 #include "../Shar/display_working/commun_display.h"
 #include "serialComPort/mainSerialPort.h"
 #include "device/device.h"
+#include "../main/settings.h"
 
 
 class Packing: public QObject
@@ -22,8 +23,11 @@ public:
     void setMainSerialPort(MainSerialPort *newMainSerialPort);
     void setDevice(Device *newDevice);
     void setSocket(QBluetoothSocket *newSocket);
+    void setSettings(Settings *newSettings);
+
     void delSocket();
     void setTypeTx(QString type);
+    int Sending(QByteArray, QString);
 
 public slots:
     int sendMessage(QString msg, bool wrap);
@@ -33,8 +37,10 @@ public slots:
 private:
     Crc                 * _crc = nullptr;
     Commun_display      * _commDisplay = nullptr;
-    MainSerialPort      *_mainSerialPort = nullptr;
-    Device              *_device = nullptr;
+    MainSerialPort      * _mainSerialPort = nullptr;
+    Device              * _device = nullptr;
+    Settings            * _settings = nullptr;
+
 
     QString typeTx = "none";
 
