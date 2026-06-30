@@ -296,6 +296,18 @@ Commun_display::pca1_pca2_speed_Ch(qint8 freqPca1, qint8 freqPca2, qint8 speedSe
     return -1;
 }
 
+// подсветить ползунок батарейки красным или не подсвечивать
+int
+Commun_display::setHighlightChargeLevel(qint8 flag)
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit SetQMLHighlightChargeLevel(flag);
+        return 0;
+    }
+    return -1;
+}
+
 QString
 Commun_display::getTime()
 {

@@ -100,6 +100,8 @@ public:
 
     int pca1_pca2_speed_Ch(qint8 freqPca1, qint8 freqPca2, qint8 speedServo);
 
+    int setHighlightChargeLevel(qint8 flag);     // подсветить ползунок батарейки красным или не подсвечивать
+
 
 signals:
     void logT(QString type, QString msg);
@@ -147,6 +149,8 @@ signals:
     void bytesReadChanged();
 
     void pca1_pca2_speed_Changed(qint8 freqPca1, qint8 freqPca2, qint8 speedServo);
+
+    void SetQMLHighlightChargeLevel(qint8 flag);
 
 private:
     QString getTime();

@@ -57,7 +57,20 @@ Item {
         text: commun_display.curDeviceName_
     }
 
+
     //напруга
+    property string lowPower: "#c22525"
+
+    property string from11: "#11ed61"
+    property string to11:   "#0ba142"
+    property string from12: "#0ba142"
+    property string to12:   "#11ed61"
+
+    property string from21: "#14aaff"
+    property string to21:   "#437284"
+    property string from22: "#437284"
+    property string to22:   "#14aaff"
+
     ProgressBar{
         id: voltage
         anchors.top: label.bottom
@@ -76,23 +89,23 @@ Item {
                 width: voltage.visualPosition * parent.width
                 height: parent.height
                 radius: 2
-                color: "#17a81a"
+//                color: "#17a81a"
 
                 gradient: Gradient {
                     GradientStop {
                         position: 0.0
                         SequentialAnimation on color {
                             loops: Animation.Infinite
-                            ColorAnimation { from: "#11ed61"; to: "#0ba142"; duration: 5000 }
-                            ColorAnimation { from: "#0ba142"; to: "#11ed61"; duration: 5000 }
+                            ColorAnimation { id: animation11; from: from11; to: to11; duration: 5000 }
+                            ColorAnimation { id: animation12; from: from12; to: to12; duration: 5000 }
                         }
                     }
                     GradientStop {
                         position: 1.0
                         SequentialAnimation on color {
                             loops: Animation.Infinite
-                            ColorAnimation { from: "#14aaff"; to: "#437284"; duration: 5000 }
-                            ColorAnimation { from: "#437284"; to: "#14aaff"; duration: 5000 }
+                            ColorAnimation { id: animation21; from: from21; to: to21; duration: 5000 }
+                            ColorAnimation { id: animation22; from: from22; to: to22; duration: 5000 }
                         }
                     }
                 }
@@ -102,6 +115,30 @@ Item {
             target: commun_display
             function onVrealChanged(V) {
                 voltage.value = V
+            }
+            function onSetQMLHighlightChargeLevel(flag){
+                if(flag){
+                    animation11.from    = lowPower;
+                    animation11.to      = lowPower;
+                    animation12.from    = lowPower;
+                    animation12.to      = lowPower;
+
+                    animation21.from    = lowPower;
+                    animation21.to      = lowPower;
+                    animation22.from    = lowPower;
+                    animation22.to      = lowPower;
+                }
+                else{
+                    animation11.from    = from11;
+                    animation11.to      = to11;
+                    animation12.from    = from12;
+                    animation12.to      = to12;
+
+                    animation21.from    = from21;
+                    animation21.to      = to21;
+                    animation22.from    = from22;
+                    animation22.to      = to22;
+                }
             }
         }
     }

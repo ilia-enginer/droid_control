@@ -212,7 +212,6 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("notificationClient", notificationClient);
     engine.rootContext()->setContextProperty("mainSerialPort", mainSerialPort);
     engine.rootContext()->setContextProperty("tx_commandsPylt", tx_commandsPylt);
-    engine.rootContext()->setContextProperty("rx_commands_Pylt", rx_commands_Pylt);
 
     engine.setInitialProperties({{ "builtInStyles", builtInStyles }});
     engine.load(QUrl("qrc:/pages/main/Main.qml"));

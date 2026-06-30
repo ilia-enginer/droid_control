@@ -33,6 +33,9 @@ Rx_commands_Pylt::searchCommand(QByteArray dat)
     int res = 1;
 
     switch (k) {
+    case 0x0A:
+        replyJoysticActivity(Data);
+        break;
     case 0xA1:
         batteryTypeRequest(Data);
         break;
@@ -47,6 +50,25 @@ Rx_commands_Pylt::searchCommand(QByteArray dat)
 
     Data.replace(0, Data.size(), empty);  //очистка массива
     return res;
+}
+
+// отвечает статус байтом и реальным напряжением 0x0A
+void
+Rx_commands_Pylt::replyJoysticActivity(QByteArray Data)
+{
+    qint8 flagLowPower;
+    f_value val;
+
+    flagLowPower = Data[0];
+    _commun_display->setHighlightChargeLevel(flagLowPower);
+
+    // реальное напряжение во флоат
+    val.data[3] = Data[1];
+    val.data[2] = Data[2];
+    val.data[1] = Data[3];
+    val.data[0] = Data[4];
+    float Vreal = val.f;
+    if(Vreal == Vreal)   _commun_display->vrealChang(Vreal);
 }
 
 void

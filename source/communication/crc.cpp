@@ -17,6 +17,7 @@ Crc::~Crc()
 qint16
 Crc::crc16(const QByteArray &arr)
 {
+    const uint16_t Polinom = 0x1021;
     quint32 len = arr.size();
     uint16_t crc = 0;  //0xFFFF
     quint8 byte;
@@ -29,10 +30,10 @@ Crc::crc16(const QByteArray &arr)
         crc = crc ^ byte << 8;
         i = 8;
         do {
-            if (crc&0x8000) {
-                crc = crc<<1^0x1021;
+            if (crc & 0x8000) {
+                crc = crc << 1 ^ Polinom;
             } else {
-                crc = crc<<1;
+                crc = crc << 1;
             }
         }   while (--i);
     }

@@ -23,8 +23,9 @@ private:
     Settings *_settings = nullptr;
     Commun_display * _commun_display = nullptr;
 
-    void getIntendifier(QByteArray Num); //ответ запроса ID устройства 0xF7
-    void batteryTypeRequest(QByteArray Data);    // запрос типа аккамулятора 0xA1
+    void replyJoysticActivity(QByteArray Data);     // отвечает статус байтом и реальным напряжением 0x0A
+    void getIntendifier(QByteArray Num);            // ответ запроса ID устройства 0xF7
+    void batteryTypeRequest(QByteArray Data);       // запрос типа аккамулятора 0xA1
 
 };
 
