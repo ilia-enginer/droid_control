@@ -302,7 +302,7 @@ Commun_display::setHighlightChargeLevel(qint8 flag)
 {
     if(rendering_flag == Qt::ApplicationState::ApplicationActive)
     {
-        emit SetQMLHighlightChargeLevel(flag);
+        emit setChargeLevel(flag);
         return 0;
     }
     return -1;

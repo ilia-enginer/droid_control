@@ -1,4 +1,6 @@
 #include "rx_commandsPylt.h"
+#include <QDebug>
+#include <QtMath>
 
 Rx_commands_Pylt::Rx_commands_Pylt(QObject *parent) :
     QObject(parent)
@@ -27,6 +29,7 @@ int
 Rx_commands_Pylt::searchCommand(QByteArray dat)
 {
     const std::string empty;
+    if(dat.size() < 1)  return -1;
     quint8 k = dat[0];
     QByteArray Data = dat;
     Data.replace(0, 1, empty);
@@ -56,6 +59,8 @@ Rx_commands_Pylt::searchCommand(QByteArray dat)
 void
 Rx_commands_Pylt::replyJoysticActivity(QByteArray Data)
 {
+    if(Data.size() < 5)  return;
+
     qint8 flagLowPower;
     f_value val;
 
@@ -69,11 +74,14 @@ Rx_commands_Pylt::replyJoysticActivity(QByteArray Data)
     val.data[0] = Data[4];
     float Vreal = val.f;
     if(Vreal == Vreal)   _commun_display->vrealChang(Vreal);
+//    qDebug() << "Vreal = " << Vreal;
 }
 
 void
 Rx_commands_Pylt::getIntendifier(QByteArray Num)
 {
+    if(Num.size() < 4)  return;
+
     f_value val;
 
     val.data[3] = Num[0];
@@ -83,12 +91,15 @@ Rx_commands_Pylt::getIntendifier(QByteArray Num)
     int id = val.int32;
 
     _settings->setIdDevice(id, false);
+//    qDebug() << "getIntendifier = " << id;
 }
 
 // ответ на запрос типа аккамулятора 0xA1
 void
 Rx_commands_Pylt::batteryTypeRequest(QByteArray Data)
 {
+    if(Data.size() < 8)  return;
+
     f_value val;
     // сначала реальное напряжение во флоат
     val.data[3] = Data[0];
@@ -103,35 +114,43 @@ Rx_commands_Pylt::batteryTypeRequest(QByteArray Data)
     val.data[2] = Data[5];
     val.data[1] = Data[6];
     val.data[0] = Data[7];
-    float Vnum = val.f;
-    if(Vnum == Vnum)
-    {
-        if(Vnum == 7.4) // 2s
+
+    if(val.f == val.f)
+    {        
+        float Vnum = val.f;
+
+        if(qFuzzyCompare(Vnum, 7.4f))   // 2s
         {
             _settings->setVmin(6.0);
             _settings->setVmax(8.4);
         }
-        else if(Vnum == 11.1)   // 3s
+        else if(qFuzzyCompare(Vnum, 11.1f))   // 3s
         {
             _settings->setVmin(9.0);
             _settings->setVmax(12.6);
         }
-        else if(Vnum == 14.8)   // 4s
+        else if(qFuzzyCompare(Vnum, 14.8f))   // 4s
         {
             _settings->setVmin(12.0);
             _settings->setVmax(16.8);
         }
-        else if(Vnum == 18.5)   // 5s
+        else if(qFuzzyCompare(Vnum, 18.5f))   // 5s
         {
             _settings->setVmin(15.0);
             _settings->setVmax(21.0);
         }
-        else if(Vnum == 22.2)   // 6s
+        else if(qFuzzyCompare(Vnum, 22.2f))   // 6s
         {
             _settings->setVmin(18.0);
             _settings->setVmax(25.2);
         }
+        else
+        {
+            _settings->setVmin(6.0);
+            _settings->setVmax(25.2);
+        }
     }
+//    qDebug() << "Vnum = " << Vnum;
 }
 //???? вписать команду получения реального напряжения + флаги статуса
 // при флаге "низкое напряжение - менять градиет ползунка напряжения на красный, при отсутствии этого флага менять обратно"

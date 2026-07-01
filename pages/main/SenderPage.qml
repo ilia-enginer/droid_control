@@ -22,7 +22,7 @@ Page {
         anchors.top: senderPageLabel.bottom
         color: "#111111"
         width: parent.width
-        height: 250
+        height: parent.height * 0.5
     }
 
     ScrollView {

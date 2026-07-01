@@ -17,7 +17,7 @@ Crc::~Crc()
 qint16
 Crc::crc16(const QByteArray &arr)
 {
-    const uint16_t Polinom = 0x1021;
+    const uint16_t Polinom = 0x1024;
     quint32 len = arr.size();
     uint16_t crc = 0;  //0xFFFF
     quint8 byte;

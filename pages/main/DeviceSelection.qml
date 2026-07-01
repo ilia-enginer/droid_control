@@ -35,6 +35,7 @@ Dialog {
             ComboBox {
                 id: styleBox
                 Layout.fillWidth: true
+                currentIndex: settParam.idDevice
                 model: ListModel {
                     ListElement { name: "..."}
                     ListElement { name: "Шар"}

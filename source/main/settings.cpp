@@ -180,9 +180,11 @@ Settings::setIdDevice(int id, bool refresh)
         default:
             idDevice = NONE;
             emit clearDevice();
+            emit idDeviceChanged();
             return 0;
             break;
     }
+    emit idDeviceChanged();
     return 1;
 }
 

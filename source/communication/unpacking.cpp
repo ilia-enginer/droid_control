@@ -151,6 +151,7 @@ Unpacking::unpack(QByteArray data, int size)
         {
             //ошибка crc
             _commDisplay->log_out_S("<- no crc ", dataRes.toHex());
+            qDebug() << "no crc, crc = " << crc << "crc_recieved = " << crc_recieved;
             res = -2;
         }
     }
@@ -198,6 +199,10 @@ Unpacking::checkBalance()
 int
 Unpacking::choosingDevice()
 {
+    // если пришел id устройства
+    if(dataRes.size() >= 1)
+        if(dataRes[0] == 0xF7) checkID();
+
     if(_settings->getIdDevice() == _settings->ID_Devices::SHAR)
     {
         return _rx_commands->searchCommand(dataRes);
@@ -206,7 +211,7 @@ Unpacking::choosingDevice()
     {
         return _rx_commandsPylt->searchCommand(dataRes);
     }
-    else if(_settings->getIdDevice() == _settings->ID_Devices::NONE)
+    else
     {
         return checkID();
     }
@@ -217,9 +222,14 @@ Unpacking::choosingDevice()
 int
 Unpacking::checkID()
 {
+    const std::string empty;
+    if(dataRes.size() < 5)      return -11;
+
     quint8 k = dataRes[0];
     if(k != 0xF7) return -9;
-    dataRes.replace(0, 1);
+    dataRes.replace(0, 1, empty);
+
+    if(dataRes.size() < 4)  return -10;
 
     f_value val;
     val.data[3] = dataRes[0];

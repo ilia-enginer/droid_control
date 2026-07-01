@@ -38,7 +38,7 @@ public:
     Q_PROPERTY(int tibaAngl READ gettibaAngl WRITE settibaAngl NOTIFY tibaAnglChanged)
     Q_PROPERTY(bool ctrl_ READ getctrl WRITE setctrl NOTIFY ctrlChanged)
     Q_PROPERTY(bool loging READ getLoging WRITE setLoging NOTIFY logingChanged) 
-
+    Q_PROPERTY(int idDevice READ getIdDevice NOTIFY idDeviceChanged)
 
     explicit Settings(QObject *parent = nullptr);
     ~Settings(); 
@@ -108,6 +108,8 @@ Q_SIGNALS:
     void clearDevice();
     void deviceShar();
     void devicePylt();
+
+    void idDeviceChanged();
 
 
 private:
