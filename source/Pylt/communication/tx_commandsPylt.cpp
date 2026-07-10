@@ -27,8 +27,10 @@ Tx_commandsPylt::joysticActivity(quint8 y1, quint8 x1, quint8 y2, quint8 x2, qui
     int res = -1;
     QString s;
     quint8 comand = 0x0A;
+    quint8 but_bit = 0;     // байтовое состояние кнопок
 
     data.append(comand);
+    data.append(but_bit);
     data.append(y1);
     data.append(x1);
     data.append(y2);
