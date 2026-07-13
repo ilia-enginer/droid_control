@@ -5,6 +5,7 @@ import QtQuick.Controls.Material
 
 
 ScrollView {
+    id: scrollView
     width: parent.width
     height: parent.height
 
@@ -17,6 +18,8 @@ ScrollView {
     property int joy2_y_max : 2000
     property int joy2_x_min : 1000
     property int joy2_x_max : 2000
+
+    property bool butFixed : false
 
     Column {
         spacing: 3
@@ -163,6 +166,14 @@ ScrollView {
             second.onMoved: {joy2_x_max = second.value}
         }
     ///////////// X прав /////////////
+
+        Switch {
+            width: parent.width
+            anchors.left: parent.left
+            checked: false
+            text: qsTr("фиксация кнопок")
+            onClicked: { butFixed = checked }
+        }
     }
 }
 

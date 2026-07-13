@@ -7,6 +7,7 @@ import QtQuick.Layouts
 
 import "stick"
 
+
 Item {
     id: joystick_pylt
     visible: false
@@ -130,10 +131,10 @@ Item {
     Stick{
         id: stick1
         anchors.left: parent.left
-        anchors.leftMargin: 100
-     //   anchors.top: voltage.bottom
-     //   anchors.topMargin: 100
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.leftMargin: 130
+        anchors.top: voltage.bottom
+        anchors.topMargin: 130
+        //anchors.verticalCenter: parent.verticalCenter
     }
 
     RoundButton {
@@ -150,6 +151,7 @@ Item {
                  anchors.fill: parent
                  color: "#c7ecee"                // цвет фона кнопки
                  border.color: but_1_Fixed === true ? pressedColor : normalColor         // цвет границы
+                 border.width: 2
                  radius: 5
         }
         onPressed : {
@@ -157,7 +159,7 @@ Item {
             but_1_tx = but_1_Fixed ? txMax : txMin
         }
         onReleased : {
-            if(!butFixed.checked && but_1_Fixed) but_1_Fixed = false
+            if(!settings_Pylt.butFixed && but_1_Fixed) but_1_Fixed = false
             but_1_tx = but_1_Fixed ? txMax : txMin
         }
     }
@@ -176,6 +178,7 @@ Item {
                  anchors.fill: parent
                  color: "#c7ecee"                // цвет фона кнопки
                  border.color: but_2_Fixed === true ? pressedColor : normalColor         // цвет границы
+                 border.width: 2
                  radius: 5
         }
         onPressed : {
@@ -183,7 +186,7 @@ Item {
             but_2_tx = but_2_Fixed ? txMax : txMin
         }
         onReleased : {
-            if(!butFixed.checked && but_2_Fixed) but_2_Fixed = false
+            if(!settings_Pylt.butFixed && but_2_Fixed) but_2_Fixed = false
             but_2_tx = but_2_Fixed ? txMax : txMin
         }
     }
@@ -191,23 +194,9 @@ Item {
     Stick{
         id: stick2
         anchors.right: parent.right
-        anchors.rightMargin: 100
-    //    anchors.top: voltage.bottom
-    //    anchors.topMargin: 100
-        anchors.verticalCenter: parent.verticalCenter
-    }
-
-    Switch {
-        id: butFixed
+        anchors.rightMargin: 130
         anchors.top: voltage.bottom
-        anchors.topMargin: 15
-        anchors.horizontalCenter: voltage.horizontalCenter
-        checked: false
-        Text {
-            anchors.top: parent.bottom
-            anchors.topMargin: 5
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("фиксация кнопок")
-        }
+        anchors.topMargin: 130
+   //     anchors.verticalCenter: parent.verticalCenter
     }
 }
