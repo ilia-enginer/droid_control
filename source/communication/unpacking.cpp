@@ -75,7 +75,7 @@ Unpacking::messRes(QByteArray recievedData)
 
     //если терминал - вывести в сыром виде
     //в окно терминала
-    _commDisplay->log_out_T("<-", QString ("%1 (%2 size)").arg(QString(recievedData.toHex())).arg(size));
+    _commDisplay->log_out_T("<- ", QString ("%1 (%2 size)").arg(QString(recievedData.toHex())).arg(size));
 
     //распаковка
     res = unpack(recievedData, size);
