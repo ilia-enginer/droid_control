@@ -270,7 +270,8 @@ Page {
               DelayButton {
               id: cur_calibr_auto
               anchors.top: set_full_param.bottom
-              width: page_settings.width
+              width: page_settings.width * 0.98
+              anchors.horizontalCenter: parent.horizontalCenter
               height: page_settings.height * 0.08
               delay: 3000     //3000 ms
 
@@ -304,7 +305,8 @@ Page {
             DelayButton {
               id: servscalibr
               anchors.top: cur_calibr_auto.bottom
-              width: page_settings.width
+              width: page_settings.width * 0.98
+              anchors.horizontalCenter: parent.horizontalCenter
               height: page_settings.height * 0.08
               delay: 1500
                onActivated: {
@@ -1095,7 +1097,8 @@ Page {
            Button {
                id: calibr_foot
                anchors.bottom: reset_foot_param.top
-               width: page_setting_foot.width
+               width: page_settings.width * 0.98
+               anchors.horizontalCenter: parent.horizontalCenter
                height: page_setting_foot.height * 0.08
                text: "старт/стоп калибровки ноги"
                background: Rectangle{
@@ -1113,7 +1116,8 @@ Page {
            Button {
                id: reset_foot_param
                anchors.bottom: parent.bottom
-               width: page_setting_foot.width
+               width: page_settings.width * 0.98
+               anchors.horizontalCenter: parent.horizontalCenter
                height: page_setting_foot.height * 0.08
                text: "Reset foot param!"
                background: Rectangle{
@@ -1147,11 +1151,11 @@ Page {
            Column {
                id: notifColumn
                spacing: 8
-               width: parent.width * 0.9
+               width: parent.width * 0.8
                anchors.centerIn: parent
 
                Row {
-                   spacing: 18
+                   spacing: 5
                    anchors.horizontalCenter: parent.horizontalCenter
 
                    RoundButton {
@@ -1295,7 +1299,7 @@ Page {
                    }
                    Label {
                        anchors.verticalCenter: row3.verticalCenter
-                       text: "Скорость сервоприводов  " + "' " + speedServs + " '"
+                       text: "Скорость серв  " + "' " + speedServs + " '"
                        font.bold: true
                        color: "black"
                    }
@@ -1316,7 +1320,7 @@ Page {
                    }
                }
                Row {
-                   spacing: 18
+                   spacing: 5
                    anchors.horizontalCenter: parent.horizontalCenter
                    Button {
                        background: Rectangle{
@@ -1325,7 +1329,7 @@ Page {
                            color: parent.pressed ? pressedColor : normalColor
                            radius: 8
                        }
-                       text: "Центр. полож. сервоприводов"
+                       text: "Центр. полож. серв"
                        onClicked: {
                            tx_commands.setMidPwmServs();
                            listView1.positionViewAtEnd();
