@@ -38,7 +38,7 @@ Item {
     property bool but_2_Fixed : false           // состояние кнопки 2
 
     function joy_activ(){
-        tx_commandsPylt.joystic_Activity(x1, y1, x2, y2, but_1_Fixed, but_2_Fixed)
+        tx_commandsPylt.joystic_Activity(y1, x1, y2, x2, but_1_Fixed, but_2_Fixed)
     }
 
     Timer {

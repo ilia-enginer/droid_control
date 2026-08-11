@@ -20,7 +20,7 @@ public:
     int writeData(const QByteArray &data);
 
 signals:
-    void connected(QString type);
+    void connected(QString type, QString name);
     void messageReceived(QByteArray mess);
 
 public slots:

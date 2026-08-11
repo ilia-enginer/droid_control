@@ -1,0 +1,534 @@
+#include "commun_display.h"
+
+#include "QDebug"
+#include <QList>
+#include <QByteArray>
+#include <QMetaEnum>
+#include <QCoreApplication>
+#include <QTime>
+
+
+Commun_display::Commun_display(QObject *parent) :
+    QObject(parent)
+{
+}
+
+Commun_display::~Commun_display()
+{
+}
+
+void
+Commun_display::setNotificationClient(NotificationClient *newNotificationClient)
+{
+    _notificationClient = newNotificationClient;
+}
+
+int
+Commun_display::get_rendering_flag()
+{
+    return rendering_flag;
+}
+
+void
+Commun_display::set_rendering_flag(int flag)
+{
+    rendering_flag = flag;
+}
+
+int
+Commun_display::log_out_S(QString type, QString msg)
+{   
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit logServis(getTime() + type, msg);
+        return 0;
+    }
+    return -1;
+}
+
+int
+Commun_display::log_out_J(QString type, QString msg)
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit logJoy(type, msg);
+        return 0;
+    }
+    return -1;
+}
+
+int
+Commun_display::log_out_T(QString type, QString msg)
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit logT(getTime() + type, msg);
+        return 0;
+    }
+    return -1;
+}
+
+int
+Commun_display::vrealChang(float V)
+{
+    int res = -1;
+    if(V != V)
+        return -2;
+    Volt = V;
+    res = vrealUpdate();
+    return res;
+}
+
+float
+Commun_display::getVolt()
+{
+    return Volt;
+}
+
+int
+Commun_display::vrealUpdate()
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit vrealChanged(Volt);
+        return 0;
+    }
+    return -1;
+}
+
+int
+Commun_display::curRealChang(float C)
+{  
+    int res = -1;
+    if(C != C)
+        return -2;
+    Cur = C;
+    res = curRealUpdate();
+    return res;
+}
+
+float
+Commun_display::getCur()
+{
+    return Cur;
+}
+
+//строка обновления hex
+int
+Commun_display::setCurrenUpd(const QString &message)
+{
+    int res = -1;
+    if(message.isEmpty())
+        return res;
+    currUpd = message;
+    res = currenUpd();
+    return res;
+}
+
+QString
+Commun_display::getCurrenUpd()
+{
+    return currUpd;
+}
+
+int
+Commun_display::statusUpdate(int status)
+{
+    int res = -1;
+    statusUpd = status;
+    res = statusRefresh();
+    return res;
+}
+
+QString
+Commun_display::getUpdate()
+{
+    return messagee;
+}
+
+//строка связана с сканированием устройств
+int
+Commun_display::setUpdatee(const QString &message)
+{
+    if(message.isEmpty())   return -1;
+    messagee = message;
+    updateRefresh();
+    return 0;
+}
+
+int
+Commun_display::statusDevicee(int status)
+{
+    int res = -1;
+    statusDevic = status;
+    res = statusDeviceRefresh();
+    return res;
+}
+
+//имя подключенного устройства или статус "отключено"
+int
+Commun_display::setCurDeviceName(QString name)
+{
+    curDeviceName_ = name;
+    return CurDeviceNameRefresh();
+}
+
+QString
+Commun_display::getCurDeviceName()
+{
+    return curDeviceName_;
+}
+
+int
+Commun_display::windloadHexOpen()
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit onWindowloadHexOpen();
+        return 0;
+    }
+    return -1;
+}
+
+void
+Commun_display::set_connected(bool connect)
+{
+    if(!connect)
+    {
+        //сбросить напряжение и ток
+        curRealChang(0.0f);
+        vrealChang(0.0f);
+    }
+}
+
+void
+Commun_display::graphsOutput(float volt, float cur, float tilt_angle, float tilt_direction, float boost, float angular_velocity, float angleX, float angleY, float angleZ)
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit chart_data(volt,
+                        cur, tilt_angle,
+                        tilt_direction, boost,
+                        angular_velocity, angleX,
+                        angleY, angleZ);
+    }
+}
+
+int
+Commun_display::statusUpdateApp(int status)
+{
+    int res = -1;  
+    statusUpdApp.append(status);
+    res = statusUpdateAppRefresh();
+    return res;
+}
+
+//строка состояния при обновлении приложения
+int
+Commun_display::setUpdateAppText(const QString &message)
+{
+    int res = -1;
+    if(message.isEmpty())
+        return res;
+    updateAppText_ = message;
+    res = updateAppTextRefresh();
+    return res;
+}
+
+QString
+Commun_display::getUpdateAppText()
+{
+    return updateAppText_;
+}
+
+QString
+Commun_display::getLoadTextApp()
+{
+    return loadTextApp_;
+}
+
+//сколько скачано при обновлении приложения
+int
+Commun_display::setLoadTextApp(QString text)
+{
+    int res = -1;
+    if(text.isEmpty())
+        return res;
+    loadTextApp_ = text;
+    res = LoadTextAppRefresh();    
+    return res;
+}
+
+void
+Commun_display::set_TotalBytes(double byte)
+{
+    TotalBytes = byte;
+    TotalBytesRefresh();
+}
+
+void
+Commun_display::set_BytesRead(double byte)
+{
+    BytesRead = byte;
+    BytesReadRefresh();
+}
+
+double
+Commun_display::get_TotalBytes() const
+{
+    return TotalBytes;
+}
+
+double
+Commun_display::get_BytesRead() const
+{
+    return BytesRead;
+}
+
+int
+Commun_display::pca1_pca2_speed_Ch(qint8 freqPca1, qint8 freqPca2, qint8 speedServo)
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit pca1_pca2_speed_Changed(freqPca1, freqPca2, speedServo);
+        return 0;
+    }
+    return -1;
+}
+
+QString
+Commun_display::getTime()
+{
+    QTime currentTime = QTime::currentTime();
+    QString sTime = currentTime.toString("HH:mm:ss.zzz");
+    sTime.append(" ");
+    return sTime;
+}
+
+int
+Commun_display::allUpdate()
+{
+    vrealUpdate();      //напряжение
+    curRealUpdate();    //ток
+    currenUpd();        //строка на странице обновления hex
+    statusRefresh();    //обновить состояние загрузочной страницы
+    updateRefresh();    //состояние поисковой страницы
+    statusDeviceRefresh();//обновить состояние поисковой страницы
+    CurDeviceNameRefresh();//обновление имени подключенного устройства
+    statusUpdateAppRefresh();//обновить состояние страницы обновления Апк
+    updateAppTextRefresh(); //обновить текст на странице обновления приложения
+    LoadTextAppRefresh();   //обновить загрузочный текст на странице обновления приложения
+    TotalBytesRefresh();
+    BytesReadRefresh();
+
+    return 0;
+}
+
+int
+Commun_display::curRealUpdate()
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit curRealChanged(Cur);
+        return 0;
+    }
+    return -1;
+}
+
+//строка при обновлении hex
+int
+Commun_display::currenUpd()
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit CurrenUpdateChanged(currUpd);
+        return 0;
+    }
+    else{
+        _notificationClient->setNotification(currUpd);
+    }
+    return -1;
+}
+
+//окно состояний обновления hex
+int
+Commun_display::statusRefresh()
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        switch(statusUpd)
+        {
+            case statusUpd::checkUpd:
+                emit checkUpdate();             //включение кнопки проверки обновления
+                break;
+            case statusUpd::checkUpdateProgr:
+                emit checkUpdateProgress();     //индикатор загрузки
+                break;
+            case statusUpd::stopUpd:
+                emit stopUpdate();             //включение кнопки остановки обновления
+                break;
+
+            case statusUpd::updateAvailab:
+                emit updateAvailable();         //включение кнопки загрузки
+                break;
+
+            case statusUpd::updateBootloaderAvailab:
+                emit updateBootloaderAvailable();//кнопка обновления бутлоадера
+                break;
+
+            default:
+                break;
+        }
+        return 0;
+    }
+    return -1;
+}
+
+//строка связана с сканированием устройств
+int
+Commun_display::updateRefresh()
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        if(messagee.isEmpty())   return -2;
+        emit updateChanged(messagee);
+        return 0;
+    }
+    return -1;
+}
+
+int
+Commun_display::statusDeviceRefresh()
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        switch(statusDevic)
+        {
+            case statusDevic::disconnect:
+                emit disconnected();
+                break;
+            case statusDevic::searchInProgr:
+                emit searchInProgress();
+                break;
+            case statusDevic::searchFinish:
+                emit searchFinished();
+                break;
+            default:
+                break;
+        }
+        return 0;
+    }
+    return -1;
+}
+
+//имя подключенного устройства или статус "отключено"
+int
+Commun_display::CurDeviceNameRefresh()
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit curDeviceNameChanged(curDeviceName_);
+    //    qDebug() << "c++ curDeviceName = " + QString(curDeviceName_) << this;
+        return 0;
+    }
+    return -1;
+}
+
+//строка состояния при обновлении приложения
+int
+Commun_display::updateAppTextRefresh()
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit UpdateAppTextChanged(updateAppText_);
+        return 0;
+    }
+    else{
+        _notificationClient->setNotification(updateAppText_);
+    }
+    return -1;
+}
+
+//сколько скачано при обновлении приложения
+int
+Commun_display::LoadTextAppRefresh()
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit onLoadTextAppChanged(loadTextApp_);
+        return 0;
+    }
+    else{
+        _notificationClient->setNotification(loadTextApp_);
+    }
+    return -1;
+}
+
+int
+Commun_display::statusUpdateAppRefresh()
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        const std::string empty;
+
+        while(!statusUpdApp.isEmpty())
+        {
+            switch(statusUpdApp[0])
+            {
+                case updApp::startloadStat:
+                    emit startload();         //включение ползунка загрузки
+                    break;
+                case updApp::statusLoadOFFStat:
+                    emit statusLoadOFF();     //отключение ползунка загрузки
+                    break;
+                case updApp::busyIndicatorONStat:
+                    emit busyIndicatorON();     //включает крутилку загрузки
+                    break;
+                case updApp::busyIndicatorOFFStat:
+                    emit busyIndicatorOFF();    //отключает крутилку загрузки
+                    break;
+                case updApp::windowloadOpenStat:
+                    emit windowloadOpen();           //открывает окно обновления app
+                    break;
+                case updApp::but_Ok_OnStat:
+                    emit but_Ok_On();            //включение кнопки повторной установки
+                    break;
+                case updApp::but_Yes_OnStat:
+                    emit but_Yes_On();            //включение кнопки повторного скачивания
+                    break;
+
+                default:
+                    break;
+            }
+
+            statusUpdApp.replace(0, 1, empty);
+        }
+        return 0;
+    }
+    return -1;
+}
+
+int
+Commun_display::TotalBytesRefresh()
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit totalBytesChanged();
+        return 0;
+    }
+    return -1;
+}
+
+int
+Commun_display::BytesReadRefresh()
+{
+    if(rendering_flag == Qt::ApplicationState::ApplicationActive)
+    {
+        emit bytesReadChanged();
+        return 0;
+    }
+    return -1;
+}
+
+
+

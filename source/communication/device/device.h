@@ -134,7 +134,7 @@ Q_SIGNALS:
     void characteristicsUpdated();
     void stateChanged();
     void messageReceived(QByteArray mess);
-    void connected(QString type);
+    void connected(QString type, QString name);
 
 private:
     void setUpdate(const QString &message);

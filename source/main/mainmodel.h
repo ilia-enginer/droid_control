@@ -9,6 +9,7 @@
 #include "../communication/serialComPort/mainSerialPort.h"
 #include "../communication/packing.h"
 #include "../Pylt/communication/tx_commandsPylt.h"
+#include "../Pylt/pylt_settings.h"
 
 
 class Device;
@@ -31,6 +32,7 @@ public:
     void setCommun_display(Commun_display *newCommun_display);
     void setMainSerialComPort(MainSerialPort *newMainSerialPort);
     void setPacking(Packing *newPacking);
+    void setPylt_settings(Pylt_settings * newPylt_settings);
 
     int checkingParameters();
     int checkID();
@@ -39,7 +41,7 @@ public:
 public slots:
     void setAdminFlag(bool value);
     bool getAdminFlag();
-    void deviceConnect(QString type);
+    void deviceConnect(QString type, QString name);
 
 Q_SIGNALS:
     void onAdminFlagChanged();
@@ -49,6 +51,7 @@ private:
     Settings            * _settings = nullptr;
     Tx_commands         * _tx_commands = nullptr;
     Tx_commandsPylt     * _tx_commandsPylt = nullptr;
+    Pylt_settings       * _pylt_settings = nullptr;
     UpdateHex           * _updateHex = nullptr;
     Commun_display      * _commun_display = nullptr;
     MainSerialPort      * _mainserialport = nullptr;

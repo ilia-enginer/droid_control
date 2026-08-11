@@ -37,6 +37,7 @@ Tx_commandsPylt::recalculatingParameters()
 
     // получить параметры пользовательского вида из класса настроек
     FullParam param = _pylt_settings->getFullParam();
+    valuesParam = param;
 
     // пересчитать параметры в значения, которые принимает пульт
     valuesParam.ch1_joy1_y_min = uint_32_changing_range(param.ch1_joy1_y_min, old_min, old_max, new_old_min, new_old_max);
@@ -55,52 +56,85 @@ Tx_commandsPylt::recalculatingParameters()
     valuesParam.ch6_min = uint_32_changing_range(param.ch6_min, old_min, old_max, new_old_min, new_old_max);
     valuesParam.ch6_max = uint_32_changing_range(param.ch6_max, old_min, old_max, new_old_min, new_old_max);
 
-    valuesParam.boot_fixing = param.boot_fixing;
-    valuesParam.tank_mode = param.tank_mode;
-
     return 0;
 }
 
 int
-Tx_commandsPylt::joystic_Activity(float x_1, float y_1, float x_2, float y_2, bool but_1, bool but_2)
+Tx_commandsPylt::joystic_Activity(float y_1, float x_1, float y_2, float x_2, bool but_1, bool but_2)
 {
     float old_min = -1.0;
     float old_max = 1.0;
 
-//    qDebug() << "joy1 X = " << x1;
+    float ch1;
+    float ch2;
+    float ch3;
+    float ch4;
+    float ch5;
+    float ch6;
+
     flag_calculation = true;    // расчет начат
 
     // при необходимости здесь можно поменять местами
-    //???
-    float ch1 = x_1;
-    float ch2 = y_1;
-    float ch3 = x_2;
-    float ch4 = y_2;
-    float ch5 = but_1;
-    float ch6 = but_2;
+    if(valuesParam.ch1_cheng_ch3)
+    {
+        ch1 = y_2;
+        ch3 = y_1;
+    }
+    else
+    {
+        ch1 = y_1;
+        ch3 = y_2;
+    }
+    if(valuesParam.ch2_cheng_ch4)
+    {
+        ch2 = x_2;
+        ch4 = x_1;
+    }
+    else
+    {
+        ch2 = x_1;
+        ch4 = x_2;
+    }
 
     //???  расчет если танк
-    //??? расчет если инверсия
-
 
     // расчет
-    ch1 = (qint8)float_changing_range(x_1, old_min, old_max, (float)valuesParam.ch1_joy1_y_min, (float)valuesParam.ch1_joy1_y_max);
-    ch2 = (qint8)float_changing_range(y_1, old_min, old_max, (float)valuesParam.ch2_joy1_x_min, (float)valuesParam.ch2_joy1_x_max);
-    ch3 = (qint8)float_changing_range(x_2, old_min, old_max, (float)valuesParam.ch3_joy2_y_min, (float)valuesParam.ch3_joy2_y_max);
-    ch4 = (qint8)float_changing_range(y_2, old_min, old_max, (float)valuesParam.ch4_joy2_x_min, (float)valuesParam.ch4_joy2_x_max);
+    //переворачивание если инверсия
+    if(valuesParam.ch1_inv) ch1 = float_changing_range(ch1, old_min, old_max, (float)valuesParam.ch1_joy1_y_max, (float)valuesParam.ch1_joy1_y_min);
+    else                    ch1 = float_changing_range(ch1, old_min, old_max, (float)valuesParam.ch1_joy1_y_min, (float)valuesParam.ch1_joy1_y_max);
+    if(valuesParam.ch2_inv) ch2 = float_changing_range(ch2, old_min, old_max, (float)valuesParam.ch2_joy1_x_max, (float)valuesParam.ch2_joy1_x_min);
+    else                    ch2 = float_changing_range(ch2, old_min, old_max, (float)valuesParam.ch2_joy1_x_min, (float)valuesParam.ch2_joy1_x_max);
+    if(valuesParam.ch3_inv) ch3 = float_changing_range(ch3, old_min, old_max, (float)valuesParam.ch3_joy2_y_max, (float)valuesParam.ch3_joy2_y_min);
+    else                    ch3 = float_changing_range(ch3, old_min, old_max, (float)valuesParam.ch3_joy2_y_min, (float)valuesParam.ch3_joy2_y_max);
+    if(valuesParam.ch4_inv) ch4 = float_changing_range(ch4, old_min, old_max, (float)valuesParam.ch4_joy2_x_max, (float)valuesParam.ch4_joy2_x_min);
+    else                    ch4 = float_changing_range(ch4, old_min, old_max, (float)valuesParam.ch4_joy2_x_min, (float)valuesParam.ch4_joy2_x_max);
+    if(valuesParam.ch5_inv)
+    {
+        if(but_1)   ch5 = valuesParam.ch5_max;
+        else        ch5 = valuesParam.ch5_min;
+    }
+    else
+    {
+        if(but_1)   ch5 = valuesParam.ch5_min;
+        else        ch5 = valuesParam.ch5_max;
+    }
+    if(valuesParam.ch6_inv)
+    {
+        if(but_2)   ch6 = valuesParam.ch6_max;
+        else        ch6 = valuesParam.ch6_min;
+    }
+    else
+    {
+        if(but_2)   ch6 = valuesParam.ch6_min;
+        else        ch6 = valuesParam.ch6_max;
+    }
 
-    if(but_1)   ch5 = valuesParam.ch5_min;
-    else        ch5 = valuesParam.ch5_max;
-
-    if(but_2)   ch6 = valuesParam.ch6_min;
-    else        ch6 = valuesParam.ch6_max;
-
-    y1      = ch1;
-    x1      = ch2;
-    y2      = ch3;
-    x2      = ch4;
-    but1    = ch5;
-    but2    = ch6;
+    y1      = (qint8)ch1;
+    x1      = (qint8)ch2;
+    y2      = (qint8)ch3;
+    x2      = (qint8)ch4;
+    but1    = (qint8)ch5;
+    but2    = (qint8)ch6;
 
     flag_calculation = false;   // расчет закончен
     if(flag_deferred_transfer)  // если нужна отложенная передача

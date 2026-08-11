@@ -175,6 +175,7 @@ int main(int argc, char *argv[])
     model->setSettings(settings);
     model->setTx_commands(tx_commands);
     model->setTx_commandsPylt(tx_commandsPylt);
+    model->setPylt_settings(pylt_settings);
     model->setMainSerialComPort(mainSerialPort);
     model->setPacking(packing);
 

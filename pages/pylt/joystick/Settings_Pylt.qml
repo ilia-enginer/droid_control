@@ -218,6 +218,65 @@ ScrollView {
         Switch {
             width: parent.width
             anchors.left: parent.left
+            checked: pylt_settings.ch1_inv
+            text: qsTr("инверсия канала 1 (Y лев.)")
+            onClicked: { pylt_settings.ch1_inv = checked }
+        }
+        Switch {
+            width: parent.width
+            anchors.left: parent.left
+            checked: pylt_settings.ch2_inv
+            text: qsTr("инверсия канала 2 (X лев.)")
+            onClicked: { pylt_settings.ch2_inv = checked }
+        }
+        Switch {
+            width: parent.width
+            anchors.left: parent.left
+            checked: pylt_settings.ch3_inv
+            text: qsTr("инверсия канала 3 (Y прав.)")
+            onClicked: { pylt_settings.ch3_inv = checked }
+        }
+        Switch {
+            width: parent.width
+            anchors.left: parent.left
+            checked: pylt_settings.ch4_inv
+            text: qsTr("инверсия канала 4 (X прав.)")
+            onClicked: { pylt_settings.ch4_inv = checked }
+        }
+        Switch {
+            width: parent.width
+            anchors.left: parent.left
+            checked: pylt_settings.ch5_inv
+            text: qsTr("инверсия канала 5 (кнопка 1)")
+            onClicked: { pylt_settings.ch5_inv = checked }
+        }
+        Switch {
+            width: parent.width
+            anchors.left: parent.left
+            checked: pylt_settings.ch6_inv
+            text: qsTr("инверсия канала 6 (кнопка 2)")
+            onClicked: { pylt_settings.ch6_inv = checked }
+        }
+
+        Switch {
+            width: parent.width
+            anchors.left: parent.left
+            checked: pylt_settings.ch1_cheng_ch3
+            text: qsTr("1 канал <=> 3 канал")
+            onClicked: { pylt_settings.ch1_cheng_ch3 = checked }
+        }
+        Switch {
+            width: parent.width
+            anchors.left: parent.left
+            checked: pylt_settings.ch2_cheng_ch4
+            text: qsTr("2 канал <=> 4 канал")
+            onClicked: { pylt_settings.ch2_cheng_ch4 = checked }
+        }
+
+
+        Switch {
+            width: parent.width
+            anchors.left: parent.left
             checked: pylt_settings.boot_fixing
             text: qsTr("фиксация кнопок")
             onClicked: { pylt_settings.boot_fixing = checked }

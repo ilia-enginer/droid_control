@@ -48,7 +48,7 @@ void MainSerialPort::openSerialPort()
         showStatusMessage(tr("Connected to\n%1 : %2, %3, %4, %5, %6")
                           .arg(p.name).arg(p.stringBaudRate).arg(p.stringDataBits)
                           .arg(p.stringParity).arg(p.stringStopBits).arg(p.stringFlowControl));
-        emit connected("comport"); 
+        emit connected("comport", p.name);
     }
     else{
         QMessageBox::critical(this, tr("Error"), m_serial->errorString());
@@ -63,7 +63,7 @@ void MainSerialPort::closeSerialPort()
     if (m_serial->isOpen())
         m_serial->close();
     _connect = false;
-    emit connected("none");
+    emit connected("none", "");
     showStatusMessage(tr("Устройство отключено"));
     _commun_display->set_connected(false);
 

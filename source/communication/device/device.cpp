@@ -255,7 +255,7 @@ Device::deviceConnected()
 
     //сохранение последнего подключенного устройства
     set_last_device();
-    emit connected("bluetooth");
+    emit connected("bluetooth", nameDevice_);
 }
 
 void
@@ -290,7 +290,7 @@ Device::disconnectFromDevice()
     // device scan progress
 
     connected_flag = false;
-    emit connected("none");
+    emit connected("none", "");
 }
 
 //отправить сообщение
@@ -307,7 +307,7 @@ Device::deviceDisconnected()
     qWarning() << "Устройство отключено";
     _commun_display->statusDevicee(_commun_display->statusDevic::disconnect);
     connected_flag = false;
-    emit connected("none");
+    emit connected("none", "");
 }
 
 void

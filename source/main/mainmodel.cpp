@@ -62,7 +62,7 @@ MainModel::checkUpdate()
 }
 
 void
-MainModel::deviceConnect(QString type)
+MainModel::deviceConnect(QString type, QString name)
 {
     qDebug() << "connect to device = " << type;
 
@@ -98,6 +98,7 @@ MainModel::deviceConnect(QString type)
             else                                  return;
             delay(90);
         }
+        _pylt_settings->setDevName(name);
     }
 }
 
@@ -121,9 +122,9 @@ MainModel::setDevice(Device *device)
 {
     device_ = device;
     connect(device_, &Device::connected, this,
-                                 [this] (QString typeDevice) {
+                                 [this] (QString typeDevice, QString name) {
                                 //     qDebug() << "test";
-                                     deviceConnect(typeDevice);
+                                     deviceConnect(typeDevice, name);
     });
 }
 
@@ -162,9 +163,9 @@ MainModel::setMainSerialComPort(MainSerialPort *newMainSerialPort)
 {
     _mainserialport = newMainSerialPort;
     connect(_mainserialport, &MainSerialPort::connected, this,
-                                 [this] (QString typeDevice) {
+                                 [this] (QString typeDevice, QString name) {
                                 //     qDebug() << "test";
-                                     deviceConnect(typeDevice);
+                                     deviceConnect(typeDevice, name);
     });
 }
 
@@ -172,5 +173,11 @@ void
 MainModel::setPacking(Packing *newPacking)
 {
     _packing = newPacking;
+}
+
+void
+MainModel::setPylt_settings(Pylt_settings *newPylt_settings)
+{
+    _pylt_settings = newPylt_settings;
 }
 
