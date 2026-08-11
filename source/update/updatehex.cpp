@@ -267,6 +267,11 @@ UpdateHex::versionToString(quint32 vers)
 void
 UpdateHex::on_pbWrite_clicked(bool flag)
 {
+    // если устройство не подключенно
+    if(_tx_commands->voltage_read(false) == -1) {
+        on_pbStop_clicked("Отсутствует подключение");
+        return;
+    }
     emit navigateBackActionOFF();
 
 #ifdef Q_OS_ANDROID

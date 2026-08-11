@@ -17,10 +17,7 @@ Item {
     property real offsetX : 0
     property real offsetY : 0
 
-    property real extX : txMid
-    property real extY : txMid
-    property real curX : 0
-    property real curY : 0
+    signal mySignal(double x, double y)
 
 
     //углы джойстика
@@ -125,19 +122,7 @@ Item {
         }
 
         function onRecalculatingValues() {
-            curX = onRecalculatingValuesConversion(offsetX, -1, 1, settings_Pylt.joy1_x_min, settings_Pylt.joy1_x_max);
-            curY = onRecalculatingValuesConversion(offsetY, -1, 1, settings_Pylt.joy1_y_min, settings_Pylt.joy1_y_max);
-
-            extX = onRecalculatingValuesConversion(curX, settings_Pylt.joy1_x_min, settings_Pylt.joy1_x_max, joystick_pylt.txMin, joystick_pylt.txMax);
-            extY = onRecalculatingValuesConversion(curY, settings_Pylt.joy1_y_min, settings_Pylt.joy1_y_max, joystick_pylt.txMin, joystick_pylt.txMax);
-        }
-
-        property int converted : 0
-        function onRecalculatingValuesConversion(old, old_min, old_max, new_min, new_max){
-            if(old >= old_max)			converted = new_max;
-            else if (old <= old_min)	converted = new_min;
-            else	converted = ((old - old_min) * (new_max - new_min)) / (old_max - old_min) + new_min;
-            return converted;
+            mySignal(offsetX, offsetY)
         }
     }
 

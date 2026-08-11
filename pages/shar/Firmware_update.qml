@@ -7,6 +7,17 @@ import QtQuick.Controls.Material
 
 Page {
     id: firmwareUpdate
+    focus: false
+
+    onActiveFocusChanged: {
+        if (!activeFocus) {
+            window_focus = false
+        } else {
+            window_focus = true
+        }
+     }
+
+    property bool window_focus : false
 
     Label {
         id: senderPageLabel
@@ -283,8 +294,11 @@ Page {
                Connections {
                    target: commun_display
                    function onLogServis(type, msg) {
-                       logListModel.append({msg: type + msg})
-                       listView1.positionViewAtEnd()
+                       if(window_focus && loging_visible.visible)
+                       {
+                           logListModel.append({msg: type + msg})
+                           listView1.positionViewAtEnd()
+                       }
                    }
                }
                delegate: Column {

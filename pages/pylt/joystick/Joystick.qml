@@ -20,6 +20,7 @@ Item {
     onVisibleChanged: {
         if(visible === true){
     //        console.log("!!!!!!!!!! Joy Pylt Visible.")
+            tx_commandsPylt.recalculatingParameters();
             joystickPyltTimer.running = visible
         }
         else{
@@ -28,15 +29,17 @@ Item {
         }
     }
 
-    property int txMin : 0
-    property int txMid : 124
-    property int txMax : 249
+    property double x1 : 0
+    property double y1 : 0
+    property double x2 : 0
+    property double y2 : 0
 
     property bool but_1_Fixed : false           // состояние кнопки 1
     property bool but_2_Fixed : false           // состояние кнопки 2
 
-    property int but_1_tx : txMin           // показания кнопки 1
-    property int but_2_tx : txMin           // показания кнопки 2
+    function joy_activ(){
+        tx_commandsPylt.joystic_Activity(x1, y1, x2, y2, but_1_Fixed, but_2_Fixed)
+    }
 
     Timer {
         id: joystickPyltTimer
@@ -44,7 +47,7 @@ Item {
         running: false
         repeat: true
         onTriggered: {
-            tx_commandsPylt.joysticActivity(stick1.extY, stick1.extX, stick2.extY, stick2.extX, but_1_tx, but_2_tx);
+            tx_commandsPylt.joystic_Tx();
         }
     }
 
@@ -112,7 +115,10 @@ Item {
             }
 
             function onSetChargeLevel(flag){
-                rect1.color = (flag) ? lowPower : normalPower
+                if(flag === 0)
+                    rect1.color = normalPower
+                else
+                    rect1.color = lowPower
             }
         }
     }
@@ -134,7 +140,15 @@ Item {
         anchors.leftMargin: 130
         anchors.top: voltage.bottom
         anchors.topMargin: 130
-        //anchors.verticalCenter: parent.verticalCenter
+
+        Connections {
+            function onMySignal(x, y) {
+            //    console.log("joy 1", "X: ", x, "Y: ", y)
+                x1 = x
+                y1 = y
+                joy_activ();
+            }
+        }
     }
 
     RoundButton {
@@ -156,12 +170,13 @@ Item {
         }
         onPressed : {
             but_1_Fixed = but_1_Fixed ? false : true
-            but_1_tx = but_1_Fixed ? txMax : txMin
+            joy_activ();
         }
         onReleased : {
-            if(!settings_Pylt.butFixed && but_1_Fixed) but_1_Fixed = false
-            but_1_tx = but_1_Fixed ? txMax : txMin
+            if(!pylt_settings.boot_fixing && but_1_Fixed) but_1_Fixed = false
+            joy_activ();
         }
+
     }
 
     RoundButton {
@@ -183,11 +198,11 @@ Item {
         }
         onPressed : {
             but_2_Fixed = but_2_Fixed ? false : true
-            but_2_tx = but_2_Fixed ? txMax : txMin
+            joy_activ();
         }
         onReleased : {
-            if(!settings_Pylt.butFixed && but_2_Fixed) but_2_Fixed = false
-            but_2_tx = but_2_Fixed ? txMax : txMin
+            if(!pylt_settings.boot_fixing && but_2_Fixed) but_2_Fixed = false
+            joy_activ();
         }
     }
 
@@ -197,6 +212,14 @@ Item {
         anchors.rightMargin: 130
         anchors.top: voltage.bottom
         anchors.topMargin: 130
-   //     anchors.verticalCenter: parent.verticalCenter
+
+        Connections {
+            function onMySignal(x, y) {
+            //    console.log("joy 2", "X: ", x, "Y: ", y)
+                x2 = x
+                y2 = y
+                joy_activ();
+            }
+        }
     }
 }

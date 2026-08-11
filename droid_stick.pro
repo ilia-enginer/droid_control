@@ -18,6 +18,7 @@ win32 {
 SOURCES += \
     source/Pylt/communication/rx_commandsPylt.cpp \
     source/Pylt/communication/tx_commandsPylt.cpp \
+    source/Pylt/pylt_settings.cpp \
     source/communication/crc.cpp \
     source/Shar/communication/rx_commands.cpp \
     source/communication/packing.cpp \
@@ -146,6 +147,7 @@ DISTFILES += \
 HEADERS += \
     source/Pylt/communication/rx_commandsPylt.h \
     source/Pylt/communication/tx_commandsPylt.h \
+    source/Pylt/pylt_settings.h \
     source/communication/crc.h \
     source/Shar/communication/rx_commands.h \
     source/communication/packing.h \

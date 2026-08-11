@@ -106,7 +106,7 @@ UpdateApp::checkVersion(QString inVersion)
             //открыть всплывающее окно с предложением обновиться
             _commun_display->statusUpdateApp(_commun_display->updApp::windowloadOpenStat);
 
-            setUpdateText("Доступно обновление программы\n Обновить сейчас?");
+            setUpdateText("Доступно обновление программы.\nОб обновлении: повышена стабильность работы.\n Обновить сейчас?");
         }
     }
 }

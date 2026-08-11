@@ -6,6 +6,10 @@ import QtQuick.Controls.Material
 Page {
     id: pageService
 
+    property int pca1 : 0
+    property int pca2 : 0
+    property int speedServs : 0
+
         Label {
             id: senderPageLabel
             anchors.top: parent.top
@@ -111,7 +115,7 @@ Page {
                 interactive: true
                 clip: true
                 flickableDirection: Flickable.VerticalFlick
-                contentHeight: 500
+                contentHeight: 900
 
 
                 ComboBox {
@@ -166,6 +170,7 @@ Page {
                                 numFootCalibr.visible           = false
                                 numFootCalibrBut.visible        = false
                                 saveParametrs.visible           = false
+                                pca_Speed.visible               = false
 
                                 //ток
                                 get_cur.visible                 = false
@@ -232,6 +237,7 @@ Page {
                                 numFootCalibr.visible           = false
                                 numFootCalibrBut.visible        = false
                                 saveParametrs.visible           = false
+                                pca_Speed.visible               = false
 
                                 //ток
                                 get_cur.visible                 = false
@@ -298,6 +304,7 @@ Page {
                                 numFootCalibr.visible           = true
                                 numFootCalibrBut.visible        = true
                                 saveParametrs.visible           = true
+                                pca_Speed.visible               = true
 
                                 //ток
                                 get_cur.visible                 = false
@@ -364,6 +371,7 @@ Page {
                                 numFootCalibr.visible           = false
                                 numFootCalibrBut.visible        = false
                                 saveParametrs.visible           = false
+                                pca_Speed.visible               = false
 
                                 //ток
                                 get_cur.visible                 = true
@@ -430,6 +438,7 @@ Page {
                                 numFootCalibr.visible           = false
                                 numFootCalibrBut.visible        = false
                                 saveParametrs.visible           = false
+                                pca_Speed.visible               = false
 
                                 //ток
                                 get_cur.visible                 = false
@@ -496,6 +505,7 @@ Page {
                                 numFootCalibr.visible           = false
                                 numFootCalibrBut.visible        = false
                                 saveParametrs.visible           = false
+                                pca_Speed.visible               = false
 
                                 //ток
                                 get_cur.visible                 = false
@@ -562,6 +572,7 @@ Page {
                                 numFootCalibr.visible           = false
                                 numFootCalibrBut.visible        = false
                                 saveParametrs.visible           = false
+                                pca_Speed.visible               = false
 
                                 //ток
                                 get_cur.visible                 = false
@@ -857,7 +868,7 @@ Page {
 
                 TextField {
                     id: get_install_serv_num
-                    placeholderText: "запрос уст. сервы №"
+                    placeholderText: "запрос уст. сервы № (0-19)"
                     anchors.top: serv_home.bottom
                     color: "#7387d1"
                     validator: RegularExpressionValidator {regularExpression: /[0-9]+/}
@@ -885,7 +896,7 @@ Page {
 
                 TextField {
                     id: get_serv_angl
-                    placeholderText: "запрос угла сервы №"
+                    placeholderText: "запрос угла сервы № (0-19)"
                     anchors.top: get_install_serv_num.bottom
                     color: "#7387d1"
                     validator: RegularExpressionValidator {regularExpression: /[0-9]+/}
@@ -913,7 +924,7 @@ Page {
 
                 TextField {
                     id: set_serv_angl
-                    placeholderText: "установить серву в угол"
+                    placeholderText: "установить серву в угол (0-19, угол)"
                     anchors.top: get_serv_angl.bottom
                     color: "#7387d1"
                     validator: RegularExpressionValidator {regularExpression: /[ 0-9]+/}
@@ -942,7 +953,7 @@ Page {
 
                 TextField {
                     id: set_serv_min_angl
-                    placeholderText: "запись мин уст. сервы"
+                    placeholderText: "запись мин уст. сервы (0-19, угол)"
                     anchors.top: set_serv_angl.bottom
                     color: "#7387d1"
                     validator: RegularExpressionValidator {regularExpression: /[ 0-9]+/}
@@ -1008,10 +1019,10 @@ Page {
 
                 TextField {
                     id: numFootCalibr
-                    placeholderText: "автокалибровка ноги №"
+                    placeholderText: "автокалибровка ноги № (1-6)"
                     anchors.top: serv_off_but.bottom
                     color: "#7387d1"
-                    validator: RegularExpressionValidator {regularExpression: /[ 0-9]+/}
+                    validator: RegularExpressionValidator {regularExpression: /[1-6]+/}
                     width: parent.width * 0.75
                 }
                 Button {
@@ -1048,6 +1059,234 @@ Page {
                     onClicked: {
                         tx_commands.saveFlashSettings();
                         listView1.positionViewAtEnd();
+                    }
+                }
+                // настройка PCA
+                Item{
+                    id: pca_Speed
+                    anchors.top: saveParametrs.bottom
+                    anchors.topMargin: 150
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: parent.width
+
+                    Component.onCompleted: {
+                        commun_display.onPca1_pca2_speed_Changed.connect(settingsChanged)
+                    }
+                    function settingsChanged(freqPca1, freqPca2, speed){
+                        pca1 = freqPca1;
+                        pca2 = freqPca2;
+                        speedServs = speed;
+                    }
+
+                    Column {
+                        id: notifColumn
+                        spacing: 8
+                        width: parent.width * 0.8
+                        anchors.centerIn: parent
+
+                        Label {
+                            width: notifColumn.width
+                            wrapMode: Label.Wrap
+                            anchors.horizontalCenter: notifColumn.horizontalCenter
+                            horizontalAlignment: Qt.AlignHCenter
+                            text: "окно настройки драйверов сервоприводов"
+                        }
+
+                        Row {
+                            spacing: 5
+                            anchors.horizontalCenter: parent.horizontalCenter
+
+                            RoundButton {
+                                text: "Прочитать настройки"
+                                background: Rectangle{
+                                    property var normalColor: "#1fc2b2"
+                                    property var pressedColor: "#17d47f"
+                                    color: parent.pressed ? pressedColor : normalColor
+                                    radius: 8
+                                }
+                                onClicked: {
+                                    tx_commands.getSettingsServs();
+                                    listView1.positionViewAtEnd();
+                                }
+                            }
+                            Button {
+                                text: "Сохранить настройки"
+                                background: Rectangle{
+                                    property var normalColor: "#1fc2b2"
+                                    property var pressedColor: "#17d47f"
+                                    color: parent.pressed ? pressedColor : normalColor
+                                    radius: 8
+                                }
+                                onClicked: {
+                                    tx_commands.saveFlashSettings();
+                                    listView1.positionViewAtEnd();
+                                }
+                            }
+                        }
+
+                        Label {
+                            width: parent.width
+                            text: "Настройка частоты PCA"
+                            horizontalAlignment: Qt.AlignHCenter
+                            font.bold: true
+                            color: "black"
+                        }
+
+                        Row {
+                            id: row1
+                            spacing: 18
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            Button {
+                                text: "-"
+                                background: Rectangle{
+                                    property var normalColor: "#1fc2b2"
+                                    property var pressedColor: "#17d47f"
+                                    color: parent.pressed ? pressedColor : normalColor
+                                    radius: 8
+                                }
+                                onClicked: {
+                                    if(pca1 !== 24)
+                                        pca1--;
+                                    tx_commands.setSettingsServo(pca1, pca2, speedServs);
+                                    listView1.positionViewAtEnd();
+                                }
+                            }
+                            Label {
+                                anchors.verticalCenter: row1.verticalCenter
+                                text: "Частота PCA 1  " + "' " + pca1 + " '"
+                                font.bold: true
+                                color: "black"
+                            }
+                            Button {
+                                text: "+"
+                                background: Rectangle{
+                                    property var normalColor: "#1fc2b2"
+                                    property var pressedColor: "#17d47f"
+                                    color: parent.pressed ? pressedColor : normalColor
+                                    radius: 8
+                                }
+                                onClicked: {
+                                    if(pca1 < 150)
+                                        pca1++;
+                                    tx_commands.setSettingsServo(pca1, pca2, speedServs);
+                                    listView1.positionViewAtEnd();
+                                }
+                            }
+                        }
+                        Row {
+                            id: row2
+                            spacing: 18
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            Button {
+                                background: Rectangle{
+                                    property var normalColor: "#1fc2b2"
+                                    property var pressedColor: "#17d47f"
+                                    color: parent.pressed ? pressedColor : normalColor
+                                    radius: 8
+                                }
+                                text: "-"
+                                onClicked: {
+                                    if(pca2 !== 24)
+                                        pca2--;
+                                    tx_commands.setSettingsServo(pca1, pca2, speedServs);
+                                    listView1.positionViewAtEnd();
+                                }
+                            }
+                            Label {
+                                anchors.verticalCenter: row2.verticalCenter
+                                text: "Частота PCA 2  " + "' " + pca2 + " '"
+                                font.bold: true
+                                color: "black"
+                            }
+                            Button {
+                                background: Rectangle{
+                                    property var normalColor: "#1fc2b2"
+                                    property var pressedColor: "#17d47f"
+                                    color: parent.pressed ? pressedColor : normalColor
+                                    radius: 8
+                                }
+                                text: "+"
+                                onClicked: {
+                                    onClicked: {
+                                        if(pca2 < 150)
+                                            pca2++;
+                                        tx_commands.setSettingsServo(pca1, pca2, speedServs);
+                                        listView1.positionViewAtEnd();
+                                    }
+                                }
+                            }
+                        }
+                        Row {
+                            id: row3
+                            spacing: 18
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            Button {
+                                background: Rectangle{
+                                    property var normalColor: "#1fc2b2"
+                                    property var pressedColor: "#17d47f"
+                                    color: parent.pressed ? pressedColor : normalColor
+                                    radius: 8
+                                }
+                                text: "-"
+                                onClicked: {
+                                    if(speedServs !== 0)
+                                        speedServs--;
+                                    tx_commands.setSettingsServo(pca1, pca2, speedServs);
+                                    listView1.positionViewAtEnd();
+                                }
+                            }
+                            Label {
+                                anchors.verticalCenter: row3.verticalCenter
+                                text: "Скорость серв  " + "' " + speedServs + " '"
+                                font.bold: true
+                                color: "black"
+                            }
+                            Button {
+                                background: Rectangle{
+                                    property var normalColor: "#1fc2b2"
+                                    property var pressedColor: "#17d47f"
+                                    color: parent.pressed ? pressedColor : normalColor
+                                    radius: 8
+                                }
+                                text: "+"
+                                onClicked: {
+                                    if(speedServs < 70)
+                                        speedServs++;
+                                    tx_commands.setSettingsServo(pca1, pca2, speedServs);
+                                    listView1.positionViewAtEnd();
+                                }
+                            }
+                        }
+                        Row {
+                            spacing: 5
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            Button {
+                                background: Rectangle{
+                                    property var normalColor: "#1fc2b2"
+                                    property var pressedColor: "#17d47f"
+                                    color: parent.pressed ? pressedColor : normalColor
+                                    radius: 8
+                                }
+                                text: "Центр. полож. серв"
+                                onClicked: {
+                                    tx_commands.setMidPwmServs();
+                                    listView1.positionViewAtEnd();
+                                }
+                            }
+                            Button {
+                                background: Rectangle{
+                                    property var normalColor: "#1fc2b2"
+                                    property var pressedColor: "#17d47f"
+                                    color: parent.pressed ? pressedColor : normalColor
+                                    radius: 8
+                                }
+                                text: "Проверка скорости"
+                                onClicked: {
+                                    tx_commands.checkSpeedServs();
+                                    listView1.positionViewAtEnd();
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -1275,7 +1514,7 @@ Page {
 
                 TextField {
                     id: setAzimAngl
-                    placeholderText: "корректировка азимута"
+                    placeholderText: "корректировка азимута (0-360)"
                     anchors.top: get_azim.bottom
                     color: "#7387d1"
                     validator: RegularExpressionValidator {regularExpression: /[-.0-9]+/}
@@ -1321,7 +1560,7 @@ Page {
 
                 TextField {
                     id: setInclination
-                    placeholderText: "корректировка угл. наклона"
+                    placeholderText: "корректировка угл. наклона (0-360)"
                     anchors.top: get_inclination.bottom
                     color: "#7387d1"
                     validator: RegularExpressionValidator {regularExpression: /[-.0-9]+/}
@@ -1379,7 +1618,7 @@ Page {
 
                 TextField {
                     id: set_led
-                    placeholderText: "запись уст. для светодиодов"
+                    placeholderText: "запись уст. для светодиодов (№ R G B)"
                     anchors.top: get_led.bottom
                     color: "#a3a614"
                     validator: RegularExpressionValidator {regularExpression: /[ 0-9]+/}

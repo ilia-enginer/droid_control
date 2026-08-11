@@ -75,6 +75,7 @@
 #include "source/communication/serialComPort/mainSerialPort.h"
 #include "source/Pylt/communication/rx_commandsPylt.h"
 #include "source/Pylt/communication/tx_commandsPylt.h"
+#include "source/Pylt/pylt_settings.h"
 
 
 int main(int argc, char *argv[])
@@ -127,6 +128,8 @@ int main(int argc, char *argv[])
     NotificationClient  * notificationClient    = new NotificationClient();
     MainSerialPort      * mainSerialPort        = new MainSerialPort();
     Commun_display      * commun_display        = new Commun_display();
+    Pylt_settings       * pylt_settings         = new Pylt_settings();
+
 
     packing->setCrc(crc);
     packing->setCommun_display(commun_display);
@@ -151,6 +154,7 @@ int main(int argc, char *argv[])
     rx_commands->setSettings(settings);
 
     tx_commandsPylt->setPacking(packing);
+    tx_commandsPylt->setPylt_settings(pylt_settings);
 
     rx_commands_Pylt->setSettings(settings);
     rx_commands_Pylt->setCommun_display(commun_display);
@@ -212,6 +216,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("notificationClient", notificationClient);
     engine.rootContext()->setContextProperty("mainSerialPort", mainSerialPort);
     engine.rootContext()->setContextProperty("tx_commandsPylt", tx_commandsPylt);
+    engine.rootContext()->setContextProperty("pylt_settings", pylt_settings);
 
     engine.setInitialProperties({{ "builtInStyles", builtInStyles }});
     engine.load(QUrl("qrc:/pages/main/Main.qml"));

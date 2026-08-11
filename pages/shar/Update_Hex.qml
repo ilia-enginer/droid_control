@@ -8,7 +8,7 @@ Dialog {
     id: updateHex
     modal: true
     focus: true
-    title: "Доступно обновление прошивки шара."
+    title: "Доступно обновление прошивки шара.\nОб обновлении: повышена стабильность работы."
     x: (window.width - updateHex.width) / 2
     y: (window.height - updateHex.height) / 4
     height: parent.height / 4

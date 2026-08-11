@@ -23,12 +23,17 @@ Page {
             box4.checked = false
             box5.checked = false
             box6.checked = false
+
+            window_focus = false
         } else {
             // Пользователь сосредоточился на этом поле
       //      console.log("Focus active.!")
             getcurtimer.running = true
+            window_focus = true
         }
     }
+
+    property bool window_focus : false
 
     property int butClick : 0
     property int coxaL : 0
@@ -89,15 +94,21 @@ Page {
                Connections {
                    target: commun_display
                    function onLogJoy(type, msg) {
-                       if (mainModel.adminFlag === false){
-                            logListModel.append({msg: type + msg})
-                            listView1.positionViewAtEnd()
+                       if(window_focus)
+                       {
+                           if (mainModel.adminFlag === false){
+                                logListModel.append({msg: type + msg})
+                                listView1.positionViewAtEnd()
+                           }
                        }
                     }
                    function onLogServis(type, msg) {
-                       if (mainModel.adminFlag === true){
-                           logListModel.append({msg: type + msg})
-                           listView1.positionViewAtEnd()
+                       if(window_focus)
+                       {
+                           if (mainModel.adminFlag === true){
+                               logListModel.append({msg: type + msg})
+                               listView1.positionViewAtEnd()
+                           }
                        }
                    }
                }
@@ -108,7 +119,7 @@ Page {
                        font.family: "Courier New"
                        font.pixelSize: 14
                        wrapMode: Text.Wrap
-                       color: "Orange"
+                       color: "black"
                    }
                 }
                // Сама модель, в которой будут содержаться все элементы
@@ -516,6 +527,7 @@ Page {
                 Connections {
                     target: commun_display
                    function onCurRealChanged(Cur) {
+                       if(window_focus)
                         current.value = Cur
                     }
                 }
@@ -1153,6 +1165,64 @@ Page {
                spacing: 8
                width: parent.width * 0.8
                anchors.centerIn: parent
+
+               Label {
+                   width: notifColumn.width
+                   wrapMode: Label.Wrap
+                   anchors.horizontalCenter: notifColumn.horizontalCenter
+                   horizontalAlignment: Qt.AlignHCenter
+                   text: "окно настройки драйверов сервоприводов"
+               }
+
+               //ток
+               ProgressBar{
+                   id: current1
+                   height: 20
+                   width: notifColumn.width
+                   anchors.horizontalCenter: notifColumn.horizontalCenter
+                   from: 0
+                   to: 5
+
+                   background: Rectangle {
+                       color: "#e6e6e6"
+                       radius: 3
+                   }
+
+                   contentItem: Item {
+                       Rectangle {
+                           width: current1.visualPosition * page_setting_foot.width
+                           height: current1.height
+                           radius: 2
+                           color: "#17a81a"
+
+                           gradient: Gradient {
+                               GradientStop {
+                                   position: 0.0
+                                   SequentialAnimation on color {
+                                       loops: Animation.Infinite
+                                       ColorAnimation { from: "#d6e014"; to: "#b39812"; duration: 5000 }
+                                       ColorAnimation { from: "#b39812"; to: "#d6e014"; duration: 5000 }
+                                   }
+                               }
+                               GradientStop {
+                                   position: 1.0
+                                   SequentialAnimation on color {
+                                       loops: Animation.Infinite
+                                       ColorAnimation { from: "#ed4811"; to: "#a1330e"; duration: 5000 }
+                                       ColorAnimation { from: "#a1330e"; to: "#ed4811"; duration: 5000 }
+                                   }
+                               }
+                           }
+                       }
+                   }
+                   Connections {
+                       target: commun_display
+                      function onCurRealChanged(Cur) {
+                          if(window_focus)
+                           current1.value = Cur
+                       }
+                   }
+               }
 
                Row {
                    spacing: 5

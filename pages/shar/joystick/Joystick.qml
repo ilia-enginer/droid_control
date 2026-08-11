@@ -18,14 +18,17 @@ SwipeView {
             console.log("!!!!!!!!!!No active.")
             joystick_timer.running = false
             radioGroup.checkState = Qt.Unchecked
+            window_focus = false
         } else {
             // Пользователь сосредоточился на этом поле
             console.log("!!!!!!!!Focus active.")
             if(Qt.platform.os !== "windows") tx_commands.getCheck();
+            window_focus = true
             joystick_timer.running = true
         }
      }
 
+    property bool window_focus : false
 
     property bool verticalOnly : false
     property bool horizontalOnly : false
@@ -95,15 +98,21 @@ SwipeView {
                    Connections {
                        target: commun_display
                       function onLogJoy(type, msg) {
-                          if (mainModel.adminFlag === false){
-                               logListModel_2.append({msg: type + msg})
-                               listView1.positionViewAtEnd()
+                          if(window_focus)
+                          {
+                              if (mainModel.adminFlag === false){
+                                   logListModel_2.append({msg: type + msg})
+                                   listView1.positionViewAtEnd()
+                              }
                           }
                        }
                       function onLogServis(type, msg) {
-                          if (mainModel.adminFlag === true){
-                              logListModel_2.append({msg: type + msg})
-                              listView1.positionViewAtEnd()
+                          if(window_focus)
+                          {
+                              if (mainModel.adminFlag === true){
+                                  logListModel_2.append({msg: type + msg})
+                                  listView1.positionViewAtEnd()
+                              }
                           }
                       }
                    }
@@ -115,7 +124,7 @@ SwipeView {
                            font.family: "transparent"
                            font.pixelSize: 14
                            wrapMode: Text.Wrap
-                           color: "orange"
+                           color: "black"
                        }
                     }
 
@@ -148,14 +157,14 @@ SwipeView {
             }
         }
 
-        //напруга
+        //напряжение
         ProgressBar{
             id: voltage
             height: parent.height * 0.043
             anchors.top: senderBackground_2.bottom
             anchors.topMargin: 10
-            anchors.left: parent.left
-            anchors.right: parent.right
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width * 0.98
             from: {settParam.Vmin}
             to: {settParam.Vmax}
 
@@ -194,7 +203,8 @@ SwipeView {
             Connections {
                 target: commun_display
                 function onVrealChanged(V) {
-                    voltage.value = V
+                    if(window_focus)
+                        voltage.value = V
                 }
             }
         }
@@ -217,8 +227,8 @@ SwipeView {
             height: parent.height * 0.043
             anchors.top: voltage.bottom
             anchors.topMargin: 5
-            anchors.left: parent.left
-            anchors.right: parent.right
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width * 0.98
             from: 0
             to: 5
 
@@ -257,6 +267,7 @@ SwipeView {
             Connections {
                 target: commun_display
                function onCurRealChanged(Cur) {
+                   if(window_focus)
                     current.value = Cur
                 }
             }
@@ -392,8 +403,8 @@ SwipeView {
             property real angle : 0
             property real distance : 0
 
-            width: parent.width * 0.5
-            height: parent.height * 0.35
+            width: 200//parent.width * 0.5
+            height: 200// parent.height * 0.35
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: senderPageLabel.bottom
             anchors.topMargin: 10
@@ -402,7 +413,7 @@ SwipeView {
             RoundButton {
                 id: upBut
                 radius: 8
-                text: "UP"
+                text: "˄"
                 highlighted: true
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -421,7 +432,7 @@ SwipeView {
             RoundButton {
                 id: downBut
                 radius: 8
-                text: "DOWN"
+                text: "˅"
                 highlighted: true
                 anchors.bottom: parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -440,11 +451,12 @@ SwipeView {
             }
             RoundButton {
                 radius: 8
-                text: "LEFT"
+                text: "˂"
                 highlighted: true
-                anchors.left: parent.left
+                anchors.right: downBut.left
+                anchors.rightMargin: 15
                 anchors.top: upBut.bottom
-                anchors.topMargin: 30
+                anchors.topMargin: 15
 
                 onPressed: {
                     amplitude = 0.5
@@ -459,11 +471,12 @@ SwipeView {
             }
             RoundButton {
                 radius: 8
-                text: "RIGHT"
+                text: "˃"
                 highlighted: true
-                anchors.right: parent.right
+                anchors.left: downBut.right
+                anchors.leftMargin: 15
                 anchors.top: upBut.bottom
-                anchors.topMargin: 30
+                anchors.topMargin: 15
 
                 onPressed: {
                     amplitude = 0.5
@@ -485,8 +498,7 @@ SwipeView {
             to: settParam.heightAmplitude
             orientation: Qt.Vertical
             value: (((settParam.heightAmplitude - settParam.heightAmplitudemin) / 2) + settParam.heightAmplitudemin)
-            anchors.left: joystick.right
-            anchors.leftMargin: 40
+            anchors.right: parent.right
             anchors.verticalCenter: joystick.verticalCenter
             onMoved: {level = value}
             Component.onCompleted: {
@@ -499,8 +511,8 @@ SwipeView {
             id: leveltext
             horizontalAlignment: Qt.AlignHCenter
             anchors.top: joystick.bottom
-            anchors.left: joystick.right
-            anchors.leftMargin: 30
+            anchors.right: parent.right
+            anchors.rightMargin: 15
             anchors.topMargin: 20
             text: "Высота"
         }
@@ -616,7 +628,7 @@ SwipeView {
             anchors.top: joystick_mode_swith.bottom
             anchors.topMargin: 15
             anchors.right: parent.right
-            anchors.leftMargin: parent.width * 0.015
+            anchors.rightMargin: 5
             width: parent.width * 0.3
             delay: 3000     //3000 ms
 

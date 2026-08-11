@@ -1099,11 +1099,14 @@ Tx_commands::calibrServsFoot(QString msg)
     QByteArray data;
     int res = -1;
     QString s;
+
     s = "старт/стоп калибровки ноги № " + msg;
     quint8 comand = 0xFC;
 
     //раскладывание строки по float числам
-    StringToFloatToByte(msg, &data);
+    float num = msg.toInt() - 1;
+    IntToByte(num, &data);
+//    StringToFloatToByte(msg, &data);
 
     //вписывание команды
     data.prepend(comand);
@@ -1176,6 +1179,4 @@ Tx_commands::IntToByte(qint32 num, QByteArray *data)
     data->append(val.data[2]);
     data->append(val.data[3]);
 }
-
-
 

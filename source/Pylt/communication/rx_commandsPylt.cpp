@@ -72,7 +72,10 @@ Rx_commands_Pylt::replyJoysticActivity(QByteArray Data)
     val.data[2] = Data[2];
     val.data[1] = Data[3];
     val.data[0] = Data[4];
-    float Vreal = val.f;
+
+    // Округление до 1 знака после запятой
+    float Vreal = round(val.f * 10) / 10;
+
     if(Vreal == Vreal)   _commun_display->vrealChang(Vreal);
 //    qDebug() << "Vreal = " << Vreal;
 }

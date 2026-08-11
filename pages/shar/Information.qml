@@ -9,7 +9,8 @@ Page {
     ComboBox {
         id: paramBox
         anchors.top: parent.up
-        width: parent.width
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: parent.width * 0.98
   //      currentIndex: info.infoIndexMenu_
 
         model: ListModel {
@@ -53,7 +54,8 @@ Page {
 
     Flickable {
          id: flick_text
-         width: parent.width
+         anchors.horizontalCenter: parent.horizontalCenter
+         width: parent.width * 0.98
          anchors.top: paramBox.bottom
          anchors.bottom: parent.bottom
          contentWidth: edit.contentWidth
