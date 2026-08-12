@@ -99,6 +99,7 @@ MainModel::deviceConnect(QString type, QString name)
             delay(90);
         }
         _pylt_settings->setDevName(name);
+        _tx_commandsPylt->recalculatingParameters();
     }
 }
 

@@ -128,6 +128,7 @@ public:
 
 
     FullParam getFullParam();
+    FullParam getStructFullParam();
 
     void setDevName(QString newName);
 

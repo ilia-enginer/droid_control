@@ -326,39 +326,112 @@ Pylt_settings::get_ch2_cheng_ch4     ()
 FullParam
 Pylt_settings::getFullParam()
 {
+    // если имя не записано - отправить дефолтные параметры
+    if(devName.isEmpty())   return param;
+
     // взять параметры из памяти, если есть
-    //???
-//    QSettings setting;
-//    QString dName;
-//    quint32 dClass;
-//    QString dAdres;
+    QSettings setting;
 
-//    stopDeviceDiscovery();
-//    clearDeviceDiscovery();
+    QString dName;
+    qint32 temp_ch1_joy1_y_min;
+    qint32 temp_ch1_joy1_y_max;
+    qint32 temp_ch2_joy1_x_min;
+    qint32 temp_ch2_joy1_x_max;
+    qint32 temp_ch3_joy2_y_min;
+    qint32 temp_ch3_joy2_y_max;
+    qint32 temp_ch4_joy2_x_min;
+    qint32 temp_ch4_joy2_x_max;
+    qint32 temp_ch5_min       ;
+    qint32 temp_ch5_max       ;
+    qint32 temp_ch6_min       ;
+    qint32 temp_ch6_max       ;
+    bool   temp_boot_fixing   ;
+    bool   temp_tank_mode     ;
+    bool   temp_ch1_inv       ;
+    bool   temp_ch2_inv       ;
+    bool   temp_ch3_inv       ;
+    bool   temp_ch4_inv       ;
+    bool   temp_ch5_inv       ;
+    bool   temp_ch6_inv       ;
+    bool   temp_ch1_cheng_ch3 ;
+    bool   temp_ch2_cheng_ch4 ;
 
-//    QVector<QStringList> lastDevices;
-//    int deviceNum = 0;
-//    while (true)
-//    {
-//        if (setting.contains(QString("last%1").arg(deviceNum))) {
-//            lastDevices.append(setting.value(QString("last%1").arg(deviceNum)).toString().split(";"));
-//            ++deviceNum;    // следующий номер прибора для сохранения в истории
-//        } else break;
-//    }
+    QVector<QStringList> lastParams;
 
-//    //добавятся в порядке сохранения
-//    for(int i = deviceNum - 1; i >= 0; i--)
-//    {
-//        dName = lastDevices[i].at(0);
-//        dClass = lastDevices[i].at(1).toInt();
-//        dAdres = lastDevices[i].at(2);
-//        addDevice(QBluetoothDeviceInfo(QBluetoothAddress(dAdres), dName, dClass));
-//    }
+    int deviceNum = 0;
+    while (true)
+    {
+        if (setting.contains(QString("lastParams%1").arg(deviceNum))) {
+            lastParams.append(setting.value(QString("lastParams%1").arg(deviceNum)).toString().split(";"));
+            ++deviceNum;    // следующий номер прибора для сохранения в истории
+        } else break;
+    }
 
-//    if(deviceNum == 0)  _commun_display->setUpdatee("Сохраненные устройства отсутствуют. Начать поиск устройств?");
-//    else                _commun_display->setUpdatee("Сохраненные устройства добавлены.");
+    //добавятся в порядке сохранения
+    for(int i = deviceNum - 1; i >= 0; i--)
+    {
+        dName = lastParams[i].at(0);
+        temp_ch1_joy1_y_min = lastParams[i].at(1).toInt();
+        temp_ch1_joy1_y_max = lastParams[i].at(2).toInt();
+        temp_ch2_joy1_x_min = lastParams[i].at(3).toInt();
+        temp_ch2_joy1_x_max = lastParams[i].at(4).toInt();
+        temp_ch3_joy2_y_min = lastParams[i].at(5).toInt();
+        temp_ch3_joy2_y_max = lastParams[i].at(6).toInt();
+        temp_ch4_joy2_x_min = lastParams[i].at(7).toInt();
+        temp_ch4_joy2_x_max = lastParams[i].at(8).toInt();
+        temp_ch5_min        = lastParams[i].at(9).toInt();
+        temp_ch5_max        = lastParams[i].at(10).toInt();
+        temp_ch6_min        = lastParams[i].at(11).toInt();
+        temp_ch6_max        = lastParams[i].at(12).toInt();
+        temp_boot_fixing      = lastParams[i].at(13).toInt();
+        temp_tank_mode        = lastParams[i].at(14).toInt();
+        temp_ch1_inv          = lastParams[i].at(15).toInt();
+        temp_ch2_inv          = lastParams[i].at(16).toInt();
+        temp_ch3_inv          = lastParams[i].at(17).toInt();
+        temp_ch4_inv          = lastParams[i].at(18).toInt();
+        temp_ch5_inv          = lastParams[i].at(19).toInt();
+        temp_ch6_inv          = lastParams[i].at(20).toInt();
+        temp_ch1_cheng_ch3    = lastParams[i].at(21).toInt();
+        temp_ch2_cheng_ch4    = lastParams[i].at(22).toInt();
 
-    // если нет - вернуть дефолтные
+
+        if(!dName.isEmpty() && !devName.isEmpty())
+        {
+            // если найдено устройство с таким именем(именем подключенного устройства) - обновить параметры
+            if(dName == devName)
+            {
+                set_ch1_joy1_y_min(temp_ch1_joy1_y_min);
+                set_ch1_joy1_y_max(temp_ch1_joy1_y_max);
+                set_ch2_joy1_x_min(temp_ch2_joy1_x_min);
+                set_ch2_joy1_x_max(temp_ch2_joy1_x_max);
+                set_ch3_joy2_y_min(temp_ch3_joy2_y_min);
+                set_ch3_joy2_y_max(temp_ch3_joy2_y_max);
+                set_ch4_joy2_x_min(temp_ch4_joy2_x_min);
+                set_ch4_joy2_x_max(temp_ch4_joy2_x_max);
+                set_ch5_min       (temp_ch5_min       );
+                set_ch5_max       (temp_ch5_max       );
+                set_ch6_min       (temp_ch6_min       );
+                set_ch6_max       (temp_ch6_max       );
+                set_boot_fixing   (temp_boot_fixing   );
+                set_tank_mode     (temp_tank_mode     );
+                set_ch1_inv       (temp_ch1_inv       );
+                set_ch2_inv       (temp_ch2_inv       );
+                set_ch3_inv       (temp_ch3_inv       );
+                set_ch4_inv       (temp_ch4_inv       );
+                set_ch5_inv       (temp_ch5_inv       );
+                set_ch6_inv       (temp_ch6_inv       );
+                set_ch1_cheng_ch3 (temp_ch1_cheng_ch3 );
+                set_ch2_cheng_ch4 (temp_ch2_cheng_ch4 );
+            }
+        }
+    }
+
+    return param;
+}
+
+FullParam
+Pylt_settings::getStructFullParam()
+{
     return param;
 }
 
@@ -372,28 +445,53 @@ Pylt_settings::setDevName(QString newName)
 int
 Pylt_settings::saveFullParam()
 {
-    //??? сохранить параметры в память
-//    QSettings setting;
+    // если имя не записано - выйти
+    if(devName.isEmpty())   return -1;
 
-//    //вычитываю все устройства
-//    QVector<QStringList> lastDevices;
-//    int deviceNum = 0;
-//    while (true)
-//    {
-//        if (setting.contains(QString("last%1").arg(deviceNum))) {
-//            lastDevices.append(setting.value(QString("last%1").arg(deviceNum)).toString().split(";"));
-//            ++deviceNum;    // следующий номер прибора для сохранения в истории
-//        } else break;
-//    }
+    QSettings setting;
 
-//    // TODO проверка есть ли устройство в списке сохраненных
-//    for(QStringList device : lastDevices) {
-//        if(device.at(2) == lastConnectedDevice_)  return;
-//    }
+    //вычитываю все устройства
+    QVector<QStringList> lastParams;
+    int deviceNum = 0;
+    while (true)
+    {
+        if (setting.contains(QString("lastParams%1").arg(deviceNum))) {
+            lastParams.append(setting.value(QString("lastParams%1").arg(deviceNum)).toString().split(";"));
+            ++deviceNum;    // следующий номер прибора для сохранения в истории
+        } else break;
+    }
 
-//    //сохраняю новое устройство
-//    QString device = QStringList({nameDevice_, class_, lastConnectedDevice_}).join(";");
-//    setting.setValue(QString("last%1").arg(deviceNum), device);    // запись нового устройства
+    // TODO проверка есть ли устройство в списке сохраненных
+    for(QStringList parametrs : lastParams) {
+        if(parametrs.at(0) == devName)  return 0;
+    }
+
+    //сохраняю новое устройство
+    QString device = QStringList({devName,
+                                  QString("%1").arg(param.ch1_joy1_y_min),
+                                  QString("%1").arg(param.ch1_joy1_y_max),
+                                  QString("%1").arg(param.ch2_joy1_x_min),
+                                  QString("%1").arg(param.ch2_joy1_x_max),
+                                  QString("%1").arg(param.ch3_joy2_y_min),
+                                  QString("%1").arg(param.ch3_joy2_y_max),
+                                  QString("%1").arg(param.ch4_joy2_x_min),
+                                  QString("%1").arg(param.ch4_joy2_x_max),
+                                  QString("%1").arg(param.ch5_min),
+                                  QString("%1").arg(param.ch5_max),
+                                  QString("%1").arg(param.ch6_min),
+                                  QString("%1").arg(param.ch6_max),
+                                  QString("%1").arg(param.boot_fixing),
+                                  QString("%1").arg(param.tank_mode),
+                                  QString("%1").arg(param.ch1_inv),
+                                  QString("%1").arg(param.ch2_inv),
+                                  QString("%1").arg(param.ch3_inv),
+                                  QString("%1").arg(param.ch4_inv),
+                                  QString("%1").arg(param.ch5_inv),
+                                  QString("%1").arg(param.ch6_inv),
+                                  QString("%1").arg(param.ch1_cheng_ch3),
+                                  QString("%1").arg(param.ch2_cheng_ch4),
+                                 }).join(";");
+    setting.setValue(QString("lastParams%1").arg(deviceNum), device);    // запись нового устройства
 
     return 0;
 }

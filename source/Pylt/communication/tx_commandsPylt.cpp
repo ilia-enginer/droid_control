@@ -60,6 +60,39 @@ Tx_commandsPylt::recalculatingParameters()
 }
 
 int
+Tx_commandsPylt::updateParameters()
+{
+    qint32 old_min = 500;
+    qint32 old_max = 2500;
+
+    qint32 new_old_min = 0;
+    qint32 new_old_max = 249;
+
+    // получить параметры пользовательского вида из класса настроек
+    FullParam param = _pylt_settings->getStructFullParam();
+    valuesParam = param;
+
+    // пересчитать параметры в значения, которые принимает пульт
+    valuesParam.ch1_joy1_y_min = uint_32_changing_range(param.ch1_joy1_y_min, old_min, old_max, new_old_min, new_old_max);
+    valuesParam.ch1_joy1_y_max = uint_32_changing_range(param.ch1_joy1_y_max, old_min, old_max, new_old_min, new_old_max);
+    valuesParam.ch2_joy1_x_min = uint_32_changing_range(param.ch2_joy1_x_min, old_min, old_max, new_old_min, new_old_max);
+    valuesParam.ch2_joy1_x_max = uint_32_changing_range(param.ch2_joy1_x_max, old_min, old_max, new_old_min, new_old_max);
+
+    valuesParam.ch3_joy2_y_min = uint_32_changing_range(param.ch3_joy2_y_min, old_min, old_max, new_old_min, new_old_max);
+    valuesParam.ch3_joy2_y_max = uint_32_changing_range(param.ch3_joy2_y_max, old_min, old_max, new_old_min, new_old_max);
+    valuesParam.ch4_joy2_x_min = uint_32_changing_range(param.ch4_joy2_x_min, old_min, old_max, new_old_min, new_old_max);
+    valuesParam.ch4_joy2_x_max = uint_32_changing_range(param.ch4_joy2_x_max, old_min, old_max, new_old_min, new_old_max);
+
+    valuesParam.ch5_min = uint_32_changing_range(param.ch5_min, old_min, old_max, new_old_min, new_old_max);
+    valuesParam.ch5_max = uint_32_changing_range(param.ch5_max, old_min, old_max, new_old_min, new_old_max);
+
+    valuesParam.ch6_min = uint_32_changing_range(param.ch6_min, old_min, old_max, new_old_min, new_old_max);
+    valuesParam.ch6_max = uint_32_changing_range(param.ch6_max, old_min, old_max, new_old_min, new_old_max);
+
+    return 0;
+}
+
+int
 Tx_commandsPylt::joystic_Activity(float y_1, float x_1, float y_2, float x_2, bool but_1, bool but_2)
 {
     float old_min = -1.0;
@@ -96,7 +129,8 @@ Tx_commandsPylt::joystic_Activity(float y_1, float x_1, float y_2, float x_2, bo
         ch4 = x_2;
     }
 
-    //???  расчет если танк
+    // расчет если танк
+    if(valuesParam.tank_mode)   joysticTank_Activity(&ch1, &ch2);
 
     // расчет
     //переворачивание если инверсия
@@ -129,12 +163,19 @@ Tx_commandsPylt::joystic_Activity(float y_1, float x_1, float y_2, float x_2, bo
         else        ch6 = valuesParam.ch6_max;
     }
 
-    y1      = (qint8)ch1;
-    x1      = (qint8)ch2;
-    y2      = (qint8)ch3;
-    x2      = (qint8)ch4;
-    but1    = (qint8)ch5;
-    but2    = (qint8)ch6;
+    y1      = (quint8)ch1;
+    x1      = (quint8)ch2;
+    y2      = (quint8)ch3;
+    x2      = (quint8)ch4;
+    but1    = (quint8)ch5;
+    but2    = (quint8)ch6;
+
+    qDebug() << "ch1 = " << y1 << ", "
+             << "ch2 = " << x1 << ", "
+             << "ch3 = " << y2 << ", "
+             << "ch4 = " << x2 << ", "
+             << "ch5 = " << but1 << ", "
+             << "ch6 = " << but2 << Qt::endl;
 
     flag_calculation = false;   // расчет закончен
     if(flag_deferred_transfer)  // если нужна отложенная передача
@@ -191,6 +232,97 @@ Tx_commandsPylt::batteryTypeRequest()
     //отправка команды, вывод лога
     res = _packing->Sending(data, s);
     return res;
+}
+
+int
+Tx_commandsPylt::joysticTank_Activity(float* y, float* x)
+{
+    // каналы перепутаны местами. так вышло.
+    // для нормальной работы в конце функции еще раз поменяны
+    float _ch1 = (*x);
+    float _ch2 = (*y);
+
+    float temp_ch1;
+    float temp_ch2;
+
+    // если надо двигаться вперед
+    if(_ch2 > 0.0f)
+    {
+        // если вперед и влево
+        if(_ch1 < 0.0f)
+        {
+            temp_ch1 = _ch2;
+            temp_ch2 = _ch2;
+            temp_ch1 -= fabs((double)_ch1);
+            if(temp_ch1 < 0.0f) temp_ch1 = 0.0f;
+
+            _ch1 = temp_ch1;
+            _ch2 = temp_ch2;
+        }
+        // если вперед и вправо
+        else if(_ch1 > 0.0f)
+        {
+            temp_ch1 = _ch2;
+            temp_ch2 = _ch2;
+            temp_ch2 -= fabs((double)_ch1);
+            if(temp_ch2 < 0.0f) temp_ch2 = 0.0f;
+
+            _ch1 = temp_ch1;
+            _ch2 = temp_ch2;
+        }
+        // если просто вперед
+        else
+        {
+            _ch1 = _ch2;
+        }
+    }
+    // если надо двигаться назад
+    else if(_ch2 < 0.0f)
+    {
+        // если назад и влево
+        if(_ch1 < 0.0f)
+        {
+            temp_ch1 = _ch2;
+            temp_ch2 = _ch2;
+            temp_ch1 += fabs((double)_ch1);
+            if(temp_ch1 > 1.0f) temp_ch1 = 0.0f;
+
+            _ch1 = temp_ch1;
+            _ch2 = temp_ch2;
+        }
+        // если назад и вправо
+        else if(_ch1 > 0.0f)
+        {
+            temp_ch1 = _ch2;
+            temp_ch2 = _ch2;
+            temp_ch2 += fabs((double)_ch1);
+            if(temp_ch2 > 1.0f) temp_ch2 = 1.0f;
+
+            _ch1 = temp_ch1;
+            _ch2 = temp_ch2;
+        }
+        // если просто назад
+        else
+        {
+            _ch1 = _ch2;
+        }
+    }
+    // если влево
+    else if(_ch1 < 0.0f)
+    {
+        _ch2 = fabs((double)_ch1);
+        _ch1 = 0.0f;
+    }
+    // если вправо
+    else if(_ch1 > 0.0f)
+    {
+        _ch2 = 0.0;
+    }
+
+    (*x) = _ch1;
+    (*y) = _ch2;
+
+    return 0;
 }
 
 qint32

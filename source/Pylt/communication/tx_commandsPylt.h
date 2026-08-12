@@ -18,6 +18,7 @@ public:
 
 public slots:
     int recalculatingParameters();
+    int updateParameters();
 
     int joystic_Activity(float x_1, float y_1, float x_2, float y_2, bool but_1, bool but_2);       // активность джойстика
 
@@ -25,6 +26,8 @@ public slots:
     int batteryTypeRequest();       // запрос типа аккамулятора 0xA1
 
 private:
+    int joysticTank_Activity(float* y, float* x);   // активность джойстика, если управление танком
+
     qint32 uint_32_changing_range(qint32 old, qint32 old_min, qint32 old_max, qint32 new_min, qint32 new_max);
     float float_changing_range(float old, float old_min, float old_max, float new_min, float new_max);
     qint8 uint_8_changing_range(qint8 old, qint8 old_min, qint8 old_max, qint8 new_min, qint8 new_max);

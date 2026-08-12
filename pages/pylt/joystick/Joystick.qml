@@ -20,8 +20,8 @@ Item {
     onVisibleChanged: {
         if(visible === true){
     //        console.log("!!!!!!!!!! Joy Pylt Visible.")
-            tx_commandsPylt.recalculatingParameters();
             joystickPyltTimer.running = visible
+            tx_commandsPylt.updateParameters()
         }
         else{
     //        console.log("!!!!!!!!!! Joy Pylt NO visible.")

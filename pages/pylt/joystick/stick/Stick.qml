@@ -192,7 +192,7 @@ Item {
             }
 
             onPressed: {
-                offsetX = 1.0
+                offsetX = -1.0
                 offsetY = 0.0
                 mouse_touch.onRecalculatingValues();
                 offsetInfo.text = Math.round(offsetX * 100) / 100 + "/" + Math.round(offsetY * 100) / 100
@@ -214,7 +214,7 @@ Item {
             }
 
             onPressed: {
-                offsetX = -1.0
+                offsetX = 1.0
                 offsetY = 0.0
                 mouse_touch.onRecalculatingValues();
                 offsetInfo.text = Math.round(offsetX * 100) / 100 + "/" + Math.round(offsetY * 100) / 100

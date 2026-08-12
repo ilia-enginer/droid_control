@@ -115,7 +115,7 @@ Page {
                 interactive: true
                 clip: true
                 flickableDirection: Flickable.VerticalFlick
-                contentHeight: 900
+                contentHeight: 800
 
 
                 ComboBox {
@@ -616,7 +616,7 @@ Page {
                     id: get_err
                     anchors.top: paramBox.bottom
                     width: parent.width
-                    height: parent.height * 0.075
+                    height: 40
                     text: "запрос ошибок"
                     background: Rectangle{
                         property var normalColor: "#c759d4"
@@ -634,7 +634,7 @@ Page {
                   id: clear_err
                   anchors.top: get_err.bottom
                   width: parent.width
-                  height: parent.height * 0.075
+                  height: 40
                   text: "стирание ошибок"
                   background: Rectangle{
                       property var normalColor: "#c759d4"
@@ -652,7 +652,7 @@ Page {
                   id: reboot
                   anchors.top: clear_err.bottom
                   width: parent.width
-                  height: parent.height * 0.075
+                  height: 40
                   text: "перезагрузка шара"
                   background: Rectangle{
                       property var normalColor: "#c759d4"
@@ -670,7 +670,7 @@ Page {
                   id: get_vers
                   anchors.top: reboot.bottom
                   width: parent.width
-                  height: parent.height * 0.075
+                  height: 40
                   text: "запрос версии"
                   background: Rectangle{
                       property var normalColor: "#c759d4"
@@ -688,7 +688,7 @@ Page {
                   id: set_signed
                   anchors.top: get_vers.bottom
                   width: parent.width
-                  height: parent.height * 0.075
+                  height: 40
                   text: "подписать приложение"
                   background: Rectangle{
                       property var normalColor: "#c759d4"
@@ -706,7 +706,7 @@ Page {
                     id: resetButton
                     anchors.top: set_signed.bottom
                     width: parent.width
-                    height: parent.height * 0.075
+                    height: 40
                     text: "Сброс до заводских"
                     background: Rectangle{
                         property var normalColor: "#db1244"
@@ -724,7 +724,7 @@ Page {
                     id: get_full_param
                     anchors.top: resetButton.bottom
                     width: parent.width
-                    height: parent.height * 0.075
+                    height: 40
                     text: "запрос точки восстановления"
                     background: Rectangle{
                         property var normalColor: "#c759d4"
@@ -742,7 +742,7 @@ Page {
                     id: set_full_param
                     anchors.top: get_full_param.bottom
                     width: parent.width
-                    height: parent.height * 0.075
+                    height: 40
                     text: "восстановить параметры"
                     background: Rectangle{
                         property var normalColor: "#c759d4"
@@ -796,7 +796,7 @@ Page {
                     anchors.top: power_off_rectangle.bottom
                     anchors.topMargin: get_ID.height * 0.15
                     width: parent.width
-                    height: parent.height * 0.075
+                    height: 40
                     text: "запрос ID устройства"
                     background: Rectangle{
                         property var normalColor: "#c759d4"
@@ -816,7 +816,7 @@ Page {
                   id: servs_calibr
                   anchors.top: paramBox.bottom
                   width: parent.width
-                  height: parent.height * 0.075
+                  height: 40
                   text: "старт/стоп автокалибровки серв"
                   background: Rectangle{
                       property var normalColor: "#7387d1"
@@ -834,7 +834,7 @@ Page {
                   id: serv_start
                   anchors.top: servs_calibr.bottom
                   width: parent.width
-                  height: parent.height * 0.075
+                  height: 40
                   text: "сервы в старт"
                   background: Rectangle{
                       property var normalColor: "#7387d1"
@@ -852,7 +852,7 @@ Page {
                   id: serv_home
                   anchors.top: serv_start.bottom
                   width: parent.width
-                  height: parent.height * 0.075
+                  height: 40
                   text: "сервы в домашнее"
                   background: Rectangle{
                       property var normalColor: "#7387d1"
@@ -983,7 +983,7 @@ Page {
                     id: serv_off_but
                     anchors.top: set_serv_min_angl.bottom
                     width: parent.width * 0.47
-                    height: parent.height * 0.075
+                    height: 40
                     anchors.left: parent.left
                     text: "откл. сервы"
                     background: Rectangle{
@@ -1002,7 +1002,7 @@ Page {
                     id: serv_on_but
                     anchors.top: set_serv_min_angl.bottom
                     width: parent.width * 0.47
-                    height: parent.height * 0.075
+                    height: 40
                     anchors.right: parent.right
                     text: "вкл. сервы"
                     background: Rectangle{
@@ -1048,7 +1048,7 @@ Page {
                     id: saveParametrs
                     anchors.top: numFootCalibr.bottom
                     width: parent.width
-                    height: parent.height * 0.075
+                    height: 40
                     text: "Сохранить настройки"
                     background: Rectangle{
                         property var normalColor: "#7387d1"
@@ -1297,7 +1297,7 @@ Page {
                   id: get_cur
                   anchors.top: paramBox.bottom
                   width: parent.width
-                  height: parent.height * 0.075
+                  height: 40
                   text: "запрос тока"
                   background: Rectangle{
                       property var normalColor: "#14deca"
@@ -1316,7 +1316,7 @@ Page {
                   id: get_cur_calibr
                   anchors.top: get_cur.bottom
                   width: parent.width
-                  height: parent.height * 0.075
+                  height: 40
                   text: "запрос калибровки тока"
                   background: Rectangle{
                       property var normalColor: "#14deca"
@@ -1372,7 +1372,7 @@ Page {
                 Button {
                     id: flag_cur_but_on
                     width: parent.width * 0.47
-                    height: parent.height * 0.075
+                    height: 40
                     anchors.top: set_cur_value.bottom
                     anchors.left: parent.left
                     text: "вкл. блок."
@@ -1390,7 +1390,7 @@ Page {
                 Button {
                     id: flag_cur_but_off
                     width: parent.width * 0.47
-                    height: parent.height * 0.075
+                    height: 40
                     anchors.right: parent.right
                     anchors.top: set_cur_value.bottom
                     text: "откл. блок."
@@ -1441,7 +1441,7 @@ Page {
                   id: get_voltage
                   anchors.top: paramBox.bottom
                   width: parent.width
-                  height: parent.height * 0.075
+                  height: 40
                   text: "запрос напряжения"
                   background: Rectangle{
                       property var normalColor: "#16e049"
@@ -1462,7 +1462,7 @@ Page {
                   id: get_angl_giroscope
                   anchors.top: paramBox.bottom
                   width: parent.width
-                  height: parent.height * 0.075
+                  height: 40
                   text: "запрос углов гироскопа"
                   background: Rectangle{
                       property var normalColor: "#6ac714"
@@ -1480,7 +1480,7 @@ Page {
                   id: get_acsel
                   anchors.top: get_angl_giroscope.bottom
                   width: parent.width
-                  height: parent.height * 0.075
+                  height: 40
                   text: "запрос ускорения"
                   background: Rectangle{
                       property var normalColor: "#6ac714"
@@ -1498,7 +1498,7 @@ Page {
                   id: get_azim
                   anchors.top: get_acsel.bottom
                   width: parent.width
-                  height: parent.height * 0.075
+                  height: 40
                   text: "запрос уст. азимута"
                   background: Rectangle{
                       property var normalColor: "#6ac714"
@@ -1544,7 +1544,7 @@ Page {
                   id: get_inclination
                   anchors.top: setAzimAngl.bottom
                   width: parent.width
-                  height: parent.height * 0.075
+                  height: 40
                   text: "запрос уст. угла наклона"
                   background: Rectangle{
                       property var normalColor: "#6ac714"
