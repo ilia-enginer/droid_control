@@ -461,9 +461,11 @@ Pylt_settings::saveFullParam()
         } else break;
     }
 
+    int num = 0;
     // TODO проверка есть ли устройство в списке сохраненных
     for(QStringList parametrs : lastParams) {
-        if(parametrs.at(0) == devName)  return 0;
+        if(parametrs.at(0) == devName)  deviceNum = num;
+        num++;
     }
 
     //сохраняю новое устройство

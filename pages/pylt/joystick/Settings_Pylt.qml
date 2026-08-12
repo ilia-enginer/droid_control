@@ -311,7 +311,7 @@ ScrollView {
             }
             onReleased: {
                 pylt_settings.saveFullParam();
-                tx_commandsPylt.recalculatingParameters();
+                tx_commandsPylt.updateParameters();
                 rec.saveParam();
             }
         }
