@@ -64,7 +64,7 @@ import "../pylt"
 ApplicationWindow {
     id: window
     width: 360
-    height: 520
+    height: 700         // 520
     visible: true
     title: qsTr("Droid Stick v.%1").arg(appversion.version_app)
 //    contentOrientation: Qt.LandscapeOrientation

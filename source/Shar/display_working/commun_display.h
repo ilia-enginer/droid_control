@@ -149,7 +149,7 @@ signals:
 
     void pca1_pca2_speed_Changed(qint8 freqPca1, qint8 freqPca2, qint8 speedServo);
 
-    void setChargeLevel(qint8 flag);
+    void setChargeLevel(int flag);
 
 private:
     QString getTime();

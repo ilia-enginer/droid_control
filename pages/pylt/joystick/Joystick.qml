@@ -110,15 +110,11 @@ Item {
         Connections {
             target: commun_display
 
-            function onVrealChanged(V) {
-                voltage.value = V
-            }
-
+            function onVrealChanged(V) { voltage.value = V }
             function onSetChargeLevel(flag){
-                if(flag === 0)
-                    rect1.color = normalPower
-                else
-                    rect1.color = lowPower
+         //       console.log("flag onSetChargeLevel = ", flag)
+                if(flag !== 0)  rect1.color = lowPower
+                else            rect1.color = normalPower
             }
         }
     }
