@@ -25,6 +25,7 @@ SwipeView {
             if(Qt.platform.os !== "windows") tx_commands.getCheck();
             window_focus = true
             joystick_timer.running = true
+            tx_commands.getCheck();         // запрашивать ошибки при активации окна
         }
      }
 
