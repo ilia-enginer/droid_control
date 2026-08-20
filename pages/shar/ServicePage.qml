@@ -32,20 +32,35 @@ Page {
             anchors.fill: senderBackground
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
             ScrollBar.vertical: ScrollBar {
-                id: styledScrollBar
-              //  orientation: Qt.Vertical  // или Qt.Vertical Qt.Horizontal
-                parent: scrolViewLogArea
-                x: scrolViewLogArea.mirrored ? 0 : scrolViewLogArea.width - width
-                y: scrolViewLogArea.topPadding
-                height: scrolViewLogArea.availableHeight
-
+                id: scrollBar
+                hoverEnabled: true
+                active: hovered || pressed
+                orientation: Qt.Vertical
+                policy: ScrollBar.AlwaysOn
+                anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
                 contentItem: Rectangle {
-                    implicitWidth: 6  // или implicitHeight в зависимости от ориентации
-                    radius: 3
-                    color: styledScrollBar.pressed ? "#2ecc71" : "#3498db"  // Меняем цвет при нажатии
+                        implicitWidth: 6
+                        implicitHeight: 30
+                        color: "grey"
+                    }
+
+                Button {
+                    anchors.top: parent.top
+                    width: parent.width
+                    height: 25
+                    text: "^"
+                    onClicked: { scrollBar.decrease() }
+                }
+                Button {
+                    anchors.bottom: parent.bottom
+                    width: parent.width
+                    height: 25
+                    text: "v"
+                    onClicked: { scrollBar.increase() }
                 }
             }
-
             ListView {
                    id: listView1
                    anchors.fill: scrolViewLogArea
@@ -61,7 +76,9 @@ Page {
                        }
                    }
                    delegate: Column {
-                       Text {
+                       TextEdit {
+                           selectByKeyboard: true
+                           selectByMouse: true
                            width: listView1.width * 0.95
                            text: msg
                            font.family: "Courier New"

@@ -87,6 +87,7 @@ RESOURCES += \
     pages/shar/joystick/Joystick.qml \
     pages/shar/joystick/finger.png \
     pages/shar/joystick/background.png \
+    pages/shar/joystick/back.png \
     pages/main/AboutPage.qml \
     pages/main/UpdateAppPage.qml \
     pages/shar/Update_Hex.qml \

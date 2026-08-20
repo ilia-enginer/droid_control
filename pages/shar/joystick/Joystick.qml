@@ -75,7 +75,7 @@ SwipeView {
         Rectangle {
             id: senderBackground_2
             anchors.top: parent.top
-            height: parent.height * 0.25
+            height: parent.height * 0.33
             anchors.left: parent.left
             anchors.right: leveltext.right
             anchors.leftMargin: 10
@@ -85,15 +85,46 @@ SwipeView {
         ScrollView {
             id: scrolViewLogArea_2
             anchors.fill: senderBackground_2
-            ScrollBar.vertical.policy: ScrollBar.AlwaysOn
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-            ScrollBar.vertical.interactive: true
+            ScrollBar.vertical: ScrollBar {
+                id: scrollBar
+                hoverEnabled: true
+                active: hovered || pressed
+                orientation: Qt.Vertical
+                policy: ScrollBar.AlwaysOn
+                anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+
+                Image {
+                    anchors.top: parent.top
+                    width: parent.width
+                    height: 15
+                    source: "back.png" // Путь к файлу с иконкой-стрелкой вверх
+                    rotation: 90
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: scrollBar.decrease() // Прокрутка вверх
+                    }
+                }
+                Image {
+                    anchors.bottom: parent.bottom
+                    width: parent.width
+                    height: 15
+                    source: "back.png" // Путь к файлу с иконкой-стрелкой вниз
+                    rotation: 270
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: scrollBar.increase() // Прокрутка вниз
+                    }
+                }
+            }
 
             ListView {
                    id: listView1
                    anchors.fill: scrolViewLogArea_2
                    snapMode:ListView.SnapToItem
-                   width: scrolViewLogArea_2.width
+                //   width: scrolViewLogArea_2.width
                    clip: true
 
                    Connections {
@@ -119,7 +150,9 @@ SwipeView {
                    }
 
                    delegate: Column {
-                       Text {
+                       TextEdit  {
+                           selectByKeyboard: true
+                           selectByMouse: true
                            width: listView1.width * 0.95
                            text: msg
                            font.family: "transparent"
@@ -161,7 +194,7 @@ SwipeView {
         //напряжение
         ProgressBar{
             id: voltage
-            height: parent.height * 0.043
+            height: parent.height * 0.02
             anchors.top: senderBackground_2.bottom
             anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
@@ -225,7 +258,7 @@ SwipeView {
         //ток
         ProgressBar{
             id: current
-            height: parent.height * 0.043
+            height: parent.height * 0.02
             anchors.top: voltage.bottom
             anchors.topMargin: 5
             anchors.horizontalCenter: parent.horizontalCenter
