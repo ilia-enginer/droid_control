@@ -840,6 +840,35 @@ SwipeView {
                      width: 2
                  }
 
+                 // масштабирование колесиком мыши
+                 MouseArea {
+                     anchors.fill: parent
+                     onWheel:(wheel) =>
+                          {
+                             // Меняем масштаб: увеличиваем или уменьшаем
+                                if(wheel.angleDelta.y > 0){
+                                     chartView.zoomIn()
+                                 }else{
+                                     chartView.zoomOut();
+                                 }
+                             wheel.accepted = true // Обязательно: сообщаем, что обработали событие
+                         }
+                 }
+                 // масштабирование клавишами "+" and "-"
+                 Shortcut {
+                     sequence: "+"
+                     onActivated: {
+               //          console.log("+");
+                         chartView.zoomIn();
+                     }
+                 }
+                 Shortcut {
+                     sequence: "-"
+                     onActivated: {
+               //          console.log("-");
+                         chartView.zoomOut();
+                     }
+                 }
 
                  //перетаскивание графика
                  PinchArea{
