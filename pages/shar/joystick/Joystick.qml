@@ -58,6 +58,7 @@ SwipeView {
     property int temp: 0
     property bool chartViewVisible : true
 
+    property string inputLink: ""
 
     //страница управления
     Item {
@@ -123,8 +124,7 @@ SwipeView {
             ListView {
                    id: listView1
                    anchors.fill: scrolViewLogArea_2
-                   snapMode:ListView.SnapToItem
-                //   width: scrolViewLogArea_2.width
+                   snapMode:ListView.SnapOneItem
                    clip: true
 
                    Connections {
@@ -149,19 +149,43 @@ SwipeView {
                       }
                    }
 
-                   delegate: Column {
+                   delegate:
+                       Column {
                        TextEdit  {
+                           id: editField
                            selectByKeyboard: true
                            selectByMouse: true
+                           persistentSelection: true
                            width: listView1.width * 0.95
                            text: msg
                            font.family: "transparent"
                            font.pixelSize: 14
                            wrapMode: Text.Wrap
                            color: "black"
+                           MouseArea {
+                               anchors.fill: parent
+                               onClicked: {
+                                   editField.deselect()
+                               }
+                               onDoubleClicked: {
+                                   editField.forceActiveFocus() // Сначала даём фокус
+                                   editField.selectAll()        // Затем выделяем всё
+
+                                   inputLink = inputLink + "\n" + editField.selectedText // сохранить фрагмент
+                                   invisibleEdit.text = inputLink;
+                                   invisibleEdit.selectAll();
+                                   invisibleEdit.copy();    // сохранить в буфер
+                                  // inputLink = "";
+                                   console.log("inputLinkText ", inputLink)
+                               }
+                           }
+                       }
+                       TextEdit {
+                           id: invisibleEdit
+                           visible: false
+                           text: inputLink  // Присваиваем текст переменной
                        }
                     }
-
                    // Сама модель, в которой будут содержаться все элементы
                    model: ListModel {
                        id: logListModel_2 // задаём ей id для обращения
