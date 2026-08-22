@@ -30,7 +30,7 @@ Page{
 
     // выбор устройства
     Button {
-        visible: Qt.platform.os === "windows"
+        visible: Qt.platform.os === "windows" || Qt.platform.os === "linux"
         text: "выбор устройства"
         onClicked: {
             deviceSelectionDialog.open();
@@ -39,7 +39,7 @@ Page{
 
   //─── COM - port ─────────────────────────────────────────
     Rectangle {
-        visible: Qt.platform.os === "windows"
+        visible: Qt.platform.os === "windows" || Qt.platform.os === "linux"
         anchors {
             bottom: parent.bottom
             left: parent.left
