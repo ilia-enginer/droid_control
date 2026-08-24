@@ -28,7 +28,6 @@ Page {
         wrapMode: Label.Wrap
         horizontalAlignment: Qt.AlignHCenter
         text: commun_display.curDeviceName_
-        font.pointSize: parent.height * 0.022
     }
 
     Label {
