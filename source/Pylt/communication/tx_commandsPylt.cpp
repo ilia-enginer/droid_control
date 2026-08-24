@@ -95,7 +95,10 @@ Tx_commandsPylt::updateParameters()
 int
 Tx_commandsPylt::joystic_Activity(float y_1, float x_1, float y_2, float x_2, bool but_1, bool but_2)
 {
+    float new_old_mid = 125;
+
     float old_min = -1.0;
+    float old_mid = 0.0;
     float old_max = 1.0;
 
     float ch1;
@@ -134,14 +137,62 @@ Tx_commandsPylt::joystic_Activity(float y_1, float x_1, float y_2, float x_2, bo
 
     // расчет
     //переворачивание если инверсия
-    if(valuesParam.ch1_inv) ch1 = float_changing_range(ch1, old_min, old_max, (float)valuesParam.ch1_joy1_y_max, (float)valuesParam.ch1_joy1_y_min);
-    else                    ch1 = float_changing_range(ch1, old_min, old_max, (float)valuesParam.ch1_joy1_y_min, (float)valuesParam.ch1_joy1_y_max);
-    if(valuesParam.ch2_inv) ch2 = float_changing_range(ch2, old_min, old_max, (float)valuesParam.ch2_joy1_x_max, (float)valuesParam.ch2_joy1_x_min);
-    else                    ch2 = float_changing_range(ch2, old_min, old_max, (float)valuesParam.ch2_joy1_x_min, (float)valuesParam.ch2_joy1_x_max);
-    if(valuesParam.ch3_inv) ch3 = float_changing_range(ch3, old_min, old_max, (float)valuesParam.ch3_joy2_y_max, (float)valuesParam.ch3_joy2_y_min);
-    else                    ch3 = float_changing_range(ch3, old_min, old_max, (float)valuesParam.ch3_joy2_y_min, (float)valuesParam.ch3_joy2_y_max);
-    if(valuesParam.ch4_inv) ch4 = float_changing_range(ch4, old_min, old_max, (float)valuesParam.ch4_joy2_x_max, (float)valuesParam.ch4_joy2_x_min);
-    else                    ch4 = float_changing_range(ch4, old_min, old_max, (float)valuesParam.ch4_joy2_x_min, (float)valuesParam.ch4_joy2_x_max);
+    if(valuesParam.ch1_inv)
+    {
+        if(ch1 > old_mid)
+            ch1 = float_changing_range(ch1, old_mid, old_max, (float)valuesParam.ch1_joy1_y_max, new_old_mid);
+        else
+            ch1 = float_changing_range(ch1, old_min, old_mid, new_old_mid, (float)valuesParam.ch1_joy1_y_min);
+    }
+    else
+    {
+        if(ch1 > old_mid)
+            ch1 = float_changing_range(ch1, old_mid, old_max, new_old_mid, (float)valuesParam.ch1_joy1_y_max);
+        else
+            ch1 = float_changing_range(ch1, old_min, old_mid, (float)valuesParam.ch1_joy1_y_min, new_old_mid);
+    }
+    if(valuesParam.ch2_inv)
+    {
+        if(ch2 > old_mid)
+            ch2 = float_changing_range(ch2, old_mid, old_max, (float)valuesParam.ch2_joy1_x_max, new_old_mid);
+        else
+            ch2 = float_changing_range(ch2, old_min, old_mid, new_old_mid, (float)valuesParam.ch2_joy1_x_min);
+    }
+    else
+    {
+        if(ch2 > old_mid)
+            ch2 = float_changing_range(ch2, old_mid, old_max, new_old_mid, (float)valuesParam.ch2_joy1_x_max);
+        else
+            ch2 = float_changing_range(ch2, old_min, old_mid, (float)valuesParam.ch2_joy1_x_min, new_old_mid);
+    }
+    if(valuesParam.ch3_inv)
+    {
+        if(ch3 > old_mid)
+            ch3 = float_changing_range(ch3, old_mid, old_max, (float)valuesParam.ch3_joy2_y_max, new_old_mid);
+        else
+            ch3 = float_changing_range(ch3, old_min, old_mid, new_old_mid, (float)valuesParam.ch3_joy2_y_min);
+    }
+    else
+    {
+        if(ch3 > old_mid)
+            ch3 = float_changing_range(ch3, old_mid, old_max, new_old_mid, (float)valuesParam.ch3_joy2_y_max);
+        else
+            ch3 = float_changing_range(ch3, old_min, old_mid, (float)valuesParam.ch3_joy2_y_min, new_old_mid);
+    }
+    if(valuesParam.ch4_inv)
+    {
+        if(ch4 > old_mid)
+            ch4 = float_changing_range(ch4, old_mid, old_max, (float)valuesParam.ch4_joy2_x_max, new_old_mid);
+        else
+            ch4 = float_changing_range(ch4, old_min, old_mid, new_old_mid, (float)valuesParam.ch4_joy2_x_min);
+    }
+    else
+    {
+        if(ch4 > old_mid)
+            ch4 = float_changing_range(ch4, old_mid, old_max, new_old_mid, (float)valuesParam.ch4_joy2_x_max);
+        else
+            ch4 = float_changing_range(ch4, old_min, old_mid, (float)valuesParam.ch4_joy2_x_min, new_old_mid);
+    }
     if(valuesParam.ch5_inv)
     {
         if(but_1)   ch5 = valuesParam.ch5_max;

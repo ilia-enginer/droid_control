@@ -33,6 +33,7 @@ Page {
 
     Label {
         id: senderPageLabel2
+        anchors.topMargin: 15
         anchors.top: senderPageLabel.bottom
         anchors.left: parent.left
         anchors.right: parent.right

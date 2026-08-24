@@ -1,5 +1,5 @@
 
-import QtQuick 2.7
+import QtQuick 2.15
 import QtQuick.Controls 2.0
 import QtCharts 2.15
 import QtQml
@@ -980,8 +980,11 @@ SwipeView {
 
                         onDoubleClicked: {
                             chartView.zoomReset();
-                            parent.currentPinchScaleX = 1;
-                            parent.currentPinchScaleY = 1;
+                            pa.pinchStartX = 1;
+                            pa.pinchStartY = 1;
+                            valueAxisX.min = 0;
+                            valueAxisY.min = valueYMin;
+                            valueAxisY.max = valueYMax;
                         }
                     }
 
