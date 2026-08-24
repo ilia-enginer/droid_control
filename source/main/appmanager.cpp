@@ -5,7 +5,6 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QFile>
-#include <QJniObject>
 #include <QStringList>
 #include <QTextStream>
 

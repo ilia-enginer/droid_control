@@ -60,6 +60,23 @@ SwipeView {
 
     property string inputLink: ""
 
+    property string copiedLogText: ""
+
+    function updateClipboardFromSelection() {
+        var text = ""
+        for (var i = 0; i < logListModel_2.count; ++i) {
+            var item = logListModel_2.get(i)
+            if (item.selected) {
+                text += item.msg + "\n"
+            }
+        }
+
+        copiedLogText = text.trim()
+        clipboardHelper.text = copiedLogText
+        clipboardHelper.selectAll()
+        clipboardHelper.copy()
+    }
+
     //страница управления
     Item {
         id: page_joystick
@@ -70,6 +87,16 @@ SwipeView {
             running: false
             repeat: true
             onTriggered: { tx_commands.joysticActivity(mode, azimuth, amplitude, level, ctrl); }
+        }
+
+        TextEdit {
+            id: clipboardHelper
+            opacity: 0
+            width: 1
+            height: 1
+            text: ""
+            readOnly: true
+            selectByMouse: false
         }
 
         //окно лога
@@ -127,67 +154,74 @@ SwipeView {
                    snapMode:ListView.SnapOneItem
                    clip: true
 
-                   Connections {
-                       target: commun_display
-                      function onLogJoy(type, msg) {
-                          if(window_focus)
-                          {
-                              if (mainModel.adminFlag === false){
-                                   logListModel_2.append({msg: type + msg})
-                                   listView1.positionViewAtEnd()
-                              }
-                          }
-                       }
-                      function onLogServis(type, msg) {
-                          if(window_focus)
-                          {
-                              if (mainModel.adminFlag === true){
-                                  logListModel_2.append({msg: type + msg})
-                                  listView1.positionViewAtEnd()
-                              }
-                          }
-                      }
-                   }
+                   spacing: 2
+                   reuseItems: true
+                   model: logListModel_2
 
-                   delegate:
-                       Column {
-                       TextEdit  {
-                           id: editField
-                           selectByKeyboard: true
-                           selectByMouse: true
-                           persistentSelection: true
-                           width: listView1.width * 0.95
+                   delegate: Rectangle {
+                       id: rowRoot
+                       width: listView1.width * 0.95
+                       height: rowText.implicitHeight + 8
+                       radius: 4
+                       color: selected ? "#cfe8ff" : "transparent"
+                       border.width: selected ? 1 : 0
+                       border.color: "#4a90e2"
+
+                       required property int index
+                       required property string msg
+                       required property bool selected
+
+                       Text {
+                           id: rowText
+                           anchors.left: parent.left
+                           anchors.leftMargin: 4
+                           anchors.right: parent.right
+                           anchors.rightMargin: 4
+                           anchors.verticalCenter: parent.verticalCenter
                            text: msg
-                           font.family: "transparent"
-                           font.pixelSize: 14
                            wrapMode: Text.Wrap
                            color: "black"
-                           MouseArea {
-                               anchors.fill: parent
-                               onClicked: {
-                                   editField.deselect()
-                               }
-                               onDoubleClicked: {
-                                   editField.forceActiveFocus() // Сначала даём фокус
-                                   editField.selectAll()        // Затем выделяем всё
+                           font.pixelSize: 14
+                       }
 
-                                   inputLink = inputLink + "\n" + editField.selectedText // сохранить фрагмент
-                                   invisibleEdit.text = inputLink;
-                                   invisibleEdit.selectAll();
-                                   invisibleEdit.copy();    // сохранить в буфер
-                                  // inputLink = "";
-                                   console.log("inputLinkText ", inputLink)
+                       MouseArea {
+                           anchors.fill: parent
+                           acceptedButtons: Qt.LeftButton
+
+                           onClicked: {
+                               logListModel_2.setProperty(index, "selected", !selected)
+                               updateClipboardFromSelection()
+                           }
+
+                           onDoubleClicked: {
+                               logListModel_2.setProperty(index, "selected", true)
+                               updateClipboardFromSelection()
+                           }
+                       }
+                   }
+
+                   Connections {
+                       target: commun_display
+                       function onLogJoy(type, msg) {
+                           if (window_focus) {
+                               if (mainModel.adminFlag === false) {
+                                   logListModel_2.append({ msg: type + msg, selected: false })
+                                   listView1.positionViewAtEnd()
                                }
                            }
                        }
-                       TextEdit {
-                           id: invisibleEdit
-                           visible: false
-                           text: inputLink  // Присваиваем текст переменной
+                       function onLogServis(type, msg) {
+                           if (window_focus) {
+                               if (mainModel.adminFlag === true) {
+                                   logListModel_2.append({ msg: type + msg, selected: false })
+                                   listView1.positionViewAtEnd()
+                               }
+                           }
                        }
-                    }
+                   }
+
                    // Сама модель, в которой будут содержаться все элементы
-                   model: ListModel {
+                   ListModel {
                        id: logListModel_2 // задаём ей id для обращения
                    }
                }
@@ -212,6 +246,8 @@ SwipeView {
 
             onClicked: {
                 logListModel_2.clear()
+                copiedLogText = ""
+                clipboardHelper.text = ""
             }
         }
 
