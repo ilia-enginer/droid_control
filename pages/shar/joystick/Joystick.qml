@@ -58,8 +58,6 @@ SwipeView {
     property int temp: 0
     property bool chartViewVisible : true
 
-    property string inputLink: ""
-
     property string copiedLogText: ""
 
     function updateClipboardFromSelection() {
@@ -68,9 +66,9 @@ SwipeView {
             var item = logListModel_2.get(i)
             if (item.selected) {
                 text += item.msg + "\n"
+                toast.toastOn("буфер обновлён")
             }
         }
-
         copiedLogText = text.trim()
         clipboardHelper.text = copiedLogText
         clipboardHelper.selectAll()
@@ -154,14 +152,14 @@ SwipeView {
                    snapMode:ListView.SnapOneItem
                    clip: true
 
-                   spacing: 2
+                   spacing: -1
                    reuseItems: true
                    model: logListModel_2
 
                    delegate: Rectangle {
                        id: rowRoot
                        width: listView1.width * 0.95
-                       height: rowText.implicitHeight + 8
+                       height: rowText.implicitHeight //+ 8
                        radius: 4
                        color: selected ? "#cfe8ff" : "transparent"
                        border.width: selected ? 1 : 0
@@ -226,6 +224,24 @@ SwipeView {
                    }
                }
         }
+
+        ToolTip {
+            id: toast
+            delay: 0  // задержка перед показом
+            timeout: 1000  // время скрытия
+            x: (parent.width - width) / 2  // по горизонтали по центру
+            y: senderBackground_2.y + senderBackground_2.height //(parent.height - 100)  // по вертикали снизу
+
+            background: Rectangle {
+                color: "#7f856f"
+                radius: 15  // скруглённые углы
+            }
+            function toastOn(msg){
+                toast.text = qsTr(msg)
+                toast.visible = true
+            }
+        }
+
 
         //очистка лога
         Button {
