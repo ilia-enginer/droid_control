@@ -105,7 +105,7 @@ SwipeView {
             anchors.left: parent.left
             anchors.right: leveltext.right
             anchors.leftMargin: 10
-            color: "transparent"
+            color: "#f7ebee"
         }
 
         ScrollView {

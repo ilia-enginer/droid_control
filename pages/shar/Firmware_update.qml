@@ -258,7 +258,7 @@ Page {
         id: senderBackground
         anchors.top: loging.bottom
         anchors.bottom: parent.bottom
-        color: "#111111"
+        color: "#f7ebee"
         width: parent.width
         visible: false
     }
@@ -308,7 +308,7 @@ Page {
                        font.family: "Courier New"
                        wrapMode: Text.Wrap
                        font.pixelSize: 14
-                       color: "lawngreen"
+                       color: "black"
                    }
                 }
                // Сама модель, в которой будут содержаться все элементы
