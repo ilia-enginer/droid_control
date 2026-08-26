@@ -620,7 +620,7 @@ Rx_commands::readAllParams(QByteArray Params)
 {
     if(Params.size() > 10)
     {
-        if(!_settings->set_full_param(Data))
+        if(_settings->set_full_param(Params) == 1)
         {
             _commun_display->log_out_J("<- точка восстановления создана", "");
             _commun_display->log_out_S("<- точка восстановления создана", "");

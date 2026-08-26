@@ -79,6 +79,7 @@ public:
     bool getctrl() const;
     void setctrl(bool newctrl);
 
+    void setDevName(QString newName);
 
 public slots:
     bool getLoging();
@@ -130,9 +131,9 @@ private:
     bool ctrl_ = false;              // режим стабилизации
     ///         ///
 
-    bool loging = false;             //флаг логирования
+    QString _devName = "";
 
-    QByteArray _full_Param;         ///массив с полными параметрами
+    bool loging = false;             //флаг логирования
 
     int idDevice = NONE;            ///хранит id подключенного устройства
 };

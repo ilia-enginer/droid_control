@@ -81,6 +81,8 @@ MainModel::deviceConnect(QString type, QString name)
     // если устройство шар
     if(checkID() == _settings->SHAR)
     {
+        _settings->setDevName(name);
+
         // запрос точки восстановления
         checkingParameters();
         // запрос версии прошивки

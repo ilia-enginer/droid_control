@@ -271,7 +271,11 @@ Tx_commands::writeAllParams()
     quint8 comand = 0xA8;
 
     //вписывание параметров
-    data.prepend(_settings->get_full_param());
+    QByteArray param = _settings->get_full_param();
+    if(!param.isEmpty())
+        data.prepend(param);
+    else
+       s = "отсутствуют сохранённые параметры для этого устройства";
 
     //вписывание команды
     data.prepend(comand);  

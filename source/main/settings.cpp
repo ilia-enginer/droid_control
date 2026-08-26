@@ -157,6 +157,12 @@ Settings::setctrl(bool newctrl)
     ctrl_ = newctrl;
 }
 
+void
+Settings::setDevName(QString newName)
+{
+    _devName = newName;
+}
+
 int
 Settings::setIdDevice(int id, bool refresh)
 {
@@ -209,13 +215,34 @@ void Settings::setLoging(bool newloging)
 
 QByteArray
 Settings::get_full_param()
-{
-    //если параметры не прочитаны
-    if(!_full_Param.isEmpty())
+{ 
+    QSettings parameters;
+    QString dName;
+    QByteArray _full_Param;
+    QVector<QStringList> lastParams;
+
+    if(_devName.isEmpty())   return _full_Param;
+
+    int deviceNum = 0;
+    while (true)
     {
-        QSettings setting;
-        _full_Param = setting.value("fullParam", QByteArray()).toByteArray();
+        if (parameters.contains(QString("SharParametrs%1").arg(deviceNum))) {
+            lastParams.append(parameters.value(QString("SharParametrs%1").arg(deviceNum)).toString().split(";"));
+            ++deviceNum;    // следующий номер прибора для сохранения в истории
+        } else break;
     }
+
+    int num = 0;
+    // TODO проверка есть ли устройство в списке сохраненных
+    for(QStringList parametrs : lastParams) {
+        if(parametrs.at(0) == _devName)
+        {
+            _full_Param = lastParams[num].at(1).toUtf8();
+            return _full_Param;
+        }
+        num++;
+    }
+
     return _full_Param;
 }
 
@@ -224,11 +251,39 @@ Settings::set_full_param(QByteArray &param)
 {
     if(param.isEmpty())
         return -1;
+    // если имя не записано - выйти
+    if(_devName.isEmpty())   return -2;
 
-    _full_Param = param;
-    QSettings setting;
-    setting.setValue("fullParam", _full_Param);
-    return 0;
+    QSettings parameters;
+    QVector<QStringList> lastParams;
+    int deviceNum = 0;
+    //вычитываю все устройства
+    while (true)
+    {
+        if (parameters.contains(QString("SharParametrs%1").arg(deviceNum))) {
+            lastParams.append(parameters.value(QString("SharParametrs%1").arg(deviceNum)).toString().split(";"));
+            ++deviceNum;    // следующий номер прибора для сохранения в истории
+        } else break;
+    }
+
+    int num = 0;
+    // TODO проверка есть ли устройство в списке сохраненных
+    for(QStringList parametrs : lastParams) {
+        if(parametrs.at(0) == _devName)
+        {
+            deviceNum = num;
+            break;
+        }
+        num++;
+    }
+
+    //сохраняю
+    QString paramString = QStringList({_devName,
+                                  QString("%1").arg(param),
+                                 }).join(";");
+    parameters.setValue(QString("SharParametrs%1").arg(deviceNum), paramString);    // запись
+
+    return 1;
 }
 
 
@@ -237,19 +292,11 @@ int
 Settings::full_param_check()
 {
     QSettings setting;
-    _full_Param = setting.value("fullParam", QByteArray()).toByteArray();
+    QByteArray _full_Param = get_full_param();
 
-    //если параметры не прочитаны
+    // если в памяти их нет
     if((_full_Param.isEmpty()) || (_full_Param.size() < 10))
-    {
-        //читаю из памяти
-         _full_Param = setting.value("fullParam", QByteArray()).toByteArray();
-
-         //если в памяти их нет
-         if((_full_Param.isEmpty()) || (_full_Param.size() < 10))
-         {
              return 0;
-         }
-    }
+
     return 1;
 }

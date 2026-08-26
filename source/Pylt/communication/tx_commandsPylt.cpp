@@ -37,6 +37,7 @@ Tx_commandsPylt::recalculatingParameters()
 
     // получить параметры пользовательского вида из класса настроек
     FullParam param = _pylt_settings->getFullParam();
+
     valuesParam = param;
 
     // пересчитать параметры в значения, которые принимает пульт
