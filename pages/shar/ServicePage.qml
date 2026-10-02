@@ -76,10 +76,11 @@ Page {
                        }
                    }
                    delegate: Column {
-                       TextEdit {
-                           selectByKeyboard: true
-                           selectByMouse: true
-                           width: listView1.width * 0.95
+                       Text {
+                           anchors.left: parent.left
+                           anchors.leftMargin: 14
+                           anchors.right: parent.right
+                           anchors.rightMargin: 4
                            text: msg
                            font.family: "Courier New"
                            wrapMode: Text.Wrap
@@ -132,7 +133,7 @@ Page {
                 interactive: true
                 clip: true
                 flickableDirection: Flickable.VerticalFlick
-                contentHeight: 800
+                contentHeight: 900
 
 
                 ComboBox {
@@ -788,7 +789,6 @@ Page {
 
                         power_off.progress = 0.0
                     }
-
                 }
                 Rectangle{
                     id: power_off_rectangle
@@ -798,7 +798,7 @@ Page {
                     anchors.right: power_off.right
                     anchors.left: power_off.left
                     height: power_off.height * 0.67
-                    radius: 8
+                    radius: 4
                     Text {
                         id: name
                         anchors.verticalCenter: parent.verticalCenter
@@ -1082,7 +1082,7 @@ Page {
                 Item{
                     id: pca_Speed
                     anchors.top: saveParametrs.bottom
-                    anchors.topMargin: 150
+                    anchors.topMargin: 180
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: parent.width
 
@@ -1363,7 +1363,7 @@ Page {
                     anchors.left: set_cur_value.right
                     anchors.leftMargin: 5
                     delay: 1000
-                    onClicked: {
+                    onActivated: {
                         set_cur_value_but.progress = 0.0
                         tx_commands.setCurCalibration(set_cur_value.text);
                         listView1.positionViewAtEnd()
@@ -1377,7 +1377,7 @@ Page {
                     anchors.right: set_cur_value_but.right
                     anchors.left: set_cur_value_but.left
                     height: set_cur_value_but.height * 0.75
-                    radius: 8
+                    radius: 4
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -1443,7 +1443,7 @@ Page {
                     anchors.right: cur_calibr_auto.right
                     anchors.left: cur_calibr_auto.left
                     height: cur_calibr_auto.height * 0.67
-                    radius: 8
+                    radius: 4
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.horizontalCenter: parent.horizontalCenter

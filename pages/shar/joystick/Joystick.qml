@@ -22,7 +22,6 @@ SwipeView {
         } else {
             // Пользователь сосредоточился на этом поле
             console.log("!!!!!!!!Focus active.")
-            if(Qt.platform.os !== "windows") tx_commands.getCheck();
             window_focus = true
             joystick_timer.running = true
             tx_commands.getCheck();         // запрашивать ошибки при активации окна
@@ -103,8 +102,7 @@ SwipeView {
             anchors.top: parent.top
             height: parent.height * 0.33
             anchors.left: parent.left
-            anchors.right: leveltext.right
-            anchors.leftMargin: 10
+            anchors.right: parent.right
             color: "#f7ebee"
         }
 
@@ -172,7 +170,7 @@ SwipeView {
                        Text {
                            id: rowText
                            anchors.left: parent.left
-                           anchors.leftMargin: 4
+                           anchors.leftMargin: 14
                            anchors.right: parent.right
                            anchors.rightMargin: 4
                            anchors.verticalCenter: parent.verticalCenter
@@ -281,6 +279,14 @@ SwipeView {
             background: Rectangle {
                 color: "#e6e6e6"
                 radius: 3
+                Text {
+                    text: commun_display.Volt.toFixed(1) + "V"
+                    width: parent.width
+                    wrapMode: Label.Wrap
+                    horizontalAlignment: Qt.AlignHCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    color: "black"
+                }
             }
 
             contentItem: Item {
@@ -319,18 +325,6 @@ SwipeView {
             }
         }
 
-        //напруга
-        Label {
-            id: voltageLabel
-            width: parent.width
-            height: voltage.height
-            wrapMode: Label.Wrap
-            horizontalAlignment: Qt.AlignHCenter
-            anchors.verticalCenter: voltage.verticalCenter
-            text: commun_display.Volt.toFixed(1) + "V"
-            color: "black"
-        }
-
         //ток
         ProgressBar{
             id: current
@@ -345,6 +339,14 @@ SwipeView {
             background: Rectangle {
                 color: "#e6e6e6"
                 radius: 3
+                Text {
+                    width: parent.width
+                    wrapMode: Label.Wrap
+                    horizontalAlignment: Qt.AlignHCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: commun_display.Cur.toFixed(2) + "А"
+                    color: "black"
+                }
             }
 
             contentItem: Item {
@@ -381,18 +383,6 @@ SwipeView {
                     current.value = Cur
                 }
             }
-        }
-
-        //ток
-        Label {
-            id: currentLabel
-            width: parent.width
-            height: current.height
-            wrapMode: Label.Wrap
-            horizontalAlignment: Qt.AlignHCenter
-            anchors.verticalCenter: current.verticalCenter
-            text: commun_display.Cur.toFixed(2) + "А"
-            color: "black"
         }
 
         //имя приемника
@@ -759,7 +749,7 @@ SwipeView {
             anchors.right: power_off.right
             anchors.left: power_off.left
             height: power_off.height * 0.8
-            radius: 8
+            radius: 4
             Text {
                 id: name
                 anchors.verticalCenter: parent.verticalCenter

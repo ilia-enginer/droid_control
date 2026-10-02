@@ -331,7 +331,7 @@ Tx_commands::getSettingsServs()
 
 // записать настройки частоты ПЦА и скорости серв без сохранения во флеш 0xAC
 int
-Tx_commands::setSettingsServo(qint8 freq_pca1, qint8 freq_pca2, qint8 speedServs)
+Tx_commands::setSettingsServo(int freq_pca1, int freq_pca2, int speedServs)
 {
     QByteArray data;
     int res = -1;
@@ -343,9 +343,9 @@ Tx_commands::setSettingsServo(qint8 freq_pca1, qint8 freq_pca2, qint8 speedServs
             .arg(freq_pca2)
             .arg(speedServs);
 
-    data.prepend(speedServs);
-    data.prepend(freq_pca2);
-    data.prepend(freq_pca1);
+    data.prepend((qint8)speedServs);
+    data.prepend((qint8)freq_pca2);
+    data.prepend((qint8)freq_pca1);
 
     //вписывание команды
     data.prepend(comand);
