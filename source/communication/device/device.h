@@ -125,6 +125,8 @@ private slots:
     void deviceDisconnected();
     void socketRead();
 
+    void openLocationSettings();
+
 Q_SIGNALS:
     void randomAddressChanged();
     void socketDataRecieved(QString msg);

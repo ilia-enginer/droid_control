@@ -54,6 +54,7 @@
 #include <qbluetoothlocaldevice.h>
 #include <qbluetoothdeviceinfo.h>
 #include <qbluetoothservicediscoveryagent.h>
+
 #include <QDebug>
 #include <QList>
 #include <QByteArray>
@@ -67,6 +68,11 @@
 #include <QSettings>
 #include <QtBluetooth/qbluetoothserviceinfo.h>
 #include <QBluetoothUuid>
+
+#if defined(Q_OS_ANDROID)
+#include <QJniObject>
+#include <QCoreApplication>
+#endif
 
 #include "source/communication/device/device.h"
 #include "source/main/mainmodel.h"
@@ -318,6 +324,28 @@ Device::socketRead()
    emit messageReceived(recievedData);
 }
 
+// открыть настройки геолокации для включения
+void
+Device::openLocationSettings()
+{
+  #if defined(Q_OS_ANDROID)
+    // создаю интент с действием для открытия настроек
+    QJniObject action = QJniObject::fromString("android.settings.LOCATION_SOURCE_SETTINGS");
+    QJniObject intent ("android/content/Intent", "(Ljava/lang/String;)V", action.object<jstring>());
+
+    if(intent.isValid())
+    {
+        // получаю текущую активити
+        QJniObject activiti = QJniObject::callStaticObjectMethod("org/qtproject/qt/android/QtNative", "activity", "()Landroid/app/Activity;");
+        if(activiti.isValid())
+        {
+            // запускаю активити с этим интент
+            activiti.callMethod<void>("startActivity", "(Landroid/content/Intent;)V", intent.object<jobject>());
+        }
+    }
+  #endif
+}
+
 void
 Device::deviceScanError(QBluetoothDeviceDiscoveryAgent::Error error)
 {
@@ -341,6 +369,7 @@ Device::deviceScanError(QBluetoothDeviceDiscoveryAgent::Error error)
     {
         _commun_display->setUpdatee("Включите геолокацию");
         _commun_display->statusDevicee(_commun_display->statusDevic::searchFinish);
+        openLocationSettings();
     }
     else {
         static QMetaEnum qme = discoveryAgent->metaObject()->enumerator(
