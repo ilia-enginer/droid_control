@@ -55,7 +55,6 @@ class UpdateApp : public QObject
         void install();
 
     private:
-        void delayyy( int mill);
         void setLoadText(QString text);
 
         void setUpdateText(QString text);

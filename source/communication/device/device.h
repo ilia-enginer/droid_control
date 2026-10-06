@@ -67,10 +67,11 @@
 #include "../../Shar/display_working/commun_display.h"
 
 
+#include <functional>
+#include <QTimer>
+
 QT_FORWARD_DECLARE_CLASS (QBluetoothDeviceInfo)
 QT_FORWARD_DECLARE_CLASS (QBluetoothServiceInfo)
-
-void delay( int millisecondsToWait );
 
 
 class Device: public QObject
@@ -98,7 +99,7 @@ public:
     bool isRandomAddress() const;
     void setRandomAddress(bool newValue);
 
-    bool blt_on(void);
+    void blt_on(const std::function<void(bool)> &done);
 
     void setCurrentDeviceName(QString name);
 
@@ -125,6 +126,8 @@ private slots:
     void deviceDisconnected();
     void socketRead();
 
+    void btPollTick();
+
 Q_SIGNALS:
     void randomAddressChanged();
     void socketDataRecieved(QString msg);
@@ -138,6 +141,9 @@ Q_SIGNALS:
 
 private:
     void setUpdate(const QString &message);
+    void startDeviceDiscoveryImpl();
+    void connectToDeviceImpl(const QString &dAddress, const QString &name, const QString &config);
+
     QBluetoothDeviceDiscoveryAgent *discoveryAgent;
     DeviceInfo currentDevice;
     QList<QObject *> devices;
@@ -157,6 +163,10 @@ private:
     QString class_;
 
     QString currenDeviceName_ = "Отсутствует подключение";
+
+    QTimer *_btPollTimer = nullptr;             //асинхронное ожидание включения Bluetooth
+    int _btPollCount = 0;
+    std::function<void(bool)> _btOnDone;
 };
 
 #endif // DEVICE_H

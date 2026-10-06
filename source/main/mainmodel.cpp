@@ -12,53 +12,51 @@ MainModel::~MainModel()
 {
 }
 
-int
-MainModel::checkingParameters()
+void
+MainModel::checkingParameters(const std::function<void()> &done)
 {
     //запрос точки восстановления
     //если нет сохраненной точки - запросить
-    if(!_settings->full_param_check())
+    if(_settings->full_param_check())
     {
-        //на всякий. вдруг прибор еще не включен, жду
-        delay(500);
-       //запрашиваю параметры
-        _tx_commands->readAllParams();
-        delay(150);
-        for(qint8 i = 0; i < 6; i++)
-        {
-            if(!_settings->full_param_check()) _tx_commands->readAllParams();
-            else                                return 1;
-            delay(120);
-        }
+        done();
+        return;
     }
-    return 0;
+
+    //на всякий. вдруг прибор еще не включен, жду (асинхронно)
+    QTimer::singleShot(500, this, [this, done]() {
+        startRetry(
+            [this]() { _tx_commands->readAllParams(); },
+            [this]() { return _settings->full_param_check() != 0; },
+            done,
+            done,
+            6, 120);
+    });
 }
 
 // запрос ID устройства
-int
-MainModel::checkID()
-{ 
-     _tx_commands->getIntendifier();
-     delay(150);
-     for(qint8 i = 0; i < 7; i++)
-     {
-         if(_settings->getIdDevice() == _settings->NONE) _tx_commands->getIntendifier();
-         else                                            return _settings->getIdDevice();
-         delay(90);
-     }
-     return 0;
+void
+MainModel::checkID(const std::function<void(int)> &done)
+{
+    startRetry(
+        [this]() { _tx_commands->getIntendifier(); },
+        [this]() { return _settings->getIdDevice() != _settings->NONE; },
+        [this, done]() { done(_settings->getIdDevice()); },
+        [this, done]() { done(_settings->NONE); },
+        7, 90);
 }
 
-int
+void
 MainModel::checkUpdate()
 {
     //проверка обновлений
-    if(_updateHex->checkUpdateHex() == 1)
-    {
-        //открыть всплывающее окно с предложением обновиться
-        _commun_display->windloadHexOpen();
-    }
-    return 0;
+    _updateHex->checkUpdateHex([this](int res) {
+        if(res == 1)
+        {
+            //открыть всплывающее окно с предложением обновиться
+            _commun_display->windloadHexOpen();
+        }
+    });
 }
 
 void
@@ -78,29 +76,32 @@ MainModel::deviceConnect(QString type, QString name)
     _packing->setTypeTx(type);
     _commun_display->set_connected(true);
 
-    // если устройство шар
-    if(checkID() == _settings->SHAR)
-    {
-        // запрос точки восстановления
-        checkingParameters();
-        // запрос версии прошивки
-        checkUpdate();
-    }
-    // если устройство пульт
-    else if(checkID() == _settings->PYLT)
-    {
-        // запрос типа аккамулятора
-        _tx_commandsPylt->batteryTypeRequest();
-        delay(150);
-        for(qint8 i = 0; i < 7; i++)
+    //запрос ID выполняется один раз (раньше checkID вызывался дважды с задержками)
+    checkID([this, name](int id) {
+        // если устройство шар
+        if(id == _settings->SHAR)
         {
-            if(_commun_display->getVolt() == 0.0) _tx_commandsPylt->batteryTypeRequest();
-            else                                  return;
-            delay(90);
+            // запрос точки восстановления, затем запрос версии прошивки
+            checkingParameters([this]() { checkUpdate(); });
         }
-        _pylt_settings->setDevName(name);
-        _tx_commandsPylt->recalculatingParameters();
-    }
+        // если устройство пульт
+        else if(id == _settings->PYLT)
+        {
+            // запрос типа аккамулятора; после ответа - пересчет параметров
+            startRetry(
+                [this]() { _tx_commandsPylt->batteryTypeRequest(); },
+                [this]() { return _commun_display->getVolt() != 0.0; },
+                [this, name]() {
+                    _pylt_settings->setDevName(name);
+                    _tx_commandsPylt->recalculatingParameters();
+                },
+                [this, name]() {
+                    _pylt_settings->setDevName(name);
+                    _tx_commandsPylt->recalculatingParameters();
+                },
+                7, 90);
+        }
+    });
 }
 
 void
@@ -127,6 +128,60 @@ MainModel::setDevice(Device *device)
                                 //     qDebug() << "test";
                                      deviceConnect(typeDevice, name);
     });
+}
+
+//асинхронное ожидание ответа: send() вызывается сразу и при каждом тике,
+//пока ready() не станет true; по исчерпании попыток вызывается onFail
+void
+MainModel::startRetry(const std::function<void()> &send,
+                      const std::function<bool()> &ready,
+                      const std::function<void()> &onDone,
+                      const std::function<void()> &onFail,
+                      int maxAttempts, int intervalMs)
+{
+    if(!_retryTimer)
+    {
+        _retryTimer = new QTimer(this);
+        _retryTimer->setInterval(intervalMs);
+        connect(_retryTimer, &QTimer::timeout, this, &MainModel::retryTick);
+    }
+    _retryTimer->setInterval(intervalMs);
+
+    _retrySend = send;
+    _retryCheck = ready;
+    _retryDone = onDone;
+    _retryFail = onFail;
+    _retryMaxAttempts = maxAttempts;
+    _retryCount = 0;
+
+    send();
+    _retryTimer->start();
+}
+
+void
+MainModel::retryTick()
+{
+    if(_retryCheck())
+    {
+        _retryTimer->stop();
+        auto done = _retryDone;
+        _retrySend = nullptr; _retryCheck = nullptr;
+        _retryDone = nullptr; _retryFail = nullptr;
+        if(done)    done();
+        return;
+    }
+
+    if(++_retryCount >= _retryMaxAttempts)
+    {
+        _retryTimer->stop();
+        auto fail = _retryFail;
+        _retrySend = nullptr; _retryCheck = nullptr;
+        _retryDone = nullptr; _retryFail = nullptr;
+        if(fail)    fail();
+        return;
+    }
+
+    _retrySend();
 }
 
 void

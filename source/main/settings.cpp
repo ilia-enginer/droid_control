@@ -211,7 +211,7 @@ QByteArray
 Settings::get_full_param()
 {
     //если параметры не прочитаны
-    if(!_full_Param.isEmpty())
+    if(_full_Param.isEmpty())
     {
         QSettings setting;
         _full_Param = setting.value("fullParam", QByteArray()).toByteArray();

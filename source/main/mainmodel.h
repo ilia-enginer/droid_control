@@ -2,6 +2,8 @@
 #define MAINMODEL_H
 
 #include <QObject>
+#include <functional>
+#include <QTimer>
 #include "settings.h"
 #include "../Shar/communication/tx_commands.h"
 #include "../update/updatehex.h"
@@ -34,9 +36,9 @@ public:
     void setPacking(Packing *newPacking);
     void setPylt_settings(Pylt_settings * newPylt_settings);
 
-    int checkingParameters();
-    int checkID();
-    int checkUpdate();  
+    void checkingParameters(const std::function<void()> &done);
+    void checkID(const std::function<void(int)> &done);
+    void checkUpdate();
 
 public slots:
     void setAdminFlag(bool value);
@@ -45,6 +47,9 @@ public slots:
 
 Q_SIGNALS:
     void onAdminFlagChanged();
+
+private slots:
+    void retryTick();
 
 private:
     Device              * device_ = nullptr;
@@ -56,6 +61,20 @@ private:
     Commun_display      * _commun_display = nullptr;
     MainSerialPort      * _mainserialport = nullptr;
     Packing             * _packing;
+
+    //асинхронное ожидание ответа прибора (вместо блокирующих delay)
+    void startRetry(const std::function<void()> &send,
+                    const std::function<bool()> &ready,
+                    const std::function<void()> &onDone,
+                    const std::function<void()> &onFail,
+                    int maxAttempts, int intervalMs);
+    QTimer              * _retryTimer = nullptr;
+    int                   _retryCount = 0;
+    int                   _retryMaxAttempts = 0;
+    std::function<bool()> _retryCheck;
+    std::function<void()> _retrySend;
+    std::function<void()> _retryDone;
+    std::function<void()> _retryFail;
 
 
     ///флаг админа

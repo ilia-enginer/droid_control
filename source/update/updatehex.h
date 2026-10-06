@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QFile>
 #include <QTimer>
+#include <functional>
 
 #if defined(Q_OS_ANDROID)
     #include <QtCore/QJniObject>
@@ -47,7 +48,7 @@ public:
 
     void setPageTx(qint32 num);
 
-    int checkUpdateHex();           //проверка наличия обновлений
+    void checkUpdateHex(const std::function<void(int)> &done);           //проверка наличия обновлений
 
     void f_AdminChange(bool f);
 
@@ -61,12 +62,30 @@ public slots:
     void on_pbStop_clicked(QString error);
     void write_page(void);
 
+private slots:
+    void waitTick();
+
 Q_SIGNALS:
     void navigateBackActionOFF();
     void navigateBackActionON();
 
 private:
     void sendPage(void);
+
+    //асинхронное ожидание ответа прибора (вместо блокирующих delay)
+    void waitResponse(int intervalMs, int maxAttempts,
+                      const std::function<void()> &send,
+                      const std::function<bool()> &ready,
+                      const std::function<void()> &onDone,
+                      const std::function<void()> &onFail);
+    void checkVoltageThenVersion();
+    void requestFirmwareVersion();
+    void proceedUpdateCheck();
+    void finishCheckUpdateHex(const std::function<void(int)> &done);
+    void finishTransfer();
+    void waitBootloaderVersion();
+    void waitProgramVersion();
+    QString versionReport();
 
     Tx_commands *_tx_commands = nullptr;
     Crc *_crc = nullptr;
@@ -90,6 +109,16 @@ private:
     int _pages = 0;                 ///< количество страниц для передачи
     int _size = 512;               ///< размер пакета
     int _unsuccessful_transfers = 0;    ///считает кол-во неудачных передач
+
+    //состояние асинхронного ожидания ответа
+    QTimer *_waitTimer = nullptr;
+    int _waitCount = 0;
+    int _waitMaxAttempts = 0;
+    std::function<bool()> _waitCheck;
+    std::function<void()> _waitSend;
+    std::function<void()> _waitDone;
+    std::function<void()> _waitFail;
+    int _opGen = 0;                     //поколение операции: отмена устаревших continuation-ов
 
     #ifdef Q_OS_WIN
         bool _f_Admin = true;
