@@ -8,7 +8,7 @@ import QtQuick.Controls.Material
 Dialog {
     id: deviceSelectionDialog
     width: window.width * 0.7
-    height: window.height * 0.45
+    height: window.height * 0.3
     anchors.centerIn: parent
     modal: false
     focus: true
@@ -23,7 +23,7 @@ Dialog {
 
     contentItem: ColumnLayout {
         id: settingsColumn
-        spacing: 20
+        spacing: 10
 
         RowLayout {
             spacing: 7

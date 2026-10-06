@@ -371,35 +371,35 @@ Pylt_settings::getFullParam()
     for(int i = deviceNum - 1; i >= 0; i--)
     {
         dName = lastParams[i].at(0);
-        temp_ch1_joy1_y_min = lastParams[i].at(1).toInt();
-        temp_ch1_joy1_y_max = lastParams[i].at(2).toInt();
-        temp_ch2_joy1_x_min = lastParams[i].at(3).toInt();
-        temp_ch2_joy1_x_max = lastParams[i].at(4).toInt();
-        temp_ch3_joy2_y_min = lastParams[i].at(5).toInt();
-        temp_ch3_joy2_y_max = lastParams[i].at(6).toInt();
-        temp_ch4_joy2_x_min = lastParams[i].at(7).toInt();
-        temp_ch4_joy2_x_max = lastParams[i].at(8).toInt();
-        temp_ch5_min        = lastParams[i].at(9).toInt();
-        temp_ch5_max        = lastParams[i].at(10).toInt();
-        temp_ch6_min        = lastParams[i].at(11).toInt();
-        temp_ch6_max        = lastParams[i].at(12).toInt();
-        temp_boot_fixing      = lastParams[i].at(13).toInt();
-        temp_tank_mode        = lastParams[i].at(14).toInt();
-        temp_ch1_inv          = lastParams[i].at(15).toInt();
-        temp_ch2_inv          = lastParams[i].at(16).toInt();
-        temp_ch3_inv          = lastParams[i].at(17).toInt();
-        temp_ch4_inv          = lastParams[i].at(18).toInt();
-        temp_ch5_inv          = lastParams[i].at(19).toInt();
-        temp_ch6_inv          = lastParams[i].at(20).toInt();
-        temp_ch1_cheng_ch3    = lastParams[i].at(21).toInt();
-        temp_ch2_cheng_ch4    = lastParams[i].at(22).toInt();
 
-
-        if(!dName.isEmpty() && !devName.isEmpty())
+        if(!dName.isEmpty())
         {
             // если найдено устройство с таким именем(именем подключенного устройства) - обновить параметры
             if(dName == devName)
             {
+                temp_ch1_joy1_y_min = lastParams[i].at(1).toInt();
+                temp_ch1_joy1_y_max = lastParams[i].at(2).toInt();
+                temp_ch2_joy1_x_min = lastParams[i].at(3).toInt();
+                temp_ch2_joy1_x_max = lastParams[i].at(4).toInt();
+                temp_ch3_joy2_y_min = lastParams[i].at(5).toInt();
+                temp_ch3_joy2_y_max = lastParams[i].at(6).toInt();
+                temp_ch4_joy2_x_min = lastParams[i].at(7).toInt();
+                temp_ch4_joy2_x_max = lastParams[i].at(8).toInt();
+                temp_ch5_min        = lastParams[i].at(9).toInt();
+                temp_ch5_max        = lastParams[i].at(10).toInt();
+                temp_ch6_min        = lastParams[i].at(11).toInt();
+                temp_ch6_max        = lastParams[i].at(12).toInt();
+                temp_boot_fixing      = lastParams[i].at(13).toInt();
+                temp_tank_mode        = lastParams[i].at(14).toInt();
+                temp_ch1_inv          = lastParams[i].at(15).toInt();
+                temp_ch2_inv          = lastParams[i].at(16).toInt();
+                temp_ch3_inv          = lastParams[i].at(17).toInt();
+                temp_ch4_inv          = lastParams[i].at(18).toInt();
+                temp_ch5_inv          = lastParams[i].at(19).toInt();
+                temp_ch6_inv          = lastParams[i].at(20).toInt();
+                temp_ch1_cheng_ch3    = lastParams[i].at(21).toInt();
+                temp_ch2_cheng_ch4    = lastParams[i].at(22).toInt();
+
                 set_ch1_joy1_y_min(temp_ch1_joy1_y_min);
                 set_ch1_joy1_y_max(temp_ch1_joy1_y_max);
                 set_ch2_joy1_x_min(temp_ch2_joy1_x_min);
@@ -422,6 +422,8 @@ Pylt_settings::getFullParam()
                 set_ch6_inv       (temp_ch6_inv       );
                 set_ch1_cheng_ch3 (temp_ch1_cheng_ch3 );
                 set_ch2_cheng_ch4 (temp_ch2_cheng_ch4 );
+
+                return param;
             }
         }
     }
@@ -472,8 +474,8 @@ Pylt_settings::saveFullParam()
         num++;
     }
 
-    //сохраняю новое устройство
-    QString device = QStringList({devName,
+    //сохраняю
+    QString paramString = QStringList({devName,
                                   QString("%1").arg(param.ch1_joy1_y_min),
                                   QString("%1").arg(param.ch1_joy1_y_max),
                                   QString("%1").arg(param.ch2_joy1_x_min),
@@ -497,7 +499,7 @@ Pylt_settings::saveFullParam()
                                   QString("%1").arg(param.ch1_cheng_ch3),
                                   QString("%1").arg(param.ch2_cheng_ch4),
                                  }).join(";");
-    setting.setValue(QString("lastParams%1").arg(deviceNum), device);    // запись нового устройства
+    setting.setValue(QString("lastParams%1").arg(deviceNum), paramString);    // запись
 
     return 0;
 }

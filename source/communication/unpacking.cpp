@@ -201,7 +201,7 @@ Unpacking::choosingDevice()
 {
     // если пришел id устройства
     if(dataRes.size() >= 1)
-        if(dataRes[0] == 0xF7) checkID();
+        if(dataRes[0] == (qint8)0xF7) return checkID();
 
     if(_settings->getIdDevice() == _settings->ID_Devices::SHAR)
     {

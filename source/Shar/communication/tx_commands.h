@@ -34,7 +34,7 @@ public slots:
     int writeAllParams();                //отправить все параметры(точка восстановления)    0xA8
     int setBrightness(QString msg);      //установить яркость светодиодной ленты            0xAA
     int getSettingsServs();             // прочитать настройки частоты ПЦА и скорости серв 0xAB
-    int setSettingsServo(qint8 freq_pca1, qint8 freq_pca2, qint8 speedServs);  // записать настройки частоты ПЦА и скорости серв без сохранения во флеш 0xAC
+    int setSettingsServo(int freq_pca1, int freq_pca2, int speedServs);  // записать настройки частоты ПЦА и скорости серв без сохранения во флеш 0xAC
     int saveFlashSettings();            // сохранить все настройки во флеш 0xAD
     int setMidPwmServs();               // задать средний импульс для серв (1500 мкс) 0xAE
     int checkSpeedServs();              // проверка скорости серв 0xAF

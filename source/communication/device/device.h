@@ -127,6 +127,7 @@ private slots:
     void socketRead();
 
     void btPollTick();
+    void openLocationSettings();
 
 Q_SIGNALS:
     void randomAddressChanged();

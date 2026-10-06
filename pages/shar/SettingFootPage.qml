@@ -301,7 +301,7 @@ Page {
                   anchors.right: cur_calibr_auto.right
                   anchors.left: cur_calibr_auto.left
                   height: cur_calibr_auto.height * 0.7
-                  radius: 8
+                  radius: 4
                   Text {
                       id: name_cur_calibr_auto
                       anchors.verticalCenter: parent.verticalCenter
@@ -334,7 +334,7 @@ Page {
                 anchors.right: servscalibr.right
                 anchors.left: servscalibr.left
                 height: servscalibr.height * 0.7
-                radius: 8
+                radius: 4
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -1164,7 +1164,8 @@ Page {
                id: notifColumn
                spacing: 8
                width: parent.width * 0.8
-               anchors.centerIn: parent
+               anchors.top: parent.top
+               anchors.horizontalCenter: parent.horizontalCenter
 
                Label {
                    width: notifColumn.width

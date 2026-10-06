@@ -20,7 +20,7 @@ Page {
     Rectangle {
         id: senderBackground
         anchors.top: senderPageLabel.bottom
-        color: "#111111"
+        color: "#f7ebee"
         width: parent.width
         height: parent.height * 0.5
     }
@@ -83,7 +83,7 @@ Page {
                        font.family: "Courier New"
                        wrapMode: Text.Wrap
                        font.pixelSize: 14
-                       color: "lawngreen"
+                       color: "black"
                    }
                 }
 

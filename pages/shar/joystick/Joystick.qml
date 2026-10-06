@@ -1,5 +1,5 @@
 
-import QtQuick 2.7
+import QtQuick 2.15
 import QtQuick.Controls 2.0
 import QtCharts 2.15
 import QtQml
@@ -22,7 +22,6 @@ SwipeView {
         } else {
             // Пользователь сосредоточился на этом поле
             console.log("!!!!!!!!Focus active.")
-            if(Qt.platform.os !== "windows") tx_commands.getCheck();
             window_focus = true
             joystick_timer.running = true
             tx_commands.getCheck();         // запрашивать ошибки при активации окна
@@ -58,8 +57,6 @@ SwipeView {
     property int temp: 0
     property bool chartViewVisible : true
 
-    property string inputLink: ""
-
     property string copiedLogText: ""
 
     function updateClipboardFromSelection() {
@@ -68,9 +65,9 @@ SwipeView {
             var item = logListModel_2.get(i)
             if (item.selected) {
                 text += item.msg + "\n"
+                toast.toastOn("буфер обновлён")
             }
         }
-
         copiedLogText = text.trim()
         clipboardHelper.text = copiedLogText
         clipboardHelper.selectAll()
@@ -105,9 +102,8 @@ SwipeView {
             anchors.top: parent.top
             height: parent.height * 0.33
             anchors.left: parent.left
-            anchors.right: leveltext.right
-            anchors.leftMargin: 10
-            color: "transparent"
+            anchors.right: parent.right
+            color: "#f7ebee"
         }
 
         ScrollView {
@@ -154,14 +150,14 @@ SwipeView {
                    snapMode:ListView.SnapOneItem
                    clip: true
 
-                   spacing: 2
+                   spacing: -1
                    reuseItems: true
                    model: logListModel_2
 
                    delegate: Rectangle {
                        id: rowRoot
                        width: listView1.width * 0.95
-                       height: rowText.implicitHeight + 8
+                       height: rowText.implicitHeight //+ 8
                        radius: 4
                        color: selected ? "#cfe8ff" : "transparent"
                        border.width: selected ? 1 : 0
@@ -174,7 +170,7 @@ SwipeView {
                        Text {
                            id: rowText
                            anchors.left: parent.left
-                           anchors.leftMargin: 4
+                           anchors.leftMargin: 14
                            anchors.right: parent.right
                            anchors.rightMargin: 4
                            anchors.verticalCenter: parent.verticalCenter
@@ -227,6 +223,24 @@ SwipeView {
                }
         }
 
+        ToolTip {
+            id: toast
+            delay: 0  // задержка перед показом
+            timeout: 1000  // время скрытия
+            x: (parent.width - width) / 2  // по горизонтали по центру
+            y: senderBackground_2.y + senderBackground_2.height //(parent.height - 100)  // по вертикали снизу
+
+            background: Rectangle {
+                color: "#7f856f"
+                radius: 15  // скруглённые углы
+            }
+            function toastOn(msg){
+                toast.text = qsTr(msg)
+                toast.visible = true
+            }
+        }
+
+
         //очистка лога
         Button {
             id: clearButton
@@ -265,6 +279,14 @@ SwipeView {
             background: Rectangle {
                 color: "#e6e6e6"
                 radius: 3
+                Text {
+                    text: commun_display.Volt.toFixed(1) + "V"
+                    width: parent.width
+                    wrapMode: Label.Wrap
+                    horizontalAlignment: Qt.AlignHCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    color: "black"
+                }
             }
 
             contentItem: Item {
@@ -303,18 +325,6 @@ SwipeView {
             }
         }
 
-        //напруга
-        Label {
-            id: voltageLabel
-            width: parent.width
-            height: voltage.height
-            wrapMode: Label.Wrap
-            horizontalAlignment: Qt.AlignHCenter
-            anchors.verticalCenter: voltage.verticalCenter
-            text: commun_display.Volt.toFixed(1) + "V"
-            color: "black"
-        }
-
         //ток
         ProgressBar{
             id: current
@@ -329,6 +339,14 @@ SwipeView {
             background: Rectangle {
                 color: "#e6e6e6"
                 radius: 3
+                Text {
+                    width: parent.width
+                    wrapMode: Label.Wrap
+                    horizontalAlignment: Qt.AlignHCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: commun_display.Cur.toFixed(2) + "А"
+                    color: "black"
+                }
             }
 
             contentItem: Item {
@@ -365,18 +383,6 @@ SwipeView {
                     current.value = Cur
                 }
             }
-        }
-
-        //ток
-        Label {
-            id: currentLabel
-            width: parent.width
-            height: current.height
-            wrapMode: Label.Wrap
-            horizontalAlignment: Qt.AlignHCenter
-            anchors.verticalCenter: current.verticalCenter
-            text: commun_display.Cur.toFixed(2) + "А"
-            color: "black"
         }
 
         //имя приемника
@@ -743,7 +749,7 @@ SwipeView {
             anchors.right: power_off.right
             anchors.left: power_off.left
             height: power_off.height * 0.8
-            radius: 8
+            radius: 4
             Text {
                 id: name
                 anchors.verticalCenter: parent.verticalCenter
@@ -980,8 +986,11 @@ SwipeView {
 
                         onDoubleClicked: {
                             chartView.zoomReset();
-                            parent.currentPinchScaleX = 1;
-                            parent.currentPinchScaleY = 1;
+                            pa.pinchStartX = 1;
+                            pa.pinchStartY = 1;
+                            valueAxisX.min = 0;
+                            valueAxisY.min = valueYMin;
+                            valueAxisY.max = valueYMax;
                         }
                     }
 

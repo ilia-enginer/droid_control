@@ -16,6 +16,7 @@
 
 #if defined(Q_OS_ANDROID)
     #include <QtCore/private/qandroidextras_p.h>
+    #include <QtCore/qjniobject.h>
 #endif
 
 #include "appversion.h"
