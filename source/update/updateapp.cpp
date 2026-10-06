@@ -2,6 +2,7 @@
 #include "source/main/appmanager.h"
 #include <QStandardPaths>
 #include <QDir>
+#include <QTimer>
 
 //------------------------------------------------------------------------------
 const QString UpdateApp::kVersionUrl =
@@ -17,16 +18,6 @@ const QString UpdateApp::versionHeading =
 const QString UpdateApp::fileName =
         "droid_stick.apk";
 //------------------------------------------------------------------------------
-
-void
-UpdateApp::delayyy( int mill)
-{
-    QTime dieTime = QTime::currentTime().addMSecs( mill );
-    while( QTime::currentTime() < dieTime )
-    {
-        QCoreApplication::processEvents( QEventLoop::AllEvents, 100 );
-    }
-}
 
 void
 UpdateApp::setUpdateText(QString text)
@@ -194,46 +185,47 @@ UpdateApp::install()
             jPath.object<jstring>()
         );
 
+        QString text;
+        int pauseMs = 1500;
         if(ret == 0)
         {
-            setUpdateText("Процесс обновления успешно запущен");
-            delayyy(1500);
+            text = "Процесс обновления успешно запущен";
         }
         else if(ret == -1)
         {
-            setUpdateText("Что-то пошло не по плану. Попробуйте обновиться чуть позже");
-            delayyy(1500);
+            text = "Что-то пошло не по плану. Попробуйте обновиться чуть позже";
         }
         else if(ret == -2)
         {
-            setUpdateText("Странные вещи происходят. Установочный файл пустой. Попробуйте перезапустить приложение.");
-            delayyy(1500);
+            text = "Странные вещи происходят. Установочный файл пустой. Попробуйте перезапустить приложение.";
         }
         else if(ret == -3)
         {
-            setUpdateText("Странные вещи происходят. Установочный файл куда-то пропал. Попробуйте перезапустить приложение.");
-            delayyy(1500);
+            text = "Странные вещи происходят. Установочный файл куда-то пропал. Попробуйте перезапустить приложение.";
         }
         else if(ret == -4)
         {
-            setUpdateText(QStringLiteral("Не хватает разрешений на установку. Вы можете изменить это в настройках приложения. Раздел 'Разрешения'"));
-            delayyy(3000);
+            text = QStringLiteral("Не хватает разрешений на установку. Вы можете изменить это в настройках приложения. Раздел 'Разрешения'");
+            pauseMs = 3000;
         }
         else if(ret == -5)
         {
-            setUpdateText("Неудача. Попробуйте перезапустить приложение.");
-            delayyy(1500);
+            text = "Неудача. Попробуйте перезапустить приложение.";
         }
+        setUpdateText(text);
 
+        //пауза для чтения сообщения, затем аккуратная очистка (асинхронно, без блокировки UI)
+        QTimer::singleShot(pauseMs, this, [this]() {
+            mDownloaderReply->deleteLater();
+            mDownloaderReply = nullptr;
 
-        // Аккуратная очистка
-        mDownloaderReply->deleteLater();
-        mDownloaderReply = nullptr;
+            if (mFile) {
+                delete mFile;
+                mFile = nullptr;
+            }
 
-        if (mFile) {
-            delete mFile;
-            mFile = nullptr;
-        }
+            _commun_display->statusUpdateApp(_commun_display->updApp::busyIndicatorOFFStat);
+        });
 #elif defined(Q_OS_WINDOWS)
     {
         QString tLocalFileName =
@@ -244,7 +236,6 @@ UpdateApp::install()
         QApplication::quit();
     }
 #endif
-    _commun_display->statusUpdateApp(_commun_display->updApp::busyIndicatorOFFStat);
 }
 
 //------------------------------------------------------------------------------

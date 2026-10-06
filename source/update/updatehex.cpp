@@ -92,44 +92,44 @@ UpdateHex::setPageTx(qint32 num)
 }
 
 //проверка обновления
-int
-UpdateHex::checkUpdateHex()
+//результат: -1 нет связи, -2 ошибка файла, 1 есть обновление, 0 обновления нет
+void
+UpdateHex::checkUpdateHex(const std::function<void(int)> &done)
 {
-    if(!versionExternalProgram.u32)
+    if(versionExternalProgram.u32 == 0)
     {
-        //запрос версии прошивки
+        //запрос версии прошивки и ожидание ответа (асинхронно)
         _tx_commands->getVersion();
-        //ожидание ответа
-        delay(90);
+        waitResponse(90, 11,
+            [this]() { _tx_commands->getVersion(); },
+            [this]() { return versionExternalProgram.u32 != 0; },
+            [this, done]() { finishCheckUpdateHex(done); },
+            [done]() { done(-1); });
+        return;
     }
-    qint32 a = 0;
-    while(versionExternalProgram.u32 == 0)
+    finishCheckUpdateHex(done);
+}
+
+void
+UpdateHex::finishCheckUpdateHex(const std::function<void(int)> &done)
+{
+    //открываю файл и читаю версии прошивки и бутлоадера
+    if(!open_Update())
     {
-        _tx_commands->getVersion();
-        if(a++ > 10)
-        {
-            return -1;
-        }
-        delay(90);
+        done(-2);
+        return;
     }
 
-    #if defined(Q_QDOC) ||                                                         \
-        (defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED))
-
-        //открываю файл и читаю версии прошивки и бутлоадера
-        if(!open_Update())  return -2;
-        if(!openBootloaderUpdate())  return -2;
-
-        //если основная версия или версия загрузчика из apk новее - предложить обновить провишку
-        if(((versionInternalProgram.u32 > versionExternalProgram.u32)
-                || (version_BootLoader_InternalProgram.u32 > version_BootLoader_ExternalProgram.u32)) &&
-                (versionExternalProgram.u32 != 0))
-        {
-            //открыть всплывающее окно с предложением обновиться
-            return 1;
-        }
-    #endif
-    return 0;
+    //если основная версия или версия загрузчика из apk новее - предложить обновить провишку
+    if(((versionInternalProgram.u32 > versionExternalProgram.u32)
+            || (version_BootLoader_InternalProgram.u32 > version_BootLoader_ExternalProgram.u32)) &&
+            (versionExternalProgram.u32 != 0))
+    {
+        //открыть всплывающее окно с предложением обновиться
+        done(1);
+        return;
+    }
+    done(0);
 }
 
 void
@@ -143,10 +143,8 @@ UpdateHex::f_AdminChange(bool f)
 void
 UpdateHex::checkingUpdates(void)
 {
+    ++_opGen;
     emit navigateBackActionOFF();
-
-    #if defined(Q_QDOC) || (defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED))
-    int a = 0;
 
     _commun_display->setCurrenUpd("Подготовка к обновлению...");
     _commun_display->statusUpdate(_commun_display->statusUpd::checkUpdateProgr);
@@ -158,21 +156,19 @@ UpdateHex::checkingUpdates(void)
         on_pbStop_clicked("Отсутствует подключение");
         return;
     }
-    delay(100);
-    a = 0;
-    ///ожидание ответа
-    //если напряжение меньше 20% заряда - защита
-    while(_commun_display->getVolt() == 0)
-    {
-        _tx_commands->voltage_read(false);
-        delay(70);
-        if(a++ > 10)
-        {
-            on_pbStop_clicked("Непредвиденная ошибка. Попробуйте еще раз.");
-            return;
-        }
-    }
 
+    ///ожидание ответа (асинхронно)
+    //если напряжение меньше 20% заряда - защита
+    waitResponse(70, 11,
+        [this]() { _tx_commands->voltage_read(false); },
+        [this]() { return _commun_display->getVolt() != 0; },
+        [this]() { checkVoltageThenVersion(); },
+        [this]() { on_pbStop_clicked("Непредвиденная ошибка. Попробуйте еще раз."); });
+}
+
+void
+UpdateHex::checkVoltageThenVersion()
+{
     if(_commun_display->getVolt() < (_settings->getVmax() * 0.8))
     {
         if(_f_Admin == false)
@@ -180,32 +176,36 @@ UpdateHex::checkingUpdates(void)
             on_pbStop_clicked("Слишком низкое напряжение. Обновление невозможно.");
             return;
         }
-        else
-        {
-            _commun_display->setCurrenUpd("Внимание! Низкое напряжение");
-            delay(3000);
-        }
-    }
 
+        const int gen = _opGen;
+        _commun_display->setCurrenUpd("Внимание! Низкое напряжение");
+        QTimer::singleShot(3000, this, [this, gen]() {
+            if(gen != _opGen)   return;
+            requestFirmwareVersion();
+        });
+        return;
+    }
+    requestFirmwareVersion();
+}
+
+void
+UpdateHex::requestFirmwareVersion()
+{
     _commun_display->setCurrenUpd("Проверка обновлений...");
     versionExternalProgram.u32 = 0;
     version_BootLoader_ExternalProgram.u32 = 0;
-    //запрос версии прошивки
+    //запрос версии прошивки и ожидание ответа (асинхронно)
     _tx_commands->getVersion();
-    //ожидание ответа
-    delay(90);
-    while(versionExternalProgram.u32 == 0)
-    {
-        _tx_commands->getVersion();
-        if(a++ > 7)
-        {
-            on_pbStop_clicked("Ошибка\nпроверьте подключение к устройству.");
-            return;
-        }
-        delay(90);
-    }
-    #endif
+    waitResponse(90, 8,
+        [this]() { _tx_commands->getVersion(); },
+        [this]() { return versionExternalProgram.u32 != 0; },
+        [this]() { proceedUpdateCheck(); },
+        [this]() { on_pbStop_clicked("Ошибка\nпроверьте подключение к устройству."); });
+}
 
+void
+UpdateHex::proceedUpdateCheck()
+{
     if(!openBootloaderUpdate())
     {
         on_pbStop_clicked("Ошибка\nне удалось открыть файл прошивки.");
@@ -238,7 +238,7 @@ UpdateHex::checkingUpdates(void)
     else
     {
         _commun_display->setCurrenUpd("Версия:\n" + versionToString(versionExternalProgram.u32) + "\nДоступна версия:\n" + versionToString(versionInternalProgram.u32) + "\n"
-                            "Версия загрузчика:\n" + versionToString(version_BootLoader_ExternalProgram.u32) + "\nДоступна версия:\n" + versionToString(version_BootLoader_InternalProgram.u32));
+                        "Версия загрузчика:\n" + versionToString(version_BootLoader_ExternalProgram.u32) + "\nДоступна версия:\n" + versionToString(version_BootLoader_InternalProgram.u32));
 
         //включить кнопку загрузки бутлоадера
         _commun_display->statusUpdate(_commun_display->statusUpd::updateBootloaderAvailab);
@@ -334,37 +334,46 @@ UpdateHex::on_pbWrite_clicked(bool flag)
     _unsuccessful_transfers = 0;
 
     QByteArray start;
+    const int gen = ++_opGen;
     //если надо грузить бутлоадер
     if(load_param_ == false)
     {
         //посылаю команду начала передачи
         _tx_commands->writeBootloader(start);
-        delay(70);
-        _tx_commands->writeBootloader(start);
-        delay(3000);
+        QTimer::singleShot(70, this, [this, gen, start]() {
+            if(gen != _opGen)   return;
+            _tx_commands->writeBootloader(start);
+        });
     }
     //если надо грузить основную прошивку
     else
     {
         //посылаю команду начала передачи
         _tx_commands->writeProgram(start);
-        delay(70);
-        _tx_commands->writeProgram(start);
-        delay(3000);
+        QTimer::singleShot(70, this, [this, gen, start]() {
+            if(gen != _opGen)   return;
+            _tx_commands->writeProgram(start);
+        });
     }
 
-     if(_appManager)    _appManager->startBackgroundService();
+    //пауза на перезапуск прибора в режиме загрузчика, затем старт передачи страниц
+    QTimer::singleShot(3000, this, [this, gen]() {
+        if(gen != _opGen)   return;
 
-     //включить индикатор загрузки
-     //и кнопку остановки
-     _commun_display->statusUpdate(_commun_display->statusUpd::stopUpd);
+        if(_appManager)    _appManager->startBackgroundService();
 
-    //включить таймер
-     _timer = new QTimer(this);
-     _timer->setInterval(200);
-     connect(_timer, &QTimer::timeout, this, &UpdateHex::write_page);
+        //включить индикатор загрузки
+        //и кнопку остановки
+        _commun_display->statusUpdate(_commun_display->statusUpd::stopUpd);
 
-     _timer->start();
+        //включить таймер
+        if(_timer)   _timer->stop();
+        _timer = new QTimer(this);
+        _timer->setInterval(200);
+        connect(_timer, &QTimer::timeout, this, &UpdateHex::write_page);
+
+        _timer->start();
+    });
 }
 
 
@@ -477,12 +486,16 @@ UpdateHex::fileOpen(bool open)
 void
 UpdateHex::on_pbStop_clicked(QString error)
 {
+    ++_opGen;                       //отменить все отложенные continuation-ы
     emit navigateBackActionON();
 
     if(_appManager) _appManager->stopBackgroundService();
 
     //выключить таймер
     if(_timer)  _timer->stop();
+    if(_waitTimer)  _waitTimer->stop();
+    _waitSend = nullptr; _waitCheck = nullptr;
+    _waitDone = nullptr; _waitFail = nullptr;
 
     _commun_display->statusUpdate(_commun_display->statusUpd::checkUpd);
     _commun_display->setCurrenUpd(error);
@@ -522,40 +535,74 @@ UpdateHex::write_page()
     //если все пакеты переданы
     if((_pageTx == _page) && (_pageTx == _pages))
     {
-        //выключить таймер
+        //выключить таймер и перейти к финальной последовательности (асинхронно)
         _timer->stop();
+        finishTransfer();
+    }
+}
 
-        //если обычный режим
-        if(!_f_Admin)
-        {
-            //если передача бутлоадера
-            if(!load_param_)
-            {
-                _commun_display->setCurrenUpd("Проверка ключей");
-                delay(1500);
-                _commun_display->setCurrenUpd("Настройка логики");
-                delay(1500);
+//текст с версиями для режима админа
+QString
+UpdateHex::versionReport()
+{
+    return QString("Версия:\n" + versionToString(versionExternalProgram.u32) +
+            "\nДоступна версия:\n" + versionToString(versionInternalProgram.u32) + "\n"
+            "Версия загрузчика:\n" + versionToString(version_BootLoader_ExternalProgram.u32) +
+            "\nДоступна версия:\n" + versionToString(version_BootLoader_InternalProgram.u32));
+}
+
+//финальная последовательность после передачи всех страниц:
+//все паузы и ожидания версии - асинхронные (раньше здесь был delay(7000) и delay(1500))
+void
+UpdateHex::finishTransfer()
+{
+    const int gen = ++_opGen;
+
+    //если передается бутлоадер
+    if(!load_param_)
+    {
+        _commun_display->setCurrenUpd("Проверка ключей");
+        QTimer::singleShot(1500, this, [this, gen]() {
+            if(gen != _opGen)   return;
+            _commun_display->setCurrenUpd("Настройка логики");
+            QTimer::singleShot(1500, this, [this, gen]() {
+                if(gen != _opGen)   return;
                 _commun_display->setCurrenUpd("Ещё чуть-чуть");
-                delay(1500);
-                //запрос версии прошивки
-                _tx_commands->getVersion();
-                delay(100);
-                int a = 0;
-                version_BootLoader_ExternalProgram.u32 = 0;
-                //ожидание ответа
-                while(version_BootLoader_ExternalProgram.u32 != version_BootLoader_InternalProgram.u32)
-                {
-                    _tx_commands->getVersion();
-                    if(a++ > 15)
-                    {
-                        on_pbStop_clicked("Что-то поломалось. Попробуйте еще раз");
-                        return;
-                    }
-                    delay(70);
-                }
+                QTimer::singleShot(1500, this, [this, gen]() {
+                    if(gen != _opGen)   return;
+                    waitBootloaderVersion();
+                });
+            });
+        });
+    }
+    //если загрузка основной программы
+    else
+    {
+        _commun_display->setCurrenUpd("Установка обновления");
+        QTimer::singleShot(7000, this, [this, gen]() {
+            if(gen != _opGen)   return;
+            waitProgramVersion();
+        });
+    }
+}
+
+//ожидание версии бутлоадера после его установки
+void
+UpdateHex::waitBootloaderVersion()
+{
+    version_BootLoader_ExternalProgram.u32 = 0;
+    //запрос версии прошивки и ожидание ответа (асинхронно)
+    _tx_commands->getVersion();
+    waitResponse(70, 16,
+        [this]() { _tx_commands->getVersion(); },
+        [this]() { return version_BootLoader_ExternalProgram.u32 == version_BootLoader_InternalProgram.u32; },
+        [this]() {
+            //если обычный режим
+            if(!_f_Admin)
+            {
                 //когда бутлоадер будет установлен
                 //загрузить основную программу, если необходимо
-                if((versionExternalProgram.u32 < versionInternalProgram.u32))
+                if(versionExternalProgram.u32 < versionInternalProgram.u32)
                 {
                     load_param_ = true;
                     openBootloaderUpdate();
@@ -564,122 +611,39 @@ UpdateHex::write_page()
                 else
                 {
                     on_pbStop_clicked("Обновление установлено");
-                    return;
                 }
             }
-            //если загрузка основной программы
+            //если режим админа
             else
             {
-                _commun_display->setCurrenUpd("Установка обновления");
-                delay(7000);    //7c
-
-                //запрос версии прошивки
-                _tx_commands->getVersion();
-                delay(100);
-                int a = 0;
-                versionExternalProgram.u32 = 0;
-                //ожидание ответа
-                while(versionExternalProgram.u32 != versionInternalProgram.u32)
-                {
-                    _tx_commands->getVersion();
-                    if(a++ > 15)
-                    {
-                        on_pbStop_clicked("Ошибка установки. Попробуйте еще раз");
-                        return;
-                    }
-                    delay(70);
-                }
-                on_pbStop_clicked("Обновление установлено");
-                return;
+                on_pbStop_clicked("Загрузчик установлен\n" + versionReport());
             }
-        }
-        //если режим админа
-        else
-        {
-            //если передача бутлоадера
-            if(!load_param_)
-            {
-                _commun_display->setCurrenUpd("Проверка ключей");
-                delay(1500);
-                _commun_display->setCurrenUpd("Настройка логики");
-                delay(1500);
-                _commun_display->setCurrenUpd("Ещё чуть-чуть");
-                delay(1500);
-                //запрос версии прошивки
-                _tx_commands->getVersion();
-                delay(100);
-                int a = 0;
-                version_BootLoader_ExternalProgram.u32 = 0;
-                //ожидание ответа
-                while(version_BootLoader_ExternalProgram.u32 != version_BootLoader_InternalProgram.u32)
-                {
-                    _tx_commands->getVersion();
-                    if(a++ > 15)
-                    {
-                        on_pbStop_clicked("Что-то поломалось. Попробуйте еще раз\n"
-                                        "Версия:\n" +
-                                        versionToString(versionExternalProgram.u32) +
-                                        "\nДоступна версия:\n" +
-                                        versionToString(versionInternalProgram.u32) + "\n\n"
-                                         "Версия загрузчика:\n" +
-                                        versionToString(version_BootLoader_ExternalProgram.u32) +
-                                        "\nДоступна версия:\n" + versionToString(version_BootLoader_InternalProgram.u32));
-                        return;
-                    }
-                    delay(70);
-                }
-                on_pbStop_clicked("Загрузчик установлен\n"
-                                "Версия:\n" +
-                                versionToString(versionExternalProgram.u32) +
-                                "\nДоступна версия:\n" +
-                                versionToString(versionInternalProgram.u32) + "\n\n"
-                                 "Версия загрузчика:\n" +
-                                versionToString(version_BootLoader_ExternalProgram.u32) +
-                                "\nДоступна версия:\n" + versionToString(version_BootLoader_InternalProgram.u32));
-                return;
+        },
+        [this]() {
+            if(!_f_Admin)   on_pbStop_clicked("Что-то поломалось. Попробуйте еще раз");
+            else            on_pbStop_clicked("Что-то поломалось. Попробуйте еще раз\n" + versionReport());
+        });
+}
 
-            }
-            //передача основной прошивки
-            else
-            {
-                _commun_display->setCurrenUpd("Установка обновления");
-                delay(7000);    //7c
-
-                //запрос версии прошивки
-                _tx_commands->getVersion();
-                delay(100);
-                int a = 0;
-                versionExternalProgram.u32 = 0;
-                //ожидание ответа
-                while(versionExternalProgram.u32 != versionInternalProgram.u32)
-                {
-                    _tx_commands->getVersion();
-                    if(a++ > 15)
-                    {
-                        on_pbStop_clicked("Что-то поломалось. Попробуйте еще раз\n"
-                                        "Версия:\n" +
-                                        versionToString(versionExternalProgram.u32) +
-                                        "\nДоступна версия:\n" +
-                                        versionToString(versionInternalProgram.u32) + "\n\n"
-                                         "Версия загрузчика:\n" +
-                                        versionToString(version_BootLoader_ExternalProgram.u32) +
-                                        "\nДоступна версия:\n" + versionToString(version_BootLoader_InternalProgram.u32));
-                        return;
-                    }
-                    delay(70);
-                }
-                on_pbStop_clicked("Обновление установлено\n"
-                                "Версия:\n" +
-                                versionToString(versionExternalProgram.u32) +
-                                "\nДоступна версия:\n" +
-                                versionToString(versionInternalProgram.u32) + "\n\n"
-                                 "Версия загрузчика:\n" +
-                                versionToString(version_BootLoader_ExternalProgram.u32) +
-                                "\nДоступна версия:\n" + versionToString(version_BootLoader_InternalProgram.u32));
-                return;
-            }
-        }
-    }
+//ожидание версии основной прошивки после ее установки
+void
+UpdateHex::waitProgramVersion()
+{
+    versionExternalProgram.u32 = 0;
+    //запрос версии прошивки и ожидание ответа (асинхронно)
+    _tx_commands->getVersion();
+    waitResponse(70, 16,
+        [this]() { _tx_commands->getVersion(); },
+        [this]() { return versionExternalProgram.u32 == versionInternalProgram.u32; },
+        [this]() {
+            //если обычный режим
+            if(!_f_Admin)   on_pbStop_clicked("Обновление установлено");
+            else            on_pbStop_clicked("Обновление установлено\n" + versionReport());
+        },
+        [this]() {
+            if(!_f_Admin)   on_pbStop_clicked("Ошибка установки. Попробуйте еще раз");
+            else            on_pbStop_clicked("Что-то поломалось. Попробуйте еще раз\n" + versionReport());
+        });
 }
 
 
@@ -747,4 +711,57 @@ UpdateHex::sendPage()
         _commun_display->setCurrenUpd(tr("Передача пакета [ %1 / %2 ]").arg(_page + 1).arg(_pages + 1) + "\n" + tr("Кол-во повторов [ %1 ]").arg(_unsuccessful_transfers));
     }
 
+}
+
+//асинхронное ожидание ответа прибора: send() вызывается сразу и на каждом тике,
+//пока ready() не станет true; по исчерпании попыток вызывается onFail
+void
+UpdateHex::waitResponse(int intervalMs, int maxAttempts,
+                        const std::function<void()> &send,
+                        const std::function<bool()> &ready,
+                        const std::function<void()> &onDone,
+                        const std::function<void()> &onFail)
+{
+    if(!_waitTimer)
+    {
+        _waitTimer = new QTimer(this);
+        connect(_waitTimer, &QTimer::timeout, this, &UpdateHex::waitTick);
+    }
+    _waitTimer->setInterval(intervalMs);
+
+    _waitSend = send;
+    _waitCheck = ready;
+    _waitDone = onDone;
+    _waitFail = onFail;
+    _waitMaxAttempts = maxAttempts;
+    _waitCount = 0;
+
+    send();
+    _waitTimer->start();
+}
+
+void
+UpdateHex::waitTick()
+{
+    if(_waitCheck && _waitCheck())
+    {
+        _waitTimer->stop();
+        auto done = _waitDone;
+        _waitSend = nullptr; _waitCheck = nullptr;
+        _waitDone = nullptr; _waitFail = nullptr;
+        if(done)    done();
+        return;
+    }
+
+    if(++_waitCount >= _waitMaxAttempts)
+    {
+        _waitTimer->stop();
+        auto fail = _waitFail;
+        _waitSend = nullptr; _waitCheck = nullptr;
+        _waitDone = nullptr; _waitFail = nullptr;
+        if(fail)    fail();
+        return;
+    }
+
+    if(_waitSend)   _waitSend();
 }

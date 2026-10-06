@@ -9,8 +9,8 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
-import android.os.Looper;
 import android.util.Log;
 
 /**
@@ -30,6 +30,7 @@ public class KeepAliveService extends Service
     private static final int    NOTIFICATION_ID = 2001;
     
     private Handler handler;
+    private HandlerThread handlerThread;
     private Runnable timerRunnable;
     private int intervalMs = 10000;
     private boolean timerRunning = false;
@@ -38,7 +39,11 @@ public class KeepAliveService extends Service
     public void onCreate() {
         super.onCreate();
         Log.i(TAG, "=== KeepAliveService onCreate() ===");
-        handler = new Handler(Looper.getMainLooper());
+        // Отдельный поток для таймера: nativeOnTimerTick() больше не выполняется
+        // на main looper и не может блокировать UI-поток приложения (ANR)
+        handlerThread = new HandlerThread("KeepAliveTimerThread");
+        handlerThread.start();
+        handler = new Handler(handlerThread.getLooper());
     }
 
     @Override
@@ -78,6 +83,10 @@ public class KeepAliveService extends Service
         super.onDestroy();
         stopNotificationTimer();
         stopForeground(true);
+        if (handlerThread != null) {
+            handlerThread.quitSafely();
+            handlerThread = null;
+        }
         Log.i(TAG, "KeepAliveService destroyed");
     }
 

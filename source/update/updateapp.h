@@ -13,10 +13,10 @@
 #include <QtWidgets>
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
-#include <QJniObject>
 
 #if defined(Q_OS_ANDROID)
     #include <QtCore/private/qandroidextras_p.h>
+    #include <QtCore/qjniobject.h>
 #endif
 
 #include "appversion.h"
@@ -56,7 +56,6 @@ class UpdateApp : public QObject
         void install();
 
     private:
-        void delayyy( int mill);
         void setLoadText(QString text);
 
         void setUpdateText(QString text);

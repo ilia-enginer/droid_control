@@ -3,6 +3,14 @@
 #include <QDebug>
 #include <QThread>
 #include <QDateTime>
+#include <QMutex>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+#include <QMutexLocker>     //в Qt 6.9+ QMutexLocker вынесен в отдельный заголовок
+#endif
+
+// m_notification доступен из разных потоков (main + HandlerThread сервиса на Android),
+// поэтому доступ защищен мьютексом
+static QMutex s_notificationMutex;
 
 #if defined(Q_QDOC) ||                                                         \
     (defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED))
@@ -72,14 +80,21 @@ void NotificationClient::setNotification(const QString &notification) {
 
   if (notification.isEmpty())
     return;
-  if (m_notification == notification)
-    return;
 
-  m_notification = notification;
+  {
+    QMutexLocker locker(&s_notificationMutex);
+    if (m_notification == notification)
+      return;
+    m_notification = notification;
+  }
+
   emit notificationChanged();
 }
 
-QString NotificationClient::notification() const { return m_notification; }
+QString NotificationClient::notification() const { 
+  QMutexLocker locker(&s_notificationMutex);
+  return m_notification; 
+}
 
 void NotificationClient::updateAndroidNotification() {
 #if defined(Q_QDOC) ||                                                         \
@@ -226,10 +241,14 @@ void NotificationClient::onTestTimerTimeout() {
 //  qDebug() << "[NotificationClient] Using phrase[" << phraseIndex << "]:" << m_testPhrases[phraseIndex];
 //  qDebug() << "[NotificationClient] Full message:" << message;
 
-    if(m_notification.isEmpty())   return;
-    QString message = m_notification;
-    m_notification = "";
-  
+    QString message;
+    {
+        QMutexLocker locker(&s_notificationMutex);
+        if(m_notification.isEmpty())   return;
+        message = m_notification;
+        m_notification = "";
+    }
+    
 #if defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_EMBEDDED)
   // КРИТИЧНО: НЕ используем setNotification() и signal/slot!
   // Signal ставится в очередь Qt main thread, который приостановлен в фоне.

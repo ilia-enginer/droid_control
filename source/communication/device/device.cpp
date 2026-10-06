@@ -61,9 +61,6 @@
 #include <QMetaEnum>
 #include <QTimer>
 #include <QRegularExpression>
-#include <string.h>
-#include <QTime>
-#include <QCoreApplication>
 #include <QGeoCoordinate>
 #include <QSettings>
 #include <QtBluetooth/qbluetoothserviceinfo.h>
@@ -78,13 +75,12 @@
 #include "source/main/mainmodel.h"
 
 void
-delay( int millisecondsToWait )
+Device::startDeviceDiscovery()
 {
-    QTime dieTime = QTime::currentTime().addMSecs( millisecondsToWait );
-    while( QTime::currentTime() < dieTime )
-    {
-        QCoreApplication::processEvents( QEventLoop::AllEvents, 100 );
-    }
+    //Bluetooth включается асинхронно, чтобы не блокировать главный поток (ANR)
+    blt_on([this](bool ok) {
+        if (ok)     startDeviceDiscoveryImpl();
+    });
 }
 
 Device::Device(QObject *parent) : QObject(parent)
@@ -102,6 +98,7 @@ Device::Device(QObject *parent) : QObject(parent)
 
 Device::~Device()
 {
+    if(_btPollTimer)    _btPollTimer->stop();
     delete discoveryAgent;
     delete controller;
     qDeleteAll(devices);
@@ -119,10 +116,8 @@ Device::setCommun_display(Commun_display *newCommun_display)
 }
 
 void
-Device::startDeviceDiscovery()
+Device::startDeviceDiscoveryImpl()
 {
-    if(!blt_on())   return;
-
     clearDeviceDiscovery();
     emit devicesUpdated();
     _commun_display->setUpdatee("Сканирование устройств ...");
@@ -214,8 +209,6 @@ Device::getCharacteristics()
 void
 Device::connectToDevice(const QString &dAddress, const QString &name, const QString &config)
 {
-    if(!blt_on())   return; 
-
     //если уже подключен к этому устройству - отключить
     if((nameDevice_ == name) && (connected_flag))
     {
@@ -223,6 +216,15 @@ Device::connectToDevice(const QString &dAddress, const QString &name, const QStr
         return;
     }
 
+    //Bluetooth включается асинхронно, чтобы не блокировать главный поток (ANR)
+    blt_on([this, dAddress, name, config](bool ok) {
+        if (ok)     connectToDeviceImpl(dAddress, name, config);
+    });
+}
+
+void
+Device::connectToDeviceImpl(const QString &dAddress, const QString &name, const QString &config)
+{
     discoveryAgent->stop();
     deviceScanFinished();
 
@@ -409,41 +411,65 @@ Device::setRandomAddress(bool newValue)
 }
 
 
-bool
-Device::blt_on()
+//асинхронное включение Bluetooth: done(ok) вызывается, когда BT включен,
+//либо включить не удалось. Главный поток не блокируется.
+void
+Device::blt_on(const std::function<void(bool)> &done)
 {
     QBluetoothLocalDevice devicee;
-//    QGeoCoordinate geo;
-
-//    if(!geo.isValid())
-//    {
-//         _commun_display->setUpdatee("Геолокация не поддерживается платформой.\nПоиск bt устройств невозможен.");
-//        return false;
-//    }
 
     if(!devicee.isValid())
     {
         _commun_display->setUpdatee("Bluetooth не поддерживается платформой.");
-        return false;
+        done(false);
+        return;
     }
 
-
-    if(devicee.hostMode() == QBluetoothLocalDevice::HostPoweredOff)// Bluetooth is not enabled
+    if(devicee.hostMode() != QBluetoothLocalDevice::HostPoweredOff)
     {
-        devicee.powerOn();// Call to open the local Bluetooth device
-        _commun_display->setUpdatee("Включение Bluetooth");
-        _commun_display->statusDevicee(_commun_display->statusDevic::searchInProgr);
-        delay(1500);
-
-        qint32 count = 0;
-        while(count++ < 8)
-        {
-            if(devicee.hostMode() != QBluetoothLocalDevice::HostPoweredOff)      count = 8;
-            delay(700);
-        }
-        delay(500);
+        done(true);
+        return;
     }
-    return true;
+
+    devicee.powerOn();// Call to open the local Bluetooth device
+    _commun_display->setUpdatee("Включение Bluetooth");
+    _commun_display->statusDevicee(_commun_display->statusDevic::searchInProgr);
+
+    _btOnDone = done;
+    _btPollCount = 0;
+    if(!_btPollTimer)
+    {
+        _btPollTimer = new QTimer(this);
+        _btPollTimer->setInterval(500);
+        connect(_btPollTimer, &QTimer::timeout, this, &Device::btPollTick);
+    }
+    _btPollTimer->start();
+}
+
+void
+Device::btPollTick()
+{
+    QBluetoothLocalDevice devicee;
+
+    if(devicee.hostMode() != QBluetoothLocalDevice::HostPoweredOff)
+    {
+        _btPollTimer->stop();
+        auto done = _btOnDone;
+        _btOnDone = nullptr;
+        if(done)    done(true);
+        return;
+    }
+
+    //~6 сек на включение, затем отказ
+    if(++_btPollCount >= 12)
+    {
+        _btPollTimer->stop();
+        _commun_display->setUpdatee("Не удалось включить Bluetooth");
+        _commun_display->statusDevicee(_commun_display->statusDevic::searchFinish);
+        auto done = _btOnDone;
+        _btOnDone = nullptr;
+        if(done)    done(false);
+    }
 }
 
 void Device::setCurrentDeviceName(QString name)
