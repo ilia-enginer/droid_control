@@ -809,7 +809,9 @@ SwipeView {
                  width: parent.width
                  anchors.left: parent.left
                  height:parent.height * 0.35
-                 antialiasing: true
+                 antialiasing: false    // отключение сглаживание линий
+                 dropShadowEnabled: false   // отключение теней (очень дорогие)
+                 animationOptions: ChartView.NoAnimation    // без анимации
 
                  //X-axis
                  ValuesAxis {
@@ -828,6 +830,7 @@ SwipeView {
                  //LINESERIES is a line, splineseries is a curve. Children are xypoint
                  SplineSeries {
                      id:line1
+                     useOpenGL: true
                      name: "1"  //Name of the line
                      axisX: valueAxisX  //Specify X-axis
                      axisY: valueAxisY  //Specify Y-axis
@@ -836,6 +839,7 @@ SwipeView {
                  }
                  SplineSeries {
                      id:line2
+                     useOpenGL: true
                      name: "2"
                      axisX: valueAxisX
                      axisY: valueAxisY
@@ -844,6 +848,7 @@ SwipeView {
                  }
                  SplineSeries {
                      id:line3
+                     useOpenGL: true
                      name: "3"
                      //STYLE: Qt.solidline // style
                      axisX: valueAxisX
@@ -853,6 +858,7 @@ SwipeView {
                  }
                  SplineSeries {
                      id:line4
+                     useOpenGL: true
                      name: "4"
                      //STYLE: Qt.solidline // style
                      axisX: valueAxisX
@@ -862,6 +868,7 @@ SwipeView {
                  }
                  SplineSeries {
                      id:line5
+                     useOpenGL: true
                      name: "5"
                      //STYLE: Qt.solidline // style
                      axisX: valueAxisX
@@ -871,6 +878,7 @@ SwipeView {
                  }
                  SplineSeries {
                      id:line6
+                     useOpenGL: true
                      name: "6"
                      //STYLE: Qt.solidline // style
                      axisX: valueAxisX
@@ -880,6 +888,7 @@ SwipeView {
                  }
                  SplineSeries {
                      id:line7
+                     useOpenGL: true
                      name: "7"
                      //STYLE: Qt.solidline // style
                      axisX: valueAxisX
@@ -889,6 +898,7 @@ SwipeView {
                  }
                  SplineSeries {
                      id:line8
+                     useOpenGL: true
                      name: "8"
                      //STYLE: Qt.solidline // style
                      axisX: valueAxisX
@@ -898,6 +908,7 @@ SwipeView {
                  }
                  SplineSeries {
                      id:line9
+                     useOpenGL: true
                      name: "9"
                      //STYLE: Qt.solidline // style
                      axisX: valueAxisX
