@@ -11,7 +11,7 @@ Dialog {
     focus: true
     title: "О программе..."
     width: window.width * 0.8
-    height: window.height * 0.4
+    height: window.height * 0.25
     x: (window.width - aboutDialog.width) / 2
     y: (window.height - aboutDialog.height) / 5
 

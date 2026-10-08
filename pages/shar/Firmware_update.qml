@@ -19,6 +19,8 @@ Page {
 
     property bool window_focus : false
 
+    property bool addingLog : true
+
     Label {
         id: senderPageLabel
         anchors.top: parent.top
@@ -251,6 +253,7 @@ Page {
            scrolViewLogArea.visible = loging_visible.checked
            listView1.visible = loging_visible.checked
            clearButton_1.visible = loging_visible.checked
+           permissLog.visible = loging_visible.checked
       }
     }
 
@@ -296,6 +299,7 @@ Page {
                    function onLogServis(type, msg) {
                        if(window_focus && loging_visible.visible)
                        {
+                           if(!addingLog)   return;
                            logListModel.append({msg: type + msg})
                            listView1.positionViewAtEnd()
                        }
@@ -322,11 +326,11 @@ Page {
     Button {
         id: clearButton_1
         width: senderBackground.width * 0.08
-        height: senderBackground.height
+        height: senderBackground.height * 0.45
         anchors.top: senderBackground.top
         anchors.right: senderBackground.right
         anchors.rightMargin: Qt.platform.os === "windows" ? 30 : 0
-        opacity: 0.2
+        opacity: 0.5
         visible: false
 
         contentItem: Text{
@@ -336,6 +340,29 @@ Page {
 
         onClicked: {
             logListModel.clear()
+        }
+    }
+
+    // остановка выпадения лога
+    Button {
+        id: permissLog
+        width: senderBackground.width * 0.08
+        height: senderBackground.height * 0.45
+        anchors.top: clearButton_1.bottom
+        anchors.topMargin: 3
+        anchors.right: senderBackground.right
+        anchors.rightMargin: 30
+        opacity: 0.5
+        visible: false
+
+        contentItem: Text{
+            horizontalAlignment: Qt.AlignHCenter
+            text: addingLog ? "Стоп" : "Старт"
+            font.pointSize: 6
+        }
+
+        onClicked: {
+            addingLog ? addingLog = false : addingLog = true
         }
     }
 

@@ -30,6 +30,8 @@ Page{
 
     // выбор устройства
     Button {
+        anchors.top: parent.top
+        anchors.topMargin: 30
         visible: Qt.platform.os === "windows" || Qt.platform.os === "linux"
         text: "выбор устройства"
         onClicked: {

@@ -30,6 +30,8 @@ SwipeView {
 
     property bool window_focus : false
 
+    property bool addingLog : true
+
     property bool verticalOnly : false
     property bool horizontalOnly : false
     property real offsetX : 0
@@ -199,6 +201,7 @@ SwipeView {
                    Connections {
                        target: commun_display
                        function onLogJoy(type, msg) {
+                           if(!addingLog)   return;
                            if (window_focus) {
                                if (mainModel.adminFlag === false) {
                                    logListModel_2.append({ msg: type + msg, selected: false })
@@ -207,6 +210,7 @@ SwipeView {
                            }
                        }
                        function onLogServis(type, msg) {
+                           if(!addingLog)   return;
                            if (window_focus) {
                                if (mainModel.adminFlag === true) {
                                    logListModel_2.append({ msg: type + msg, selected: false })
@@ -245,12 +249,12 @@ SwipeView {
         Button {
             id: clearButton
             width: senderBackground_2.width * 0.08
-            height: senderBackground_2.height
+            height: senderBackground_2.height * 0.45
             anchors.top: senderBackground_2.top
             anchors.right: senderBackground_2.right
           //  anchors.rightMargin: Qt.platform.os === "windows" ? 30 : 0
             anchors.rightMargin: 30
-            opacity: 0.2            
+            opacity: 0.4
 
             contentItem: Text{
                 horizontalAlignment: Qt.AlignHCenter
@@ -262,6 +266,27 @@ SwipeView {
                 logListModel_2.clear()
                 copiedLogText = ""
                 clipboardHelper.text = ""
+            }
+
+            // остановка выпадения лога
+            Button {
+                width: senderBackground_2.width * 0.08
+                height: senderBackground_2.height * 0.45
+                anchors.top: clearButton.bottom
+                anchors.topMargin: 3
+                anchors.right: senderBackground_2.right
+                anchors.rightMargin: 30
+                opacity: 0.8
+
+                contentItem: Text{
+                    horizontalAlignment: Qt.AlignHCenter
+                    text: addingLog ? "Стоп" : "Старт"
+                    font.pointSize: 6
+                }
+
+                onClicked: {
+                    addingLog ? addingLog = false : addingLog = true
+                }
             }
         }
 
@@ -279,14 +304,6 @@ SwipeView {
             background: Rectangle {
                 color: "#e6e6e6"
                 radius: 3
-                Text {
-                    text: commun_display.Volt.toFixed(1) + "V"
-                    width: parent.width
-                    wrapMode: Label.Wrap
-                    horizontalAlignment: Qt.AlignHCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: "black"
-                }
             }
 
             contentItem: Item {
@@ -325,6 +342,17 @@ SwipeView {
             }
         }
 
+        //напруга
+        Label {
+            id: voltageLabel
+            width: parent.width
+            wrapMode: Label.Wrap
+            horizontalAlignment: Qt.AlignHCenter
+            anchors.verticalCenter: voltage.verticalCenter
+            text: commun_display.Volt.toFixed(1) + "V"
+            color: "black"
+        }
+
         //ток
         ProgressBar{
             id: current
@@ -339,14 +367,6 @@ SwipeView {
             background: Rectangle {
                 color: "#e6e6e6"
                 radius: 3
-                Text {
-                    width: parent.width
-                    wrapMode: Label.Wrap
-                    horizontalAlignment: Qt.AlignHCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: commun_display.Cur.toFixed(2) + "А"
-                    color: "black"
-                }
             }
 
             contentItem: Item {
@@ -383,6 +403,17 @@ SwipeView {
                     current.value = Cur
                 }
             }
+        }
+
+        //ток
+        Label {
+            id: currentLabel
+            width: parent.width
+            wrapMode: Label.Wrap
+            horizontalAlignment: Qt.AlignHCenter
+            anchors.verticalCenter: current.verticalCenter
+            text: commun_display.Cur.toFixed(2) + "А"
+            color: "black"
         }
 
         //имя приемника
@@ -725,7 +756,7 @@ SwipeView {
         //выключение шара
         DelayButton{
             id: power_off
-            anchors.top: joystick_mode_swith.bottom
+            anchors.bottom: parent.bottom
             anchors.topMargin: 15
             anchors.right: parent.right
             anchors.rightMargin: 5

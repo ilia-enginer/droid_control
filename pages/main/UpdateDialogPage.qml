@@ -12,7 +12,7 @@ Dialog {
     x: (window.width - updateDialog.width) / 2
     y: (window.height - updateDialog.height) / 4
     width: window.width * 0.8
-    height: window.height * 0.55
+    height: window.height * 0.4
 
 
     Column {
@@ -40,49 +40,16 @@ Dialog {
             color: "#9a22c9"
         }
 
-        Label {
+        Text {
             anchors.horizontalCenter: parent.horizontalCenter
             font.family: "Courier New"
             wrapMode: Text.Wrap
             font.pixelSize: 14
             color: "#25820c"
-            text: "Ссылка"
+            text: 'Ссылка <a href="https://github.com/ilia-enginer/droid_stick/blob/main/droid_stick.apk">github.com</a>'
+            onLinkActivated: Qt.openUrlExternally(link)
         }
 
-        TextInput {
-            id: inputLink
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: parent.width
-            font.family: "Courier New"
-            wrapMode: Text.Wrap
-            font.pixelSize: 12
-            color: "#25820c"
-            text: "https://github.com/ilia-enginer/droid_stick/blob/main/droid_stick.apk"
-            visible: false
-        }
-
-
-        RoundButton {
-            id: coppy
-            anchors.horizontalCenter: parent.horizontalCenter
-            height: parent.height * 0.12
-            width: parent.width * 0.9
-            radius: 8
-            text: "Копировать ссылку"
-            background: Rectangle{
-                id: color_
-                property var normalColor: "#9dcf0a"
-                property var pressedColor: "#cfc10a"
-                color: coppy.pressed ? pressedColor : normalColor
-                radius: 8
-            }
-            onClicked: {
-                inputLink.selectAll(); // выделить весь текст
-                inputLink.copy();       // скопировать выделенный текст
-                coppy.text = "Скопировано"
-                color_.normalColor = "#5e560d"
-            }
-        }
         RoundButton {
             id: butLoadUpdateApp
             anchors.horizontalCenter: parent.horizontalCenter

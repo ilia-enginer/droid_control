@@ -6,6 +6,9 @@ import QtQuick.Controls.Material
 
 Page {
     id: terminalPage
+
+    property bool addingLog : true
+
     property bool wrap : false
 
     Label {
@@ -69,6 +72,7 @@ Page {
                Connections {
                    target: commun_display
                    function onLogT(type, msg) {
+                       if(!addingLog)   return;
                        logListModel.append({msg: type + msg})
                        listView1.positionViewAtEnd()
                    }
@@ -145,10 +149,30 @@ Page {
         }
     }
 
+    // остановка выпадения лога
+    Button {
+        id: startStopLog
+        anchors.top: sendButton.bottom
+        anchors.right: sendButton.right
+        anchors.left: sendButton.left
+        height: parent.height * 0.08
+        text: addingLog ? "Стоп лог" : "Старт лог"
+        background: Rectangle{
+            id: colorStSt
+            property var nolog: "#ff084e"
+            property var log: "#17d47f"
+            color: addingLog ? log : noLog
+            radius: 8
+        }
+        onClicked: {
+            addingLog ? addingLog = false : addingLog = true
+            addingLog ? colorStSt.color = "#17d47f" : colorStSt.color = "#ff084e"
+        }
+    }
 
     CheckBox {
       id: needWrap
-      anchors.top: sendButton.bottom
+      anchors.top: startStopLog.bottom
       checked: false
       text: qsTr("Оборачивать протоколом")
 
