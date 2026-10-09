@@ -1,6 +1,6 @@
-import QtQuick
+import QtQuick 2.0
 import QtQuick.Layouts
-import QtQuick.Controls
+import QtQuick.Controls 2.12
 import Qt.labs.settings
 import QtQuick.Controls.Material
 
@@ -67,6 +67,10 @@ Dialog {
                onClicked: {
                    device.connectToDevice(modelData.deviceAddress,modelData.deviceName,modelData.coreConfig);
                }
+               onPressAndHold: {
+                   myPopup.y = box.y
+                   myPopup.open()
+               }
            }
 
            Label {
@@ -97,6 +101,40 @@ Dialog {
                anchors.rightMargin: 5
            }
        }
+
+    }
+
+    // работа с элементом списка
+    Popup {
+        id: myPopup
+        contentWidth: colum.implicitWidth
+        contentHeight: colum.implicitHeight
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside // Политика закрытия
+        x: (parent.width / 2) + (parent.width / 4)
+        padding: 1
+
+        // Стиль фона
+        background: Rectangle {
+            border.color: "#21be2b"
+            radius: 4
+        }
+
+        Column {
+            id: colum
+            anchors.fill: parent
+            spacing: 1
+
+            RoundButton {
+                id: delElement
+                height: devicesDialog.height * 0.07
+                highlighted: true
+                radius: 6
+                text: "Удалить"
+                onClicked: {
+
+                }
+            }
+        }
     }
 
     contentItem: ListView {
