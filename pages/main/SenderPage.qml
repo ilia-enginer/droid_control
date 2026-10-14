@@ -8,6 +8,20 @@ Page {
     id: terminalPage
     property bool wrap : false
 
+    //копирование лога без системного выделения текста: copy() только
+    //записывает в буфер (запись на Android разрешена всегда), в отличие
+    //от выделения, которое опрашивает клипборд и на Huawei приводит
+    //к шторму отказов ClipboardService и падению приложения
+    function copyLog() {
+        var text = ""
+        for (var i = 0; i < logListModel.count; ++i) {
+            text += logListModel.get(i).msg + "\n"
+        }
+        clipboardHelper.text = text
+        clipboardHelper.selectAll()
+        clipboardHelper.copy()
+    }
+
     Label {
         id: senderPageLabel
         width: parent.width
@@ -76,8 +90,11 @@ Page {
 
                delegate: Column {
                    TextEdit {
-                       selectByKeyboard: true
-                       selectByMouse: true
+                       //интерактивное выделение отключено на Android:
+                       //при выделении Qt опрашивает системный клипборд,
+                       //что на Huawei вызывает шторм отказов и краш
+                       selectByKeyboard: Qt.platform.os !== "android"
+                       selectByMouse: Qt.platform.os !== "android"
                        width: listView1.width * 0.95
                        text: msg
                        font.family: "Courier New"
@@ -162,6 +179,33 @@ Page {
       checked: false
       anchors.top: needWrap.bottom
       text: qsTr("Очищать поле ввода")
+    }
+
+    Button {
+      id: copyLogButton
+      anchors.top: needClear.bottom
+      anchors.left: parent.left
+      height: parent.height * 0.08
+      width: parent.width * 0.49
+      text: "Копировать лог"
+      background: Rectangle{
+          property var normalColor: "#9dcf0a"
+          property var pressedColor: "#cfc10a"
+          color: copyLogButton.pressed ? pressedColor : normalColor
+          radius: 8
+      }
+      onClicked: {
+          copyLog()
+      }
+    }
+
+    //скрытый помощник копирования (как в Joystick.qml)
+    TextEdit {
+        id: clipboardHelper
+        visible: false
+        width: 0
+        height: 0
+        selectByMouse: false
     }
 
 }
