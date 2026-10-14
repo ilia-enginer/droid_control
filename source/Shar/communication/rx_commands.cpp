@@ -713,6 +713,9 @@ Rx_commands::getParamsChart(QByteArray Params)
     val.data[3] = Params[35];
     if(val.f == val.f)  angleZ = val.f;
 
+//    qDebug() << "tilt_angle = " << tilt_angle;
+//    qDebug() << "tilt_direction = " << tilt_direction;
+
     _commun_display->vrealChang(volt);
     _commun_display->curRealChang(cur);
 

@@ -105,6 +105,12 @@ target.path = $$[QT_INSTALL_EXAMPLES]/quickcontrols2/gallery
 INSTALLS += target
 
 DISTFILES += \
+    android/res/drawable/logo.png \
+    android/res/drawable/logo_land.png \
+    android/res/drawable/logo_port.png \
+    android/res/drawable/splashscreen.xml \
+    android/res/drawable/splashscreen_land.xml \
+    android/res/drawable/splashscreen_port.xml \
     file.rc \
     file.rc \
     android/src/org/qtproject/example/NotificationClient.java \
@@ -176,8 +182,11 @@ FORMS += \
 
 contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
     OTHER_FILES = \
-    $$PWD/android/src/org/qtproject/example/InstallAPK.java\
-    $$PWD/android/res/xml/provider_paths.xml\
+    $$PWD/android/src/org/qtproject/example/InstallAPK.java
+    $$PWD/android/res/xml/provider_paths.xml
+    $$PWD/android/res/drawable/splashscreen.xml
+    $$PWD/android/res/drawable/splashscreen_land.xml
+    $$PWD/android/res/drawable/splashscreen_port.xml
     $$PWD/android/src/org/qtproject/example/QtAndroidService.java
     $$PWD/android/src/org/qtproject/example/NotificationClient.java
     $$PWD/android/src/org/qtproject/example/KeepAliveService.java

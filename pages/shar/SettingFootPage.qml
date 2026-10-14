@@ -35,6 +35,8 @@ Page {
 
     property bool window_focus : false
 
+    property bool addingLog : true
+
     property int butClick : 0
     property int coxaL : 0
     property int coxaH : 0
@@ -94,6 +96,7 @@ Page {
                Connections {
                    target: commun_display
                    function onLogJoy(type, msg) {
+                       if(!addingLog)   return;
                        if(window_focus)
                        {
                            if (mainModel.adminFlag === false){
@@ -103,6 +106,7 @@ Page {
                        }
                     }
                    function onLogServis(type, msg) {
+                       if(!addingLog)   return;
                        if(window_focus)
                        {
                            if (mainModel.adminFlag === true){
@@ -132,18 +136,39 @@ Page {
     Button {
         id: clearButton_1
         width: senderBackground.width * 0.08
-        height: senderBackground.height
+        height: senderBackground.height * 0.45
         anchors.top: senderBackground.top
         anchors.right: senderBackground.right
         //anchors.rightMargin: Qt.platform.os === "windows" ? 30 : 0
         anchors.rightMargin: 30
-        opacity: 0.2
+        opacity: 0.5
         contentItem: Text{
             text: "Clear"
             font.pointSize: 6
         }
         onClicked: {
             logListModel.clear()
+        }
+    }
+
+    // остановка выпадения лога
+    Button {
+        width: senderBackground.width * 0.08
+        height: senderBackground.height * 0.45
+        anchors.top: clearButton_1.bottom
+        anchors.topMargin: 3
+        anchors.right: senderBackground.right
+        anchors.rightMargin: 30
+        opacity: 0.5
+
+        contentItem: Text{
+            horizontalAlignment: Qt.AlignHCenter
+            text: addingLog ? "Стоп" : "Старт"
+            font.pointSize: 6
+        }
+
+        onClicked: {
+            addingLog ? addingLog = false : addingLog = true
         }
     }
 
