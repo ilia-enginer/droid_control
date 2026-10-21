@@ -155,12 +155,20 @@ Device::clearDeviceDiscovery()
 void
 Device::addDevice(const QBluetoothDeviceInfo &info)
 {
-     QString empty;
-    if(info.name() != empty)
+    // не добавлять устройство без имени
+    if(info.name().isEmpty())
+        return;
+
+    // проверка на дубликат
+    for(QObject *obj :devices)
     {
-        devices.append(new DeviceInfo(QBluetoothDeviceInfo(info)));
-        emit devicesUpdated();
+        auto *dev = qobject_cast<DeviceInfo*>(obj);
+        if(dev && dev->getAddress() == info.address().toString())
+            return;
     }
+
+    devices.append(new DeviceInfo(QBluetoothDeviceInfo(info)));
+    emit devicesUpdated();
 }
 //! [les-devicediscovery-3]
 void
@@ -230,13 +238,7 @@ Device::connectToDeviceImpl(const QString &dAddress, const QString &name, const 
 
     lastConnectedDevice_ = dAddress;
     nameDevice_ = name;
-
-    qint32 i;
-    if (config == "BR")         i = 0x02;   // class_ = "2";
-    else if (config == "LE")    i = 0x01;   //class_ = "1";
-    else if (config == "BRLE")  i = 0x03;   //class_ = "3";
-    else                        i = 0x00;   //class_ = "0";
-    class_ = QString("%1").arg(i);
+    class_ = config;
 
     _commun_display->setUpdatee("Подключение к " + nameDevice_);
     _commun_display->statusDevicee(_commun_display->statusDevic::searchInProgr);
@@ -248,6 +250,39 @@ Device::connectToDeviceImpl(const QString &dAddress, const QString &name, const 
     connect(socket, SIGNAL(connected()), this, SLOT(deviceConnected()));
     connect(socket, SIGNAL(disconnected()), this, SLOT(disconnectFromDevice()));
     connect(socket, SIGNAL(readyRead()), this, SLOT(socketRead()));
+}
+
+/// вычитывание устройств из памяти
+int
+Device::reading_devices_from_memory(QVector<QStringList> &lastDevices, int &num)
+{
+    QSettings setting;
+    //вычитываю все устройства
+    while (true)
+    {
+        if (setting.contains(QString("last%1").arg(num))) {
+            lastDevices.append(setting.value(QString("last%1").arg(num)).toString().split(";"));
+            ++num;    // следующий номер прибора для сохранения в истории
+        } else break;
+    }
+
+    return 0;
+}
+
+/// поиск устройства в списке
+bool
+Device::searching_device_in_memory(QVector<QStringList> lastDevices, QString id, int &num)
+{
+    QSettings setting;
+
+    for(QStringList device : lastDevices) {
+        if(device.at(2) == id)
+        {
+            return true;
+        }
+        num++;
+    }
+    return false;
 }
 
 void
@@ -478,42 +513,192 @@ void Device::setCurrentDeviceName(QString name)
     _commun_display->setCurDeviceName(currenDeviceName_);
 }
 
+/// удаляет устройство из памяти и из листа
+int
+Device::del_device(QString id)
+{
+    if(id.isEmpty())
+        return 1;
+
+    /// удаляет из памяти
+    QSettings setting;
+    QVector<QStringList> lastDevices;
+    int deviceNum = 0;
+
+    //вычитываю все устройства
+    reading_devices_from_memory(lastDevices, deviceNum);
+
+    // TODO проверка есть ли устройство в списке сохраненных
+    deviceNum = 0;
+    // удаляет сохраненное
+    if(searching_device_in_memory(lastDevices, id, deviceNum))
+    {
+        setting.remove(QString("last%1").arg(deviceNum));
+        // сдвинуть остальные чтоб не было промежутка
+        while(true)
+        {
+            if (setting.contains(QString("last%1").arg(++deviceNum))) {
+                setting.setValue(QString("last%1").arg(deviceNum-1), setting.value(QString("last%1").arg(deviceNum)));
+            }
+            else
+            {
+                if (setting.contains(QString("last%1").arg(--deviceNum))) {
+                    setting.remove(QString("last%1").arg(deviceNum));
+                }
+                break;
+            }
+        }
+    }
+
+    /// удаляет из листа
+    deviceNum = 0;
+    for (QObject *obj : devices) {
+        if (obj->property("deviceAddress").toString() == id)
+        {
+            devices.removeAt(deviceNum);      // убираем из списка
+            emit devicesUpdated();             // уведомляем QML
+        }
+        deviceNum++;
+    }
+
+    return 0;
+}
+
+/// поднимает устройство в начало списка в памяти и в списке
+int
+Device::upList_device(QString id)
+{
+    if(id.isEmpty())
+        return 1;
+
+    /// поднимает устройство в начало списка в списке
+    for(int i = 0; i < devices.size(); ++i)
+    {
+        DeviceInfo *info = qobject_cast<DeviceInfo*>(devices.at(i));
+        if(info && info->getAddress() == id)
+        {
+            if(i == 0)
+                break;   // уже в начале
+            devices.move(i, 0); // QList::move перемещает элемент
+            emit devicesUpdated();             // уведомляем QML
+            break;;
+        }
+    }
+
+    /// поднимает устройство в начало списка в памяти
+    QVector<QStringList> lastDevices;
+    QSettings settings;
+    int lastIndex;
+    reading_devices_from_memory(lastDevices, lastIndex);
+    int deviceNum = 0;
+    // если такого устройства нет в памяти - выйти
+    if(!searching_device_in_memory(lastDevices, id, deviceNum))
+        return 0;
+    if(deviceNum >= lastIndex-1)
+        return 0;
+
+    //читаю перемещаемое устройство до сдвига
+    QVariant movedDevice = settings.value(QString("last%1").arg(deviceNum));
+
+    // сдвигаю last(deviceNum+1)..last(lastIndex) на -1, иду с начала
+    for(int i = deviceNum+1; i < lastIndex; ++i)
+    {
+        QVariant value = settings.value(QString("last%1").arg(i));
+        settings.setValue(QString("last%1").arg(i - 1), value);
+    }
+    // кладу перемещаемое устройство в последний ключ
+    settings.setValue(QString("last%1").arg(lastIndex), movedDevice);
+
+    return 0;
+}
+
 //добавление сохраненных устройств в список устройств
 void
 Device::get_last_device()
 {
     if(!connected_flag)
     {
-        QSettings setting;
-        QString dName;
-        quint32 dClass;
-        QString dAdres;
+        QString dName = "null";
+        quint32 dClass = 0x020C;
+        QString dAdres = "null";
 
         stopDeviceDiscovery();
         clearDeviceDiscovery();
 
         QVector<QStringList> lastDevices;
         int deviceNum = 0;
-        while (true)
-        {
-            if (setting.contains(QString("last%1").arg(deviceNum))) {
-                lastDevices.append(setting.value(QString("last%1").arg(deviceNum)).toString().split(";"));
-                ++deviceNum;    // следующий номер прибора для сохранения в истории
-            } else break;
-        }
+        reading_devices_from_memory(lastDevices, deviceNum);
 
         //добавятся в порядке сохранения
         for(int i = deviceNum - 1; i >= 0; i--)
         {
-            dName = lastDevices[i].at(0);
-            dClass = lastDevices[i].at(1).toInt();
-            dAdres = lastDevices[i].at(2);
-            addDevice(QBluetoothDeviceInfo(QBluetoothAddress(dAdres), dName, dClass));
+            if((!lastDevices[i].at(0).isEmpty()) &&
+                (!lastDevices[i].at(1).isEmpty()) &&
+                (!lastDevices[i].at(2).isEmpty()))
+            {
+                dName = lastDevices[i].at(0);
+                dClass = lastDevices[i].at(1).toInt();
+                dAdres = lastDevices[i].at(2);
+
+                QBluetoothDeviceInfo info(QBluetoothAddress(dAdres), dName, dClass);
+                info.setCoreConfigurations(QBluetoothDeviceInfo::LowEnergyCoreConfiguration);
+                addDevice(info);
+            }
         }
 
         if(deviceNum == 0)  _commun_display->setUpdatee("Сохраненные устройства отсутствуют. Начать поиск устройств?");
         else                _commun_display->setUpdatee("Сохраненные устройства добавлены.");
     }
+}
+
+/// добавляет новые имитированные устройства
+void
+Device::addingNewDevicesWindows()
+{
+    QString dName;
+    // создаю смартфон
+    // согласно документации: биты 8-12 - это major class, биты 2-7 - это minor class
+    // PhoneDevice = 2, SmartPhone = 3
+    // Закодированное значение = (2 << 8) | (3 << 2) = 0x020C
+    quint32 dClass = 0x020C;
+    QString dAdres;
+
+    for(int i = 0; i < 5; i++)
+    {
+        nameDevice_ = dName = "name" + QString::number(i) + "*";
+        class_ = QString::number(dClass);
+        lastConnectedDevice_ = dAdres = "00:01:02:03:04:0" + QString::number(i);
+
+        QBluetoothDeviceInfo info(QBluetoothAddress(dAdres), dName, dClass);
+        info.setCoreConfigurations(QBluetoothDeviceInfo::LowEnergyCoreConfiguration);
+//        qDebug() << "Raw coreConfigurations:" << info.coreConfigurations();
+
+        addDevice(info);
+    }
+
+    QSettings setting;
+    // очистить список
+    for(int i = 0; i < 30; i++)
+    {
+        if (setting.contains(QString("last%1").arg(i)))
+            setting.remove(QString("last%1").arg(i));
+    }
+
+    // эти устройства сохранены в памяти
+    for(int i = 5; i < 10; i++)
+    {
+        nameDevice_ = dName = "name" + QString::number(i) + "*";
+        class_ = QString::number(dClass);
+        lastConnectedDevice_ = dAdres = "00:01:02:03:04:0" + QString::number(i);
+        QBluetoothDeviceInfo info(QBluetoothAddress(dAdres), dName, dClass);
+        info.setCoreConfigurations(QBluetoothDeviceInfo::LowEnergyCoreConfiguration);
+        addDevice(info);
+        set_last_device();
+
+    }
+    QVector<QStringList> lastDevices;
+    int deviceNum = 0;
+    reading_devices_from_memory(lastDevices, deviceNum);
 }
 
 //сохранение последнего подключенного устройства
@@ -525,18 +710,10 @@ Device::set_last_device()
     //вычитываю все устройства
     QVector<QStringList> lastDevices;
     int deviceNum = 0;
-    while (true)
-    {
-        if (setting.contains(QString("last%1").arg(deviceNum))) {
-            lastDevices.append(setting.value(QString("last%1").arg(deviceNum)).toString().split(";"));
-            ++deviceNum;    // следующий номер прибора для сохранения в истории
-        } else break;
-    }
-
-    // TODO проверка есть ли устройство в списке сохраненных
-    for(QStringList device : lastDevices) {
-        if(device.at(2) == lastConnectedDevice_)  return;
-    }
+    reading_devices_from_memory(lastDevices, deviceNum);
+    deviceNum = 0;
+    if(searching_device_in_memory(lastDevices, lastConnectedDevice_, deviceNum))
+        return;
 
     //сохраняю новое устройство
     QString device = QStringList({nameDevice_, class_, lastConnectedDevice_}).join(";");

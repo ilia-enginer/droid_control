@@ -103,6 +103,9 @@ public:
 
     void setCurrentDeviceName(QString name);
 
+    int del_device(QString id);
+    int upList_device(QString id);
+
 public slots:
     void startDeviceDiscovery();
     void stopDeviceDiscovery();
@@ -115,6 +118,8 @@ public slots:
 
     void set_last_device(void);
     void get_last_device(void);
+
+    void addingNewDevicesWindows(void);
 
 private slots:
     void addDevice(const QBluetoothDeviceInfo&);
@@ -144,6 +149,8 @@ private:
     void setUpdate(const QString &message);
     void startDeviceDiscoveryImpl();
     void connectToDeviceImpl(const QString &dAddress, const QString &name, const QString &config);
+    int reading_devices_from_memory(QVector<QStringList> &lastDevices, int &num);
+    bool searching_device_in_memory(QVector<QStringList> lastDevices, QString id, int &num);
 
     QBluetoothDeviceDiscoveryAgent *discoveryAgent;
     DeviceInfo currentDevice;

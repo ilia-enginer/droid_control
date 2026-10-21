@@ -1,5 +1,6 @@
 #include "commun_display.h"
 
+
 #include "QDebug"
 #include <QList>
 #include <QByteArray>
@@ -21,6 +22,12 @@ void
 Commun_display::setNotificationClient(NotificationClient *newNotificationClient)
 {
     _notificationClient = newNotificationClient;
+}
+
+void
+Commun_display::setChartController(ChartController *newChartController)
+{
+    _chartController = newChartController;
 }
 
 int
@@ -206,11 +213,22 @@ Commun_display::graphsOutput(float volt, float cur, float tilt_angle, float tilt
 {
     if(rendering_flag == Qt::ApplicationState::ApplicationActive)
     {
-        emit chart_data(volt,
-                        cur, tilt_angle,
-                        tilt_direction, boost,
-                        angular_velocity, angleX,
-                        angleY, angleZ);
+        _chartController->pushData(0, volt);
+        _chartController->pushData(1, cur);
+        _chartController->pushData(2, tilt_angle);
+        _chartController->pushData(3, tilt_direction);
+        _chartController->pushData(4, boost);
+        _chartController->pushData(5, angular_velocity);
+        _chartController->pushData(6, angleX);
+        _chartController->pushData(7, angleY);
+        _chartController->pushData(8, angleZ);
+
+        //???
+//        emit chart_data(volt,
+//                        cur, tilt_angle,
+//                        tilt_direction, boost,
+//                        angular_velocity, angleX,
+//                        angleY, angleZ);
     }
 }
 

@@ -5,10 +5,11 @@ CONFIG += qml_debug
 
 ANDROID_VERSION_NAME = "1.1.5"      #версия в apk
 #DEFINES += VERSION=\\\"$$ANDROID_VERSION_NAME\\\"   #версия в windows так не работает
-DEFINES += INSERT_VERSION_NAME=\\\"$$ANDROID_VERSION_NAME\\\"   #версия на главном экране
+DEFINES += QT_MESSAGELOGCONTEXT INSERT_VERSION_NAME=\\\"$$ANDROID_VERSION_NAME\\\"   #версия на главном экране
 #DEFINES += INSERT_VERSION_CODE = 2 ??? хз как присвоить. требуется для плей маркета
 
 QT += quick charts qml quickcontrols2 bluetooth core positioning widgets core-private network gui concurrent serialport #androidextras
+
 
 win32 {
     RC_FILE += file.rc
@@ -19,6 +20,7 @@ SOURCES += \
     source/Pylt/communication/rx_commandsPylt.cpp \
     source/Pylt/communication/tx_commandsPylt.cpp \
     source/Pylt/pylt_settings.cpp \
+    source/Shar/display_working/chartcontroller.cpp \
     source/communication/crc.cpp \
     source/Shar/communication/rx_commands.cpp \
     source/communication/packing.cpp \
@@ -85,6 +87,7 @@ RESOURCES += \
     +Material/ToolBar.qml \
     images/bluetooth-512.png \
     pages/shar/joystick/Joystick.qml \
+    pages/shar/joystick/ChartController.qml \
     pages/shar/joystick/finger.png \
     pages/shar/joystick/background.png \
     pages/shar/joystick/back.png \
@@ -148,13 +151,15 @@ DISTFILES += \
     android/res/drawable-xxxhdpi/icon.png \
     android/res/values/libs.xml \
     android/res/xml/provider_paths.xml \
-    pages/shar/SettingFootPage.qml
+    pages/shar/SettingFootPage.qml \
+    pages/shar/joystick/ChartController.qml
 
 
 HEADERS += \
     source/Pylt/communication/rx_commandsPylt.h \
     source/Pylt/communication/tx_commandsPylt.h \
     source/Pylt/pylt_settings.h \
+    source/Shar/display_working/chartcontroller.h \
     source/communication/crc.h \
     source/Shar/communication/rx_commands.h \
     source/communication/packing.h \

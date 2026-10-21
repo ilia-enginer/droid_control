@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include "../../main/notificationclient.h"
+#include "chartcontroller.h"
 
 
 class Commun_display: public QObject
@@ -49,6 +50,8 @@ public:
     Q_PROPERTY(double BytesRead READ get_BytesRead WRITE set_BytesRead NOTIFY bytesReadChanged)
 
     void setNotificationClient(NotificationClient *newNotificationClient);
+    void setChartController(ChartController *newChartController);
+
 
     int get_rendering_flag();
     void set_rendering_flag(int flag);
@@ -175,6 +178,7 @@ private:
     double BytesRead = 0.0;              //сколько уже загружено
 
     NotificationClient * _notificationClient = nullptr;
+    ChartController * _chartController = nullptr;
 
     QString currUpd = "Проверьте обновление";
     QString messagee = " ";

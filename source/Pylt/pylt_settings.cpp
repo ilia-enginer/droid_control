@@ -330,7 +330,6 @@ Pylt_settings::getFullParam()
     if(devName.isEmpty())   return param;
 
     // взять параметры из памяти, если есть
-    QSettings setting;
 
     QString dName;
     qint32 temp_ch1_joy1_y_min;
@@ -357,15 +356,8 @@ Pylt_settings::getFullParam()
     bool   temp_ch2_cheng_ch4 ;
 
     QVector<QStringList> lastParams;
-
     int deviceNum = 0;
-    while (true)
-    {
-        if (setting.contains(QString("lastParams%1").arg(deviceNum))) {
-            lastParams.append(setting.value(QString("lastParams%1").arg(deviceNum)).toString().split(";"));
-            ++deviceNum;    // следующий номер прибора для сохранения в истории
-        } else break;
-    }
+    reading_devices_from_memory(lastParams, deviceNum);
 
     //добавятся в порядке сохранения
     for(int i = deviceNum - 1; i >= 0; i--)
@@ -444,6 +436,46 @@ Pylt_settings::setDevName(QString newName)
     devName = newName;
 }
 
+/// удаляет настройки устройства памяти
+int
+Pylt_settings::del_settings(QString id)
+{
+    if(id.isEmpty())
+        return 1;
+
+    /// удаляет из памяти
+    QSettings setting;
+    QVector<QStringList> lastDevices;
+    int deviceNum = 0;
+
+    //вычитываю все устройства
+    reading_devices_from_memory(lastDevices, deviceNum);
+
+    // TODO проверка есть ли устройство в списке сохраненных
+    deviceNum = 0;
+    // удаляет сохраненное
+    if(searching_device_in_memory(lastDevices, QString("lastParams%1").arg(deviceNum), deviceNum))
+    {
+        setting.remove(QString("lastParams%1").arg(deviceNum));
+        // сдвинуть остальные чтоб не было промежутка
+        while(true)
+        {
+            if (setting.contains(QString("lastParams%1").arg(++deviceNum))) {
+                setting.setValue(QString("lastParams%1").arg(deviceNum-1), setting.value(QString("last%1").arg(deviceNum)));
+            }
+            else
+            {
+                if (setting.contains(QString("lastParams%1").arg(--deviceNum))) {
+                    setting.remove(QString("lastParams%1").arg(deviceNum));
+                }
+                break;
+            }
+        }
+    }
+
+    return 0;
+}
+
 int
 Pylt_settings::saveFullParam()
 {
@@ -455,24 +487,11 @@ Pylt_settings::saveFullParam()
     //вычитываю все устройства
     QVector<QStringList> lastParams;
     int deviceNum = 0;
-    while (true)
-    {
-        if (setting.contains(QString("lastParams%1").arg(deviceNum))) {
-            lastParams.append(setting.value(QString("lastParams%1").arg(deviceNum)).toString().split(";"));
-            ++deviceNum;    // следующий номер прибора для сохранения в истории
-        } else break;
-    }
+    reading_devices_from_memory(lastParams, deviceNum);
 
     int num = 0;
-    // TODO проверка есть ли устройство в списке сохраненных
-    for(QStringList parametrs : lastParams) {
-        if(parametrs.at(0) == devName)
-        {
-            deviceNum = num;
-            break;
-        }
-        num++;
-    }
+    // проверка есть ли устройство в списке сохраненных
+    searching_device_in_memory(lastParams, devName, num);
 
     //сохраняю
     QString paramString = QStringList({devName,
@@ -502,4 +521,36 @@ Pylt_settings::saveFullParam()
     setting.setValue(QString("lastParams%1").arg(deviceNum), paramString);    // запись
 
     return 0;
+}
+
+/// вычитывание устройств из памяти
+int
+Pylt_settings::reading_devices_from_memory(QVector<QStringList> &lastParams, int &num)
+{
+    QSettings setting;
+    //вычитываю все устройства
+    while (true)
+    {
+        if (setting.contains(QString("lastParams%1").arg(num))) {
+            lastParams.append(setting.value(QString("lastParams%1").arg(num)).toString().split(";"));
+            ++num;    // следующий номер прибора для сохранения в истории
+        } else break;
+    }
+
+    return 0;
+}
+
+/// поиск устройства в списке
+bool
+Pylt_settings::searching_device_in_memory(QVector<QStringList> lastParams, QString id, int &num)
+{
+    // TODO проверка есть ли устройство в списке сохраненных
+    for(QStringList parametrs : lastParams) {
+        if(parametrs.at(0) == id)
+        {
+            return true;
+        }
+        num++;
+    }
+    return false;
 }

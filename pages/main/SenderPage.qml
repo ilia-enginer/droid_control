@@ -115,6 +115,32 @@ Page {
            }
     }
 
+    // уведомление о копировании
+    ToolTip {
+        id: toast
+        delay: 0  // задержка перед показом
+        timeout: 1000  // время скрытия
+        x: (parent.width - width) / 2  // по горизонтали по центру
+        y: senderBackground.y + senderBackground.height //(parent.height - 100)  // по вертикали снизу
+
+        // появление
+        enter: Transition {
+                NumberAnimation { property: "opacity"; from: 0.0; to: 1.0; duration: 450 }
+            }
+        // изчезновение
+        exit: Transition {
+                NumberAnimation { property: "opacity"; from: 1.0; to: 0.0; duration: 250 }
+            }
+
+        background: Rectangle {
+            color: "#7f856f"
+            radius: 15  // скруглённые углы
+        }
+        function toastOn(msg){
+            toast.text = qsTr(msg)
+            toast.visible = true
+        }
+    }
 
     TextField {
         id: messageToSend
@@ -187,6 +213,25 @@ Page {
         }
     }
 
+    Button {
+      id: copyLogButton
+      anchors.top: clearButton.bottom
+      anchors.left: clearButton.left
+      anchors.right: clearButton.right
+      height: parent.height * 0.08
+      text: "Копировать лог"
+      background: Rectangle{
+          property var normalColor: "#9dcf0a"
+          property var pressedColor: "#cfc10a"
+          color: copyLogButton.pressed ? pressedColor : normalColor
+          radius: 8
+      }
+      onClicked: {
+          toast.toastOn("буфер обновлён")
+          copyLog()
+      }
+    }
+
     CheckBox {
       id: needWrap
       anchors.top: startStopLog.bottom
@@ -203,24 +248,6 @@ Page {
       checked: false
       anchors.top: needWrap.bottom
       text: qsTr("Очищать поле ввода")
-    }
-
-    Button {
-      id: copyLogButton
-      anchors.top: needClear.bottom
-      anchors.left: parent.left
-      height: parent.height * 0.08
-      width: parent.width * 0.49
-      text: "Копировать лог"
-      background: Rectangle{
-          property var normalColor: "#9dcf0a"
-          property var pressedColor: "#cfc10a"
-          color: copyLogButton.pressed ? pressedColor : normalColor
-          radius: 8
-      }
-      onClicked: {
-          copyLog()
-      }
     }
 
     //скрытый помощник копирования (как в Joystick.qml)

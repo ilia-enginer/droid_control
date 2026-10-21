@@ -17,6 +17,8 @@ Dialog {
         device.get_last_device()
     }
 
+    property string deviceAddress: ""     // для хранения id устройства
+
     header: Column {
         anchors.left: devicesDialog.Left
         anchors.right: devicesDialog.Right
@@ -60,7 +62,7 @@ Dialog {
            color: "#cccccc"
            border.width: 2
            border.color: "#666699"
-           radius: 10
+           radius: 10  
 
            MouseArea {
                anchors.fill: parent
@@ -68,7 +70,10 @@ Dialog {
                    device.connectToDevice(modelData.deviceAddress,modelData.deviceName,modelData.coreConfig);
                }
                onPressAndHold: {
-                   myPopup.y = box.y
+                   deviceAddress = modelData.deviceAddress
+             //      console.log("element #: ", index);
+                   index > 0 ? upList.enabled = true : upList.enabled = false
+                   myPopup.y = box.y - (box.height / 2)
                    myPopup.open()
                }
            }
@@ -113,10 +118,19 @@ Dialog {
         x: (parent.width / 2) + (parent.width / 4)
         padding: 1
 
+        // появление
+        enter: Transition {
+                NumberAnimation { property: "opacity"; from: 0.0; to: 1.0; duration: 450 }
+            }
+        // изчезновение
+        exit: Transition {
+                NumberAnimation { property: "opacity"; from: 1.0; to: 0.0; duration: 450 }
+            }
+
         // Стиль фона
         background: Rectangle {
-            border.color: "#21be2b"
-            radius: 4
+            border.color: "#8c2020"
+            radius: 6
         }
 
         Column {
@@ -125,13 +139,25 @@ Dialog {
             spacing: 1
 
             RoundButton {
+                id: upList
+                height: devicesDialog.height * 0.07
+                highlighted: true
+                radius: 6
+                text: "В начало списка"
+                onClicked: {
+                    settParam.upListDevice(deviceAddress)
+                    myPopup.close()
+                }
+           }
+            RoundButton {
                 id: delElement
                 height: devicesDialog.height * 0.07
                 highlighted: true
                 radius: 6
                 text: "Удалить"
                 onClicked: {
-
+                    settParam.deleteDevice(deviceAddress)
+                    myPopup.close()
                 }
             }
         }
@@ -146,6 +172,7 @@ Dialog {
         anchors.left: devicesDialog.Left
         anchors.right: devicesDialog.Right
         anchors.bottom: devicesDialog.footer.top
+        anchors.bottomMargin: searchButton.height
         model: device.devicesList
         spacing : 5
 
@@ -203,9 +230,16 @@ Dialog {
             text: "Начать поиск"
 
             onClicked: {
-                devicesWarning.visible = false
-                device.startDeviceDiscovery();
-                appManager.ensureBluetoothPermissions();
+                if(Qt.platform.os === "windows")
+                {
+                    device.addingNewDevicesWindows();
+                }
+                else
+                {
+                    devicesWarning.visible = false
+                    device.startDeviceDiscovery();
+                    appManager.ensureBluetoothPermissions();
+                }
             }
         }
 

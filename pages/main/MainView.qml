@@ -6,7 +6,6 @@ import QtQuick.Controls
 import Qt.labs.settings
 import QtQuick.Controls.Material
 
-//Pane {
 Page{
     id: pane
     Image {

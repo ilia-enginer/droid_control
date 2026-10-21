@@ -132,6 +132,8 @@ public:
 
     void setDevName(QString newName);
 
+    int del_settings(QString id);
+
 public slots:
     int saveFullParam();
 
@@ -166,6 +168,8 @@ signals:
     void ch2_cheng_ch4_chang();
 
 private:
+    int reading_devices_from_memory(QVector<QStringList> &lastParams, int &num);
+    bool searching_device_in_memory(QVector<QStringList> lastParams, QString id, int &num);
 
     QString devName = "";   // имя подключенного устройства. для хранения настроек
 

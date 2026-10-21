@@ -9,8 +9,10 @@
 #include <QMetaEnum>
 #include <QString>
 #include <QCoreApplication>
-#include "../Shar/display_working/commun_display.h"
 
+#include "../Shar/display_working/commun_display.h"
+#include "../communication/device/device.h"
+#include "../Pylt/pylt_settings.h"
 
 
 
@@ -44,6 +46,8 @@ public:
     ~Settings(); 
 
     void setCommun_display(Commun_display *newCommun_display);     
+    void setDevice(Device *device);
+    void setPylt_settings(Pylt_settings *newPylt_settings);
 
     QByteArray get_full_param(void);
     int set_full_param(QByteArray &param);
@@ -88,6 +92,9 @@ public slots:
     int setIdDevice(int id, bool refresh);
     int getIdDevice();
 
+    int deleteDevice(QString idDev);
+    int upListDevice(QString idDev);
+
 Q_SIGNALS:
     void timer1Changed(int value);
 
@@ -114,7 +121,13 @@ Q_SIGNALS:
 
 
 private:
+    int reading_fullParam_from_memory(QVector<QStringList> &lastParams, int &num);
+    bool searching_fullParam_in_memory(QVector<QStringList> lastDevices, QString id, int &num);
+    int del_paramShar(QString id);
+
     Commun_display * _commun_display = nullptr;
+    Device              * device_ = nullptr;
+    Pylt_settings       * _pylt_settings = nullptr;
 
     int timer1 = 100;
     float joystickAmplitude = 100;

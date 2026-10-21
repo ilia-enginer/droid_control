@@ -55,6 +55,9 @@
 #include <QQuickStyle>
 #include <QIcon>
 #include <QDebug>
+#include <QSurfaceFormat>
+#include <QQuickWindow>
+#include <cstdio>
 
 #include "source/communication/device/device.h"
 #include "source/main/mainmodel.h"
@@ -66,6 +69,7 @@
 #include "source/communication/unpacking.h"
 #include "source/Shar/communication/rx_commands.h"
 #include "source/Shar/display_working/commun_display.h"
+#include "source/Shar/display_working/chartcontroller.h"
 #include "source/Shar/communication/tx_commands.h"
 #include "source/main/settings.h"
 #include "source/update/updatehex.h"
@@ -77,12 +81,91 @@
 #include "source/Pylt/communication/tx_commandsPylt.h"
 #include "source/Pylt/pylt_settings.h"
 
+// ---------------------------------------------------------------------------
+// Обработчик сообщений Qt.
+// Вызывается для каждого qDebug/qWarning/qCritical/qFatal и для внутренних
+// предупреждений Qt (включая QQmlEngine::setContextForObject и т.п.).
+// Печатает категорию, текст, файл и строку источника — это позволяет
+// найти, откуда именно пришло предупреждение.
+// ---------------------------------------------------------------------------
+static void myMessageHandler(QtMsgType type,
+                             const QMessageLogContext &ctx,
+                             const QString &msg)
+{
+    const char *level = "INFO";
+    switch (type) {
+    case QtDebugMsg:    level = "DEBUG"; break;
+    case QtInfoMsg:     level = "INFO";  break;
+    case QtWarningMsg:  level = "WARN";  break;
+    case QtCriticalMsg: level = "CRIT";  break;
+    case QtFatalMsg:    level = "FATAL"; break;
+    }
+
+    // ctx.file и ctx.function могут быть nullptr, если категория отключена
+    // или сборка без QMessageLogContext (release без QT_MESSAGELOGCONTEXT).
+    const char *file = ctx.file ? ctx.file : "?";
+    const char *func = ctx.function ? ctx.function : "?";
+    const int   line = ctx.line;
+
+    // Печатаем в stderr, чтобы не смешиваться с qDebug-выводом в stdout.
+    std::fprintf(stderr,
+                 "[%s] %s\n"
+                 "        at %s:%d (%s)\n",
+                 level,
+                 qPrintable(msg),
+                 file,
+                 line,
+                 func);
+}
+
 
 int main(int argc, char *argv[])
 {
+    // Ставим обработчик ДО создания QApplication и до загрузки QML.
+//    qInstallMessageHandler(myMessageHandler);
+
+    // для OpenGL
+    // ДО создания QApplication!
+    QSurfaceFormat fmt;
+    fmt.setVersion(3, 3);
+    fmt.setProfile(QSurfaceFormat::CoreProfile);
+    fmt.setRenderableType(QSurfaceFormat::OpenGL);
+    fmt.setDepthBufferSize(24);
+    fmt.setStencilBufferSize(8);
+    fmt.setSamples(4);
+    QSurfaceFormat::setDefaultFormat(fmt);
+
+    // Qt 6: указать RHI-бэкенд OpenGL
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+
+
     QApplication::setApplicationName("Gallery");
     QApplication::setOrganizationName("QtProject");
     QApplication app(argc, argv);
+
+
+    QOpenGLContext ctx;
+    ctx.setFormat(fmt);
+    if (!ctx.create()) {
+        qDebug() << "Failed to create OpenGL context";
+    } else {
+        QOffscreenSurface surface;
+        surface.setFormat(ctx.format());
+        surface.create();
+        if (!surface.isValid()) {
+            qDebug() << "Offscreen surface invalid";
+        } else if (!ctx.makeCurrent(&surface)) {
+            qDebug() << "makeCurrent failed";
+        } else {
+            QOpenGLFunctions *f = ctx.functions();
+            qDebug() << "Vendor:"   << reinterpret_cast<const char*>(f->glGetString(GL_VENDOR));
+            qDebug() << "Renderer:" << reinterpret_cast<const char*>(f->glGetString(GL_RENDERER));
+            qDebug() << "Version:"  << reinterpret_cast<const char*>(f->glGetString(GL_VERSION));
+            qDebug() << "GLSL:"     << reinterpret_cast<const char*>(f->glGetString(GL_SHADING_LANGUAGE_VERSION));
+            ctx.doneCurrent();
+        }
+    }
+
 
     QIcon::setThemeName("gallery");
 
@@ -128,8 +211,8 @@ int main(int argc, char *argv[])
     NotificationClient  * notificationClient    = new NotificationClient();
     MainSerialPort      * mainSerialPort        = new MainSerialPort();
     Commun_display      * commun_display        = new Commun_display();
+    ChartController     * chartController       = new ChartController();
     Pylt_settings       * pylt_settings         = new Pylt_settings();
-
 
     packing->setCrc(crc);
     packing->setCommun_display(commun_display);
@@ -160,6 +243,8 @@ int main(int argc, char *argv[])
     rx_commands_Pylt->setCommun_display(commun_display);
 
     settings->setCommun_display(commun_display);
+    settings->setDevice(device);
+    settings->setPylt_settings(pylt_settings);
 
     device->setCommun_display(commun_display);
 
@@ -186,6 +271,7 @@ int main(int argc, char *argv[])
     updateApp->setCommun_display(commun_display);
 
     commun_display->setNotificationClient(notificationClient);
+    commun_display->setChartController(chartController);
 
     mainSerialPort->setCommun_display(commun_display);
 
@@ -207,6 +293,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("updateApp", updateApp);
     engine.rootContext()->setContextProperty("packing", packing);
     engine.rootContext()->setContextProperty("commun_display", commun_display);
+    engine.rootContext()->setContextProperty("chartController", chartController);
     engine.rootContext()->setContextProperty("tx_commands", tx_commands);
     engine.rootContext()->setContextProperty("settParam", settings);
     engine.rootContext()->setContextProperty("updateHexx", updateHex);
@@ -227,3 +314,5 @@ int main(int argc, char *argv[])
     }
     return app.exec();
 }
+
+
