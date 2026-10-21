@@ -122,7 +122,7 @@ void NotificationClient::updateAndroidNotification() {
   qDebug() << "[NotificationClient] Application Context obtained successfully";
   
   // ИСПРАВЛЕНИЕ #2: Запускаем в worker thread с правильным JNI thread attachment
-  QtConcurrent::run([msg, appContext]() {
+    auto res = QtConcurrent::run([msg, appContext]() {
     qDebug() << "[NotificationClient] Inside QtConcurrent::run lambda";
     qDebug() << "[NotificationClient] Worker thread:" << QThread::currentThread();
     

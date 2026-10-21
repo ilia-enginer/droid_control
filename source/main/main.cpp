@@ -88,7 +88,7 @@
 // Печатает категорию, текст, файл и строку источника — это позволяет
 // найти, откуда именно пришло предупреждение.
 // ---------------------------------------------------------------------------
-static void myMessageHandler(QtMsgType type,
+void myMessageHandler(QtMsgType type,
                              const QMessageLogContext &ctx,
                              const QString &msg)
 {
@@ -124,19 +124,19 @@ int main(int argc, char *argv[])
     // Ставим обработчик ДО создания QApplication и до загрузки QML.
 //    qInstallMessageHandler(myMessageHandler);
 
-    // для OpenGL
-    // ДО создания QApplication!
-    QSurfaceFormat fmt;
-    fmt.setVersion(3, 3);
-    fmt.setProfile(QSurfaceFormat::CoreProfile);
-    fmt.setRenderableType(QSurfaceFormat::OpenGL);
-    fmt.setDepthBufferSize(24);
-    fmt.setStencilBufferSize(8);
-    fmt.setSamples(4);
-    QSurfaceFormat::setDefaultFormat(fmt);
+//    // для OpenGL
+//    // ДО создания QApplication!
+//    QSurfaceFormat fmt;
+//    fmt.setVersion(3, 3);
+//    fmt.setProfile(QSurfaceFormat::CoreProfile);
+//    fmt.setRenderableType(QSurfaceFormat::OpenGL);
+//    fmt.setDepthBufferSize(24);
+//    fmt.setStencilBufferSize(8);
+//    fmt.setSamples(4);
+//    QSurfaceFormat::setDefaultFormat(fmt);
 
-    // Qt 6: указать RHI-бэкенд OpenGL
-    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+//    // Qt 6: указать RHI-бэкенд OpenGL
+//    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
 
 
     QApplication::setApplicationName("Gallery");
@@ -144,27 +144,27 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
 
-    QOpenGLContext ctx;
-    ctx.setFormat(fmt);
-    if (!ctx.create()) {
-        qDebug() << "Failed to create OpenGL context";
-    } else {
-        QOffscreenSurface surface;
-        surface.setFormat(ctx.format());
-        surface.create();
-        if (!surface.isValid()) {
-            qDebug() << "Offscreen surface invalid";
-        } else if (!ctx.makeCurrent(&surface)) {
-            qDebug() << "makeCurrent failed";
-        } else {
-            QOpenGLFunctions *f = ctx.functions();
-            qDebug() << "Vendor:"   << reinterpret_cast<const char*>(f->glGetString(GL_VENDOR));
-            qDebug() << "Renderer:" << reinterpret_cast<const char*>(f->glGetString(GL_RENDERER));
-            qDebug() << "Version:"  << reinterpret_cast<const char*>(f->glGetString(GL_VERSION));
-            qDebug() << "GLSL:"     << reinterpret_cast<const char*>(f->glGetString(GL_SHADING_LANGUAGE_VERSION));
-            ctx.doneCurrent();
-        }
-    }
+//    QOpenGLContext ctx;
+//    ctx.setFormat(fmt);
+//    if (!ctx.create()) {
+//        qDebug() << "Failed to create OpenGL context";
+//    } else {
+//        QOffscreenSurface surface;
+//        surface.setFormat(ctx.format());
+//        surface.create();
+//        if (!surface.isValid()) {
+//            qDebug() << "Offscreen surface invalid";
+//        } else if (!ctx.makeCurrent(&surface)) {
+//            qDebug() << "makeCurrent failed";
+//        } else {
+//            QOpenGLFunctions *f = ctx.functions();
+//            qDebug() << "Vendor:"   << reinterpret_cast<const char*>(f->glGetString(GL_VENDOR));
+//            qDebug() << "Renderer:" << reinterpret_cast<const char*>(f->glGetString(GL_RENDERER));
+//            qDebug() << "Version:"  << reinterpret_cast<const char*>(f->glGetString(GL_VERSION));
+//            qDebug() << "GLSL:"     << reinterpret_cast<const char*>(f->glGetString(GL_SHADING_LANGUAGE_VERSION));
+//            ctx.doneCurrent();
+//        }
+//    }
 
 
     QIcon::setThemeName("gallery");

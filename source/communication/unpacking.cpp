@@ -199,9 +199,10 @@ Unpacking::checkBalance()
 int
 Unpacking::choosingDevice()
 {
+    qint8 id = 0xF7;
     // если пришел id устройства
     if(dataRes.size() >= 1)
-        if(dataRes[0] == (qint8)0xF7) return checkID();
+        if(dataRes[0] == id) return checkID();
 
     if(_settings->getIdDevice() == _settings->ID_Devices::SHAR)
     {
