@@ -84,6 +84,16 @@ SwipeView {
     Item {
         id: page_joystick
 
+        PageIndicator {
+            id: pageIndicator
+            interactive: true
+            count: joystick_shar.count
+            currentIndex: joystick_shar.currentIndex
+            anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.topMargin: parent.height * 0.03
+        }
+
         Timer {
             id: joystick_timer
             interval: settParam.timer1

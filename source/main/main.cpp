@@ -124,48 +124,54 @@ int main(int argc, char *argv[])
     // Ставим обработчик ДО создания QApplication и до загрузки QML.
 //    qInstallMessageHandler(myMessageHandler);
 
-//    // для OpenGL
-//    // ДО создания QApplication!
-//    QSurfaceFormat fmt;
-//    fmt.setVersion(3, 3);
-//    fmt.setProfile(QSurfaceFormat::CoreProfile);
-//    fmt.setRenderableType(QSurfaceFormat::OpenGL);
-//    fmt.setDepthBufferSize(24);
-//    fmt.setStencilBufferSize(8);
-//    fmt.setSamples(4);
-//    QSurfaceFormat::setDefaultFormat(fmt);
+    // для OpenGL
+    // ДО создания QApplication!
+    QSurfaceFormat fmt;
+    fmt.setDepthBufferSize(24);
+    fmt.setStencilBufferSize(8);
+    fmt.setSamples(4);
 
-//    // Qt 6: указать RHI-бэкенд OpenGL
-//    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+    #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+        // Мобильная платформа: используем OpenGL ES, версию 3.0 (более универсально, чем 3.3)
+        fmt.setRenderableType(QSurfaceFormat::OpenGLES);
+        fmt.setVersion(3, 0);
+        // На мобильных платформах обычно не нужно принудительно устанавливать CoreProfile, оставьте по умолчанию или проверьте поддержку устройством
+    #else
+        // Настольная платформа: используем запрошенные вами OpenGL 3.3 Core
+        fmt.setRenderableType(QSurfaceFormat::OpenGL);
+        fmt.setVersion(3, 3);
+        fmt.setProfile(QSurfaceFormat::CoreProfile);
+    #endif
 
+    QSurfaceFormat::setDefaultFormat(fmt);
 
     QApplication::setApplicationName("Gallery");
     QApplication::setOrganizationName("QtProject");
     QApplication app(argc, argv);
 
-
-//    QOpenGLContext ctx;
-//    ctx.setFormat(fmt);
-//    if (!ctx.create()) {
-//        qDebug() << "Failed to create OpenGL context";
-//    } else {
-//        QOffscreenSurface surface;
-//        surface.setFormat(ctx.format());
-//        surface.create();
-//        if (!surface.isValid()) {
-//            qDebug() << "Offscreen surface invalid";
-//        } else if (!ctx.makeCurrent(&surface)) {
-//            qDebug() << "makeCurrent failed";
-//        } else {
-//            QOpenGLFunctions *f = ctx.functions();
-//            qDebug() << "Vendor:"   << reinterpret_cast<const char*>(f->glGetString(GL_VENDOR));
-//            qDebug() << "Renderer:" << reinterpret_cast<const char*>(f->glGetString(GL_RENDERER));
-//            qDebug() << "Version:"  << reinterpret_cast<const char*>(f->glGetString(GL_VERSION));
-//            qDebug() << "GLSL:"     << reinterpret_cast<const char*>(f->glGetString(GL_SHADING_LANGUAGE_VERSION));
-//            ctx.doneCurrent();
-//        }
-//    }
-
+    #if defined(Q_OS_WINDOWS)
+        QOpenGLContext ctx;
+        ctx.setFormat(fmt);
+        if (!ctx.create()) {
+            qDebug() << "Failed to create OpenGL context";
+        } else {
+            QOffscreenSurface surface;
+            surface.setFormat(ctx.format());
+            surface.create();
+            if (!surface.isValid()) {
+                qDebug() << "Offscreen surface invalid";
+            } else if (!ctx.makeCurrent(&surface)) {
+                qDebug() << "makeCurrent failed";
+            } else {
+                QOpenGLFunctions *f = ctx.functions();
+                qDebug() << "Vendor:"   << reinterpret_cast<const char*>(f->glGetString(GL_VENDOR));
+                qDebug() << "Renderer:" << reinterpret_cast<const char*>(f->glGetString(GL_RENDERER));
+                qDebug() << "Version:"  << reinterpret_cast<const char*>(f->glGetString(GL_VERSION));
+                qDebug() << "GLSL:"     << reinterpret_cast<const char*>(f->glGetString(GL_SHADING_LANGUAGE_VERSION));
+                ctx.doneCurrent();
+            }
+        }
+    #endif
 
     QIcon::setThemeName("gallery");
 

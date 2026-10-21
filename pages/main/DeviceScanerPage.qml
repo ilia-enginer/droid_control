@@ -115,7 +115,7 @@ Dialog {
         contentWidth: colum.implicitWidth
         contentHeight: colum.implicitHeight
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside // Политика закрытия
-        x: (parent.width / 2) + (parent.width / 4)
+        x: (parent.width / 2) - ((parent.width / 3)*2)
         padding: 1
 
         // появление
