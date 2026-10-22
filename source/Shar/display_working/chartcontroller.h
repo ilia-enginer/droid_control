@@ -41,7 +41,7 @@ class ChartController : public QObject
 
     // Шаг по X: 1 точка = xStep единиц времени.
     // Управляется ТОЛЬКО из C++ (setXStep). QML в него не пишет.
-    Q_PROPERTY(qreal xStep READ xStep NOTIFY xStepChanged)
+    Q_PROPERTY(qreal xStep READ xStep WRITE setXStep NOTIFY xStepChanged)
 
 public:
     explicit ChartController(QObject *parent = nullptr);

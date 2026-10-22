@@ -30,15 +30,16 @@ Item {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 8
-        spacing: 6
+        anchors.margins: 4
+        spacing: 4
 
         // ------------------ График ------------------
         ChartView {
             id: chartView
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.minimumHeight: 200
+            Layout.minimumHeight: 60          // маленький минимум — график сможет сжаться
+            Layout.preferredHeight: 300
             antialiasing: true
             animationOptions: ChartView.NoAnimation
 
@@ -51,6 +52,14 @@ Item {
                 id: axisY
                 min: chartController.yMin
                 max: chartController.yMax
+
+                // до 2 знаков после запятой; при больших диапазонах — 1 или 0
+                labelFormat: {
+                    var range = Math.abs(max - min)
+                    if (range >= 100) return "%.0f"
+                    if (range >= 10)  return "%.1f"
+                    return "%.3f"
+                }
             }
 
             LineSeries { id: s0; axisX: axisX; axisY: axisY; color: channelColors[0] }
@@ -91,8 +100,6 @@ Item {
                     lastX = mouse.x
                     lastY = mouse.y
                     dragged = false
-                    // SwipeView блокируем только при реальном drag,
-                    // чтобы короткий тап не мешал листать страницы.
                 }
 
                 onPositionChanged: function(mouse) {
@@ -104,7 +111,6 @@ Item {
                     if (!dragged) {
                         dragged = true
                         chartController.notifyUserInteraction()
-                        // Сообщаем наружу: начался drag графика
                         root.interacting = true
                         root.interactionStarted()
                     }
@@ -174,24 +180,31 @@ Item {
         // ------------------ Панель: ряд 1 ------------------
         RowLayout {
             Layout.fillWidth: true
-            spacing: 6
+            Layout.minimumHeight: 28
+            Layout.preferredHeight: 32
+            spacing: 4
 
             StyledButton {
                 text: "+"
                 baseColor: root.btnZoomColor
+                Layout.minimumWidth: 30
                 Layout.preferredWidth: 44
+                Layout.fillWidth: false
                 onClicked: { chartController.notifyUserInteraction(); chartController.zoomBoth(0.8) }
             }
             StyledButton {
                 text: "−"
                 baseColor: root.btnZoomColor
+                Layout.minimumWidth: 30
                 Layout.preferredWidth: 44
+                Layout.fillWidth: false
                 onClicked: { chartController.notifyUserInteraction(); chartController.zoomBoth(1.25) }
             }
             StyledButton {
                 text: "Очистить"
                 baseColor: root.btnClearColor
                 Layout.fillWidth: true
+                Layout.minimumWidth: 40
                 onClicked: chartController.clear()
             }
             CheckBox {
@@ -199,19 +212,39 @@ Item {
                 text: "Следовать"
                 checked: chartController.autoFollow
                 palette.text: root.btnTextColor
+                Layout.fillWidth: false
+                Layout.minimumWidth: 0
                 onToggled: chartController.autoFollow = checked
+
+                contentItem: Text {
+                    text: followCheck.text
+                    color: root.btnTextColor
+                    font: followCheck.font
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                    leftPadding: followCheck.indicator.width + followCheck.spacing
+                }
             }
         }
 
         // ------------------ Панель: ряд 2 (только количество точек) ------------------
         RowLayout {
             Layout.fillWidth: true
-            spacing: 6
+            Layout.minimumHeight: 28
+            Layout.preferredHeight: 32
+            spacing: 4
 
-            Label { text: "Точек:"; color: root.btnTextColor }
+            Label {
+                text: "Точек:"
+                color: root.btnTextColor
+                Layout.minimumWidth: 0
+                elide: Text.ElideRight
+            }
             ComboBox {
                 id: pointsCombo
                 Layout.fillWidth: true
+                Layout.minimumWidth: 50
+                Layout.preferredHeight: 30
                 model: ["50", "100", "200", "Все"]
                 currentIndex: 3
                 Component.onCompleted: chartController.maxPoints = 0
@@ -223,11 +256,13 @@ Item {
         }
 
         // ------------------ Панель: ряд 3 (9 чекбоксов) ------------------
-        GridLayout {
+        // Используем Flow вместо GridLayout, чтобы чекбоксы переносились
+        // на новую строку при нехватке ширины.
+        Flow {
             Layout.fillWidth: true
-            columns: 3
-            rowSpacing: 2
-            columnSpacing: 8
+            Layout.minimumHeight: 20
+            Layout.preferredHeight: implicitHeight
+            spacing: 4
 
             Repeater {
                 model: 9
@@ -235,6 +270,9 @@ Item {
                     id: channelCheck
                     checked: false
                     text: channelNames[index]
+                    height: 24
+                    // ширина по содержимому, но не больше доступной
+                    width: Math.min(implicitWidth, root.width / 2)
 
                     Component.onCompleted:
                         chartController.setChannelEnabled(index, false)
@@ -244,6 +282,7 @@ Item {
                         color: channelColors[index % channelColors.length]
                         font: channelCheck.font
                         verticalAlignment: Text.AlignVCenter
+                        elide: Text.ElideRight
                         leftPadding: channelCheck.indicator.width + channelCheck.spacing
                     }
 
@@ -277,17 +316,17 @@ Item {
         id: sb
         property color baseColor: "#7fa8d8"
 
-        implicitHeight: 34
-        implicitWidth: 44
-        leftPadding: 10
-        rightPadding: 10
-        topPadding: 4
-        bottomPadding: 4
+        implicitHeight: 30
+        implicitWidth: 40
+        leftPadding: 6
+        rightPadding: 6
+        topPadding: 2
+        bottomPadding: 2
 
         contentItem: Text {
             text: sb.text
             color: sb.palette.buttonText
-            font.pixelSize: 14
+            font.pixelSize: 13
             font.bold: true
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
@@ -295,7 +334,7 @@ Item {
         }
 
         background: Rectangle {
-            radius: 8
+            radius: 6
             color: {
                 if (sb.pressed) return Qt.darker(sb.baseColor, 1.15)
                 if (sb.hovered) return Qt.lighter(sb.baseColor, 1.10)

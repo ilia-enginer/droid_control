@@ -9,8 +9,19 @@ SwipeView {
     id: joystick_shar
     // Свайп разрешён, только если внутренний элемент не "захватил" жест
     interactive: !childBusy
-    currentIndex: 0
-    focus: false
+    currentIndex: pageIndicator.currentIndex
+    focus: true
+    activeFocusOnTab: true
+
+    // Принудительно забираем фокус при создании
+    Component.onCompleted: joystick_shar.forceActiveFocus()
+
+    // Если страница создаётся заранее (StackView/SwipeView), ловим момент,
+    // когда она реально стала видимой
+    onVisibleChanged: {
+        if (visible)
+            joystick_shar.forceActiveFocus()
+    }
 
     // true, пока какой-то внутренний элемент (график/джойстик/слайдер/удержание)
     // обрабатывает жест. Пока true — SwipeView не листает страницы.
@@ -18,17 +29,15 @@ SwipeView {
 
     onActiveFocusChanged: {
         if (!activeFocus) {
-            // Пользователь нажал или перешёл away от этого поля
             console.log("!!!!!!!!!!No active.")
             joystick_timer.running = false
             radioGroup.checkState = Qt.Unchecked
             window_focus = false
         } else {
-            // Пользователь сосредоточился на этом поле
             console.log("!!!!!!!!Focus active.")
             window_focus = true
             joystick_timer.running = true
-            tx_commands.getCheck();         // запрашивать ошибки при активации окна
+            tx_commands.getCheck();
         }
      }
 
@@ -84,14 +93,31 @@ SwipeView {
     Item {
         id: page_joystick
 
+        // === СВЕТЛЫЙ ФОН СТРАНИЦЫ ===
+        Rectangle {
+            anchors.fill: parent
+            color: "#eef3f8"
+            z: -1
+        }
+
         PageIndicator {
             id: pageIndicator
-            interactive: true
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: joystick_mode_swith.bottom
+            anchors.topMargin: 10
             count: joystick_shar.count
             currentIndex: joystick_shar.currentIndex
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.topMargin: parent.height * 0.03
+            interactive: true
+
+            delegate: Rectangle {
+                implicitWidth: 8
+                implicitHeight: 8
+                radius: 4
+                color: index === pageIndicator.currentIndex ? "#1e88e5" : "#b0bec5"
+                border.width: 1
+                border.color: index === pageIndicator.currentIndex ? "#1565c0" : "transparent"
+                opacity: index === pageIndicator.currentIndex ? 1.0 : 0.6
+            }
         }
 
         Timer {
@@ -119,12 +145,17 @@ SwipeView {
             height: parent.height * 0.33
             anchors.left: parent.left
             anchors.right: parent.right
-            color: "#f7ebee"
+            color: "#ffffff"
+            border.width: 1
+            border.color: "#cfd8dc"
+            radius: 6
+            anchors.margins: 6
         }
 
         ScrollView {
             id: scrolViewLogArea_2
             anchors.fill: senderBackground_2
+            anchors.margins: 1
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
             ScrollBar.vertical: ScrollBar {
                 id: scrollBar
@@ -136,136 +167,144 @@ SwipeView {
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
 
+                contentItem: Rectangle {
+                    implicitWidth: 4
+                    radius: 2
+                    color: scrollBar.pressed ? "#1e88e5" : "#b0bec5"
+                }
+
                 Image {
                     anchors.top: parent.top
                     width: parent.width
                     height: 15
-                    source: "back.png" // Путь к файлу с иконкой-стрелкой вверх
+                    source: "back.png"
                     rotation: 90
                     MouseArea {
                         anchors.fill: parent
-                        onClicked: scrollBar.decrease() // Прокрутка вверх
+                        onClicked: scrollBar.decrease()
                     }
                 }
                 Image {
                     anchors.bottom: parent.bottom
                     width: parent.width
                     height: 15
-                    source: "back.png" // Путь к файлу с иконкой-стрелкой вниз
+                    source: "back.png"
                     rotation: 270
                     MouseArea {
                         anchors.fill: parent
-                        onClicked: scrollBar.increase() // Прокрутка вниз
+                        onClicked: scrollBar.increase()
                     }
                 }
             }
 
             ListView {
-                   id: listView1
-                   anchors.fill: scrolViewLogArea_2
-                   snapMode:ListView.SnapOneItem
-                   clip: true
+                id: listView1
+                anchors.fill: scrolViewLogArea_2
+                anchors.margins: 2
+                snapMode:ListView.SnapOneItem
+                clip: true
+                spacing: -1
+                reuseItems: true
+                model: logListModel_2
 
-                   spacing: -1
-                   reuseItems: true
-                   model: logListModel_2
+                onMovementStarted: joystick_shar.childBusy = true
+                onMovementEnded:   joystick_shar.childBusy = false
 
-                   // Пока пользователь скроллит лог — не даём SwipeView
-                   // перехватить горизонтальный жест.
-                   onMovementStarted: joystick_shar.childBusy = true
-                   onMovementEnded:   joystick_shar.childBusy = false
+                delegate: Rectangle {
+                    id: rowRoot
+                    width: listView1.width * 0.95
+                    height: rowText.implicitHeight
+                    radius: 4
+                    color: selected ? "#d6eaff" : "transparent"
+                    border.width: selected ? 1 : 0
+                    border.color: "#1e88e5"
 
-                   delegate: Rectangle {
-                       id: rowRoot
-                       width: listView1.width * 0.95
-                       height: rowText.implicitHeight //+ 8
-                       radius: 4
-                       color: selected ? "#cfe8ff" : "transparent"
-                       border.width: selected ? 1 : 0
-                       border.color: "#4a90e2"
+                    required property int index
+                    required property string msg
+                    required property bool selected
 
-                       required property int index
-                       required property string msg
-                       required property bool selected
+                    Text {
+                        id: rowText
+                        anchors.left: parent.left
+                        anchors.leftMargin: 8
+                        anchors.right: parent.right
+                        anchors.rightMargin: 4
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: msg
+                        wrapMode: Text.Wrap
+                        color: selected ? "#0d47a1" : "#263238"
+                        font.pixelSize: 14
+                    }
 
-                       Text {
-                           id: rowText
-                           anchors.left: parent.left
-                           anchors.leftMargin: 14
-                           anchors.right: parent.right
-                           anchors.rightMargin: 4
-                           anchors.verticalCenter: parent.verticalCenter
-                           text: msg
-                           wrapMode: Text.Wrap
-                           color: "black"
-                           font.pixelSize: 14
-                       }
+                    MouseArea {
+                        anchors.fill: parent
+                        acceptedButtons: Qt.LeftButton
 
-                       MouseArea {
-                           anchors.fill: parent
-                           acceptedButtons: Qt.LeftButton
+                        onClicked: {
+                            logListModel_2.setProperty(index, "selected", !selected)
+                            updateClipboardFromSelection()
+                        }
 
-                           onClicked: {
-                               logListModel_2.setProperty(index, "selected", !selected)
-                               updateClipboardFromSelection()
-                           }
+                        onDoubleClicked: {
+                            logListModel_2.setProperty(index, "selected", true)
+                            updateClipboardFromSelection()
+                        }
+                    }
+                }
 
-                           onDoubleClicked: {
-                               logListModel_2.setProperty(index, "selected", true)
-                               updateClipboardFromSelection()
-                           }
-                       }
-                   }
+                Connections {
+                    target: commun_display
+                    function onLogJoy(type, msg) {
+                        if(!addingLog)   return;
+                        if (window_focus) {
+                            if (mainModel.adminFlag === false) {
+                                logListModel_2.append({ msg: type + msg, selected: false })
+                                listView1.positionViewAtEnd()
+                            }
+                        }
+                    }
+                    function onLogServis(type, msg) {
+                        if(!addingLog)   return;
+                        if (window_focus) {
+                            if (mainModel.adminFlag === true) {
+                                logListModel_2.append({ msg: type + msg, selected: false })
+                                listView1.positionViewAtEnd()
+                            }
+                        }
+                    }
+                }
 
-                   Connections {
-                       target: commun_display
-                       function onLogJoy(type, msg) {
-                           if(!addingLog)   return;
-                           if (window_focus) {
-                               if (mainModel.adminFlag === false) {
-                                   logListModel_2.append({ msg: type + msg, selected: false })
-                                   listView1.positionViewAtEnd()
-                               }
-                           }
-                       }
-                       function onLogServis(type, msg) {
-                           if(!addingLog)   return;
-                           if (window_focus) {
-                               if (mainModel.adminFlag === true) {
-                                   logListModel_2.append({ msg: type + msg, selected: false })
-                                   listView1.positionViewAtEnd()
-                               }
-                           }
-                       }
-                   }
-
-                   // Сама модель, в которой будут содержаться все элементы
-                   ListModel {
-                       id: logListModel_2 // задаём ей id для обращения
-                   }
-               }
+                ListModel {
+                    id: logListModel_2
+                }
+            }
         }
 
         // уведомление о копировании
         ToolTip {
             id: toast
-            delay: 0  // задержка перед показом
-            timeout: 1000  // время скрытия
-            x: (parent.width - width) / 2  // по горизонтали по центру
-            y: senderBackground_2.y + senderBackground_2.height //(parent.height - 100)  // по вертикали снизу
+            delay: 0
+            timeout: 1000
+            x: (parent.width - width) / 2
+            y: senderBackground_2.y + senderBackground_2.height
 
-            // появление
             enter: Transition {
-                    NumberAnimation { property: "opacity"; from: 0.0; to: 1.0; duration: 450 }
-                }
-            // изчезновение
+                NumberAnimation { property: "opacity"; from: 0.0; to: 1.0; duration: 450 }
+            }
             exit: Transition {
-                    NumberAnimation { property: "opacity"; from: 1.0; to: 0.0; duration: 250 }
-                }
+                NumberAnimation { property: "opacity"; from: 1.0; to: 0.0; duration: 250 }
+            }
 
             background: Rectangle {
                 color: "#7f856f"
-                radius: 15  // скруглённые углы
+                radius: 15
+                border.width: 1
+                border.color: "#aab39a"
+            }
+            contentItem: Text {
+                text: toast.text
+                color: "#ffffff"
+                wrapMode: Text.Wrap
             }
             function toastOn(msg){
                 toast.text = qsTr(msg)
@@ -273,22 +312,29 @@ SwipeView {
             }
         }
 
-
         //очистка лога
         Button {
             id: clearButton
             width: senderBackground_2.width * 0.08
             height: senderBackground_2.height * 0.45
             anchors.top: senderBackground_2.top
+            anchors.topMargin: 6
             anchors.right: senderBackground_2.right
-          //  anchors.rightMargin: Qt.platform.os === "windows" ? 30 : 0
             anchors.rightMargin: 30
-            opacity: 0.4
+            opacity: 0.9
+
+            background: Rectangle {
+                color: clearButton.pressed ? "#bbdefb" : (clearButton.hovered ? "#e3f2fd" : "#f5f9ff")
+                radius: 4
+                border.width: 1
+                border.color: "#90caf9"
+            }
 
             contentItem: Text{
                 horizontalAlignment: Qt.AlignHCenter
                 text: "Clear"
                 font.pointSize: 6
+                color: "#0d47a1"
             }
 
             onClicked: {
@@ -305,12 +351,20 @@ SwipeView {
                 anchors.topMargin: 3
                 anchors.right: senderBackground_2.right
                 anchors.rightMargin: 30
-                opacity: 0.8
+                opacity: 0.9
+
+                background: Rectangle {
+                    color: parent.pressed ? "#bbdefb" : (parent.hovered ? "#e3f2fd" : "#f5f9ff")
+                    radius: 4
+                    border.width: 1
+                    border.color: "#90caf9"
+                }
 
                 contentItem: Text{
                     horizontalAlignment: Qt.AlignHCenter
                     text: addingLog ? "Стоп" : "Старт"
                     font.pointSize: 6
+                    color: "#0d47a1"
                 }
 
                 onClicked: {
@@ -333,6 +387,8 @@ SwipeView {
             background: Rectangle {
                 color: "#e6e6e6"
                 radius: 3
+                border.width: 1
+                border.color: "#cfd8dc"
             }
 
             contentItem: Item {
@@ -379,7 +435,8 @@ SwipeView {
             horizontalAlignment: Qt.AlignHCenter
             anchors.verticalCenter: voltage.verticalCenter
             text: commun_display.Volt.toFixed(1) + "V"
-            color: "black"
+            color: "#263238"
+            font.bold: true
         }
 
         //ток
@@ -396,6 +453,8 @@ SwipeView {
             background: Rectangle {
                 color: "#e6e6e6"
                 radius: 3
+                border.width: 1
+                border.color: "#cfd8dc"
             }
 
             contentItem: Item {
@@ -442,7 +501,8 @@ SwipeView {
             horizontalAlignment: Qt.AlignHCenter
             anchors.verticalCenter: current.verticalCenter
             text: commun_display.Cur.toFixed(2) + "А"
-            color: "black"
+            color: "#263238"
+            font.bold: true
         }
 
         //имя приемника
@@ -454,6 +514,8 @@ SwipeView {
             anchors.top: current.bottom
             anchors.topMargin: 10
             text: commun_display.curDeviceName_
+            color: "#263238"
+            font.bold: true
         }
 
         Image {
@@ -483,8 +545,8 @@ SwipeView {
 
         MultiPointTouchArea{
             id: mouse_touch
-            property real mouseX2 : verticalOnly ? width * 0.5 : point1.x //mouseX
-            property real mouseY2 : horizontalOnly ? height * 0.5 : point1.y //mouseY
+            property real mouseX2 : verticalOnly ? width * 0.5 : point1.x
+            property real mouseY2 : horizontalOnly ? height * 0.5 : point1.y
             property real fingerAngle : Math.atan2(mouseX2, mouseY2)
             property int mcx : mouseX2 - width * 0.5
             property int mcy : mouseY2 - height * 0.5
@@ -496,11 +558,14 @@ SwipeView {
             property double signal_y : -(mouseY2 - joystick.height/2) / distanceBound
 
             anchors.fill: joystick
+            width: joystick.width - 60   // 60px отступа справа под слайдер
+            height: joystick.height
+            // Не перехватывать касания за пределами джойстика (особенно справа, где levelSlider)
+            z: 1
 
             minimumTouchPoints: 1
             maximumTouchPoints: 5
             touchPoints: [
-
                 TouchPoint {id: point1 },
                 TouchPoint {id: point2 },
                 TouchPoint {id: point3 },
@@ -509,7 +574,6 @@ SwipeView {
 
             onPressed: {
                 returnAnimation.stop();
-                // Блокируем SwipeView, пока палец на джойстике
                 joystick_shar.childBusy = true
             }
 
@@ -521,12 +585,10 @@ SwipeView {
                     amplitude = 0
                     azimuth = 0
                     offsetInfo.text = Math.round(azimuth * 100) / 100 + "/" + Math.round(amplitude * 100) / 100
-                    // Отпускаем SwipeView
                     joystick_shar.childBusy = false
             }
 
             onCanceled: {
-                // Страховка: если жест перехвачен — снимаем блокировку
                 joystick_shar.childBusy = false
             }
 
@@ -540,7 +602,6 @@ SwipeView {
                     thumb.anchors.verticalCenterOffset = Math.sin(angle) * distanceBound
                 }
 
-                // Fire the signal to indicate the joystick has moved
                 angle = Math.atan2(signal_y, signal_x)
 
                 var offX = 0
@@ -564,7 +625,6 @@ SwipeView {
                 offsetX = offX
                 offsetY = offY
             }
-
         }
 
         Image {
@@ -573,8 +633,8 @@ SwipeView {
             property real angle : 0
             property real distance : 0
 
-            width: 200//parent.width * 0.5
-            height: 200// parent.height * 0.35
+            width: 200
+            height: 200
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: senderPageLabel.bottom
             anchors.topMargin: 10
@@ -587,6 +647,10 @@ SwipeView {
                 highlighted: true
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
+                palette.button: "#f5f9ff"
+                palette.buttonText: "#0d47a1"
+                palette.highlight: "#1e88e5"
+                palette.highlightedText: "#ffffff"
 
                 onPressed: {
                     amplitude = 0.5
@@ -609,6 +673,10 @@ SwipeView {
                 anchors.bottom: parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottomMargin: 30
+                palette.button: "#f5f9ff"
+                palette.buttonText: "#0d47a1"
+                palette.highlight: "#1e88e5"
+                palette.highlightedText: "#ffffff"
 
                 onPressed: {
                     amplitude = 0.5
@@ -631,6 +699,10 @@ SwipeView {
                 anchors.rightMargin: 15
                 anchors.top: upBut.bottom
                 anchors.topMargin: 15
+                palette.button: "#f5f9ff"
+                palette.buttonText: "#0d47a1"
+                palette.highlight: "#1e88e5"
+                palette.highlightedText: "#ffffff"
 
                 onPressed: {
                     amplitude = 0.5
@@ -653,6 +725,10 @@ SwipeView {
                 anchors.leftMargin: 15
                 anchors.top: upBut.bottom
                 anchors.topMargin: 15
+                palette.button: "#f5f9ff"
+                palette.buttonText: "#0d47a1"
+                palette.highlight: "#1e88e5"
+                palette.highlightedText: "#ffffff"
 
                 onPressed: {
                     amplitude = 0.5
@@ -671,22 +747,33 @@ SwipeView {
 
         //высота
         Slider {
-            id: levelSlider
-            from: settParam.heightAmplitudemin
-            to: settParam.heightAmplitude
-            orientation: Qt.Vertical
-            value: (((settParam.heightAmplitude - settParam.heightAmplitudemin) / 2) + settParam.heightAmplitudemin)
-            anchors.right: parent.right
-            anchors.verticalCenter: joystick.verticalCenter
-            onMoved: {level = value}
-            Component.onCompleted: {
-                            level = value
-                        }
+                    id: levelSlider
+                    from: settParam.heightAmplitudemin
+                    to: settParam.heightAmplitude
+                    orientation: Qt.Vertical
+                    value: (((settParam.heightAmplitude - settParam.heightAmplitudemin) / 2) + settParam.heightAmplitudemin)
+                    anchors.right: parent.right
+                    anchors.rightMargin: 20
+                    anchors.verticalCenter: joystick.verticalCenter
+                    // Явные размеры — иначе при кастомном фоне область захвата может схлопнуться
+                    width: 40
+                    height: Math.max(200, joystick.height)
+                    z: 1000
+                    enabled: true
+                    live: true
 
-            // Пока слайдер в нажатом состоянии — блокируем SwipeView,
-            // чтобы вертикальный drag не уезжал в листание страниц.
-            onPressedChanged: joystick_shar.childBusy = pressed
-        }
+                    onMoved: { level = value }
+                    Component.onCompleted: { level = value }
+
+                    onPressedChanged: joystick_shar.childBusy = pressed
+
+                    // Стандартный вид — точно работает, не перекрывает область захвата
+                    // Если нужна кастомизация — только через palette, без переопределения handle/background
+                    palette.highlight: "#1e88e5"
+                    palette.dark: "#cfd8dc"
+                    palette.mid: "#e6e6e6"
+                    palette.light: "#f5f9ff"
+                }
 
         //высота
         Label {
@@ -697,6 +784,7 @@ SwipeView {
             anchors.rightMargin: 15
             anchors.topMargin: 20
             text: "Высота"
+            color: "#455a64"
         }
 
         //режим работы
@@ -707,7 +795,7 @@ SwipeView {
             }
         }
         Column {
-            spacing: 3
+            spacing: 6
             anchors.left: parent.left
             anchors.leftMargin: 20
             anchors.verticalCenter: joystick.verticalCenter
@@ -715,6 +803,9 @@ SwipeView {
              RadioButton {
                  text: qsTr("1")
                  ButtonGroup.group: radioGroup
+                 palette.windowText: "#263238"
+                 palette.highlight: "#1e88e5"
+                 palette.highlightedText: "#ffffff"
                  onClicked: {
                      mode = Number("1")
                      ctrl_check.enabled = true
@@ -726,6 +817,9 @@ SwipeView {
              RadioButton {
                  text: qsTr("2")
                  ButtonGroup.group: radioGroup
+                 palette.windowText: "#263238"
+                 palette.highlight: "#1e88e5"
+                 palette.highlightedText: "#ffffff"
                  onClicked: {
                      mode = Number("2")
                      settParam.ctrl_ = false
@@ -737,6 +831,9 @@ SwipeView {
              RadioButton {
                  text: qsTr("3")
                  ButtonGroup.group: radioGroup
+                 palette.windowText: "#263238"
+                 palette.highlight: "#1e88e5"
+                 palette.highlightedText: "#ffffff"
                  onClicked: {
                      mode = Number("3")
                      ctrl_check.enabled = true
@@ -748,6 +845,9 @@ SwipeView {
              RadioButton {
                  text: qsTr("0")
                  ButtonGroup.group: radioGroup
+                 palette.windowText: "#263238"
+                 palette.highlight: "#1e88e5"
+                 palette.highlightedText: "#ffffff"
                  onClicked: {
                      mode = Number("0")
                      settParam.ctrl_ = false
@@ -758,6 +858,7 @@ SwipeView {
 
              Label {
                 text: qsTr("режим\nработы")
+                color: "#546e7a"
                 }
 
         }
@@ -772,6 +873,8 @@ SwipeView {
             anchors.horizontalCenter: joystick.horizontalCenter
             text: "0/0"
             visible: mainModel.adminFlag
+            color: "#1565c0"
+            font.bold: true
         }
 
         Switch {
@@ -781,6 +884,9 @@ SwipeView {
             anchors.top: offsetInfo.bottom
             anchors.topMargin: 20
             anchors.horizontalCenter: joystick.horizontalCenter
+            palette.windowText: "#263238"
+            palette.highlight: "#1e88e5"
+            palette.highlightedText: "#ffffff"
             onCheckedChanged:  {
                joystick.visible = checked
                joystick_buttons.visible = !checked
@@ -797,6 +903,9 @@ SwipeView {
           checked: settParam.ctrl_
           enabled: false
           text: qsTr("Вкл. стабилизацию")
+          palette.windowText: "#263238"
+          palette.highlight: "#1e88e5"
+          palette.highlightedText: "#ffffff"
 
           onClicked: {
             settParam.ctrl_ = ctrl_check.checked
@@ -816,6 +925,33 @@ SwipeView {
 
             // Удержание (3 секунды) не должно листать страницы
             onPressedChanged: joystick_shar.childBusy = pressed
+
+            // Видимый индикатор удержания (прогресс)
+            background: Rectangle {
+                radius: 4
+                color: "#f5f9ff"
+                border.width: 1
+                border.color: power_off.pressed ? "#e57373" : "#66bb6a"
+
+                Rectangle {
+                    id: powerProgress
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    width: parent.width * power_off.progress
+                    radius: parent.radius
+                    color: power_off.pressed ? "#ffab91" : "#a5d6a7"
+                    visible: power_off.progress > 0
+                }
+            }
+
+            contentItem: Text {
+                text: power_off.text
+                color: power_off.pressed ? "#b71c1c" : "#1b5e20"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                font.bold: true
+            }
 
             onActivated: {
                 joystick_timer.running = false

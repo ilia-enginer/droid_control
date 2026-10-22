@@ -14,6 +14,32 @@ Dialog {
     width: window.width * 0.8
     height: window.height * 0.4
 
+    // ---- Палитра ----
+    readonly property color cCard:      "#ffffff"
+    readonly property color cBorder:    "#e0e6ed"
+    readonly property color cText:      "#263238"
+    readonly property color cTextSoft:  "#546e7a"
+    readonly property color cAccent:    "#5b7cfa"
+    readonly property color cAccentD:   "#3f5fd6"
+    readonly property color cMint:      "#66bb6a"
+    readonly property color cMintD:     "#43a047"
+    readonly property color cLink:      "#1e88e5"
+
+    background: Rectangle {
+        radius: 12
+        color: cCard
+        border.width: 1
+        border.color: cBorder
+
+        Rectangle {
+            anchors.fill: parent
+            anchors.margins: -2
+            radius: parent.radius
+            color: "#000000"
+            opacity: 0.06
+            z: -1
+        }
+    }
 
     Column {
         width: parent.width

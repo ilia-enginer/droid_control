@@ -120,11 +120,11 @@ Dialog {
 
         // появление
         enter: Transition {
-                NumberAnimation { property: "opacity"; from: 0.0; to: 1.0; duration: 450 }
+                NumberAnimation { property: "opacity"; from: 0.0; to: 1.0; duration: 350 }
             }
         // изчезновение
         exit: Transition {
-                NumberAnimation { property: "opacity"; from: 1.0; to: 0.0; duration: 450 }
+                NumberAnimation { property: "opacity"; from: 1.0; to: 0.0; duration: 200 }
             }
 
         // Стиль фона

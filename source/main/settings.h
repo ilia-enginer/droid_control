@@ -15,7 +15,6 @@
 #include "../Pylt/pylt_settings.h"
 
 
-
 class Settings : public QObject
 {
     Q_OBJECT
@@ -128,6 +127,7 @@ private:
     Commun_display * _commun_display = nullptr;
     Device              * device_ = nullptr;
     Pylt_settings       * _pylt_settings = nullptr;
+
 
     int timer1 = 100;
     float joystickAmplitude = 100;

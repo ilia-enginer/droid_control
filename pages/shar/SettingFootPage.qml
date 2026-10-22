@@ -1,4 +1,3 @@
-
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Layouts
@@ -8,12 +7,21 @@ import QtQml
 
 Page {
     id: settingFoot
-    focus: false
+    focus: true
+    activeFocusOnTab: true
+
+    // Принудительно забираем фокус при появлении страницы
+    Component.onCompleted: settingFoot.forceActiveFocus()
+
+    // Если страница создаётся заранее (StackView/SwipeView), ловим момент,
+    // когда она реально стала видимой
+    onVisibleChanged: {
+        if (visible)
+            settingFoot.forceActiveFocus()
+    }
 
     onActiveFocusChanged: {
         if (!activeFocus) {
-            // Пользователь нажал или перешёл away от этого поля
-      //      console.log("No active.")
             getcurtimer.running = false
             get_foot_param.visible = false
             set_foot_param.visible = false
@@ -26,15 +34,12 @@ Page {
 
             window_focus = false
         } else {
-            // Пользователь сосредоточился на этом поле
-      //      console.log("Focus active.!")
             getcurtimer.running = true
             window_focus = true
         }
     }
 
     property bool window_focus : false
-
     property bool addingLog : true
 
     property int butClick : 0
@@ -48,6 +53,21 @@ Page {
     property int pca1 : 0
     property int pca2 : 0
     property int speedServs : 0
+
+    // ---- Приятная палитра ----
+    readonly property color cPrimary:    "#5b7cfa"
+    readonly property color cPrimaryD:   "#3f5fd6"
+    readonly property color cTeal:       "#26a69a"
+    readonly property color cTealD:      "#00796b"
+    readonly property color cCoral:      "#ff7a7a"
+    readonly property color cCoralD:     "#e05555"
+    readonly property color cAmber:      "#ffb74d"
+    readonly property color cAmberD:     "#e09a2f"
+    readonly property color cMint:       "#66bb6a"
+    readonly property color cMintD:      "#43a047"
+    readonly property color cText:       "#263238"
+    readonly property color cTextLight:  "#ffffff"
+    readonly property color cBg:         "#f4f7fb"
 
     Label {
         id: senderPageLabel
@@ -67,104 +87,182 @@ Page {
         anchors.horizontalCenter: parent.horizontalCenter
         horizontalAlignment: Qt.AlignHCenter
         text: "Не меняйте настройки, если не уверены!"
-        color: "red"
+        color: "#d32f2f"
         font.pointSize: 16
+        font.bold: true
+        padding: 6
     }
 
     Rectangle {
         id: senderBackground
         anchors.top: warring.bottom
-        color: "#f7ebee"
+        color: "#ffffff"
         width: parent.width
         height: parent.height * 0.2
+        radius: 8
+        border.width: 1
+        border.color: "#e0e6ed"
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.leftMargin: 6
+        anchors.rightMargin: 6
     }
 
     ScrollView {
         id: scrolViewLogArea
         anchors.fill: senderBackground
-        ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+        anchors.margins: 1
+        clip: true
+
+        // Горизонтальный скроллбар отключаем
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        ScrollBar.vertical.interactive: true
+
+        // Вертикальный — прижат к правому краю, реагирует на нажатия
+        ScrollBar.vertical: ScrollBar {
+            id: vbar
+            orientation: Qt.Vertical
+            policy: ScrollBar.AlwaysOn
+            interactive: true
+
+            // Явно прижимаем к правому краю ScrollView
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            width: 8
+
+            // Ползунок: стандартный size/position Controls 2
+            size: 0.3
+            position: 0.0
+
+            contentItem: Rectangle {
+                implicitWidth: 4
+                radius: 2
+                color: vbar.pressed ? "#5b7cfa" : "#cfd8dc"
+            }
+
+            // Фон дорожки (опционально, чтобы видеть, куда тянуть)
+            background: Rectangle {
+                implicitWidth: 8
+                color: "transparent"
+            }
+        }
 
         ListView {
-               id: listView1
-               anchors.fill: scrolViewLogArea
-               snapMode:ListView.SnapToItem
-               width: parent.width
-               clip: true
+            id: listView1
+            anchors.fill: parent
+            anchors.rightMargin: 10       // чтобы контент не залезал под скроллбар
+            anchors.margins: 2
+            snapMode:ListView.SnapToItem
+            width: parent.width
+            clip: true
+            spacing: 2
 
-               Connections {
-                   target: commun_display
-                   function onLogJoy(type, msg) {
-                       if(!addingLog)   return;
-                       if(window_focus)
-                       {
-                           if (mainModel.adminFlag === false){
-                                logListModel.append({msg: type + msg})
-                                listView1.positionViewAtEnd()
-                           }
-                       }
+            Connections {
+                target: commun_display
+                function onLogJoy(type, msg) {
+                    if(!addingLog)   return;
+                    if(window_focus)
+                    {
+                        if (mainModel.adminFlag === false){
+                             logListModel.append({msg: type + msg})
+                             listView1.positionViewAtEnd()
+                        }
                     }
-                   function onLogServis(type, msg) {
-                       if(!addingLog)   return;
-                       if(window_focus)
-                       {
-                           if (mainModel.adminFlag === true){
-                               logListModel.append({msg: type + msg})
-                               listView1.positionViewAtEnd()
-                           }
-                       }
-                   }
-               }
-               delegate: Column {
-                   Text {
-                       width: listView1.width * 0.95
-                       text: msg
-                       font.family: "Courier New"
-                       font.pixelSize: 14
-                       wrapMode: Text.Wrap
-                       color: "black"
-                   }
+                 }
+                function onLogServis(type, msg) {
+                    if(!addingLog)   return;
+                    if(window_focus)
+                    {
+                        if (mainModel.adminFlag === true){
+                            logListModel.append({msg: type + msg})
+                            listView1.positionViewAtEnd()
+                        }
+                    }
                 }
-               // Сама модель, в которой будут содержаться все элементы
-               model: ListModel {
-                   id: logListModel // задаём ей id для обращения
-               }
-           }
+            }
+            delegate: Rectangle {
+                width: listView1.width * 0.97
+                height: rowText.implicitHeight + 6
+                radius: 4
+                color: index % 2 === 0 ? "#f7f9fc" : "transparent"
+
+                Text {
+                    id: rowText
+                    anchors.left: parent.left
+                    anchors.leftMargin: 6
+                    anchors.right: parent.right
+                    anchors.rightMargin: 6
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width - 12
+                    text: msg
+                    font.family: "Courier New"
+                    font.pixelSize: 14
+                    wrapMode: Text.Wrap
+                    color: "#263238"
+                }
+            }
+            model: ListModel {
+                id: logListModel
+            }
+        }
     }
-    // очистка лога
+    // очистка лога — прижата к правому краю
     Button {
         id: clearButton_1
-        width: senderBackground.width * 0.08
-        height: senderBackground.height * 0.45
+        width: senderBackground.width * 0.1
+        height: senderBackground.height * 0.42
         anchors.top: senderBackground.top
+        anchors.topMargin: 6
         anchors.right: senderBackground.right
-        //anchors.rightMargin: Qt.platform.os === "windows" ? 30 : 0
-        anchors.rightMargin: 30
-        opacity: 0.5
+        anchors.rightMargin: 6
+        opacity: 0.9
+
+        background: Rectangle {
+            radius: 6
+            color: clearButton_1.pressed ? "#e05555" : (clearButton_1.hovered ? "#ff8a80" : "#ff7a7a")
+            border.width: 1
+            border.color: "#e05555"
+            Behavior on color { ColorAnimation { duration: 120 } }
+        }
         contentItem: Text{
             text: "Clear"
             font.pointSize: 6
+            color: "#ffffff"
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
         }
         onClicked: {
             logListModel.clear()
         }
     }
 
-    // остановка выпадения лога
+    // остановка выпадения лога — прижата к правому краю
     Button {
-        width: senderBackground.width * 0.08
-        height: senderBackground.height * 0.45
+        id: stopStartButton
+        width: senderBackground.width * 0.1
+        height: senderBackground.height * 0.42
         anchors.top: clearButton_1.bottom
-        anchors.topMargin: 3
+        anchors.topMargin: 4
         anchors.right: senderBackground.right
-        anchors.rightMargin: 30
-        opacity: 0.5
+        anchors.rightMargin: 6
+        opacity: 0.9
+
+        background: Rectangle {
+            radius: 6
+            color: addingLog
+                ? (stopStartButton.pressed ? "#e09a2f" : (stopStartButton.hovered ? "#ffca7a" : "#ffb74d"))
+                : (stopStartButton.pressed ? "#43a047" : (stopStartButton.hovered ? "#81c784" : "#66bb6a"))
+            border.width: 1
+            border.color: addingLog ? "#e09a2f" : "#43a047"
+            Behavior on color { ColorAnimation { duration: 120 } }
+        }
 
         contentItem: Text{
             horizontalAlignment: Qt.AlignHCenter
+            verticalAlignment: Qt.AlignVCenter
             text: addingLog ? "Стоп" : "Старт"
             font.pointSize: 6
+            color: "#ffffff"
         }
 
         onClicked: {
@@ -185,251 +283,303 @@ Page {
         Item {
             id: page_settings
 
-            Label {
-                id: label_1
-                anchors.top: page_settings.top
-                width: page_settings.width
-                wrapMode: Label.Wrap
-                anchors.horizontalCenter: page_settings.horizontalCenter
-                horizontalAlignment: Qt.AlignHCenter
-                text: "окно основных настроек"
-            }
+            Flickable {
+                id: settingsFlick
+                anchors.fill: parent
+                contentWidth: width
+                contentHeight: settingsColumn.height + 16
+                clip: true
+                boundsBehavior: Flickable.StopAtBounds
 
-            //////////система/////////////
-           RoundButton {
-                id: get_err
-                anchors.top: label_1.bottom
-                anchors.topMargin: 5
-                width: page_settings.width
-                height: parent.height * 0.08
-                radius: 8
-                text: "запрос ошибок"
-                background: Rectangle{
-                    property var normalColor: "#c759d4"
-                    property var pressedColor: "#5813a1"
-                    color: get_err.pressed ? pressedColor : normalColor
-                    radius: 8
-                }
-                onClicked: {
-                    getcurtimer.running = false
-                    tx_commands.getCheck();
-                    listView1.positionViewAtEnd()
-                    getcurtimer.running = true
-                }
-            }
-
-             RoundButton {
-              id: clear_err
-              anchors.top: get_err.bottom
-              width: page_settings.width
-              height: page_settings.height * 0.08
-              radius: 8
-              text: "стереть ошибки"
-              background: Rectangle{
-                  property var normalColor: "#c759d4"
-                  property var pressedColor: "#5813a1"
-                  color: clear_err.pressed ? pressedColor : normalColor
-                  radius: 8
-              }
-               onClicked: {
-                   getcurtimer.running = false
-                  tx_commands.checkReset();
-                  listView1.positionViewAtEnd()
-                   getcurtimer.running = true
-               }
-            }
-
-            RoundButton {
-              id: reboot
-              anchors.top: clear_err.bottom
-              width: page_settings.width
-              height: page_settings.height * 0.08
-              radius: 8
-              text: "перезагрузка шара"
-              background: Rectangle{
-                  property var normalColor: "#c759d4"
-                  property var pressedColor: "#5813a1"
-                  color: reboot.pressed ? pressedColor : normalColor
-                  radius: 8
-              }
-               onClicked: {
-                   getcurtimer.running = false
-                  tx_commands.reboot();
-                  listView1.positionViewAtEnd()
-                   getcurtimer.running = true
-               }
-            }
-
-           RoundButton {
-                id: get_full_param
-                anchors.top: reboot.bottom
-                width: page_settings.width
-                height: page_settings.height * 0.08
-                radius: 8
-                text: "запрос точки восстановления"
-                background: Rectangle{
-                    property var normalColor: "#c759d4"
-                    property var pressedColor: "#5813a1"
-                    color: get_full_param.pressed ? pressedColor : normalColor
-                    radius: 8
-                }
-                onClicked: {
-                    getcurtimer.running = false
-                    tx_commands.readAllParams();
-                    listView1.positionViewAtEnd()
-                    getcurtimer.running = true
-                }
-            }
-
-          RoundButton {
-                id: set_full_param
-                anchors.top: get_full_param.bottom
-                width: page_settings.width
-                height: page_settings.height * 0.08
-                radius: 8
-                text: "восстановить параметры"
-                background: Rectangle{
-                    property var normalColor: "#c759d4"
-                    property var pressedColor: "#5813a1"
-                    color: set_full_param.pressed ? pressedColor : normalColor
-                    radius: 8
-                }
-                onClicked: {
-                    getcurtimer.running = false
-                    tx_commands.writeAllParams();
-                    listView1.positionViewAtEnd()
-                    getcurtimer.running = true
-                }
-            }
-
-            //////////ток/////////////
-              DelayButton {
-              id: cur_calibr_auto
-              anchors.top: set_full_param.bottom
-              width: page_settings.width * 0.98
-              anchors.horizontalCenter: parent.horizontalCenter
-              height: page_settings.height * 0.08
-              delay: 3000     //3000 ms
-
-               onActivated: {
-                  getcurtimer.running = false;
-                  tx_commands.curAutoCalibration();
-                  listView1.positionViewAtEnd();
-                  getcurtimer.running = true;
-                  cur_calibr_auto.progress = 0.0;
-               }
-            }
-              Rectangle{
-                  property var normalColor: "#d66364"
-                  property var pressedColor: "#800909"
-                  anchors.top: cur_calibr_auto.top
-                  anchors.right: cur_calibr_auto.right
-                  anchors.left: cur_calibr_auto.left
-                  height: cur_calibr_auto.height * 0.7
-                  radius: 4
-                  Text {
-                      id: name_cur_calibr_auto
-                      anchors.verticalCenter: parent.verticalCenter
-                      anchors.horizontalCenter: parent.horizontalCenter
-                      text: qsTr("автокалибровка датчика тока")
-                  }
-                  color: cur_calibr_auto.pressed ? pressedColor : normalColor
-              }
-
-            //////////сервы/////////////
-
-            DelayButton {
-              id: servscalibr
-              anchors.top: cur_calibr_auto.bottom
-              width: page_settings.width * 0.98
-              anchors.horizontalCenter: parent.horizontalCenter
-              height: page_settings.height * 0.08
-              delay: 1500
-               onActivated: {
-                   getcurtimer.running = false
-                  tx_commands.servoAutoCalibration();
-                  listView1.positionViewAtEnd()
-                   getcurtimer.running = true
-               }
-             }
-            Rectangle{
-                property var normalColor: "#1fc2b2"
-                property var pressedColor: "#17d47f"
-                anchors.top: servscalibr.top
-                anchors.right: servscalibr.right
-                anchors.left: servscalibr.left
-                height: servscalibr.height * 0.7
-                radius: 4
-                Text {
-                    anchors.verticalCenter: parent.verticalCenter
+                Column {
+                    id: settingsColumn
+                    width: parent.width * 0.92
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: qsTr("старт/стоп автокалибровки серв")
-                }
-                color: servscalibr.pressed ? pressedColor : normalColor
-            }
+                    anchors.top: parent.top
+                    anchors.topMargin: 8
+                    spacing: 6
 
-            RoundButton {
-                id: serv_off_but
-                anchors.top: servscalibr.bottom
-                width: page_settings.width * 0.47
-                height: page_settings.height * 0.08
-                anchors.left: page_settings.left
-                radius: 8
-                text: "откл. сервы"
-                background: Rectangle{
-                    property var normalColor: "#7387d1"
-                    property var pressedColor: "#052bb3"
-                    color: serv_off_but.pressed ? pressedColor : normalColor
-                    radius: 8
-                }
-                onClicked: {
-                    getcurtimer.running = false
-                    tx_commands.on_offServo(0x00);
-                    listView1.positionViewAtEnd()
-                    getcurtimer.running = true
-                }
-            }
+                    Label {
+                        id: label_1
+                        width: parent.width
+                        wrapMode: Label.Wrap
+                        horizontalAlignment: Qt.AlignHCenter
+                        text: "окно основных настроек"
+                        color: cText
+                        font.pointSize: 12
+                        font.bold: true
+                    }
 
-            RoundButton {
-                id: serv_on_but
-                anchors.top: servscalibr.bottom
-                width: page_settings.width * 0.47
-                height: page_settings.height * 0.08
-                anchors.right: parent.right
-                radius: 8
-                text: "вкл. сервы"
-                background: Rectangle{
-                    property var normalColor: "#7387d1"
-                    property var pressedColor: "#052bb3"
-                    color: serv_on_but.pressed ? pressedColor : normalColor
-                    radius: 8
-                }
-                onClicked: {
-                    getcurtimer.running = false
-                    tx_commands.on_offServo(0x01);
-                    listView1.positionViewAtEnd()
-                    getcurtimer.running = true
-                }
-            }
-            Label {
-                id: brightnessOLEDlabel
-                anchors.top: serv_on_but.bottom
-                width: parent.width
-                wrapMode: Label.Wrap
-                horizontalAlignment: Qt.AlignHCenter
-                text: "яркость oled  " + Math.round(brightnessOLED.value)
-            }
-            Slider {
-                id: brightnessOLED
-                value: 255
-                from: 0
-                to: 255
-                anchors.top: brightnessOLEDlabel.bottom
-                width: parent.width
-                onPressedChanged: {
-                    if(!pressed)
-                    {
-                        tx_commands.setBrightness(Math.round(brightnessOLED.value));
+                    // ---- Система ----
+                    Label {
+                        width: parent.width
+                        text: "Система"
+                        color: cPrimaryD
+                        font.pointSize: 10
+                        font.bold: true
+                    }
+
+                    StyledButton {
+                        width: parent.width
+                        text: "запрос ошибок"
+                        baseColor: cPrimary
+                        onClicked: {
+                            getcurtimer.running = false
+                            tx_commands.getCheck();
+                            listView1.positionViewAtEnd()
+                            getcurtimer.running = true
+                        }
+                    }
+
+                    StyledButton {
+                        width: parent.width
+                        text: "стереть ошибки"
+                        baseColor: cPrimary
+                        onClicked: {
+                            getcurtimer.running = false
+                            tx_commands.checkReset();
+                            listView1.positionViewAtEnd()
+                            getcurtimer.running = true
+                        }
+                    }
+
+                    StyledButton {
+                        width: parent.width
+                        text: "перезагрузка шара"
+                        baseColor: cPrimary
+                        onClicked: {
+                            getcurtimer.running = false
+                            tx_commands.reboot();
+                            listView1.positionViewAtEnd()
+                            getcurtimer.running = true
+                        }
+                    }
+
+                    StyledButton {
+                        width: parent.width
+                        text: "запрос точки восстановления"
+                        baseColor: cPrimary
+                        onClicked: {
+                            getcurtimer.running = false
+                            tx_commands.readAllParams();
+                            listView1.positionViewAtEnd()
+                            getcurtimer.running = true
+                        }
+                    }
+
+                    StyledButton {
+                        width: parent.width
+                        text: "восстановить параметры"
+                        baseColor: cPrimary
+                        onClicked: {
+                            getcurtimer.running = false
+                            tx_commands.writeAllParams();
+                            listView1.positionViewAtEnd()
+                            getcurtimer.running = true
+                        }
+                    }
+
+                    // ---- Ток ----
+                    Label {
+                        width: parent.width
+                        text: "Ток"
+                        color: cCoralD
+                        font.pointSize: 10
+                        font.bold: true
+                    }
+
+                    Column {
+                        width: parent.width
+                        spacing: 4
+
+                        Button {
+                            id: cur_calibr_auto
+                            width: parent.width
+                            height: 38
+                            property real holdProgress: 0.0
+                            property bool fired: false
+
+                            background: Rectangle {
+                                radius: 8
+                                color: cur_calibr_auto.pressed ? cCoralD : cCoral
+                                Behavior on color { ColorAnimation { duration: 120 } }
+                            }
+
+                            contentItem: Text {
+                                text: "автокалибровка датчика тока"
+                                color: "#ffffff"
+                                font.pointSize: 10
+                                font.bold: true
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+
+                            Timer {
+                                id: curHoldTimer
+                                interval: 50
+                                repeat: true
+                                running: cur_calibr_auto.pressed && !cur_calibr_auto.fired
+                                onTriggered: {
+                                    cur_calibr_auto.holdProgress += 50 / 3000.0
+                                    if (cur_calibr_auto.holdProgress >= 1.0) {
+                                        cur_calibr_auto.holdProgress = 0.0
+                                        cur_calibr_auto.fired = true
+                                        getcurtimer.running = false;
+                                        tx_commands.curAutoCalibration();
+                                        listView1.positionViewAtEnd();
+                                        getcurtimer.running = true;
+                                    }
+                                }
+                            }
+
+                            onPressedChanged: {
+                                if (pressed) {
+                                    holdProgress = 0.0
+                                    fired = false
+                                } else {
+                                    holdProgress = 0.0
+                                    fired = false
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            width: parent.width
+                            height: 8
+                            radius: 4
+                            color: "#f0d6d6"
+                            border.width: 1
+                            border.color: "#d8b4b4"
+                            visible: cur_calibr_auto.holdProgress > 0
+
+                            Rectangle {
+                                anchors.left: parent.left
+                                anchors.top: parent.top
+                                anchors.bottom: parent.bottom
+                                width: parent.width * cur_calibr_auto.holdProgress
+                                radius: 4
+                                color: "#b71c1c"
+                                Behavior on width { NumberAnimation { duration: 60 } }
+                            }
+                        }
+                    }
+
+                    // ---- Сервы ----
+                    Label {
+                        width: parent.width
+                        text: "Сервы"
+                        color: cTealD
+                        font.pointSize: 10
+                        font.bold: true
+                    }
+
+                    Column {
+                        width: parent.width
+                        spacing: 4
+
+                        Button {
+                            id: servscalibr
+                            width: parent.width
+                            height: 38
+                            property real holdProgress: 0.0
+                            property bool fired: false
+
+                            background: Rectangle {
+                                radius: 8
+                                color: servscalibr.pressed ? cTealD : cTeal
+                                Behavior on color { ColorAnimation { duration: 120 } }
+                            }
+
+                            contentItem: Text {
+                                text: "старт/стоп автокалибровки серв"
+                                color: "#ffffff"
+                                font.pointSize: 10
+                                font.bold: true
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+
+                            Timer {
+                                id: servHoldTimer
+                                interval: 50
+                                repeat: true
+                                running: servscalibr.pressed && !servscalibr.fired
+                                onTriggered: {
+                                    servscalibr.holdProgress += 50 / 1500.0
+                                    if (servscalibr.holdProgress >= 1.0) {
+                                        servscalibr.holdProgress = 0.0
+                                        servscalibr.fired = true
+                                        getcurtimer.running = false
+                                        tx_commands.servoAutoCalibration();
+                                        listView1.positionViewAtEnd()
+                                        getcurtimer.running = true
+                                    }
+                                }
+                            }
+
+                            onPressedChanged: {
+                                if (pressed) {
+                                    holdProgress = 0.0
+                                    fired = false
+                                } else {
+                                    holdProgress = 0.0
+                                    fired = false
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            width: parent.width
+                            height: 8
+                            radius: 4
+                            color: "#d6ebe8"
+                            border.width: 1
+                            border.color: "#b4d8d3"
+                            visible: servscalibr.holdProgress > 0
+
+                            Rectangle {
+                                anchors.left: parent.left
+                                anchors.top: parent.top
+                                anchors.bottom: parent.bottom
+                                width: parent.width * servscalibr.holdProgress
+                                radius: 4
+                                color: "#004d40"
+                                Behavior on width { NumberAnimation { duration: 60 } }
+                            }
+                        }
+                    }
+
+                    // ---- Яркость ----
+                    Label {
+                        width: parent.width
+                        text: "Яркость OLED"
+                        color: cTealD
+                        font.pointSize: 10
+                        font.bold: true
+                    }
+
+                    Label {
+                        id: brightnessOLEDlabel
+                        width: parent.width
+                        wrapMode: Label.Wrap
+                        horizontalAlignment: Qt.AlignHCenter
+                        text: Math.round(brightnessOLED.value)
+                        color: cText
+                        font.pointSize: 11
+                    }
+
+                    SwipeSlider {
+                        id: brightnessOLED
+                        from: 0
+                        to: 255
+                        width: parent.width
+                        Component.onCompleted: { value = 255 }
+                        onPressedChanged: {
+                            if(!pressed)
+                            {
+                                tx_commands.setBrightness(Math.round(brightnessOLED.value));
+                            }
+                        }
                     }
                 }
             }
@@ -447,1006 +597,777 @@ Page {
                 }
             }
 
-            Label {
-                id: label_2
-                anchors.top: page_setting_foot.top
-                width: page_setting_foot.width
-                wrapMode: Label.Wrap
-                anchors.horizontalCenter: page_setting_foot.horizontalCenter
-                horizontalAlignment: Qt.AlignHCenter
-                text: "окно корректировки 'домашних' углов конечностей"
-            }
+            Column {
+                id: footCurrentBlock
+                width: parent.width * 0.94
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: 8
+                spacing: 4
 
-            RoundButton {
-                id: get_foot_param
-                anchors.top: label_2.bottom
-                anchors.left: page_setting_foot.left
-                width: page_setting_foot.width * 0.5
-                height: page_setting_foot.height * 0.075
-                radius: 8
-                text: "Прочитать парам."
-                visible: false
-
-                onClicked: {
-                    getcurtimer.running = false
-                    tx_commands.getParamServsFoot(butClick);
-                    listView1.positionViewAtEnd()
-                    getcurtimer.running = true
-                }
-            }
-
-            RoundButton {
-                id: set_foot_param
-                anchors.top: label_2.bottom
-                width: page_setting_foot.width * 0.5
-                anchors.right: parent.right
-                height: page_setting_foot.height * 0.08
-                radius: 8
-                text: "Сохранить парам."
-                visible: false
-                background: Rectangle{
-                    property var normalColor: "orange"
-                    property var pressedColor: "green"
-                    color: set_foot_param.pressed ? pressedColor : normalColor
-                    radius: 8
+                Label {
+                    width: parent.width
+                    text: "Ток потребления"
+                    color: cCoralD
+                    font.pointSize: 10
+                    font.bold: true
                 }
 
-                onClicked: {
-                    getcurtimer.running = false
-                    coxaH = settParam.coxaAngl >> 8 & 0x00ff
-                    coxaL = settParam.coxaAngl & 0x00ff
-                    femurH = settParam.femurAngl >> 8 & 0x00ff
-                    femurL = settParam.femurAngl & 0x00ff
-                    tibaH = settParam.tibaAngl >> 8 & 0x00ff
-                    tibaL = settParam.tibaAngl & 0x00ff
+                Item {
+                    width: parent.width
+                    height: 18
 
-                    tx_commands.writeHomeAngleFoot(butClick + " " + coxaL + " " + coxaH + " " + femurL + " " + femurH + " " + tibaL + " " + tibaH);
-
-                    listView1.positionViewAtEnd()
-                    getcurtimer.running = true
-                }
-            }
-
-            //ток
-            ProgressBar{
-                id: current
-                height: 20
-                anchors.left: page_setting_foot.left
-                anchors.right: page_setting_foot.right
-                anchors.top: set_foot_param.bottom
-                from: 0
-                to: 5
-
-                background: Rectangle {
-                    color: "#e6e6e6"
-                    radius: 3
-                }
-
-                contentItem: Item {
-                    Rectangle {
-                        width: current.visualPosition * page_setting_foot.width
-                        height: current.height
-                        radius: 2
-                        color: "#17a81a"
-
-                        gradient: Gradient {
-                            GradientStop {
-                                position: 0.0
-                                SequentialAnimation on color {
-                                    loops: Animation.Infinite
-                                    ColorAnimation { from: "#d6e014"; to: "#b39812"; duration: 5000 }
-                                    ColorAnimation { from: "#b39812"; to: "#d6e014"; duration: 5000 }
-                                }
+                    ProgressBar {
+                        id: current
+                        anchors.fill: parent
+                        from: 0
+                        to: 5
+                        background: Rectangle {
+                            color: "#e0e6ed"
+                            radius: 8
+                        }
+                        contentItem: Item {
+                            Rectangle {
+                                width: current.visualPosition * parent.width
+                                height: parent.height
+                                radius: 8
+                                color: cCoral
+                                Behavior on width { NumberAnimation { duration: 150 } }
                             }
-                            GradientStop {
-                                position: 1.0
-                                SequentialAnimation on color {
-                                    loops: Animation.Infinite
-                                    ColorAnimation { from: "#ed4811"; to: "#a1330e"; duration: 5000 }
-                                    ColorAnimation { from: "#a1330e"; to: "#ed4811"; duration: 5000 }
+                        }
+                        Connections {
+                            target: commun_display
+                            function onCurRealChanged(Cur) {
+                                if(window_focus)
+                                    current.value = Cur
+                            }
+                        }
+                    }
+
+                    Label {
+                        id: labelcur
+                        anchors.centerIn: parent
+                        z: 2
+                        text: commun_display.Cur.toFixed(2) + " А"
+                        color: cText
+                        font.pointSize: 10
+                        font.bold: true
+                    }
+                }
+            }
+
+            Flickable {
+                id: footFlick
+                anchors.top: footCurrentBlock.bottom
+                anchors.topMargin: 6
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                contentWidth: width
+                contentHeight: footColumn.height + 16
+                clip: true
+                boundsBehavior: Flickable.StopAtBounds
+
+                Column {
+                    id: footColumn
+                    width: parent.width * 0.94
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: parent.top
+                    anchors.topMargin: 6
+                    spacing: 6
+
+                    Label {
+                        id: label_2
+                        width: parent.width
+                        wrapMode: Label.Wrap
+                        horizontalAlignment: Qt.AlignHCenter
+                        text: "окно корректировки 'домашних' углов конечностей"
+                        color: cText
+                        font.pointSize: 12
+                        font.bold: true
+                    }
+
+                    // ---- Выбор ноги ----
+                    Label {
+                        width: parent.width
+                        text: "Какую ногу калибруем?"
+                        color: cPrimaryD
+                        font.pointSize: 10
+                        font.bold: true
+                    }
+
+                    Row {
+                        width: parent.width
+                        spacing: 4
+                        Repeater {
+                            model: 6
+                            StyledButton {
+                                width: (footColumn.width - 5 * 4) / 6
+                                text: (index + 1).toString()
+                                baseColor: (box1.checked && index === 0) ||
+                                           (box2.checked && index === 1) ||
+                                           (box3.checked && index === 2) ||
+                                           (box4.checked && index === 3) ||
+                                           (box5.checked && index === 4) ||
+                                           (box6.checked && index === 5)
+                                           ? cPrimaryD : cPrimary
+                                onClicked: {
+                                    getcurtimer.running = false
+                                    get_foot_param.visible = true
+                                    set_foot_param.visible = true
+                                    butClick = index
+                                    box1.checked = (index === 0)
+                                    box2.checked = (index === 1)
+                                    box3.checked = (index === 2)
+                                    box4.checked = (index === 3)
+                                    box5.checked = (index === 4)
+                                    box6.checked = (index === 5)
+                                    tx_commands.getParamServsFoot(butClick);
+                                    getcurtimer.running = true
                                 }
                             }
                         }
                     }
+
+                    // Скрытые радиокнопки — для совместимости
+                    Item {
+                        width: 0; height: 0
+                        RadioButton { id: box1; visible: false }
+                        RadioButton { id: box2; visible: false }
+                        RadioButton { id: box3; visible: false }
+                        RadioButton { id: box4; visible: false }
+                        RadioButton { id: box5; visible: false }
+                        RadioButton { id: box6; visible: false }
+                    }
+
+                    // ---- Параметры ----
+                    Row {
+                        width: parent.width
+                        spacing: 6
+                        StyledButton {
+                            id: get_foot_param
+                            width: (parent.width - 6) / 2
+                            text: "Прочитать"
+                            baseColor: cTeal
+                            visible: false
+                            onClicked: {
+                                getcurtimer.running = false
+                                tx_commands.getParamServsFoot(butClick);
+                                listView1.positionViewAtEnd()
+                                getcurtimer.running = true
+                            }
+                        }
+                        StyledButton {
+                            id: set_foot_param
+                            width: (parent.width - 6) / 2
+                            text: "Сохранить"
+                            baseColor: cAmber
+                            visible: false
+                            onClicked: {
+                                getcurtimer.running = false
+                                coxaH = settParam.coxaAngl >> 8 & 0x00ff
+                                coxaL = settParam.coxaAngl & 0x00ff
+                                femurH = settParam.femurAngl >> 8 & 0x00ff
+                                femurL = settParam.femurAngl & 0x00ff
+                                tibaH = settParam.tibaAngl >> 8 & 0x00ff
+                                tibaL = settParam.tibaAngl & 0x00ff
+                                tx_commands.writeHomeAngleFoot(butClick + " " + coxaL + " " + coxaH + " " + femurL + " " + femurH + " " + tibaL + " " + tibaH);
+                                listView1.positionViewAtEnd()
+                                getcurtimer.running = true
+                            }
+                        }
+                    }
+
+                    // ---- Coxa ----
+                    Label {
+                        width: parent.width
+                        text: "Coxa — " + Math.round(settParam.coxaAngl) + "°"
+                        color: cMintD
+                        font.pointSize: 10
+                        font.bold: true
+                    }
+
+                    SwipeSlider {
+                        id: slider1
+                        width: parent.width
+                        from: 0
+                        to: 270
+                        Component.onCompleted: {
+                            value = settParam.coxaAngl
+                            settParam.coxaAnglChanged.connect(modelChanged)
+                        }
+                        onMoved: {settParam.coxaAngl = value}
+                        onPressedChanged: {
+                            if(!pressed)
+                            {
+                                getcurtimer.running = false
+                                coxaH = settParam.coxaAngl >> 8 & 0x00ff
+                                coxaL = settParam.coxaAngl & 0x00ff
+                                tx_commands.setServoAnglee((butClick * 3 + 0) + " " + coxaL + " " + coxaH);
+                                getcurtimer.running = true
+                            }
+                        }
+                        function modelChanged(){
+                            if (!pressed)
+                                value = settParam.coxaAngl
+                        }
+                    }
+
+                    Row {
+                        width: parent.width
+                        spacing: 4
+                        StyledButton {
+                            width: (parent.width - 3 * 4) / 4
+                            text: "<<"
+                            baseColor: cMint
+                            onClicked: {
+                                getcurtimer.running = false
+                                if(settParam.coxaAngl >= 10) {
+                                    settParam.coxaAngl = settParam.coxaAngl - 10
+                                    coxaH = settParam.coxaAngl >> 8 & 0x00ff
+                                    coxaL = settParam.coxaAngl & 0x00ff
+                                    tx_commands.setServoAnglee((butClick * 3 + 0) + " " + coxaL + " " + coxaH);
+                                }
+                                getcurtimer.running = true
+                            }
+                        }
+                        StyledButton {
+                            width: (parent.width - 3 * 4) / 4
+                            text: "<"
+                            baseColor: cMint
+                            onClicked: {
+                                getcurtimer.running = false
+                                if(settParam.coxaAngl >= 1) {
+                                    settParam.coxaAngl = settParam.coxaAngl - 1
+                                    coxaH = settParam.coxaAngl >> 8 & 0x00ff
+                                    coxaL = settParam.coxaAngl & 0x00ff
+                                    tx_commands.setServoAnglee((butClick * 3 + 0) + " " + coxaL + " " + coxaH);
+                                }
+                                getcurtimer.running = true
+                            }
+                        }
+                        StyledButton {
+                            width: (parent.width - 3 * 4) / 4
+                            text: ">"
+                            baseColor: cMint
+                            onClicked: {
+                                getcurtimer.running = false
+                                if(settParam.coxaAngl <= 269) {
+                                    settParam.coxaAngl = settParam.coxaAngl + 1
+                                    coxaH = settParam.coxaAngl >> 8 & 0x00ff
+                                    coxaL = settParam.coxaAngl & 0x00ff
+                                    tx_commands.setServoAnglee((butClick * 3 + 0) + " " + coxaL + " " + coxaH);
+                                }
+                                getcurtimer.running = true
+                            }
+                        }
+                        StyledButton {
+                            width: (parent.width - 3 * 4) / 4
+                            text: ">>"
+                            baseColor: cMint
+                            onClicked: {
+                                getcurtimer.running = false
+                                if(settParam.coxaAngl <= 260) {
+                                    settParam.coxaAngl = settParam.coxaAngl + 10
+                                    coxaH = settParam.coxaAngl >> 8 & 0x00ff
+                                    coxaL = settParam.coxaAngl & 0x00ff
+                                    tx_commands.setServoAnglee((butClick * 3 + 0) + " " + coxaL + " " + coxaH);
+                                }
+                                getcurtimer.running = true
+                            }
+                        }
+                    }
+
+                    // ---- Femur ----
+                    Label {
+                        width: parent.width
+                        text: "Femur — " + Math.round(settParam.femurAngl) + "°"
+                        color: cAmberD
+                        font.pointSize: 10
+                        font.bold: true
+                    }
+
+                    SwipeSlider {
+                        id: slider2
+                        width: parent.width
+                        from: 0
+                        to: 270
+                        Component.onCompleted: {
+                            value = settParam.femurAngl
+                            settParam.femurAnglChanged.connect(modelChanged)
+                        }
+                        onMoved: {settParam.femurAngl = value}
+                        onPressedChanged: {
+                            if(!pressed)
+                            {
+                                getcurtimer.running = false
+                                femurH = settParam.femurAngl >> 8 & 0x00ff
+                                femurL = settParam.femurAngl & 0x00ff
+                                tx_commands.setServoAnglee((butClick * 3 + 1) + " " + femurL + " " + femurH);
+                                getcurtimer.running = true
+                            }
+                        }
+                        function modelChanged(){
+                            if (!pressed)
+                                value = settParam.femurAngl
+                        }
+                    }
+
+                    Row {
+                        width: parent.width
+                        spacing: 4
+                        StyledButton {
+                            width: (parent.width - 3 * 4) / 4
+                            text: "<<"
+                            baseColor: cAmber
+                            onClicked: {
+                                getcurtimer.running = false
+                                if(settParam.femurAngl >= 10) {
+                                    settParam.femurAngl = settParam.femurAngl - 10
+                                    femurH = settParam.femurAngl >> 8 & 0x00ff
+                                    femurL = settParam.femurAngl & 0x00ff
+                                    tx_commands.setServoAnglee((butClick * 3 + 1) + " " + femurL + " " + femurH);
+                                }
+                                getcurtimer.running = true
+                            }
+                        }
+                        StyledButton {
+                            width: (parent.width - 3 * 4) / 4
+                            text: "<"
+                            baseColor: cAmber
+                            onClicked: {
+                                getcurtimer.running = false
+                                if(settParam.femurAngl >= 1) {
+                                    settParam.femurAngl = settParam.femurAngl - 1
+                                    femurH = settParam.femurAngl >> 8 & 0x00ff
+                                    femurL = settParam.femurAngl & 0x00ff
+                                    tx_commands.setServoAnglee((butClick * 3 + 1) + " " + femurL + " " + femurH);
+                                }
+                                getcurtimer.running = true
+                            }
+                        }
+                        StyledButton {
+                            width: (parent.width - 3 * 4) / 4
+                            text: ">"
+                            baseColor: cAmber
+                            onClicked: {
+                                getcurtimer.running = false
+                                if(settParam.femurAngl <= 269) {
+                                    settParam.femurAngl = settParam.femurAngl + 1
+                                    femurH = settParam.femurAngl >> 8 & 0x00ff
+                                    femurL = settParam.femurAngl & 0x00ff
+                                    tx_commands.setServoAnglee((butClick * 3 + 1) + " " + femurL + " " + femurH);
+                                }
+                                getcurtimer.running = true
+                            }
+                        }
+                        StyledButton {
+                            width: (parent.width - 3 * 4) / 4
+                            text: ">>"
+                            baseColor: cAmber
+                            onClicked: {
+                                getcurtimer.running = false
+                                if(settParam.femurAngl <= 260) {
+                                    settParam.femurAngl = settParam.femurAngl + 10
+                                    femurH = settParam.femurAngl >> 8 & 0x00ff
+                                    femurL = settParam.femurAngl & 0x00ff
+                                    tx_commands.setServoAnglee((butClick * 3 + 1) + " " + femurL + " " + femurH);
+                                }
+                                getcurtimer.running = true
+                            }
+                        }
+                    }
+
+                    // ---- Tiba ----
+                    Label {
+                        width: parent.width
+                        text: "Tiba — " + Math.round(settParam.tibaAngl) + "°"
+                        color: cPrimaryD
+                        font.pointSize: 10
+                        font.bold: true
+                    }
+
+                    SwipeSlider {
+                        id: slider3
+                        width: parent.width
+                        from: 0
+                        to: 270
+                        Component.onCompleted: {
+                            value = settParam.tibaAngl
+                            settParam.tibaAnglChanged.connect(modelChanged)
+                        }
+                        onMoved: {settParam.tibaAngl = value}
+                        onPressedChanged: {
+                            if(!pressed)
+                            {
+                                getcurtimer.running = false
+                                tibaH = settParam.tibaAngl >> 8 & 0x00ff
+                                tibaL = settParam.tibaAngl & 0x00ff
+                                tx_commands.setServoAnglee((butClick * 3 + 2) + " " + tibaL + " " + tibaH);
+                                getcurtimer.running = true
+                            }
+                        }
+                        function modelChanged(){
+                            if (!pressed)
+                                value = settParam.tibaAngl
+                        }
+                    }
+
+                    Row {
+                        width: parent.width
+                        spacing: 4
+                        StyledButton {
+                            width: (parent.width - 3 * 4) / 4
+                            text: "<<"
+                            baseColor: cPrimary
+                            onClicked: {
+                                getcurtimer.running = false
+                                if(settParam.tibaAngl >= 10) {
+                                    settParam.tibaAngl = settParam.tibaAngl - 10
+                                    tibaH = settParam.tibaAngl >> 8 & 0x00ff
+                                    tibaL = settParam.tibaAngl & 0x00ff
+                                    tx_commands.setServoAnglee((butClick * 3 + 2) + " " + tibaL + " " + tibaH);
+                                }
+                                getcurtimer.running = true
+                            }
+                        }
+                        StyledButton {
+                            width: (parent.width - 3 * 4) / 4
+                            text: "<"
+                            baseColor: cPrimary
+                            onClicked: {
+                                getcurtimer.running = false
+                                if(settParam.tibaAngl >= 1) {
+                                    settParam.tibaAngl = settParam.tibaAngl - 1
+                                    tibaH = settParam.tibaAngl >> 8 & 0x00ff
+                                    tibaL = settParam.tibaAngl & 0x00ff
+                                    tx_commands.setServoAnglee((butClick * 3 + 2) + " " + tibaL + " " + tibaH);
+                                }
+                                getcurtimer.running = true
+                            }
+                        }
+                        StyledButton {
+                            width: (parent.width - 3 * 4) / 4
+                            text: ">"
+                            baseColor: cPrimary
+                            onClicked: {
+                                getcurtimer.running = false
+                                if(settParam.tibaAngl <= 269) {
+                                    settParam.tibaAngl = settParam.tibaAngl + 1
+                                    tibaH = settParam.tibaAngl >> 8 & 0x00ff
+                                    tibaL = settParam.tibaAngl & 0x00ff
+                                    tx_commands.setServoAnglee((butClick * 3 + 2) + " " + tibaL + " " + tibaH);
+                                }
+                                getcurtimer.running = true
+                            }
+                        }
+                        StyledButton {
+                            width: (parent.width - 3 * 4) / 4
+                            text: ">>"
+                            baseColor: cPrimary
+                            onClicked: {
+                                getcurtimer.running = false
+                                if(settParam.tibaAngl <= 260) {
+                                    settParam.tibaAngl = settParam.tibaAngl + 10
+                                    tibaH = settParam.tibaAngl >> 8 & 0x00ff
+                                    tibaL = settParam.tibaAngl & 0x00ff
+                                    tx_commands.setServoAnglee((butClick * 3 + 2) + " " + tibaL + " " + tibaH);
+                                }
+                                getcurtimer.running = true
+                            }
+                        }
+                    }
+
+                    // ---- Калибровка ----
+                    Label {
+                        width: parent.width
+                        text: "Калибровка"
+                        color: cText
+                        font.pointSize: 10
+                        font.bold: true
+                    }
+
+                    StyledButton {
+                        id: calibr_foot
+                        width: parent.width
+                        text: "старт/стоп калибровки ноги"
+                        baseColor: cTeal
+                        onClicked: {
+                            tx_commands.calibrServsFoot(butClick);
+                            listView1.positionViewAtEnd();
+                        }
+                    }
+
+                    StyledButton {
+                        id: reset_foot_param
+                        width: parent.width
+                        text: "Reset foot param!"
+                        baseColor: cCoral
+                        onClicked: {
+                            getcurtimer.running = false
+                            tx_commands.resetServsFoot(butClick);
+                            listView1.positionViewAtEnd()
+                            getcurtimer.running = true
+                        }
+                    }
                 }
-                Connections {
-                    target: commun_display
-                   function onCurRealChanged(Cur) {
-                       if(window_focus)
-                        current.value = Cur
+            }
+        }
+
+        // настройка PCA
+        Item {
+            id: pca_Speed
+
+            Component.onCompleted: {
+                commun_display.onPca1_pca2_speed_Changed.connect(settingsChanged)
+            }
+            function settingsChanged(freqPca1, freqPca2, speed){
+                pca1 = freqPca1;
+                pca2 = freqPca2;
+                speedServs = speed;
+            }
+
+            Column {
+                id: pcaCurrentBlock
+                width: parent.width * 0.9
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: 8
+                spacing: 4
+
+                Label {
+                    width: parent.width
+                    text: "Ток потребления"
+                    color: cCoralD
+                    font.pointSize: 10
+                    font.bold: true
+                }
+
+                Item {
+                    width: parent.width
+                    height: 18
+
+                    ProgressBar {
+                        id: current1
+                        anchors.fill: parent
+                        from: 0
+                        to: 5
+                        background: Rectangle {
+                            color: "#e0e6ed"
+                            radius: 8
+                        }
+                        contentItem: Item {
+                            Rectangle {
+                                width: current1.visualPosition * parent.width
+                                height: parent.height
+                                radius: 8
+                                color: cCoral
+                                Behavior on width { NumberAnimation { duration: 150 } }
+                            }
+                        }
+                        Connections {
+                            target: commun_display
+                            function onCurRealChanged(Cur) {
+                                if(window_focus)
+                                    current1.value = Cur
+                            }
+                        }
+                    }
+
+                    Label {
+                        id: labelcur1
+                        anchors.centerIn: parent
+                        z: 2
+                        text: commun_display.Cur.toFixed(2) + " А"
+                        color: cText
+                        font.pointSize: 10
+                        font.bold: true
                     }
                 }
             }
 
-            Label {
-                id: labelcur
-                width: page_setting_foot.width
-                wrapMode: Label.Wrap
-                horizontalAlignment: Qt.AlignHCenter
-                anchors.verticalCenter: current.verticalCenter
-                text: "Ток потребления" + "   " + commun_display.Cur.toFixed(2) + "А"
-            }
+            Flickable {
+                id: pcaFlick
+                anchors.top: pcaCurrentBlock.bottom
+                anchors.topMargin: 6
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                contentWidth: width
+                contentHeight: pcaColumn.height + 16
+                clip: true
+                boundsBehavior: Flickable.StopAtBounds
 
+                Column {
+                    id: pcaColumn
+                    width: parent.width * 0.9
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: parent.top
+                    anchors.topMargin: 6
+                    spacing: 6
 
-            Label {
-                id: label1
-                anchors.top: labelcur.bottom
-                anchors.topMargin: 5
-                width: page_setting_foot.width
-                wrapMode: Label.Wrap
-                anchors.horizontalCenter: page_setting_foot.horizontalCenter
-                horizontalAlignment: Qt.AlignHCenter
-                text: "Какую ногу калибруем?"
-            }
-
-           RadioButton{
-               id: box1
-               anchors.left: page_setting_foot.left
-               anchors.top: label1.bottom
-               text: "1"
-               onClicked: {
-                   getcurtimer.running = false
-                   get_foot_param.visible = true
-                   set_foot_param.visible = true
-                   butClick = 0
-                   tx_commands.getParamServsFoot(butClick);
-                   getcurtimer.running = true
-               }
-           }
-           RadioButton{
-               id: box2
-               anchors.left: box1.right
-               anchors.top: label1.bottom
-               anchors.leftMargin: 10
-               text: "2"
-               onClicked: {
-                   getcurtimer.running = false
-                   get_foot_param.visible = true
-                   set_foot_param.visible = true
-                   butClick = 1
-                   tx_commands.getParamServsFoot(butClick);
-                   getcurtimer.running = true
-               }
-           }
-           RadioButton{
-               id: box3
-               anchors.left: box2.right
-               anchors.top: label1.bottom
-               anchors.leftMargin: 10
-               text: "3"
-               onClicked: {
-                   getcurtimer.running = false
-                   get_foot_param.visible = true
-                   set_foot_param.visible = true
-                   butClick = 2
-                   tx_commands.getParamServsFoot(butClick);
-                   getcurtimer.running = true
-               }
-           }
-           RadioButton{
-               id: box4
-               anchors.right: box5.left
-               anchors.top: label1.bottom
-               anchors.rightMargin: 10
-               text: "4"
-               onClicked: {
-                   getcurtimer.running = false
-                   get_foot_param.visible = true
-                   set_foot_param.visible = true
-                   butClick = 3
-                   tx_commands.getParamServsFoot(butClick);
-                   getcurtimer.running = true
-               }
-           }
-           RadioButton{
-               id: box5
-               anchors.right: box6.left
-               anchors.top: label1.bottom
-               anchors.rightMargin: 10
-               text: "5"
-               onClicked: {
-                   getcurtimer.running = false
-                   get_foot_param.visible = true
-                   set_foot_param.visible = true
-                   butClick = 4
-                   tx_commands.getParamServsFoot(butClick);
-                   getcurtimer.running = true
-               }
-           }
-           RadioButton{
-               id: box6
-               anchors.right: parent.right
-               anchors.top: label1.bottom
-               text: "6"
-               onClicked: {
-                   getcurtimer.running = false
-                   get_foot_param.visible = true
-                   set_foot_param.visible = true
-                   butClick = 5
-                   tx_commands.getParamServsFoot(butClick);
-                   getcurtimer.running = true
-               }
-           }
-
-
-           //coxa
-           Button {
-               id: left_left_coxa
-               anchors.top: box1.bottom
-               anchors.left: page_setting_foot.left
-               width: page_setting_foot.width * 0.12
-               height: page_setting_foot.height * 0.08
-               background: Rectangle{
-                   property var normalColor: "#12c98c"
-                   property var pressedColor: "#0c7854"
-                   color: left_left_coxa.pressed ? pressedColor : normalColor
-                   radius: 8
-               }
-               text: "<<"
-               onClicked: {
-                   getcurtimer.running = false
-                   if(settParam.coxaAngl >= 10)
-                   {
-                       settParam.coxaAngl = settParam.coxaAngl - 10
-                       coxaH = settParam.coxaAngl >> 8 & 0x00ff
-                       coxaL = settParam.coxaAngl & 0x00ff
-
-                       tx_commands.setServoAnglee((butClick * 3 + 0) + " " + coxaL + " " + coxaH);
-                   }
-                    getcurtimer.running = true
-               }
-           }
-
-           Button {
-               id: left_coxa
-               anchors.top: left_left_coxa.top
-               anchors.left: left_left_coxa.right
-               anchors.leftMargin: 5
-               width: page_setting_foot.width * 0.12
-               height: page_setting_foot.height * 0.08
-               background: Rectangle{
-                   property var normalColor: "#12c98c"
-                   property var pressedColor: "#0c7854"
-                   color: left_coxa.pressed ? pressedColor : normalColor
-                   radius: 8
-               }
-               text: "<"
-               onClicked: {
-                   getcurtimer.running = false
-                   if(settParam.coxaAngl >= 1)
-                   {
-                       settParam.coxaAngl = settParam.coxaAngl - 1
-                       coxaH = settParam.coxaAngl >> 8 & 0x00ff
-                       coxaL = settParam.coxaAngl & 0x00ff
-
-                       tx_commands.setServoAnglee((butClick * 3 + 0) + " " + coxaL + " " + coxaH);
-                   }
-                    getcurtimer.running = true
-               }
-           }
-
-           Button {
-               id: right_right_coxa
-               anchors.top: left_left_coxa.top
-               anchors.right: parent.right
-               width: page_setting_foot.width * 0.12
-               height: page_setting_foot.height * 0.08
-               background: Rectangle{
-                   property var normalColor: "#12c98c"
-                   property var pressedColor: "#0c7854"
-                   color: right_right_coxa.pressed ? pressedColor : normalColor
-                   radius: 8
-               }
-               text: ">>"
-               onClicked: {
-                   getcurtimer.running = false
-                   if(settParam.coxaAngl <= 260)
-                   {
-                       settParam.coxaAngl = settParam.coxaAngl + 10
-                       coxaH = settParam.coxaAngl >> 8 & 0x00ff
-                       coxaL = settParam.coxaAngl & 0x00ff
-
-                       tx_commands.setServoAnglee((butClick * 3 + 0) + " " + coxaL + " " + coxaH);
-                   }
-                    getcurtimer.running = true
-               }
-           }
-
-           Button {
-               id: right_coxa
-               anchors.top: right_right_coxa.top
-               anchors.right: right_right_coxa.left
-               anchors.rightMargin: 5
-               width: page_setting_foot.width * 0.12
-               height: page_setting_foot.height * 0.08
-               background: Rectangle{
-                   property var normalColor: "#12c98c"
-                   property var pressedColor: "#0c7854"
-                   color: right_coxa.pressed ? pressedColor : normalColor
-                   radius: 8
-               }
-               text: ">"
-               onClicked: {
-                   getcurtimer.running = false
-                   if(settParam.coxaAngl <= 269)
-                   {
-                       settParam.coxaAngl = settParam.coxaAngl + 1
-                       coxaH = settParam.coxaAngl >> 8 & 0x00ff
-                       coxaL = settParam.coxaAngl & 0x00ff
-
-                       tx_commands.setServoAnglee((butClick * 3 + 0) + " " + coxaL + " " + coxaH);
-                   }
-                    getcurtimer.running = true
-               }
-           }
-
-
-           Label {
-               id: label2
-               width: page_setting_foot.width
-               anchors.verticalCenter: left_left_coxa.verticalCenter
-               wrapMode: Label.Wrap
-               horizontalAlignment: Qt.AlignHCenter
-               text: "угол сервы coxa" + "      " + Math.round(settParam.coxaAngl)
-           }
-
-           Slider {
-               id: slider1
-               anchors.top: left_left_coxa.top                  ///??
-               value: settParam.coxaAngl
-               from: 0
-               to: 270
-               anchors.left: parent.left
-               anchors.right: parent.right
-               anchors.topMargin: left_left_coxa.height * 0.8       ///??
-               onMoved: {settParam.coxaAngl = value}
-
-
-               Component.onCompleted: {
-                   settParam.coxaAnglChanged.connect(modelChanged)
-               }
-
-                onPressedChanged: {
-                    if(!pressed)
-                    {
-                        getcurtimer.running = false
-                       coxaH = settParam.coxaAngl >> 8 & 0x00ff
-                       coxaL = settParam.coxaAngl & 0x00ff
-
-                       tx_commands.setServoAnglee((butClick * 3 + 0) + " " + coxaL + " " + coxaH);
-                        getcurtimer.running = true
+                    Label {
+                        width: parent.width
+                        wrapMode: Label.Wrap
+                        horizontalAlignment: Qt.AlignHCenter
+                        text: "окно настройки драйверов сервоприводов"
+                        color: cText
+                        font.pointSize: 12
+                        font.bold: true
                     }
-               }
 
-               function modelChanged(){
-                   this.value = value
-               }
-           }
+                    Row {
+                        width: parent.width
+                        spacing: 6
+                        StyledButton {
+                            width: (parent.width - 6) / 2
+                            text: "Прочитать"
+                            baseColor: cTeal
+                            onClicked: {
+                                tx_commands.getSettingsServs();
+                                listView1.positionViewAtEnd();
+                            }
+                        }
+                        StyledButton {
+                            width: (parent.width - 6) / 2
+                            text: "Сохранить"
+                            baseColor: cMint
+                            onClicked: {
+                                tx_commands.saveFlashSettings();
+                                listView1.positionViewAtEnd();
+                            }
+                        }
+                    }
 
+                    Label {
+                        width: parent.width
+                        text: "Частота PCA 1 — " + pca1
+                        color: cPrimaryD
+                        font.pointSize: 10
+                        font.bold: true
+                    }
 
-           //femur
-           Button {
-               id: left_left_femur
-               anchors.top: left_left_coxa.bottom
-               anchors.left: page_setting_foot.left
-               anchors.topMargin: left_left_coxa.height * 0.9
-               width: page_setting_foot.width * 0.12
-               height: parent.height * 0.08
-               background: Rectangle{
-                   property var normalColor: "#a0cf13"
-                   property var pressedColor: "#70910a"
-                   color: left_left_femur.pressed ? pressedColor : normalColor
-                   radius: 8
-               }
-               text: "<<"
-               onClicked: {
-                   getcurtimer.running = false
-                   if(settParam.femurAngl >= 10)
-                   {
-                       settParam.femurAngl = settParam.femurAngl - 10
-                       femurH = settParam.femurAngl >> 8 & 0x00ff
-                       femurL = settParam.femurAngl & 0x00ff
+                    Row {
+                        width: parent.width
+                        spacing: 6
+                        StyledButton {
+                            width: (parent.width - 6) / 2
+                            text: "−"
+                            baseColor: cPrimary
+                            onClicked: {
+                                if(pca1 !== 24) pca1--;
+                                tx_commands.setSettingsServo(pca1, pca2, speedServs);
+                                listView1.positionViewAtEnd();
+                            }
+                        }
+                        StyledButton {
+                            width: (parent.width - 6) / 2
+                            text: "+"
+                            baseColor: cPrimary
+                            onClicked: {
+                                if(pca1 < 150) pca1++;
+                                tx_commands.setSettingsServo(pca1, pca2, speedServs);
+                                listView1.positionViewAtEnd();
+                            }
+                        }
+                    }
 
-                       tx_commands.setServoAnglee((butClick * 3 + 1) + " " + femurL + " " + femurH);
-                   }
-                    getcurtimer.running = true
-               }
-           }
+                    Label {
+                        width: parent.width
+                        text: "Частота PCA 2 — " + pca2
+                        color: cPrimaryD
+                        font.pointSize: 10
+                        font.bold: true
+                    }
 
-           Button {
-               id: left_femur
-               anchors.top: left_left_femur.top
-               anchors.left: left_left_femur.right
-               anchors.leftMargin: 5
-               width: page_setting_foot.width * 0.12
-               height: parent.height * 0.08
-               background: Rectangle{
-                   property var normalColor: "#a0cf13"
-                   property var pressedColor: "#70910a"
-                   color: left_femur.pressed ? pressedColor : normalColor
-                   radius: 8
-               }
-               text: "<"
-               onClicked: {
-                   getcurtimer.running = false
-                   if(settParam.femurAngl >= 1)
-                   {
-                       settParam.femurAngl = settParam.femurAngl - 1
-                       femurH = settParam.femurAngl >> 8 & 0x00ff
-                       femurL = settParam.femurAngl & 0x00ff
+                    Row {
+                        width: parent.width
+                        spacing: 6
+                        StyledButton {
+                            width: (parent.width - 6) / 2
+                            text: "−"
+                            baseColor: cPrimary
+                            onClicked: {
+                                if(pca2 !== 24) pca2--;
+                                tx_commands.setSettingsServo(pca1, pca2, speedServs);
+                                listView1.positionViewAtEnd();
+                            }
+                        }
+                        StyledButton {
+                            width: (parent.width - 6) / 2
+                            text: "+"
+                            baseColor: cPrimary
+                            onClicked: {
+                                if(pca2 < 150) pca2++;
+                                tx_commands.setSettingsServo(pca1, pca2, speedServs);
+                                listView1.positionViewAtEnd();
+                            }
+                        }
+                    }
 
-                       tx_commands.setServoAnglee((butClick * 3 + 1) + " " + femurL + " " + femurH);
-                   }
-                    getcurtimer.running = true
-               }
-           }
+                    Label {
+                        width: parent.width
+                        text: "Скорость серв — " + speedServs
+                        color: cAmberD
+                        font.pointSize: 10
+                        font.bold: true
+                    }
 
-           Button {
-               id: right_right_femur
-               anchors.top: left_left_femur.top
-               anchors.right: parent.right
-               width: page_setting_foot.width * 0.12
-               height: parent.height * 0.08
-               background: Rectangle{
-                   property var normalColor: "#a0cf13"
-                   property var pressedColor: "#70910a"
-                   color: right_right_femur.pressed ? pressedColor : normalColor
-                   radius: 8
-               }
-               text: ">>"
-               onClicked: {
-                   getcurtimer.running = false
-                   if(settParam.femurAngl <= 260)
-                   {
-                       settParam.femurAngl = settParam.femurAngl + 10
-                       femurH = settParam.femurAngl >> 8 & 0x00ff
-                       femurL = settParam.femurAngl & 0x00ff
+                    Row {
+                        width: parent.width
+                        spacing: 6
+                        StyledButton {
+                            width: (parent.width - 6) / 2
+                            text: "−"
+                            baseColor: cAmber
+                            onClicked: {
+                                if(speedServs !== 0) speedServs--;
+                                tx_commands.setSettingsServo(pca1, pca2, speedServs);
+                                listView1.positionViewAtEnd();
+                            }
+                        }
+                        StyledButton {
+                            width: (parent.width - 6) / 2
+                            text: "+"
+                            baseColor: cAmber
+                            onClicked: {
+                                if(speedServs < 70) speedServs++;
+                                tx_commands.setSettingsServo(pca1, pca2, speedServs);
+                                listView1.positionViewAtEnd();
+                            }
+                        }
+                    }
 
-                       tx_commands.setServoAnglee((butClick * 3 + 1) + " " + femurL + " " + femurH);
-                   }
-                    getcurtimer.running = true
-               }
-           }
+                    Label {
+                        width: parent.width
+                        text: "Прочее"
+                        color: cText
+                        font.pointSize: 10
+                        font.bold: true
+                    }
 
-           Button {
-               id: right_femur
-               anchors.top: right_right_femur.top
-               anchors.right: right_right_femur.left
-               anchors.rightMargin: 5
-               width: page_setting_foot.width * 0.12
-               height: parent.height * 0.08
-               background: Rectangle{
-                   property var normalColor: "#a0cf13"
-                   property var pressedColor: "#70910a"
-                   color: right_femur.pressed ? pressedColor : normalColor
-                   radius: 8
-               }
-               text: ">"
-               onClicked: {
-                   getcurtimer.running = false
-                   if(settParam.femurAngl <= 269)
-                   {
-                       settParam.femurAngl = settParam.femurAngl + 1
-                       femurH = settParam.femurAngl >> 8 & 0x00ff
-                       femurL = settParam.femurAngl & 0x00ff
+                    StyledButton {
+                        width: parent.width
+                        text: "Центр. полож. серв"
+                        baseColor: cTeal
+                        onClicked: {
+                            tx_commands.setMidPwmServs();
+                            listView1.positionViewAtEnd();
+                        }
+                    }
 
-                       tx_commands.setServoAnglee((butClick * 3 + 1) + " " + femurL + " " + femurH);
-                   }
-                    getcurtimer.running = true
-               }
-           }
-
-           Label {
-               id: label3
-               width: page_setting_foot.width
-               wrapMode: Label.Wrap
-               horizontalAlignment: Qt.AlignHCenter
-               anchors.verticalCenter: left_left_femur.verticalCenter
-               text: "угол сервы femur" + "      " + Math.round(settParam.femurAngl)
-           }
-
-           Slider {
-               id: slider2
-               anchors.top: left_left_femur.top
-               anchors.topMargin: left_left_femur.height * 0.8
-               value: settParam.femurAngl
-               from: 0
-               to: 270
-               anchors.left: parent.left
-               anchors.right: parent.right
-               onMoved: {settParam.femurAngl = value}
-
-               Component.onCompleted: {
-                   settParam.femurAnglChanged.connect(modelChanged)
-               }
-
-               onPressedChanged: {
-                   if(!pressed)
-                   {
-                       getcurtimer.running = false
-                       femurH = settParam.femurAngl >> 8 & 0x00ff
-                       femurL = settParam.femurAngl & 0x00ff
-
-                       tx_commands.setServoAnglee((butClick * 3 + 1) + " " + femurL + " " + femurH);
-                       getcurtimer.running = true
-                   }
-              }
-
-               function modelChanged(){
-                   this.value = value
-               }
-           }
-
-           //tiba
-           Button {
-               id: left_left_tiba
-               anchors.top: left_left_femur.bottom
-               anchors.left: page_setting_foot.left
-               anchors.topMargin: left_left_tiba.height * 0.9
-               width: page_setting_foot.width * 0.12
-               height: page_setting_foot.height * 0.08
-               background: Rectangle{
-                   property var normalColor: "#11a9d4"
-                   property var pressedColor: "#0c6f8a"
-                   color: left_left_tiba.pressed ? pressedColor : normalColor
-                   radius: 8
-               }
-               text: "<<"
-               onClicked: {
-                   getcurtimer.running = false
-                   if(settParam.tibaAngl >= 10)
-                   {
-                       settParam.tibaAngl = settParam.tibaAngl - 10
-                       tibaH = settParam.tibaAngl >> 8 & 0x00ff
-                       tibaL = settParam.tibaAngl & 0x00ff
-
-                       tx_commands.setServoAnglee((butClick * 3 + 2) + " " + tibaL + " " + tibaH);
-                   }
-                    getcurtimer.running = true
-               }
-           }
-
-           Button {
-               id: left_tiba
-               anchors.top: left_left_tiba.top
-               anchors.left: left_left_tiba.right
-               anchors.leftMargin: 5
-               width: page_setting_foot.width * 0.12
-               height: page_setting_foot.height * 0.08
-               background: Rectangle{
-                   property var normalColor: "#11a9d4"
-                   property var pressedColor: "#0c6f8a"
-                   color: left_tiba.pressed ? pressedColor : normalColor
-                   radius: 8
-               }
-               text: "<"
-               onClicked: {
-                   getcurtimer.running = false
-                   if(settParam.tibaAngl >= 1)
-                   {
-                       settParam.tibaAngl = settParam.tibaAngl - 1
-                       tibaH = settParam.tibaAngl >> 8 & 0x00ff
-                       tibaL = settParam.tibaAngl & 0x00ff
-
-                       tx_commands.setServoAnglee((butClick * 3 + 2) + " " + tibaL + " " + tibaH);
-                   }
-                    getcurtimer.running = true
-               }
-           }
-
-           Button {
-               id: right_right_tiba
-               anchors.top: left_left_tiba.top
-               anchors.right: parent.right
-               width: page_setting_foot.width * 0.12
-               height: page_setting_foot.height * 0.08
-               background: Rectangle{
-                   property var normalColor: "#11a9d4"
-                   property var pressedColor: "#0c6f8a"
-                   color: right_right_tiba.pressed ? pressedColor : normalColor
-                   radius: 8
-               }
-               text: ">>"
-               onClicked: {
-                   getcurtimer.running = false
-                   if(settParam.tibaAngl <= 260)
-                   {
-                       settParam.tibaAngl = settParam.tibaAngl + 10
-                       tibaH = settParam.tibaAngl >> 8 & 0x00ff
-                       tibaL = settParam.tibaAngl & 0x00ff
-
-                       tx_commands.setServoAnglee((butClick * 3 + 2) + " " + tibaL + " " + tibaH);
-                   }
-                    getcurtimer.running = true
-               }
-           }
-
-           Button {
-               id: right_tiba
-               anchors.top: right_right_tiba.top
-               anchors.right: right_right_tiba.left
-               anchors.rightMargin: 5
-               width: page_setting_foot.width * 0.12
-               height: page_setting_foot.height * 0.08
-               background: Rectangle{
-                   property var normalColor: "#11a9d4"
-                   property var pressedColor: "#0c6f8a"
-                   color: right_tiba.pressed ? pressedColor : normalColor
-                   radius: 8
-               }
-               text: ">"
-               onClicked: {
-                   getcurtimer.running = false
-                   if(settParam.tibaAngl <= 269)
-                   {
-                       settParam.tibaAngl = settParam.tibaAngl + 1
-                       tibaH = settParam.tibaAngl >> 8 & 0x00ff
-                       tibaL = settParam.tibaAngl & 0x00ff
-
-                       tx_commands.setServoAnglee((butClick * 3 + 2) + " " + tibaL + " " + tibaH);
-                   }
-                    getcurtimer.running = true
-               }
-           }
-
-           Label {
-               id: label4
-               width: page_setting_foot.width
-               wrapMode: Label.Wrap
-               horizontalAlignment: Qt.AlignHCenter
-               anchors.verticalCenter: left_left_tiba.verticalCenter
-               text: "угол сервы tiba" + "      " + Math.round(settParam.tibaAngl)
-           }
-
-
-           Slider {
-               id: slider3
-               anchors.top: left_left_tiba.top
-               anchors.topMargin: left_left_tiba.height * 0.8
-               value: settParam.tibaAngl
-               from: 0
-               to: 270
-               anchors.left: parent.left
-               anchors.right: parent.right
-               onMoved: {settParam.tibaAngl = value}
-
-               Component.onCompleted: {
-                   settParam.tibaAnglChanged.connect(modelChanged)
-               }
-
-               onPressedChanged: {
-                   if(!pressed)
-                   {
-                       getcurtimer.running = false
-                       tibaH = settParam.tibaAngl >> 8 & 0x00ff
-                       tibaL = settParam.tibaAngl & 0x00ff
-
-                       tx_commands.setServoAnglee((butClick * 3 + 2) + " " + tibaL + " " + tibaH);
-                       getcurtimer.running = true
-                   }
-              }
-
-               function modelChanged(){
-                   this.value = value
-               }
-           }
-
-           Button {
-               id: calibr_foot
-               anchors.bottom: reset_foot_param.top
-               width: page_settings.width * 0.98
-               anchors.horizontalCenter: parent.horizontalCenter
-               height: page_setting_foot.height * 0.08
-               text: "старт/стоп калибровки ноги"
-               background: Rectangle{
-                   property var normalColor: "#7387d1"
-                   property var pressedColor: "#052bb3"
-                   color: calibr_foot.pressed ? pressedColor : normalColor
-                   radius: 8
-               }
-               onClicked: {
-                    tx_commands.calibrServsFoot(butClick);
-                   listView1.positionViewAtEnd();
-               }
-           }
-
-           Button {
-               id: reset_foot_param
-               anchors.bottom: parent.bottom
-               width: page_settings.width * 0.98
-               anchors.horizontalCenter: parent.horizontalCenter
-               height: page_setting_foot.height * 0.08
-               text: "Reset foot param!"
-               background: Rectangle{
-                   property var normalColor: "#e31041"
-                   property var pressedColor: "#f026dc"
-                   color: reset_foot_param.pressed ? pressedColor : normalColor
-                   radius: 8
-               }
-
-               onClicked: {
-                   getcurtimer.running = false
-                   tx_commands.resetServsFoot(butClick);
-                   listView1.positionViewAtEnd()
-                   getcurtimer.running = true
-               }
-           }
-       }
-       // настройка PCA
-       Item{
-           id: pca_Speed
-
-           Component.onCompleted: {
-               commun_display.onPca1_pca2_speed_Changed.connect(settingsChanged)
-           }
-           function settingsChanged(freqPca1, freqPca2, speed){
-               pca1 = freqPca1;
-               pca2 = freqPca2;
-               speedServs = speed;
-           }
-
-           Column {
-               id: notifColumn
-               spacing: 8
-               width: parent.width * 0.8
-               anchors.top: parent.top
-               anchors.horizontalCenter: parent.horizontalCenter
-
-               Label {
-                   width: notifColumn.width
-                   wrapMode: Label.Wrap
-                   anchors.horizontalCenter: notifColumn.horizontalCenter
-                   horizontalAlignment: Qt.AlignHCenter
-                   text: "окно настройки драйверов сервоприводов"
-               }
-
-               //ток
-               ProgressBar{
-                   id: current1
-                   height: 20
-                   width: notifColumn.width
-                   anchors.horizontalCenter: notifColumn.horizontalCenter
-                   from: 0
-                   to: 5
-
-                   background: Rectangle {
-                       color: "#e6e6e6"
-                       radius: 3
-                   }
-
-                   contentItem: Item {
-                       Rectangle {
-                           width: current1.visualPosition * page_setting_foot.width
-                           height: current1.height
-                           radius: 2
-                           color: "#17a81a"
-
-                           gradient: Gradient {
-                               GradientStop {
-                                   position: 0.0
-                                   SequentialAnimation on color {
-                                       loops: Animation.Infinite
-                                       ColorAnimation { from: "#d6e014"; to: "#b39812"; duration: 5000 }
-                                       ColorAnimation { from: "#b39812"; to: "#d6e014"; duration: 5000 }
-                                   }
-                               }
-                               GradientStop {
-                                   position: 1.0
-                                   SequentialAnimation on color {
-                                       loops: Animation.Infinite
-                                       ColorAnimation { from: "#ed4811"; to: "#a1330e"; duration: 5000 }
-                                       ColorAnimation { from: "#a1330e"; to: "#ed4811"; duration: 5000 }
-                                   }
-                               }
-                           }
-                       }
-                   }
-                   Connections {
-                       target: commun_display
-                      function onCurRealChanged(Cur) {
-                          if(window_focus)
-                           current1.value = Cur
-                       }
-                   }
-               }
-
-               Row {
-                   spacing: 5
-                   anchors.horizontalCenter: parent.horizontalCenter
-
-                   RoundButton {
-                       text: "Прочитать настройки"
-                       background: Rectangle{
-                           property var normalColor: "#1fc2b2"
-                           property var pressedColor: "#17d47f"
-                           color: parent.pressed ? pressedColor : normalColor
-                           radius: 8
-                       }
-                       onClicked: {
-                           tx_commands.getSettingsServs();
-                           listView1.positionViewAtEnd();
-                       }
-                   }
-                   Button {
-                       text: "Сохранить настройки"
-                       background: Rectangle{
-                           property var normalColor: "#1fc2b2"
-                           property var pressedColor: "#17d47f"
-                           color: parent.pressed ? pressedColor : normalColor
-                           radius: 8
-                       }
-                       onClicked: {
-                           tx_commands.saveFlashSettings();
-                           listView1.positionViewAtEnd();
-                       }
-                   }
-               }
-
-               Label {
-                   width: parent.width
-                   text: "Настройка частоты PCA"
-                   horizontalAlignment: Qt.AlignHCenter
-                   font.bold: true
-                   color: "black"
-               }
-
-               Row {
-                   id: row1
-                   spacing: 18
-                   anchors.horizontalCenter: parent.horizontalCenter
-                   Button {
-                       text: "-"
-                       background: Rectangle{
-                           property var normalColor: "#1fc2b2"
-                           property var pressedColor: "#17d47f"
-                           color: parent.pressed ? pressedColor : normalColor
-                           radius: 8
-                       }
-                       onClicked: {
-                           if(pca1 !== 24)
-                               pca1--;
-                           tx_commands.setSettingsServo(pca1, pca2, speedServs);
-                           listView1.positionViewAtEnd();
-                       }
-                   }
-                   Label {
-                       anchors.verticalCenter: row1.verticalCenter
-                       text: "Частота PCA 1  " + "' " + pca1 + " '"
-                       font.bold: true
-                       color: "black"
-                   }
-                   Button {
-                       text: "+"
-                       background: Rectangle{
-                           property var normalColor: "#1fc2b2"
-                           property var pressedColor: "#17d47f"
-                           color: parent.pressed ? pressedColor : normalColor
-                           radius: 8
-                       }
-                       onClicked: {
-                           if(pca1 < 150)
-                               pca1++;
-                           tx_commands.setSettingsServo(pca1, pca2, speedServs);
-                           listView1.positionViewAtEnd();
-                       }
-                   }
-               }
-               Row {
-                   id: row2
-                   spacing: 18
-                   anchors.horizontalCenter: parent.horizontalCenter
-                   Button {
-                       background: Rectangle{
-                           property var normalColor: "#1fc2b2"
-                           property var pressedColor: "#17d47f"
-                           color: parent.pressed ? pressedColor : normalColor
-                           radius: 8
-                       }
-                       text: "-"
-                       onClicked: {
-                           if(pca2 !== 24)
-                               pca2--;
-                           tx_commands.setSettingsServo(pca1, pca2, speedServs);
-                           listView1.positionViewAtEnd();
-                       }
-                   }
-                   Label {
-                       anchors.verticalCenter: row2.verticalCenter
-                       text: "Частота PCA 2  " + "' " + pca2 + " '"
-                       font.bold: true
-                       color: "black"
-                   }
-                   Button {
-                       background: Rectangle{
-                           property var normalColor: "#1fc2b2"
-                           property var pressedColor: "#17d47f"
-                           color: parent.pressed ? pressedColor : normalColor
-                           radius: 8
-                       }
-                       text: "+"
-                       onClicked: {
-                           onClicked: {
-                               if(pca2 < 150)
-                                   pca2++;
-                               tx_commands.setSettingsServo(pca1, pca2, speedServs);
-                               listView1.positionViewAtEnd();
-                           }
-                       }
-                   }
-               }
-               Row {
-                   id: row3
-                   spacing: 18
-                   anchors.horizontalCenter: parent.horizontalCenter
-                   Button {
-                       background: Rectangle{
-                           property var normalColor: "#1fc2b2"
-                           property var pressedColor: "#17d47f"
-                           color: parent.pressed ? pressedColor : normalColor
-                           radius: 8
-                       }
-                       text: "-"
-                       onClicked: {
-                           if(speedServs !== 0)
-                               speedServs--;
-                           tx_commands.setSettingsServo(pca1, pca2, speedServs);
-                           listView1.positionViewAtEnd();
-                       }
-                   }
-                   Label {
-                       anchors.verticalCenter: row3.verticalCenter
-                       text: "Скорость серв  " + "' " + speedServs + " '"
-                       font.bold: true
-                       color: "black"
-                   }
-                   Button {
-                       background: Rectangle{
-                           property var normalColor: "#1fc2b2"
-                           property var pressedColor: "#17d47f"
-                           color: parent.pressed ? pressedColor : normalColor
-                           radius: 8
-                       }
-                       text: "+"
-                       onClicked: {
-                           if(speedServs < 70)
-                               speedServs++;
-                           tx_commands.setSettingsServo(pca1, pca2, speedServs);
-                           listView1.positionViewAtEnd();
-                       }
-                   }
-               }
-               Row {
-                   spacing: 5
-                   anchors.horizontalCenter: parent.horizontalCenter
-                   Button {
-                       background: Rectangle{
-                           property var normalColor: "#1fc2b2"
-                           property var pressedColor: "#17d47f"
-                           color: parent.pressed ? pressedColor : normalColor
-                           radius: 8
-                       }
-                       text: "Центр. полож. серв"
-                       onClicked: {
-                           tx_commands.setMidPwmServs();
-                           listView1.positionViewAtEnd();
-                       }
-                   }
-                   Button {
-                       background: Rectangle{
-                           property var normalColor: "#1fc2b2"
-                           property var pressedColor: "#17d47f"
-                           color: parent.pressed ? pressedColor : normalColor
-                           radius: 8
-                       }
-                       text: "Проверка скорости"
-                       onClicked: {
-                           tx_commands.checkSpeedServs();
-                           listView1.positionViewAtEnd();
-                       }
-                   }
-               }
-           }
-       }
+                    StyledButton {
+                        width: parent.width
+                        text: "Проверка скорости"
+                        baseColor: cMint
+                        onClicked: {
+                            tx_commands.checkSpeedServs();
+                            listView1.positionViewAtEnd();
+                        }
+                    }
+                }
+            }
+        }
     }
 
     PageIndicator {
@@ -1458,6 +1379,176 @@ Page {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottomMargin: parent.height * 0.05
     }
+
+    // =====================================================================
+    // Стилизованная кнопка — компактная
+    // =====================================================================
+    component StyledButton: Button {
+        id: sb
+        property color baseColor: "#5b7cfa"
+
+        implicitHeight: 38
+        implicitWidth: 200
+        leftPadding: 10
+        rightPadding: 10
+        topPadding: 6
+        bottomPadding: 6
+
+        contentItem: Text {
+            text: sb.text
+            color: "#ffffff"
+            font.pixelSize: 11
+            font.bold: true
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            elide: Text.ElideRight
+        }
+
+        background: Rectangle {
+            radius: 8
+            color: {
+                if (sb.pressed) return Qt.darker(sb.baseColor, 1.18)
+                if (sb.hovered) return Qt.lighter(sb.baseColor, 1.08)
+                return sb.baseColor
+            }
+            border.color: Qt.darker(sb.baseColor, 1.25)
+            border.width: 1
+
+            Rectangle {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                height: 3
+                radius: parent.radius
+                color: Qt.darker(sb.baseColor, 1.30)
+                opacity: sb.pressed ? 0.0 : 0.55
+            }
+
+            Behavior on color { ColorAnimation { duration: 120 } }
+        }
+    }
+
+    // =====================================================================
+    // SwipeSlider — тонкий кастомный слайдер
+    // =====================================================================
+    component SwipeSlider: Item {
+        id: ssRoot
+
+        property real value: 0
+        property real from: 0
+        property real to: 100
+        property real stepSize: 0
+        property bool pressed: false
+
+        signal moved()
+
+        implicitHeight: 30
+        implicitWidth: 200
+
+        readonly property color trackColor:  "#cfd8dc"
+        readonly property color fillColor:   "#4dd0e1"
+        readonly property color handleColor: "#26a69a"
+        readonly property color handleBorder:"#00796b"
+
+        Rectangle {
+            id: ssTrack
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 4
+            radius: 2
+            color: ssRoot.trackColor
+
+            Rectangle {
+                width: Math.max(0, Math.min(parent.width,
+                    (ssRoot.value - ssRoot.from) / (ssRoot.to - ssRoot.from) * parent.width))
+                height: parent.height
+                radius: 2
+                color: ssRoot.fillColor
+            }
+        }
+
+        Rectangle {
+            id: ssHandle
+            width: 16
+            height: 16
+            radius: 8
+            color: ssRoot.handleColor
+            border.color: ssRoot.handleBorder
+            border.width: 2
+            anchors.verticalCenter: parent.verticalCenter
+            x: Math.max(0, Math.min(parent.width - width,
+                (ssRoot.value - ssRoot.from) / (ssRoot.to - ssRoot.from) * (parent.width - width)))
+        }
+
+        MouseArea {
+            id: ssMouse
+            anchors.fill: parent
+            preventStealing: true
+            acceptedButtons: Qt.LeftButton
+
+            property real startX: 0
+            property real startY: 0
+            property bool dragging: false
+            property bool horizontal: false
+
+            onPressed: function(mouse) {
+                startX = mouse.x
+                startY = mouse.y
+                dragging = false
+                horizontal = false
+                ssRoot.pressed = true
+                swipeView.interactive = false
+            }
+
+            onPositionChanged: function(mouse) {
+                if (!pressed) return
+                var dx = mouse.x - startX
+                var dy = mouse.y - startY
+
+                if (!dragging && !horizontal) {
+                    if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) {
+                        horizontal = true
+                        ssRoot.pressed = false
+                        swipeView.interactive = true
+                        preventStealing = false
+                        mouse.accepted = false
+                        return
+                    } else if (Math.abs(dy) > 4 || Math.abs(dx) > 4) {
+                        dragging = true
+                    }
+                }
+
+                if (dragging) {
+                    var rel = Math.max(0, Math.min(1,
+                        (mouse.x - ssHandle.width / 2) / (width - ssHandle.width)))
+                    var newVal = ssRoot.from + rel * (ssRoot.to - ssRoot.from)
+                    if (ssRoot.stepSize > 0)
+                        newVal = Math.round(newVal / ssRoot.stepSize) * ssRoot.stepSize
+                    ssRoot.value = newVal
+                    mouse.accepted = true
+                }
+            }
+
+            onReleased: function(mouse) {
+                if (dragging) {
+                    ssRoot.moved()
+                }
+                dragging = false
+                horizontal = false
+                ssRoot.pressed = false
+                preventStealing = true
+                swipeView.interactive = true
+                mouse.accepted = false
+            }
+
+            onCanceled: {
+                dragging = false
+                horizontal = false
+                ssRoot.pressed = false
+                preventStealing = true
+                swipeView.interactive = true
+            }
+        }
+    }
 }
-
-

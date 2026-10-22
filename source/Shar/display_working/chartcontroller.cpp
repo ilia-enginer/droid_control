@@ -61,6 +61,8 @@ void ChartController::setVisiblePoints(int n)
 void ChartController::setXStep(qreal step)
 {
     if (step <= 0) return;
+    step = step / 1000; // меняю в qml, а там значения в мс
+
     if (qFuzzyCompare(step, m_xStep)) return;
 
     const qreal oldStep = m_xStep;
