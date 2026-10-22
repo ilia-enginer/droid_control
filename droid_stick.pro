@@ -16,6 +16,8 @@ win32 {
     OTHER_FILES += file.rc
 }
 
+ANDROID_TARGET_SDK_VERSION = 31
+
 SOURCES += \
     source/Pylt/communication/rx_commandsPylt.cpp \
     source/Pylt/communication/tx_commandsPylt.cpp \
