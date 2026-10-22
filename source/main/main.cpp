@@ -70,6 +70,7 @@
 #include "source/Shar/communication/rx_commands.h"
 #include "source/Shar/display_working/commun_display.h"
 #include "source/Shar/display_working/chartcontroller.h"
+#include "source/Shar/display_working/clipboardHelper.h"
 #include "source/Shar/communication/tx_commands.h"
 #include "source/main/settings.h"
 #include "source/update/updatehex.h"
@@ -218,6 +219,7 @@ int main(int argc, char *argv[])
     MainSerialPort      * mainSerialPort        = new MainSerialPort();
     Commun_display      * commun_display        = new Commun_display();
     ChartController     * chartController       = new ChartController();
+    ClipboardHelper     * clipboardHelper       = new ClipboardHelper();
     Pylt_settings       * pylt_settings         = new Pylt_settings();
 
     packing->setCrc(crc);
@@ -300,6 +302,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("packing", packing);
     engine.rootContext()->setContextProperty("commun_display", commun_display);
     engine.rootContext()->setContextProperty("chartController", chartController);
+    engine.rootContext()->setContextProperty("clipboardHelperCpp", clipboardHelper);
     engine.rootContext()->setContextProperty("tx_commands", tx_commands);
     engine.rootContext()->setContextProperty("settParam", settings);
     engine.rootContext()->setContextProperty("updateHexx", updateHex);

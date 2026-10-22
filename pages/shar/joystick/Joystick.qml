@@ -74,19 +74,26 @@ SwipeView {
 
     property string copiedLogText: ""
 
+    // Буфер обмена: очищается при старте нового выделения
+    property bool selectionActive: false
+
     function updateClipboardFromSelection() {
-        var text = ""
+        var parts = []
         for (var i = 0; i < logListModel_2.count; ++i) {
             var item = logListModel_2.get(i)
-            if (item.selected) {
-                text += item.msg + "\n"
-                toast.toastOn("буфер обновлён")
-            }
+            if (item.selected)
+                parts.push(item.msg)
         }
-        copiedLogText = text.trim()
-        clipboardHelper.text = copiedLogText
-        clipboardHelper.selectAll()
-        clipboardHelper.copy()
+        copiedLogText = parts.join("\n").trim()
+
+        if (copiedLogText.length > 0) {
+            clipboardHelperCpp.copyText(copiedLogText)
+            toast.toastOn("буфер обновлён")
+        } else {
+            // Ничего не выбрано — очищаем буфер, чтобы старый текст не остался
+            clipboardHelperCpp.copyText("")
+            toast.toastOn("выделение снято, буфер очищен")
+        }
     }
 
     //страница управления
@@ -126,16 +133,6 @@ SwipeView {
             running: false
             repeat: true
             onTriggered: { tx_commands.joysticActivity(mode, azimuth, amplitude, level, ctrl); }
-        }
-
-        TextEdit {
-            id: clipboardHelper
-            opacity: 0
-            width: 1
-            height: 1
-            text: ""
-            readOnly: true
-            selectByMouse: false
         }
 
         //окно лога
@@ -203,7 +200,7 @@ SwipeView {
                 anchors.margins: 2
                 snapMode:ListView.SnapOneItem
                 clip: true
-                spacing: -1
+                spacing: 1
                 reuseItems: true
                 model: logListModel_2
 
@@ -213,6 +210,7 @@ SwipeView {
                 delegate: Rectangle {
                     id: rowRoot
                     width: listView1.width * 0.95
+                    // Высота по тексту, но чуть меньше за счёт lineHeight
                     height: rowText.implicitHeight
                     radius: 4
                     color: selected ? "#d6eaff" : "transparent"
@@ -226,7 +224,7 @@ SwipeView {
                     Text {
                         id: rowText
                         anchors.left: parent.left
-                        anchors.leftMargin: 8
+                        anchors.leftMargin: 6
                         anchors.right: parent.right
                         anchors.rightMargin: 4
                         anchors.verticalCenter: parent.verticalCenter
@@ -234,6 +232,9 @@ SwipeView {
                         wrapMode: Text.Wrap
                         color: selected ? "#0d47a1" : "#263238"
                         font.pixelSize: 14
+                        // Компактнее по вертикали, текст остаётся по центру
+                        lineHeight: 0.9
+                        lineHeightMode: Text.ProportionalHeight
                     }
 
                     MouseArea {
@@ -340,7 +341,6 @@ SwipeView {
             onClicked: {
                 logListModel_2.clear()
                 copiedLogText = ""
-                clipboardHelper.text = ""
             }
 
             // остановка выпадения лога

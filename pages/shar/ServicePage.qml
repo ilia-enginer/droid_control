@@ -6,11 +6,60 @@ import QtQuick.Controls.Material
 Page {
     id: pageService
 
+    // ---- Палитра ----
+    readonly property color cBg:        "#eef3f8"
+    readonly property color cCard:      "#ffffff"
+    readonly property color cBorder:    "#e0e6ed"
+    readonly property color cText:      "#263238"
+    readonly property color cTextSoft:  "#546e7a"
+    readonly property color cPrimary:   "#5b7cfa"
+    readonly property color cPrimaryD:  "#3f5fd6"
+    readonly property color cCoral:     "#ff7a7a"
+    readonly property color cCoralD:    "#e05555"
+    readonly property color cAmber:     "#ffb74d"
+    readonly property color cAmberD:    "#e09a2f"
+    readonly property color cMint:      "#66bb6a"
+    readonly property color cMintD:     "#43a047"
+
     property bool addingLog : true
 
     property int pca1 : 0
     property int pca2 : 0
     property int speedServs : 0
+
+    // Фон страницы
+    Rectangle {
+        anchors.fill: parent
+        color: cBg
+        z: -1
+    }
+
+    // Буфер обмена: очищается при старте нового выделения
+    property bool selectionActive: false
+
+    function updateClipboardFromSelection() {
+        var parts = []
+        for (var i = 0; i < logListModel.count; ++i) {
+            var item = logListModel.get(i)
+            if (item.selected)
+                parts.push(item.msg)
+        }
+        var text = parts.join("\n").trim()
+
+        if (text.length > 0) {
+            // Первое выделение после «чистого» состояния — очищаем буфер,
+            // чтобы не смешать с текстом из другого файла
+            if (!selectionActive) {
+                clipboardHelperCpp.copyText("")
+                selectionActive = true
+            }
+            clipboardHelperCpp.copyText(text)
+        } else {
+            // Выделение снято полностью — очищаем буфер
+            clipboardHelperCpp.copyText("")
+            selectionActive = false
+        }
+    }
 
         Label {
             id: senderPageLabel
@@ -19,20 +68,32 @@ Page {
             wrapMode: Label.Wrap
             horizontalAlignment: Qt.AlignHCenter
             text: commun_display.curDeviceName_
+            color: cText
+            padding: 6
         }
 
         Rectangle {
             id: senderBackground
             anchors.top: senderPageLabel.bottom
-            color: "#f7ebee"
-            width: parent.width
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 6
+            anchors.rightMargin: 6
+            color: cCard
             height: parent.height * 0.3
+            radius: 8
+            border.width: 1
+            border.color: cBorder
         }
 
         ScrollView {
             id: scrolViewLogArea
             anchors.fill: senderBackground
+            anchors.margins: 1
+            clip: true
+
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+
             ScrollBar.vertical: ScrollBar {
                 id: scrollBar
                 hoverEnabled: true
@@ -42,123 +103,219 @@ Page {
                 anchors.top: parent.top
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
+                width: 10
+
                 contentItem: Rectangle {
-                        implicitWidth: 6
-                        implicitHeight: 30
-                        color: "grey"
-                    }
+                    implicitWidth: 4
+                    radius: 2
+                    color: scrollBar.pressed ? cPrimary : "#cfd8dc"
+                }
+
+                background: Rectangle {
+                    implicitWidth: 10
+                    color: "transparent"
+                }
 
                 Button {
                     anchors.top: parent.top
                     width: parent.width
-                    height: 25
-                    text: "^"
+                    height: 22
+                    background: Rectangle {
+                        radius: 4
+                        color: parent.pressed ? "#bbdefb" : "#e3f2fd"
+                        border.width: 1
+                        border.color: "#90caf9"
+                    }
+                    contentItem: Text {
+                        text: "^"
+                        color: cPrimaryD
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
                     onClicked: { scrollBar.decrease() }
                 }
                 Button {
                     anchors.bottom: parent.bottom
                     width: parent.width
-                    height: 25
-                    text: "v"
+                    height: 22
+                    background: Rectangle {
+                        radius: 4
+                        color: parent.pressed ? "#bbdefb" : "#e3f2fd"
+                        border.width: 1
+                        border.color: "#90caf9"
+                    }
+                    contentItem: Text {
+                        text: "v"
+                        color: cPrimaryD
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
                     onClicked: { scrollBar.increase() }
                 }
             }
             ListView {
-                   id: listView1
-                   anchors.fill: scrolViewLogArea
-                   snapMode:ListView.SnapToItem
-                   width: scrolViewLogArea.width
-                   clip: true
+                id: listView1
+                anchors.fill: parent
+                anchors.margins: 2
+                anchors.rightMargin: 12
+                snapMode: ListView.SnapToItem
+                clip: true
+                spacing: 1
+                model: logListModel
 
-                   Connections {
-                       target: commun_display
-                       function onLogServis(type, msg) {
-                           if(!addingLog)   return;
-                           logListModel.append({msg: type + msg})
-                           listView1.positionViewAtEnd()
-                       }
-                   }
-                   delegate: Column {
-                       Text {
-                           anchors.left: parent.left
-                           anchors.leftMargin: 14
-                           anchors.right: parent.right
-                           anchors.rightMargin: 4
-                           text: msg
-                           font.family: "Courier New"
-                           wrapMode: Text.Wrap
-                           font.pixelSize: 14
-                           color: "black"
-                       }
+                Connections {
+                    target: commun_display
+                    function onLogServis(type, msg) {
+                        if(!addingLog)   return;
+                        logListModel.append({ msg: type + msg, selected: false })
+                        listView1.positionViewAtEnd()
                     }
-                   // Сама модель, в которой будут содержаться все элементы
-                   model: ListModel {
-                       id: logListModel // задаём ей id для обращения
-                   }
-               }
+                }
+
+                delegate: Rectangle {
+                    id: rowRoot
+                    width: listView1.width * 0.97
+                    height: rowText.implicitHeight + 6
+                    radius: 4
+                    color: selected ? "#d6eaff"
+                                      : (index % 2 === 0 ? "#f7f9fc" : "transparent")
+                    border.width: selected ? 1 : 0
+                    border.color: cPrimary
+
+                    required property int index
+                    required property string msg
+                    required property bool selected
+
+                    Text {
+                        id: rowText
+                        anchors.left: parent.left
+                        anchors.leftMargin: 6
+                        anchors.right: parent.right
+                        anchors.rightMargin: 6
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: msg
+                    //    font.family: "Courier New"
+                        font.pixelSize: 14
+                        wrapMode: Text.Wrap
+                        color: selected ? "#0d47a1" : cText
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        acceptedButtons: Qt.LeftButton
+                        onClicked: {
+                            logListModel.setProperty(index, "selected", !selected)
+                            updateClipboardFromSelection()
+                        }
+                        onDoubleClicked: {
+                            logListModel.setProperty(index, "selected", true)
+                            updateClipboardFromSelection()
+                        }
+                    }
+                }
+
+                ListModel {
+                    id: logListModel
+                }
+            }
         }
 
-        //очистка окна
+
+        // очистка окна — прижата к правому краю
         Button {
             id: clearButton_1
-            width: senderBackground.width * 0.07
-            height: senderBackground.height * 0.45
+            width: senderBackground.width * 0.1
+            height: senderBackground.height * 0.42
             anchors.top: senderBackground.top
+            anchors.topMargin: 6
             anchors.right: senderBackground.right
-            anchors.rightMargin: Qt.platform.os === "windows" ? 30 : 0
-            opacity: 0.5
-            contentItem: Text{
+            anchors.rightMargin: 6
+            opacity: 0.9
+
+            background: Rectangle {
+                radius: 6
+                color: clearButton_1.pressed ? cCoralD
+                                              : (clearButton_1.hovered ? "#ff8a80" : cCoral)
+                border.width: 1
+                border.color: cCoralD
+                Behavior on color { ColorAnimation { duration: 120 } }
+            }
+            contentItem: Text {
                 text: "Clear"
                 font.pointSize: 6
+                color: "#ffffff"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
             }
             onClicked: {
                 logListModel.clear()
+                clipboardHelperCpp.copyText("")
+                selectionActive = false
             }
         }
 
-        // остановка выпадения лога
         Button {
-            width: senderBackground.width * 0.08
-            height: senderBackground.height * 0.45
+            id: stopStartButton
+            width: senderBackground.width * 0.1
+            height: senderBackground.height * 0.42
             anchors.top: clearButton_1.bottom
-            anchors.topMargin: 3
+            anchors.topMargin: 4
             anchors.right: senderBackground.right
-            anchors.rightMargin: 30
-            opacity: 0.5
+            anchors.rightMargin: 6
+            opacity: 0.9
 
-            contentItem: Text{
-                horizontalAlignment: Qt.AlignHCenter
+            background: Rectangle {
+                radius: 6
+                color: addingLog
+                    ? (stopStartButton.pressed ? cAmberD
+                                               : (stopStartButton.hovered ? "#ffca7a" : cAmber))
+                    : (stopStartButton.pressed ? cMintD
+                                               : (stopStartButton.hovered ? "#81c784" : cMint))
+                border.width: 1
+                border.color: addingLog ? cAmberD : cMintD
+                Behavior on color { ColorAnimation { duration: 120 } }
+            }
+            contentItem: Text {
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
                 text: addingLog ? "Стоп" : "Старт"
                 font.pointSize: 6
+                color: "#ffffff"
             }
-
             onClicked: {
                 addingLog ? addingLog = false : addingLog = true
             }
         }
 
         CheckBox {
-          id: loging
-          anchors.top: senderBackground.bottom
-          checked: settParam.loging
-          text: qsTr("Включить логирование")
-
-          onClicked: {
-              settParam.loging = checked
-          }
+            id: loging
+            anchors.top: senderBackground.bottom
+         //   anchors.topMargin: 2
+            anchors.left: parent.left
+            anchors.leftMargin: 16
+            checked: settParam.loging
+            text: qsTr("Включить логирование")
+            palette.windowText: cText
+            palette.highlight: cPrimary
+            palette.highlightedText: "#ffffff"
+            onClicked: {
+                settParam.loging = checked
+            }
         }
 
         Flickable {
-
-                id: scrolViewLogArea_1
-                anchors.top: loging.bottom
-                anchors.bottom: parent.bottom
-                width: parent.width
-                interactive: true
-                clip: true
-                flickableDirection: Flickable.VerticalFlick
-                contentHeight: 900
-
+            id: scrolViewLogArea_1
+            anchors.top: loging.bottom
+          //  anchors.topMargin: 2
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 6
+            anchors.rightMargin: 6
+            interactive: true
+            clip: true
+            flickableDirection: Flickable.VerticalFlick
+            contentHeight: 900
 
                 ComboBox {
                     id: paramBox

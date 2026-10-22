@@ -6,12 +6,29 @@ import QtQuick.Controls.Material
 Page {
     id: informationPage
 
+    // ---- Палитра ----
+    readonly property color cBg:        "#eef3f8"
+    readonly property color cCard:      "#ffffff"
+    readonly property color cBorder:    "#e0e6ed"
+    readonly property color cText:      "#263238"
+    readonly property color cTextSoft:  "#546e7a"
+    readonly property color cPrimary:   "#5b7cfa"
+    readonly property color cPrimaryD:  "#3f5fd6"
+
+    // Фон страницы
+    Rectangle {
+        anchors.fill: parent
+        color: cBg
+        z: -1
+    }
+
     ComboBox {
         id: paramBox
-        anchors.top: parent.up
+        anchors.top: parent.top
+        anchors.topMargin: 8
         anchors.horizontalCenter: parent.horizontalCenter
         width: parent.width * 0.98
-  //      currentIndex: info.infoIndexMenu_
+        height: 40
 
         model: ListModel {
                id: model
@@ -26,9 +43,45 @@ Page {
                ListElement { text: "Зарядка" }
                ListElement { text: "Меры предосторожности" }
            }
-        onCurrentIndexChanged: {
-  //          info.infoIndexMenu_ = paramBox.currentIndex
 
+        palette.windowText: cText
+        palette.highlight: cPrimary
+        palette.highlightedText: "#ffffff"
+
+        background: Rectangle {
+            radius: 6
+            color: cCard
+            border.width: 1
+            border.color: cBorder
+        }
+
+        contentItem: Text {
+            text: paramBox.displayText
+            color: cText
+            font.pixelSize: 14
+            verticalAlignment: Text.AlignVCenter
+            elide: Text.ElideRight
+            leftPadding: 8
+        }
+
+        indicator: Rectangle {
+            implicitWidth: 24
+            implicitHeight: 24
+            x: paramBox.width - width - 6
+            y: paramBox.topPadding + (paramBox.availableHeight - height) / 2
+            radius: 4
+            color: "transparent"
+            border.width: 0
+
+            Text {
+                anchors.centerIn: parent
+                text: "▾"
+                color: cPrimaryD
+                font.pixelSize: 14
+            }
+        }
+
+        onCurrentIndexChanged: {
             //пустая строка
             if(currentIndex === 0)  info.clear();
             //Включение
@@ -52,32 +105,71 @@ Page {
         }
     }
 
+    // Карточка с текстом — показывается только когда есть текст
+    Rectangle {
+        id: textCard
+        anchors.top: paramBox.bottom
+        anchors.topMargin: 8
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: parent.width * 0.98
+        color: cCard
+        radius: 8
+        border.width: 1
+        border.color: cBorder
+        clip: true
+
+        // Показываем только при непустом тексте
+        visible: txt.text.length > 0
+
+        // Высота по содержимому, но не больше доступного места
+        height: Math.min(txt.contentHeight + 24,
+                         informationPage.height - paramBox.height - 24)
+    }
+
     Flickable {
-         id: flick_text
-         anchors.horizontalCenter: parent.horizontalCenter
-         width: parent.width * 0.98
-         anchors.top: paramBox.bottom
-         anchors.bottom: parent.bottom
-         contentWidth: edit.contentWidth
-         contentHeight: txt.contentHeight
-         clip: true
+        id: flick_text
+        anchors.fill: textCard
+        anchors.margins: 1
+        contentWidth: width
+        contentHeight: txt.contentHeight + 16
+        clip: true
+        boundsBehavior: Flickable.StopAtBounds
 
-         TextEdit {
-             id: edit
-             width: flick_text.width
-             color: "#7387d1"
-             focus: false
-             activeFocusOnPress: false
-             font: font.pixelSize = 13
-             wrapMode: TextEdit.Wrap
+        ScrollBar.vertical: ScrollBar {
+            id: vbar
+            policy: ScrollBar.AsNeeded
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            width: 10
 
-             Text {
-                 id: txt
-                 width: parent.width
-                 text: info.info_str_
-                 wrapMode: TextEdit.Wrap
-                 color: "#7387d1"
-             }
-         }
-     }
+            contentItem: Rectangle {
+                implicitWidth: 4
+                radius: 2
+                color: vbar.pressed ? cPrimary : "#cfd8dc"
+            }
+
+            background: Rectangle {
+                implicitWidth: 10
+                color: "transparent"
+            }
+        }
+
+        Text {
+            id: txt
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.rightMargin: 10
+            anchors.top: parent.top
+            anchors.topMargin: 8
+            anchors.leftMargin: 8
+            width: parent.width - 18
+            text: info.info_str_
+            wrapMode: Text.Wrap
+            font.family: "Courier New"
+            font.pixelSize: 13
+            color: cTextSoft
+            lineHeight: 1.15
+        }
+    }
 }

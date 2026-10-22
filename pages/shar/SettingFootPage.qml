@@ -1,4 +1,4 @@
-import QtQuick 2.7
+import QtQuick 2.15
 import QtQuick.Controls 2.0
 import QtQuick.Layouts
 import Qt.labs.settings
@@ -69,6 +69,33 @@ Page {
     readonly property color cTextLight:  "#ffffff"
     readonly property color cBg:         "#f4f7fb"
 
+    // Буфер обмена: очищается при старте нового выделения
+    property bool selectionActive: false
+
+    function updateClipboardFromSelection() {
+        var parts = []
+        for (var i = 0; i < logListModel.count; ++i) {
+            var item = logListModel.get(i)
+            if (item.selected)
+                parts.push(item.msg)
+        }
+        var text = parts.join("\n").trim()
+
+        if (text.length > 0) {
+            // Если это первое выделение после «чистого» состояния —
+            // очищаем буфер, чтобы не смешать с текстом из другого файла
+            if (!selectionActive) {
+                clipboardHelperCpp.copyText("")
+                selectionActive = true
+            }
+            clipboardHelperCpp.copyText(text)
+        } else {
+            // Выделение снято полностью — очищаем буфер
+            clipboardHelperCpp.copyText("")
+            selectionActive = false
+        }
+    }
+
     Label {
         id: senderPageLabel
         anchors.top: parent.top
@@ -98,7 +125,7 @@ Page {
         anchors.top: warring.bottom
         color: "#ffffff"
         width: parent.width
-        height: parent.height * 0.2
+        height: parent.height * 0.25
         radius: 8
         border.width: 1
         border.color: "#e0e6ed"
@@ -150,12 +177,14 @@ Page {
         ListView {
             id: listView1
             anchors.fill: parent
-            anchors.rightMargin: 10       // чтобы контент не залезал под скроллбар
+            anchors.rightMargin: 10
             anchors.margins: 2
-            snapMode:ListView.SnapToItem
+            snapMode: ListView.SnapToItem
             width: parent.width
             clip: true
-            spacing: 2
+            spacing: 1
+            reuseItems: true
+            model: logListModel
 
             Connections {
                 target: commun_display
@@ -164,7 +193,7 @@ Page {
                     if(window_focus)
                     {
                         if (mainModel.adminFlag === false){
-                             logListModel.append({msg: type + msg})
+                             logListModel.append({msg: type + msg, selected: false})
                              listView1.positionViewAtEnd()
                         }
                     }
@@ -174,17 +203,25 @@ Page {
                     if(window_focus)
                     {
                         if (mainModel.adminFlag === true){
-                            logListModel.append({msg: type + msg})
+                            logListModel.append({msg: type + msg, selected: false})
                             listView1.positionViewAtEnd()
                         }
                     }
                 }
             }
+
             delegate: Rectangle {
+                id: rowRoot
                 width: listView1.width * 0.97
                 height: rowText.implicitHeight + 6
                 radius: 4
-                color: index % 2 === 0 ? "#f7f9fc" : "transparent"
+                color: selected ? "#d6eaff" : (index % 2 === 0 ? "#f7f9fc" : "transparent")
+                border.width: selected ? 1 : 0
+                border.color: "#1e88e5"
+
+                required property int index
+                required property string msg
+                required property bool selected
 
                 Text {
                     id: rowText
@@ -193,15 +230,29 @@ Page {
                     anchors.right: parent.right
                     anchors.rightMargin: 6
                     anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width - 12
                     text: msg
-                    font.family: "Courier New"
                     font.pixelSize: 14
                     wrapMode: Text.Wrap
-                    color: "#263238"
+                    color: selected ? "#0d47a1" : "#263238"
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.LeftButton
+
+                    onClicked: {
+                        logListModel.setProperty(index, "selected", !selected)
+                        updateClipboardFromSelection()
+                    }
+
+                    onDoubleClicked: {
+                        logListModel.setProperty(index, "selected", true)
+                        updateClipboardFromSelection()
+                    }
                 }
             }
-            model: ListModel {
+
+            ListModel {
                 id: logListModel
             }
         }
@@ -233,6 +284,8 @@ Page {
         }
         onClicked: {
             logListModel.clear()
+            clipboardHelperCpp.copyText("")
+            selectionActive = false
         }
     }
 

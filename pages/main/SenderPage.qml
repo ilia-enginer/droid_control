@@ -1,28 +1,73 @@
-
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
 
-
 Page {
     id: terminalPage
 
+    // ---- Палитра ----
+    readonly property color cBg:        "#eef3f8"
+    readonly property color cCard:      "#ffffff"
+    readonly property color cBorder:    "#e0e6ed"
+    readonly property color cText:      "#263238"
+    readonly property color cTextSoft:  "#546e7a"
+    readonly property color cPrimary:   "#5b7cfa"
+    readonly property color cPrimaryD:  "#3f5fd6"
+    readonly property color cCoral:     "#ff7a7a"
+    readonly property color cCoralD:    "#e05555"
+    readonly property color cAmber:     "#ffb74d"
+    readonly property color cAmberD:    "#e09a2f"
+    readonly property color cMint:      "#66bb6a"
+    readonly property color cMintD:     "#43a047"
+    readonly property color cLime:      "#c0ca33"
+    readonly property color cLimeD:     "#9e9d24"
+
     property bool addingLog : true
-
     property bool wrap : false
+    property bool selectionActive: false
 
-    //копирование лога без системного выделения текста: copy() только
-    //записывает в буфер (запись на Android разрешена всегда), в отличие
-    //от выделения, которое опрашивает клипборд и на Huawei приводит
-    //к шторму отказов ClipboardService и падению приложения
+    // Фон страницы
+    Rectangle {
+        anchors.fill: parent
+        color: cBg
+        z: -1
+    }
+
+    // Копирование всего лога (кнопка «Копировать всё»)
     function copyLog() {
-        var text = ""
+        var parts = []
         for (var i = 0; i < logListModel.count; ++i) {
-            text += logListModel.get(i).msg + "\n"
+            parts.push(logListModel.get(i).msg)
         }
-        clipboardHelper.text = text
-        clipboardHelper.selectAll()
-        clipboardHelper.copy()
+        var text = parts.join("\n").trim()
+
+        clipboardHelperCpp.copyText("")
+        if (text.length > 0)
+            clipboardHelperCpp.copyText(text)
+    }
+
+    // Копирование выделенных строк (клик по строке)
+    function updateClipboardFromSelection() {
+        var parts = []
+        for (var i = 0; i < logListModel.count; ++i) {
+            var item = logListModel.get(i)
+            if (item.selected)
+                parts.push(item.msg)
+        }
+        var text = parts.join("\n").trim()
+
+        if (text.length > 0) {
+            if (!selectionActive) {
+                clipboardHelperCpp.copyText("")
+                selectionActive = true
+                toast.toastOn("буфер обновлён")
+            }
+            clipboardHelperCpp.copyText(text)
+        } else {
+            clipboardHelperCpp.copyText("")
+            selectionActive = false
+            toast.toastOn("выделение снято, буфер очищен")
+        }
     }
 
     Label {
@@ -32,21 +77,32 @@ Page {
         anchors.top: parent.top
         horizontalAlignment: Qt.AlignHCenter
         text: commun_display.curDeviceName_
+        color: cText
+        padding: 6
     }
 
     Rectangle {
         id: senderBackground
         anchors.top: senderPageLabel.bottom
-        color: "#f7ebee"
-        width: parent.width
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.leftMargin: 6
+        anchors.rightMargin: 6
+        color: cCard
         height: parent.height * 0.5
+        radius: 8
+        border.width: 1
+        border.color: cBorder
     }
 
     ScrollView {
         id: scrolViewLogArea
         anchors.fill: senderBackground
+        anchors.margins: 1
+        clip: true
 
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+
         ScrollBar.vertical: ScrollBar {
             id: scrollBar
             hoverEnabled: true
@@ -56,85 +112,152 @@ Page {
             anchors.top: parent.top
             anchors.right: parent.right
             anchors.bottom: parent.bottom
+            width: 10
+
             contentItem: Rectangle {
-                    implicitWidth: 6
-                    implicitHeight: 30
-                    color: "grey"
-                }
+                implicitWidth: 4
+                radius: 2
+                color: scrollBar.pressed ? cPrimary : "#cfd8dc"
+            }
+
+            background: Rectangle {
+                implicitWidth: 10
+                color: "transparent"
+            }
+
             Button {
                 anchors.top: parent.top
                 width: parent.width
-                height: 25
-                text: "^"
+                height: 22
+                background: Rectangle {
+                    radius: 4
+                    color: parent.pressed ? "#bbdefb" : "#e3f2fd"
+                    border.width: 1
+                    border.color: "#90caf9"
+                }
+                contentItem: Text {
+                    text: "^"
+                    color: cPrimaryD
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
                 onClicked: { scrollBar.decrease() }
             }
             Button {
                 anchors.bottom: parent.bottom
                 width: parent.width
-                height: 25
-                text: "v"
+                height: 22
+                background: Rectangle {
+                    radius: 4
+                    color: parent.pressed ? "#bbdefb" : "#e3f2fd"
+                    border.width: 1
+                    border.color: "#90caf9"
+                }
+                contentItem: Text {
+                    text: "v"
+                    color: cPrimaryD
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
                 onClicked: { scrollBar.increase() }
             }
         }
 
         ListView {
-               id: listView1
-               anchors.fill: scrolViewLogArea
-               snapMode:ListView.SnapToItem
-               clip: true
+            id: listView1
+            anchors.fill: parent
+            anchors.margins: 2
+            anchors.rightMargin: 12
+            snapMode: ListView.SnapToItem
+            clip: true
+            spacing: 2
+            model: logListModel
 
-               Connections {
-                   target: commun_display
-                   function onLogT(type, msg) {
-                       if(!addingLog)   return;
-                       logListModel.append({msg: type + msg})
-                       listView1.positionViewAtEnd()
-                   }
-               }
+            Connections {
+                target: commun_display
+                function onLogT(type, msg) {
+                    if(!addingLog)   return;
+                    logListModel.append({ msg: type + msg, selected: false })
+                    listView1.positionViewAtEnd()
+                }
+            }
 
-               delegate: Column {
-                   TextEdit {
-                       //интерактивное выделение отключено на Android:
-                       //при выделении Qt опрашивает системный клипборд,
-                       //что на Huawei вызывает шторм отказов и краш
-                       selectByKeyboard: Qt.platform.os !== "android"
-                       selectByMouse: Qt.platform.os !== "android"
-                       width: listView1.width * 0.95
-                       text: msg
-                       font.family: "Courier New"
-                       wrapMode: Text.Wrap
-                       font.pixelSize: 14
-                       color: "black"
-                   }
+            delegate: Rectangle {
+                id: rowRoot
+                width: listView1.width * 0.97
+                height: rowText.implicitHeight + 6
+                radius: 4
+                color: selected ? "#d6eaff"
+                                  : (index % 2 === 0 ? "#f7f9fc" : "transparent")
+                border.width: selected ? 1 : 0
+                border.color: cPrimary
+
+                required property int index
+                required property string msg
+                required property bool selected
+
+                Text {
+                    id: rowText
+                    anchors.left: parent.left
+                    anchors.leftMargin: 6
+                    anchors.right: parent.right
+                    anchors.rightMargin: 6
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width - 12
+                    text: msg
+                    font.family: "Courier New"
+                    font.pixelSize: 14
+                    wrapMode: Text.Wrap
+                    color: selected ? "#0d47a1" : cText
                 }
 
-               // Сама модель, в которой будут содержаться все элементы
-               model: ListModel {
-                   id: logListModel // задаём ей id для обращения
-               }
-           }
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.LeftButton
+
+                    onClicked: {
+                        logListModel.setProperty(index, "selected", !selected)
+                        updateClipboardFromSelection()
+                    }
+
+                    onDoubleClicked: {
+                        logListModel.setProperty(index, "selected", true)
+                        updateClipboardFromSelection()
+                    }
+                }
+            }
+
+            ListModel {
+                id: logListModel
+            }
+        }
     }
 
     // уведомление о копировании
     ToolTip {
         id: toast
-        delay: 0  // задержка перед показом
-        timeout: 1000  // время скрытия
-        x: (parent.width - width) / 2  // по горизонтали по центру
-        y: senderBackground.y + senderBackground.height //(parent.height - 100)  // по вертикали снизу
+        delay: 0
+        timeout: 1000
+        x: (parent.width - width) / 2
+        y: senderBackground.y + senderBackground.height
 
-        // появление
         enter: Transition {
-                NumberAnimation { property: "opacity"; from: 0.0; to: 1.0; duration: 450 }
-            }
-        // изчезновение
+            NumberAnimation { property: "opacity"; from: 0.0; to: 1.0; duration: 450 }
+        }
         exit: Transition {
-                NumberAnimation { property: "opacity"; from: 1.0; to: 0.0; duration: 250 }
-            }
+            NumberAnimation { property: "opacity"; from: 1.0; to: 0.0; duration: 250 }
+        }
 
         background: Rectangle {
             color: "#7f856f"
-            radius: 15  // скруглённые углы
+            radius: 15
+            border.width: 1
+            border.color: "#aab39a"
+        }
+        contentItem: Text {
+            text: toast.text
+            color: "#ffffff"
+            wrapMode: Text.Wrap
         }
         function toastOn(msg){
             toast.text = qsTr(msg)
@@ -146,30 +269,55 @@ Page {
         id: messageToSend
         placeholderText: "..."
         anchors.top: senderBackground.bottom
+        anchors.topMargin: 8
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.leftMargin: 6
+        anchors.rightMargin: 6
         validator: RegularExpressionValidator {regularExpression: /[0-9A-Fa-f]+/}
+        color: cText
+        padding: 8
 
-        width: parent.width
+        background: Rectangle {
+            radius: 6
+            color: cCard
+            border.width: 1
+            border.color: cBorder
+        }
     }
 
     Button {
         id: sendButton
         anchors.top: messageToSend.bottom
+        anchors.topMargin: 6
         anchors.left: parent.left
+        anchors.leftMargin: 6
         height: parent.height * 0.08
-        width: parent.width * 0.49
+        width: parent.width * 0.49 - 6
         text: "Отправить"
-        background: Rectangle{
-            property var normalColor: "#17d47f"
-            property var pressedColor: "#0fd93b"
-            color: sendButton.pressed ? pressedColor : normalColor
+
+        background: Rectangle {
             radius: 8
+            color: sendButton.pressed ? cMintD : (sendButton.hovered ? "#81c784" : cMint)
+            border.width: 1
+            border.color: cMintD
+            Behavior on color { ColorAnimation { duration: 120 } }
         }
+        contentItem: Text {
+            text: sendButton.text
+            color: "#ffffff"
+            font.pixelSize: 13
+            font.bold: true
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            elide: Text.ElideRight
+        }
+
         onClicked: {
             packing.sendMessage(messageToSend.text, wrap);
             if (needClear.checked) {
                 messageToSend.text = ""
             }
-
             listView1.positionViewAtEnd()
         }
     }
@@ -177,18 +325,34 @@ Page {
     Button {
         id: clearButton
         anchors.top: messageToSend.bottom
+        anchors.topMargin: 6
         anchors.right: parent.right
+        anchors.rightMargin: 6
         height: parent.height * 0.08
-        width: parent.width * 0.49
+        width: parent.width * 0.49 - 6
         text: "Очистить поле вывода"
-        background: Rectangle{
-            property var normalColor: "#cb0fd9"
-            property var pressedColor: "#ff084e"
-            color: clearButton.pressed ? pressedColor : normalColor
+
+        background: Rectangle {
             radius: 8
+            color: clearButton.pressed ? cCoralD : (clearButton.hovered ? "#ff8a80" : cCoral)
+            border.width: 1
+            border.color: cCoralD
+            Behavior on color { ColorAnimation { duration: 120 } }
         }
+        contentItem: Text {
+            text: clearButton.text
+            color: "#ffffff"
+            font.pixelSize: 13
+            font.bold: true
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            elide: Text.ElideRight
+        }
+
         onClicked: {
             logListModel.clear()
+            clipboardHelperCpp.copyText("")
+            selectionActive = false
         }
     }
 
@@ -196,67 +360,100 @@ Page {
     Button {
         id: startStopLog
         anchors.top: sendButton.bottom
+        anchors.topMargin: 6
         anchors.right: sendButton.right
         anchors.left: sendButton.left
         height: parent.height * 0.08
         text: addingLog ? "Стоп лог" : "Старт лог"
-        background: Rectangle{
-            id: colorStSt
-            property var nolog: "#ff084e"
-            property var log: "#17d47f"
-            color: addingLog ? log : noLog
+
+        background: Rectangle {
             radius: 8
+            color: addingLog
+                ? (startStopLog.pressed ? cAmberD
+                                        : (startStopLog.hovered ? "#ffca7a" : cAmber))
+                : (startStopLog.pressed ? cMintD
+                                        : (startStopLog.hovered ? "#81c784" : cMint))
+            border.width: 1
+            border.color: addingLog ? cAmberD : cMintD
+            Behavior on color { ColorAnimation { duration: 120 } }
         }
+        contentItem: Text {
+            text: startStopLog.text
+            color: "#ffffff"
+            font.pixelSize: 13
+            font.bold: true
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            elide: Text.ElideRight
+        }
+
         onClicked: {
             addingLog ? addingLog = false : addingLog = true
-            addingLog ? colorStSt.color = "#17d47f" : colorStSt.color = "#ff084e"
         }
     }
 
     Button {
-      id: copyLogButton
-      anchors.top: clearButton.bottom
-      anchors.left: clearButton.left
-      anchors.right: clearButton.right
-      height: parent.height * 0.08
-      text: "Копировать лог"
-      background: Rectangle{
-          property var normalColor: "#9dcf0a"
-          property var pressedColor: "#cfc10a"
-          color: copyLogButton.pressed ? pressedColor : normalColor
-          radius: 8
-      }
-      onClicked: {
-          toast.toastOn("буфер обновлён")
-          copyLog()
-      }
+        id: copyLogButton
+        anchors.top: clearButton.bottom
+        anchors.topMargin: 6
+        anchors.left: clearButton.left
+        anchors.right: clearButton.right
+        height: parent.height * 0.08
+        text: "Копировать всё"
+
+        background: Rectangle {
+            radius: 8
+            color: copyLogButton.pressed ? cLimeD
+                                         : (copyLogButton.hovered ? "#d4e157" : cLime)
+            border.width: 1
+            border.color: cLimeD
+            Behavior on color { ColorAnimation { duration: 120 } }
+        }
+        contentItem: Text {
+            text: copyLogButton.text
+            color: "#ffffff"
+            font.pixelSize: 13
+            font.bold: true
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            elide: Text.ElideRight
+        }
+
+        onClicked: {
+            copyLog()
+            if (logListModel.count > 0)
+                toast.toastOn("буфер обновлён")
+            else
+                toast.toastOn("лог пуст")
+        }
     }
 
     CheckBox {
-      id: needWrap
-      anchors.top: startStopLog.bottom
-      checked: false
-      text: qsTr("Оборачивать протоколом")
+        id: needWrap
+        anchors.top: startStopLog.bottom
+        anchors.topMargin: 6
+        anchors.left: parent.left
+        anchors.leftMargin: 16
+        checked: false
+        text: qsTr("Оборачивать протоколом")
+        palette.windowText: cText
+        palette.highlight: cPrimary
+        palette.highlightedText: "#ffffff"
 
-      onClicked: {
-          wrap = checked
-      }
+        onClicked: {
+            wrap = checked
+        }
     }
 
     CheckBox {
-      id: needClear
-      checked: false
-      anchors.top: needWrap.bottom
-      text: qsTr("Очищать поле ввода")
+        id: needClear
+        checked: false
+        anchors.top: needWrap.bottom
+        anchors.left: parent.left
+        anchors.leftMargin: 16
+        text: qsTr("Очищать поле ввода")
+        palette.windowText: cText
+        palette.highlight: cPrimary
+        palette.highlightedText: "#ffffff"
     }
-
-    //скрытый помощник копирования (как в Joystick.qml)
-    TextEdit {
-        id: clipboardHelper
-        visible: false
-        width: 0
-        height: 0
-        selectByMouse: false
-    }
-
 }

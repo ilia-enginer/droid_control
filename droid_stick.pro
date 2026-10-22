@@ -21,6 +21,7 @@ SOURCES += \
     source/Pylt/communication/tx_commandsPylt.cpp \
     source/Pylt/pylt_settings.cpp \
     source/Shar/display_working/chartcontroller.cpp \
+    source/Shar/display_working/clipboardhelper.cpp \
     source/communication/crc.cpp \
     source/Shar/communication/rx_commands.cpp \
     source/communication/packing.cpp \
@@ -160,6 +161,7 @@ HEADERS += \
     source/Pylt/communication/tx_commandsPylt.h \
     source/Pylt/pylt_settings.h \
     source/Shar/display_working/chartcontroller.h \
+    source/Shar/display_working/clipboardhelper.h \
     source/communication/crc.h \
     source/Shar/communication/rx_commands.h \
     source/communication/packing.h \
