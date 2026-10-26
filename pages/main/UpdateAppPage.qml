@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.15
 import Qt.labs.settings
 import QtQuick.Controls.Material
 import QtQuick.Dialogs

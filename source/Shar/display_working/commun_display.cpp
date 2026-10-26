@@ -58,7 +58,8 @@ Commun_display::log_out_J(QString type, QString msg)
 {
     if(rendering_flag == Qt::ApplicationState::ApplicationActive)
     {
-        emit logJoy(type, msg);
+        //emit logJoy(type, msg);
+        emit logJoy(getTime() + type, msg);
         return 0;
     }
     return -1;

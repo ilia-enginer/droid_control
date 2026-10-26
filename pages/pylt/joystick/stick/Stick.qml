@@ -53,6 +53,7 @@ Item {
     MultiPointTouchArea{
         id: mouse_touch
         anchors.fill: joystick
+        mouseEnabled: Qt.platform.os === "windows" ? true : false         // не перехватывать события мыши, пропускать к кнопкам
 
         property real mouseX2 : verticalOnly ? width * 0.5 : point1.x //mouseX
         property real mouseY2 : horizontalOnly ? height * 0.5 : point1.y //mouseY

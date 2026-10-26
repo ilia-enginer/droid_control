@@ -342,34 +342,35 @@ SwipeView {
                 logListModel_2.clear()
                 copiedLogText = ""
             }
+        }
 
-            // остановка выпадения лога
-            Button {
-                width: senderBackground_2.width * 0.08
-                height: senderBackground_2.height * 0.45
-                anchors.top: clearButton.bottom
-                anchors.topMargin: 3
-                anchors.right: senderBackground_2.right
-                anchors.rightMargin: 30
-                opacity: 0.9
+        // остановка выпадения лога (теперь sibling для clearButton)
+        Button {
+            id: stopLogButton
+            width: senderBackground_2.width * 0.08
+            height: senderBackground_2.height * 0.45
+            anchors.top: clearButton.bottom
+            anchors.topMargin: 3
+            anchors.right: senderBackground_2.right
+            anchors.rightMargin: 30
+            opacity: 0.9
 
-                background: Rectangle {
-                    color: parent.pressed ? "#bbdefb" : (parent.hovered ? "#e3f2fd" : "#f5f9ff")
-                    radius: 4
-                    border.width: 1
-                    border.color: "#90caf9"
-                }
+            background: Rectangle {
+                color: stopLogButton.pressed ? "#bbdefb" : (stopLogButton.hovered ? "#e3f2fd" : "#f5f9ff")
+                radius: 4
+                border.width: 1
+                border.color: "#90caf9"
+            }
 
-                contentItem: Text{
-                    horizontalAlignment: Qt.AlignHCenter
-                    text: addingLog ? "Стоп" : "Старт"
-                    font.pointSize: 6
-                    color: "#0d47a1"
-                }
+            contentItem: Text{
+                horizontalAlignment: Qt.AlignHCenter
+                text: addingLog ? "Стоп" : "Старт"
+                font.pointSize: 6
+                color: "#0d47a1"
+            }
 
-                onClicked: {
-                    addingLog ? addingLog = false : addingLog = true
-                }
+            onClicked: {
+                addingLog ? addingLog = false : addingLog = true
             }
         }
 

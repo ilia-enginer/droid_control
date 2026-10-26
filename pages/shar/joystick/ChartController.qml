@@ -84,60 +84,58 @@ Item {
                 chartController.registerSeries(s8, 8)
             }
 
-            // --- MouseArea: drag, wheel, double-click ---
-            MouseArea {
-                id: chartMouse
-                anchors.fill: parent
-                acceptedButtons: Qt.LeftButton
-                hoverEnabled: true
-                z: 5
+            DragHandler {
+                id: chartDrag
+                target: null  // не перемещаем сам ChartView, а используем для вычисления смещения
 
                 property real lastX: 0
                 property real lastY: 0
                 property bool dragged: false
 
-                onPressed: function(mouse) {
-                    lastX = mouse.x
-                    lastY = mouse.y
-                    dragged = false
-                }
-
-                onPositionChanged: function(mouse) {
-                    if (!pressed) return
-                    var dx = mouse.x - lastX
-                    var dy = mouse.y - lastY
-                    if (!dragged && Math.abs(dx) < 4 && Math.abs(dy) < 4)
-                        return
-                    if (!dragged) {
-                        dragged = true
+                onActiveChanged: {
+                    if (active) {
+                        // При начале перетаскивания запоминаем начальную позицию
+                        lastX = centroid.scenePosition.x
+                        lastY = centroid.scenePosition.y
+                        dragged = false
                         chartController.notifyUserInteraction()
                         root.interacting = true
                         root.interactionStarted()
+                    } else {
+                        // При завершении перетаскивания
+                        if (dragged) {
+                            root.interacting = false
+                            root.interactionEnded()
+                        }
                     }
+                }
+
+                onCentroidChanged: {
+                    if (!active) return
+
+                    var dx = centroid.scenePosition.x - lastX
+                    var dy = centroid.scenePosition.y - lastY
+
+                    // Порог для фильтрации случайных касаний
+                    if (!dragged && Math.abs(dx) < 4 && Math.abs(dy) < 4)
+                        return
+
+                    if (!dragged) {
+                        dragged = true
+                    }
+
                     chartController.panByPixels(dx, dy, chartView.width, chartView.height)
-                    lastX = mouse.x
-                    lastY = mouse.y
+                    lastX = centroid.scenePosition.x
+                    lastY = centroid.scenePosition.y
                 }
+            }
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.LeftButton
+                // z ниже, чем у DragHandler, чтобы не мешать перетаскиванию
+                z: 4
 
-                onReleased: function(mouse) {
-                    if (dragged) {
-                        dragged = false
-                        root.interacting = false
-                        root.interactionEnded()
-                    }
-                }
-
-                onCanceled: {
-                    if (dragged) {
-                        dragged = false
-                        root.interacting = false
-                        root.interactionEnded()
-                    }
-                }
-
-                onDoubleClicked: function(mouse) {
-                    chartController.autoScaleAll()
-                }
+                onDoubleClicked: chartController.autoScaleAll()
 
                 onWheel: function(wheel) {
                     chartController.notifyUserInteraction()

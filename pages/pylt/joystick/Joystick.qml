@@ -148,6 +148,7 @@ Item {
     }
 
     RoundButton {
+        z: 100
         anchors.top: stick1.top
         anchors.topMargin: 60
         anchors.left: stick1.right
@@ -176,6 +177,7 @@ Item {
     }
 
     RoundButton {
+        z: 100
         anchors.top: stick2.top
         anchors.topMargin: 60
         anchors.right: stick2.left
