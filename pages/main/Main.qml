@@ -106,8 +106,11 @@ ApplicationWindow {
                 listView.currentIndex = -1
                 mainView.focus = true
                 drawer.open()
-                keyPage.visible = true
-            } else { drawer.open(); keyPage.visible = true }
+                mainView.keyPage.visible = true
+            } else {
+                drawer.open();
+                mainView.keyPage.visible = true
+            }
         }
         Component.onCompleted: {
             updateHexx.navigateBackActionOFF.connect(navigateBackActionOFF)
@@ -218,7 +221,7 @@ ApplicationWindow {
     }
 
     function loadPage(page){
-        keyPage.visible = false
+        mainView.keyPage.visible = false
 
         switch(settParam.getIdDevice()){
             case 1 :
@@ -248,10 +251,6 @@ ApplicationWindow {
     }
     DeviceScanerPage {
        id: devicesDialog
-    }
-    Key{
-        id: keyPage
-        visible: true
     }
     SenderPage {
         id: terminalPage

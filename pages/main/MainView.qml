@@ -1,135 +1,189 @@
-
 import QtQuick 2.15
-import QtQuick.VirtualKeyboard 2.15
 import QtQuick.Layouts
 import QtQuick.Controls
 import Qt.labs.settings
 import QtQuick.Controls.Material
 
-Page{
+Page {
     id: pane
-    Image {
-        id: logo
-        width: pane.availableWidth / 1.9
-        height: pane.availableHeight / 1.9
-        anchors.centerIn: parent
-        anchors.verticalCenterOffset: -(parent.height * 0.08)
-        fillMode: Image.PreserveAspectFit
-        source: "../../images/play_store_512.png"
-    }
-    //имя приемника
-    Text {
-        id: devName
-        width: parent.width
-        wrapMode: Label.Wrap
-        horizontalAlignment: Qt.AlignHCenter
-        text: commun_display.curDeviceName_
-        font.pixelSize: 16
-    }
 
-    // выбор устройства
-    Button {
-        anchors.top: parent.top
-        anchors.topMargin: 30
-        visible: Qt.platform.os === "windows" || Qt.platform.os === "linux"
-        text: "выбор устройства"
-        onClicked: {
-            deviceSelectionDialog.open();
-        }
-    }
+    property alias keyPage: keyPage
+    property alias swipeIndex: swipeView.currentIndex
 
-  //─── COM - port ─────────────────────────────────────────
-    Rectangle {
-        visible: Qt.platform.os === "windows" || Qt.platform.os === "linux"
-        anchors {
-            bottom: parent.bottom
-            left: parent.left
-            right: parent.right
-            margins: 12
-        }
-        height: notifColumn.implicitHeight + 20
-        radius: 8
-        color: "#6040a1"
-        opacity: 0.9
+    SwipeView {
+        id: swipeView
+        anchors.fill: parent
+        currentIndex: 0
 
-        Column {
-            id: notifColumn
-            spacing: 8
-            width: parent.width - 24
-            anchors.centerIn: parent
+        // ═══════════════════════════════════════════════════════════
+        // СТРАНИЦА 1: логотип + Key + devName + COM-порт
+        // ═══════════════════════════════════════════════════════════
+        Item {
+            id: page1
 
-            Label {
-                width: parent.width
-                text: "🔔 Настройка COM-port"
-                horizontalAlignment: Qt.AlignHCenter
-                font.bold: true
-                color: "white"
-            }
+            // ─── Логотип, внутри которого живёт Key ──────────────
+            Image {
+                id: logo
+                width: page1.width / 1.9
+                height: page1.height / 1.9
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: -(page1.height * 0.08)
+                fillMode: Image.PreserveAspectFit
+                source: "../../images/play_store_512.png"
 
-            property bool testActive: false
-
-            Row {
-                spacing: 12
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                Shortcut{
-                    sequence: "F3"
-                    onActivated: if(!notifColumn.testActive) mainSerialPort.settingsWindowOpen();
-                }
-
-                Button {
-                    text: "☣ Настройки (F3)"
-                    enabled: !notifColumn.testActive
-                    onClicked: {
-                        mainSerialPort.settingsWindowOpen();
-                    }
-                }
-
-                Shortcut{
-                    sequence: "F2"
-                    onActivated: {
-                        if(notifColumn.testActive)
-                        {
-                            notifColumn.testActive = false;
-                            mainSerialPort.closeSerialPort()
-                        }
-                        else
-                        {
-                            notifColumn.testActive = true;
-                            mainSerialPort.openSerialPort()
-                        }
-                    }
-                }
-
-                Button {
-                    text: "▶ Старт (F2)"
-                    enabled: !notifColumn.testActive
-                    onClicked: {
-                        notifColumn.testActive = true
-                        mainSerialPort.openSerialPort();
-                    }
-                }
-
-                Button {
-                    text: "■ Стоп (F2)"
-                    enabled: notifColumn.testActive
-                    onClicked: {
-                         notifColumn.testActive = false
-                         mainSerialPort.closeSerialPort();
-                    }
+                Key {
+                    id: keyPage
+                    anchors.fill: parent
                 }
             }
 
-            Label {
+            // имя приемника
+            Text {
+                id: devName
                 width: parent.width
-                horizontalAlignment: Qt.AlignHCenter
-                color: notifColumn.testActive ? "#A5D6A7" : "#EF9A9A"
-                text: notifColumn.testActive
-                      ? "✓ Активен"
-                      : "● Остановлен"
                 wrapMode: Label.Wrap
+                horizontalAlignment: Qt.AlignHCenter
+                text: commun_display.curDeviceName_
+                font.pixelSize: 16
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 160
+            }
+
+            // выбор устройства
+            Button {
+                anchors.top: parent.top
+                anchors.topMargin: 30
+                visible: Qt.platform.os === "windows" || Qt.platform.os === "linux"
+                text: "выбор устройства"
+                onClicked: {
+                    deviceSelectionDialog.open();
+                }
+            }
+
+            //─── COM - port ─────────────────────────────────────────
+            Rectangle {
+                visible: Qt.platform.os === "windows" || Qt.platform.os === "linux"
+                anchors {
+                    bottom: parent.bottom
+                    left: parent.left
+                    right: parent.right
+                    margins: 12
+                }
+                height: notifColumn.implicitHeight + 20
+                radius: 8
+                color: "#6040a1"
+                opacity: 0.9
+
+                Column {
+                    id: notifColumn
+                    spacing: 8
+                    width: parent.width - 24
+                    anchors.centerIn: parent
+
+                    Label {
+                        width: parent.width
+                        text: "🔔 Настройка COM-port"
+                        horizontalAlignment: Qt.AlignHCenter
+                        font.bold: true
+                        color: "white"
+                    }
+
+                    property bool testActive: false
+
+                    Row {
+                        spacing: 12
+                        anchors.horizontalCenter: parent.horizontalCenter
+
+                        Shortcut{
+                            sequence: "F3"
+                            onActivated: if(!notifColumn.testActive) mainSerialPort.settingsWindowOpen();
+                        }
+
+                        Button {
+                            text: "☣ Настройки (F3)"
+                            enabled: !notifColumn.testActive
+                            onClicked: {
+                                mainSerialPort.settingsWindowOpen();
+                            }
+                        }
+
+                        Shortcut{
+                            sequence: "F2"
+                            onActivated: {
+                                if(notifColumn.testActive)
+                                {
+                                    notifColumn.testActive = false;
+                                    mainSerialPort.closeSerialPort()
+                                }
+                                else
+                                {
+                                    notifColumn.testActive = true;
+                                    mainSerialPort.openSerialPort()
+                                }
+                            }
+                        }
+
+                        Button {
+                            text: "▶ Старт (F2)"
+                            enabled: !notifColumn.testActive
+                            onClicked: {
+                                notifColumn.testActive = true
+                                mainSerialPort.openSerialPort();
+                            }
+                        }
+
+                        Button {
+                            text: "■ Стоп (F2)"
+                            enabled: notifColumn.testActive
+                            onClicked: {
+                                 notifColumn.testActive = false
+                                 mainSerialPort.closeSerialPort();
+                            }
+                        }
+                    }
+
+                    Label {
+                        width: parent.width
+                        horizontalAlignment: Qt.AlignHCenter
+                        color: notifColumn.testActive ? "#A5D6A7" : "#EF9A9A"
+                        text: notifColumn.testActive
+                              ? "✓ Активен"
+                              : "● Остановлен"
+                        wrapMode: Label.Wrap
+                    }
+                }
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // СТРАНИЦА 2: сцена с роботом
+        // ═══════════════════════════════════════════════════════════
+        Item {
+            id: page2
+
+            RobotRoom {
+                id: robotScene
+                anchors.fill: parent
+                active: swipeView.currentIndex === 1
             }
         }
     }
-    // ─────────────────────────────────────────────────────────────────────
+
+    // ─── Индикатор страниц ───────────────────────────────────────
+    Row {
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottomMargin: 8
+        spacing: 8
+
+        Repeater {
+            model: swipeView.count
+            Rectangle {
+                width: 10; height: 10
+                radius: 5
+                color: index === swipeView.currentIndex ? "#6040a1" : "#9aa0b5"
+                opacity: index === swipeView.currentIndex ? 1.0 : 0.5
+            }
+        }
+    }
 }

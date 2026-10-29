@@ -8,7 +8,7 @@ ANDROID_VERSION_NAME = "1.1.5"      #версия в apk
 DEFINES += QT_MESSAGELOGCONTEXT INSERT_VERSION_NAME=\\\"$$ANDROID_VERSION_NAME\\\"   #версия на главном экране
 #DEFINES += INSERT_VERSION_CODE = 2 ??? хз как присвоить. требуется для плей маркета
 
-QT += quick charts qml quickcontrols2 bluetooth core positioning widgets core-private network gui concurrent serialport #androidextras
+QT += quick charts qml quickcontrols2 bluetooth core positioning widgets core-private network gui concurrent serialport quick3d #androidextras
 
 
 win32 {
@@ -99,6 +99,7 @@ RESOURCES += \
     pages/shar/Update_Hex.qml \
     pages/shar/SettingsPageShar.qml \
     pages/main/MainView.qml \
+    pages/main/RobotRoom.qml \
     pages/pylt/MainPagePylt.qml \
     pages/pylt/joystick/Joystick.qml \
     pages/pylt/joystick/stick/Stick.qml \
@@ -129,6 +130,7 @@ DISTFILES += \
     pages/main/Key.qml \
     pages/main/ApkSettings.qml \
     pages/main/MainView.qml \
+    pages/main/RobotRoom.qml \
     pages/pylt/MainPagePylt.qml \
     pages/pylt/joystick/Joystick.qml \
     pages/pylt/joystick/Settings_Pylt.qml \

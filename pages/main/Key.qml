@@ -13,7 +13,6 @@ Page {
     anchors.centerIn: parent
     anchors.verticalCenterOffset: -(parent.height * 0.08)
     opacity: 0.0
-
     property string key : "159"
     property string inputKey : ""
 
