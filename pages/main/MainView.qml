@@ -21,6 +21,18 @@ Page {
         Item {
             id: page1
 
+            // имя приемника
+            Text {
+                id: devName
+                width: parent.width
+                wrapMode: Label.Wrap
+                horizontalAlignment: Qt.AlignHCenter
+                text: commun_display.curDeviceName_
+                font.pixelSize: 16
+                anchors.top: parent.top
+                anchors.topMargin: 30
+            }
+
             // ─── Логотип, внутри которого живёт Key ──────────────
             Image {
                 id: logo
@@ -35,18 +47,6 @@ Page {
                     id: keyPage
                     anchors.fill: parent
                 }
-            }
-
-            // имя приемника
-            Text {
-                id: devName
-                width: parent.width
-                wrapMode: Label.Wrap
-                horizontalAlignment: Qt.AlignHCenter
-                text: commun_display.curDeviceName_
-                font.pixelSize: 16
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 160
             }
 
             // выбор устройства

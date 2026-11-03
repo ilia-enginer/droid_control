@@ -891,6 +891,7 @@ SwipeView {
             onCheckedChanged:  {
                joystick.visible = checked
                joystick_buttons.visible = !checked
+               mouse_touch.enabled = checked
             }
         }
 

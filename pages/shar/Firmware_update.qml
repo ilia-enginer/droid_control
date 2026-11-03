@@ -433,9 +433,8 @@ Page {
             Connections {
                 target: commun_display
                 function onLogServis(type, msg) {
-                    if(window_focus && loging_visible.visible)
+                    if(window_focus && loging_visible.visible && addingLog)
                     {
-                        if(!addingLog)   return;
                         logListModel.append({ msg: type + msg, selected: false })
                         listView1.positionViewAtEnd()
                     }

@@ -20,6 +20,10 @@ Item {
         if (robot.state !== "jump")
             robot.y = room.floorY - robot.height
     }
+    onFloorYChanged: {
+        if (robot.state !== "jump")
+            robot.y = room.floorY - robot.height
+    }
 
     // ─── Палитра комнаты ──────────────────────────────────────────
     Rectangle {
@@ -65,9 +69,6 @@ Item {
         anchors.fill: parent
         onClicked: {
             if (!room.active) return;
-            if (robot.state === "jump" || robot.state === "ball" ||
-                robot.state === "exercise" || robot.state === "run")
-                return;
             robot.pickAction();
         }
     }
@@ -103,7 +104,6 @@ Item {
             }
         }
 
-        // ─── Клик по мячу → отскок + погоня (если ещё не бежит) ───
         MouseArea {
             anchors.fill: parent
             onClicked: {
@@ -112,6 +112,9 @@ Item {
                 ball.vx = (Math.random() > 0.5 ? 1 : -1) * (4 + Math.random() * 3);
                 ball.vy = -7 - Math.random() * 3;
                 ball.visible = true;
+                robot.userBallMode = true;
+                robot.robotKicks = 0;
+                ballCooldown.restart();
                 if (!robot.chasing) {
                     robot.chasing = true;
                 }
@@ -128,7 +131,6 @@ Item {
                 ball.x += ball.vx
                 ball.y += ball.vy
 
-                // ─── Отскок от пола ──────────────────────────────
                 if (ball.y >= ball.groundY) {
                     ball.y = ball.groundY
                     ball.vy = -ball.vy * 0.55
@@ -138,14 +140,10 @@ Item {
                         ball.vx = 0
                     }
                 }
-
-                // ─── Отскок от потолка (верх окна) ───────────────
                 if (ball.y <= 0) {
                     ball.y = 0
                     ball.vy = Math.abs(ball.vy) * 0.55
                 }
-
-                // ─── Стены по X ──────────────────────────────────
                 if (ball.x <= room.walkMinX * 0.5) {
                     ball.x = room.walkMinX * 0.5
                     ball.vx = -ball.vx * 0.7
@@ -251,10 +249,46 @@ Item {
         property real jumpStartY: 0
         property int kickCount: 0
         property bool chasing: false
+        property bool userBallMode: false
+        property int robotKicks: 0        // удары робота с момента последнего касания мяча пользователем
+
+        // Условие «робот двигается» — используется как running для moveAnim
+        readonly property bool moving: room.active && (state === "walk" || state === "run" || chasing)
+
+        // ─── Сброс конечностей в ноль (плавно) ────────────────────
+        SequentialAnimation {
+            id: resetLimbsAnim
+            running: false
+            ParallelAnimation {
+                NumberAnimation { target: leftArm;  property: "rotation"; to: 0; duration: 150; easing.type: Easing.OutQuad }
+                NumberAnimation { target: rightArm; property: "rotation"; to: 0; duration: 150; easing.type: Easing.OutQuad }
+                NumberAnimation { target: leftLeg;  property: "rotation"; to: 0; duration: 150; easing.type: Easing.OutQuad }
+                NumberAnimation { target: rightLeg; property: "rotation"; to: 0; duration: 150; easing.type: Easing.OutQuad }
+            }
+        }
+
+        function startMoveAnim() {
+            resetLimbsAnim.stop();
+            leftArm.rotation = 0;
+            rightArm.rotation = 0;
+            leftLeg.rotation = 0;
+            rightLeg.rotation = 0;
+        }
+        function stopMoveAnim() {
+            resetLimbsAnim.stop();
+            resetLimbsAnim.start();
+        }
+
+        onChasingChanged: {
+            if (chasing && room.active) {
+                startMoveAnim();
+            } else if (!chasing && state !== "walk" && state !== "run") {
+                stopMoveAnim();
+            }
+        }
 
         function stopAll() {
-            armsAnim.stop();
-            legsAnim.stop();
+            stopMoveAnim();
             idleBob.stop();
             jumpAnim.stop();
             exerciseAnim.stop();
@@ -263,51 +297,71 @@ Item {
             kickDelay.stop();
             fleeTimer.stop();
             chaseTimer.stop();
+            ballCooldown.stop();
             chasing = false;
+            userBallMode = false;
+            robotKicks = 0;
             state = "idle";
             y = room.floorY - height;
             scale = 1.0;
-            leftArm.rotation = 0;
-            rightArm.rotation = 0;
-            leftLeg.rotation = 0;
-            rightLeg.rotation = 0;
             body.y = head.y + head.height + 4;
             ball.visible = true;
         }
 
         Behavior on x { NumberAnimation { duration: 60; easing.type: Easing.Linear } }
 
-        // ─── Анимации конечностей ─────────────────────────────────
-        SequentialAnimation {
-            id: armsAnim
-            loops: Animation.Infinite
-            running: room.active && (robot.state === "walk" || robot.state === "run" || robot.chasing)
-            NumberAnimation { target: leftArm; property: "rotation"; from: -25; to: 25; duration: 300; easing.type: Easing.InOutSine }
-            NumberAnimation { target: leftArm; property: "rotation"; from: 25; to: -25; duration: 300; easing.type: Easing.InOutSine }
+        // ─── Таймер «пользователь перестал играть» ───────────────
+        Timer {
+            id: ballCooldown
+            interval: 5000
+            repeat: false
+            onTriggered: {
+                robot.userBallMode = false;
+                // robotKicks НЕ сбрасываем — удары робота уже накоплены.
+                // Если к этому моменту робот уже ударил >= 2 раза — сразу смена активности.
+                if (robot.robotKicks >= 2 && robot.chasing) {
+                    robot.robotKicks = 0;
+                    robot.enterState("idle");
+                }
+            }
         }
+
+        // ─── Единая анимация ходьбы/бега ─────────────────────────
         SequentialAnimation {
-            id: legsAnim
+            id: moveAnim
             loops: Animation.Infinite
-            running: room.active && (robot.state === "walk" || robot.state === "run" || robot.chasing)
-            NumberAnimation { target: leftLeg; property: "rotation"; from: -20; to: 20; duration: 300; easing.type: Easing.InOutSine }
-            NumberAnimation { target: rightLeg; property: "rotation"; from: 20; to: -20; duration: 300; easing.type: Easing.InOutSine }
+            running: robot.moving
+            ParallelAnimation {
+                NumberAnimation { target: leftArm;  property: "rotation"; from: -25; to: 25; duration: 320; easing.type: Easing.InOutSine }
+                NumberAnimation { target: rightArm; property: "rotation"; from:  25; to: -25; duration: 320; easing.type: Easing.InOutSine }
+                NumberAnimation { target: leftLeg;  property: "rotation"; from:  20; to: -20; duration: 320; easing.type: Easing.InOutSine }
+                NumberAnimation { target: rightLeg; property: "rotation"; from: -20; to:  20; duration: 320; easing.type: Easing.InOutSine }
+            }
+            ParallelAnimation {
+                NumberAnimation { target: leftArm;  property: "rotation"; from: 25; to: -25; duration: 320; easing.type: Easing.InOutSine }
+                NumberAnimation { target: rightArm; property: "rotation"; from: -25; to: 25; duration: 320; easing.type: Easing.InOutSine }
+                NumberAnimation { target: leftLeg;  property: "rotation"; from: -20; to: 20; duration: 320; easing.type: Easing.InOutSine }
+                NumberAnimation { target: rightLeg; property: "rotation"; from: 20; to: -20; duration: 320; easing.type: Easing.InOutSine }
+            }
         }
+
         SequentialAnimation {
             id: idleBob
             loops: Animation.Infinite
-            running: room.active && robot.state === "idle" && !robot.chasing
+            running: false
             NumberAnimation { target: body; property: "y"; from: head.y + head.height + 4; to: head.y + head.height + 6; duration: 900; easing.type: Easing.InOutSine }
             NumberAnimation { target: body; property: "y"; from: head.y + head.height + 6; to: head.y + head.height + 4; duration: 900; easing.type: Easing.InOutSine }
         }
 
-        // ─── Прыжок (3 подряд) ───────────────────────────────────
+        // ─── Прыжок ──────────────────────────────────────────────
         SequentialAnimation {
             id: jumpAnim
             loops: 3
-            running: room.active
+            running: false
             NumberAnimation {
                 target: robot
                 property: "y"
+                from: robot.jumpStartY
                 to: robot.jumpStartY - 80
                 duration: 300
                 easing.type: Easing.OutQuad
@@ -315,6 +369,7 @@ Item {
             NumberAnimation {
                 target: robot
                 property: "y"
+                from: robot.jumpStartY - 80
                 to: robot.jumpStartY
                 duration: 300
                 easing.type: Easing.InQuad
@@ -322,14 +377,15 @@ Item {
             onFinished: {
                 robot.y = room.floorY - robot.height
                 robot.state = "idle"
+                idleBob.start()
             }
         }
 
-        // ─── Зарядка (8 приседаний) ──────────────────────────────
+        // ─── Зарядка ─────────────────────────────────────────────
         SequentialAnimation {
             id: exerciseAnim
             loops: 8
-            running: room.active
+            running: false
             NumberAnimation {
                 target: body
                 property: "y"
@@ -347,13 +403,14 @@ Item {
             onFinished: {
                 body.y = head.y + head.height + 4
                 robot.state = "idle"
+                idleBob.start()
             }
         }
 
-        // ─── Визуальный выпад при ударе ───────────────────────────
+        // ─── Выпад при ударе ─────────────────────────────────────
         SequentialAnimation {
             id: kickLunge
-            running: room.active
+            running: false
             NumberAnimation {
                 target: robot
                 property: "scale"
@@ -370,7 +427,7 @@ Item {
             }
         }
 
-        // ─── Смена действий ───────────────────────────────────────
+        // ─── Смена действий (brain) ───────────────────────────────
         Timer {
             id: brain
             interval: 2500 + Math.random() * 2500
@@ -378,6 +435,7 @@ Item {
             running: room.active
             onTriggered: {
                 if (!room.active) return;
+                if (robot.userBallMode || robot.chasing) return;
                 if (robot.state === "jump" || robot.state === "ball" ||
                     robot.state === "exercise" || robot.state === "run")
                     return;
@@ -395,26 +453,34 @@ Item {
             console.log("enterState:", s)
             state = s;
             chasing = false;
-            armsAnim.stop(); legsAnim.stop(); idleBob.stop();
+            userBallMode = false;
+            robotKicks = 0;
+            ballCooldown.stop();
+            stopMoveAnim();
+            idleBob.stop();
             jumpAnim.stop(); exerciseAnim.stop();
             kickTimer.stop(); kickDelay.stop();
             fleeTimer.stop(); chaseTimer.stop();
             ball.visible = true;
-            leftArm.rotation = 0; rightArm.rotation = 0;
-            leftLeg.rotation = 0; rightLeg.rotation = 0;
+
+            y = room.floorY - height;
+            scale = 1.0;
             body.y = head.y + head.height + 4;
 
             switch (s) {
             case "idle":
                 targetX = x;
+                idleBob.start();
                 break;
             case "walk":
                 targetX = room.walkMinX + Math.random() * (room.walkMaxX - room.walkMinX);
                 vx = 1.2;
+                startMoveAnim();
                 break;
             case "run":
                 targetX = (x < room.width / 2) ? room.walkMaxX : room.walkMinX;
                 vx = 3.0;
+                startMoveAnim();
                 fleeTimer.start();
                 break;
             case "jump":
@@ -453,8 +519,11 @@ Item {
             id: fleeTimer
             interval: 4000
             onTriggered: {
-                if (robot.state === "run")
+                if (robot.state === "run") {
                     robot.state = "idle";
+                    robot.stopMoveAnim();
+                    idleBob.start();
+                }
             }
         }
 
@@ -471,17 +540,33 @@ Item {
                     return;
                 }
                 var dx = (ball.x + ball.width / 2) - (robot.x + robot.width / 2);
-                if (Math.abs(dx) < 30) {
+                var ballReachable = ball.y + ball.height >= robot.y;
+                if (Math.abs(dx) < 30 && ballReachable) {
                     ball.vx = (Math.random() > 0.5 ? 1 : -1) * (4 + Math.random() * 3);
                     ball.vy = -7 - Math.random() * 3;
                     kickLunge.start();
+
+                    // Считаем удары робота с момента последнего касания мяча пользователем.
+                    // ballCooldown НЕ перезапускаем — иначе робот сам продлевает «игру».
+                    robot.robotKicks++;
+
+                    // Пользователь уже не играет (кулдаун истёк) и робот ударил >= 2 раз —
+                    // смена активности.
+                    if (!robot.userBallMode && robot.robotKicks >= 2) {
+                        robot.robotKicks = 0;
+                        robot.enterState("idle");
+                        return;
+                    }
                 } else {
-                    robot.x += Math.sign(dx) * 4.0;
+                    if (Math.abs(dx) > 2) {
+                        var step = Math.min(Math.abs(dx), 4.0);
+                        robot.x += Math.sign(dx) * step;
+                    }
                 }
             }
         }
 
-        // ─── Пинки мяча ───────────────────────────────────────────
+        // ─── Пинки мяча (автоматический режим «ball») ─────────────
         Timer {
             id: kickTimer
             interval: 1200
@@ -492,6 +577,11 @@ Item {
                 if (robot.kickCount >= 4) {
                     kickTimer.stop();
                     robot.state = "idle";
+                    robot.stopMoveAnim();
+                    idleBob.start();
+                    return;
+                }
+                if (ball.y + ball.height < robot.y) {
                     return;
                 }
                 robot.kickCount++;
@@ -506,6 +596,18 @@ Item {
             interval: 350
             onTriggered: {
                 if (!room.active) return;
+
+                var dx = (ball.x + ball.width / 2) - (robot.x + robot.width / 2);
+                var ballReachable = ball.y + ball.height >= robot.y;
+                var closeEnough = Math.abs(dx) < robot.width / 2 + ball.width / 2 + 15;
+
+                if (!ballReachable || !closeEnough) {
+                    robot.state = "idle";
+                    robot.stopMoveAnim();
+                    idleBob.start();
+                    return;
+                }
+
                 ball.vx = (Math.random() > 0.5 ? 1 : -1) * (3 + Math.random() * 3);
                 ball.vy = -6 - Math.random() * 3;
                 kickLunge.start();
@@ -529,24 +631,52 @@ Item {
         }
     }
 
-    // ─── Подпись ─────────────────────────────────────────────────
-    Text {
+    // ─── Подпись (без эмодзи — Android их не отображает) ─────────
+    Rectangle {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: 40
-        color: "#9aa0b5"
-        font.pixelSize: 13
+        anchors.topMargin: 30
+        width: statusRow.implicitWidth + 24
+        height: statusRow.implicitHeight + 12
+        radius: 10
+        color: "#00000055"
         visible: room.active
-        text: {
-            if (robot.chasing) return "🏃 бежит за мячом";
-            switch (robot.state) {
-            case "idle":     return "🤖 отдыхает";
-            case "walk":     return "🚶 идёт";
-            case "run":      return "🏃 бежит";
-            case "jump":     return "🦘 прыгает";
-            case "ball":     return "⚽ играет в мяч";
-            case "exercise": return "💪 делает зарядку";
-            default:         return "";
+
+        Row {
+            id: statusRow
+            anchors.centerIn: parent
+            spacing: 8
+
+            Rectangle {
+                width: 10; height: 10; radius: 5
+                anchors.verticalCenter: parent.verticalCenter
+                color: robot.chasing ? "#4cc9f0"
+                     : robot.state === "idle" ? "#adb5bd"
+                     : robot.state === "walk" ? "#8ecae6"
+                     : robot.state === "run" ? "#4cc9f0"
+                     : robot.state === "jump" ? "#ffb703"
+                     : robot.state === "ball" ? "#e74c3c"
+                     : robot.state === "exercise" ? "#90be6d"
+                     : "#adb5bd"
+            }
+
+            Text {
+                id: statusText
+                anchors.verticalCenter: parent.verticalCenter
+                color: "#e0e0e0"
+                font.pixelSize: 13
+                text: {
+                    if (robot.chasing) return "бежит за мячом";
+                    switch (robot.state) {
+                    case "idle":     return "отдыхает";
+                    case "walk":     return "идёт";
+                    case "run":      return "бежит";
+                    case "jump":     return "прыгает";
+                    case "ball":     return "играет в мяч";
+                    case "exercise": return "делает зарядку";
+                    default:         return "";
+                    }
+                }
             }
         }
     }
