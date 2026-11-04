@@ -1,4 +1,4 @@
-#include "ClipboardHelper.h"
+#include "clipboardhelper.h"
 #include <QGuiApplication>
 #include <QClipboard>
 

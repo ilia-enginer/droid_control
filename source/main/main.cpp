@@ -70,7 +70,7 @@
 #include "source/Shar/communication/rx_commands.h"
 #include "source/Shar/display_working/commun_display.h"
 #include "source/Shar/display_working/chartcontroller.h"
-#include "source/Shar/display_working/clipboardHelper.h"
+#include "source/Shar/display_working/clipboardhelper.h"
 #include "source/Shar/communication/tx_commands.h"
 #include "source/main/settings.h"
 #include "source/update/updatehex.h"
