@@ -175,6 +175,7 @@ Item {
             border.width: 2
             anchors.horizontalCenter: parent.horizontalCenter
             y: 0
+            transformOrigin: Item.Bottom
             Row {
                 anchors.centerIn: parent
                 spacing: 8
@@ -204,6 +205,7 @@ Item {
             border.width: 2
             anchors.horizontalCenter: parent.horizontalCenter
             y: head.y + head.height + 4
+            transformOrigin: Item.Bottom
         }
         Rectangle {
             id: leftArm
@@ -250,10 +252,20 @@ Item {
         property int kickCount: 0
         property bool chasing: false
         property bool userBallMode: false
-        property int robotKicks: 0        // удары робота с момента последнего касания мяча пользователем
+        property int robotKicks: 0
 
-        // Условие «робот двигается» — используется как running для moveAnim
-        readonly property bool moving: room.active && (state === "walk" || state === "run" || chasing)
+        // Флаг: робот реально перемещается по X в режиме "ball"
+        property bool ballWalking: false
+
+        readonly property bool moving: room.active && (
+            state === "walk" || state === "run" || chasing || ballWalking
+        )
+
+        property int strideMs: 340
+        readonly property real legAmp: (state === "run" || chasing) ? 32 : 20
+        readonly property real armAmp: (state === "run" || chasing) ? 26 : 16
+        readonly property real lean: (state === "run" || chasing) ? 8 : 3
+        readonly property real bobAmp: (state === "run" || chasing) ? 3 : 2
 
         // ─── Сброс конечностей в ноль (плавно) ────────────────────
         SequentialAnimation {
@@ -264,6 +276,11 @@ Item {
                 NumberAnimation { target: rightArm; property: "rotation"; to: 0; duration: 150; easing.type: Easing.OutQuad }
                 NumberAnimation { target: leftLeg;  property: "rotation"; to: 0; duration: 150; easing.type: Easing.OutQuad }
                 NumberAnimation { target: rightLeg; property: "rotation"; to: 0; duration: 150; easing.type: Easing.OutQuad }
+                NumberAnimation { target: body;     property: "y";        to: head.y + head.height + 4; duration: 150; easing.type: Easing.OutQuad }
+                NumberAnimation { target: body;     property: "rotation"; to: 0; duration: 150; easing.type: Easing.OutQuad }
+                NumberAnimation { target: head;     property: "rotation"; to: 0; duration: 150; easing.type: Easing.OutQuad }
+                NumberAnimation { target: leftLeg;  property: "height";   to: 26; duration: 150; easing.type: Easing.OutQuad }
+                NumberAnimation { target: rightLeg; property: "height";   to: 26; duration: 150; easing.type: Easing.OutQuad }
             }
         }
 
@@ -273,6 +290,9 @@ Item {
             rightArm.rotation = 0;
             leftLeg.rotation = 0;
             rightLeg.rotation = 0;
+            body.rotation = 0;
+            head.rotation = 0;
+            body.y = head.y + head.height + 4;
         }
         function stopMoveAnim() {
             resetLimbsAnim.stop();
@@ -282,7 +302,7 @@ Item {
         onChasingChanged: {
             if (chasing && room.active) {
                 startMoveAnim();
-            } else if (!chasing && state !== "walk" && state !== "run") {
+            } else if (!chasing && state !== "walk" && state !== "run" && !ballWalking) {
                 stopMoveAnim();
             }
         }
@@ -301,10 +321,16 @@ Item {
             chasing = false;
             userBallMode = false;
             robotKicks = 0;
+            ballWalking = false;
             state = "idle";
             y = room.floorY - height;
             scale = 1.0;
             body.y = head.y + head.height + 4;
+            body.rotation = 0;
+            head.rotation = 0;
+            leftLeg.height = 26;
+            rightLeg.height = 26;
+            strideMs = 340;
             ball.visible = true;
         }
 
@@ -317,8 +343,6 @@ Item {
             repeat: false
             onTriggered: {
                 robot.userBallMode = false;
-                // robotKicks НЕ сбрасываем — удары робота уже накоплены.
-                // Если к этому моменту робот уже ударил >= 2 раза — сразу смена активности.
                 if (robot.robotKicks >= 2 && robot.chasing) {
                     robot.robotKicks = 0;
                     robot.enterState("idle");
@@ -326,54 +350,143 @@ Item {
             }
         }
 
+        onStateChanged: {
+            if (state === "run")      strideMs = 240;
+            else if (state === "walk") strideMs = 340;
+            else                       strideMs = 340;
+        }
+
         // ─── Единая анимация ходьбы/бега ─────────────────────────
         SequentialAnimation {
             id: moveAnim
             loops: Animation.Infinite
             running: robot.moving
+
+            // Шаг A
             ParallelAnimation {
-                NumberAnimation { target: leftArm;  property: "rotation"; from: -25; to: 25; duration: 320; easing.type: Easing.InOutSine }
-                NumberAnimation { target: rightArm; property: "rotation"; from:  25; to: -25; duration: 320; easing.type: Easing.InOutSine }
-                NumberAnimation { target: leftLeg;  property: "rotation"; from:  20; to: -20; duration: 320; easing.type: Easing.InOutSine }
-                NumberAnimation { target: rightLeg; property: "rotation"; from: -20; to:  20; duration: 320; easing.type: Easing.InOutSine }
+                NumberAnimation { target: leftLeg;  property: "rotation"; from:  robot.legAmp; to: -robot.legAmp; duration: robot.strideMs; easing.type: Easing.InOutSine }
+                NumberAnimation { target: rightLeg; property: "rotation"; from: -robot.legAmp; to:  robot.legAmp; duration: robot.strideMs; easing.type: Easing.InOutSine }
+                NumberAnimation { target: leftArm;  property: "rotation"; from: -robot.armAmp; to:  robot.armAmp; duration: robot.strideMs; easing.type: Easing.InOutSine }
+                NumberAnimation { target: rightArm; property: "rotation"; from:  robot.armAmp; to: -robot.armAmp; duration: robot.strideMs; easing.type: Easing.InOutSine }
+                NumberAnimation { target: body; property: "y"; from: head.y + head.height + 4; to: head.y + head.height + 4 + robot.bobAmp; duration: robot.strideMs; easing.type: Easing.InOutSine }
+                NumberAnimation { target: body; property: "rotation"; from: 0; to: robot.lean; duration: robot.strideMs; easing.type: Easing.InOutSine }
+                NumberAnimation { target: head; property: "rotation"; from: 0; to: -robot.lean * 0.6; duration: robot.strideMs; easing.type: Easing.InOutSine }
+                NumberAnimation { target: leftLeg;  property: "height"; from: 26; to: 22; duration: robot.strideMs; easing.type: Easing.InOutSine }
+                NumberAnimation { target: rightLeg; property: "height"; from: 26; to: 30; duration: robot.strideMs; easing.type: Easing.InOutSine }
             }
+            // Шаг B
             ParallelAnimation {
-                NumberAnimation { target: leftArm;  property: "rotation"; from: 25; to: -25; duration: 320; easing.type: Easing.InOutSine }
-                NumberAnimation { target: rightArm; property: "rotation"; from: -25; to: 25; duration: 320; easing.type: Easing.InOutSine }
-                NumberAnimation { target: leftLeg;  property: "rotation"; from: -20; to: 20; duration: 320; easing.type: Easing.InOutSine }
-                NumberAnimation { target: rightLeg; property: "rotation"; from: 20; to: -20; duration: 320; easing.type: Easing.InOutSine }
+                NumberAnimation { target: leftLeg;  property: "rotation"; from: -robot.legAmp; to:  robot.legAmp; duration: robot.strideMs; easing.type: Easing.InOutSine }
+                NumberAnimation { target: rightLeg; property: "rotation"; from:  robot.legAmp; to: -robot.legAmp; duration: robot.strideMs; easing.type: Easing.InOutSine }
+                NumberAnimation { target: leftArm;  property: "rotation"; from:  robot.armAmp; to: -robot.armAmp; duration: robot.strideMs; easing.type: Easing.InOutSine }
+                NumberAnimation { target: rightArm; property: "rotation"; from: -robot.armAmp; to:  robot.armAmp; duration: robot.strideMs; easing.type: Easing.InOutSine }
+                NumberAnimation { target: body; property: "y"; from: head.y + head.height + 4 + robot.bobAmp; to: head.y + head.height + 4; duration: robot.strideMs; easing.type: Easing.InOutSine }
+                NumberAnimation { target: body; property: "rotation"; from: robot.lean; to: 0; duration: robot.strideMs; easing.type: Easing.InOutSine }
+                NumberAnimation { target: head; property: "rotation"; from: -robot.lean * 0.6; to: 0; duration: robot.strideMs; easing.type: Easing.InOutSine }
+                NumberAnimation { target: leftLeg;  property: "height"; from: 22; to: 26; duration: robot.strideMs; easing.type: Easing.InOutSine }
+                NumberAnimation { target: rightLeg; property: "height"; from: 30; to: 26; duration: robot.strideMs; easing.type: Easing.InOutSine }
             }
         }
 
+        // ─── Idle ────────────────────────────────────────────────
         SequentialAnimation {
             id: idleBob
             loops: Animation.Infinite
             running: false
-            NumberAnimation { target: body; property: "y"; from: head.y + head.height + 4; to: head.y + head.height + 6; duration: 900; easing.type: Easing.InOutSine }
-            NumberAnimation { target: body; property: "y"; from: head.y + head.height + 6; to: head.y + head.height + 4; duration: 900; easing.type: Easing.InOutSine }
+            ParallelAnimation {
+                NumberAnimation { target: body; property: "y"; from: head.y + head.height + 4; to: head.y + head.height + 6; duration: 1100; easing.type: Easing.InOutSine }
+                NumberAnimation { target: head; property: "rotation"; from: -1.5; to: 1.5; duration: 1400; easing.type: Easing.InOutSine }
+            }
+            ParallelAnimation {
+                NumberAnimation { target: body; property: "y"; from: head.y + head.height + 6; to: head.y + head.height + 4; duration: 1100; easing.type: Easing.InOutSine }
+                NumberAnimation { target: head; property: "rotation"; from: 1.5; to: -1.5; duration: 1400; easing.type: Easing.InOutSine }
+            }
         }
 
         // ─── Прыжок ──────────────────────────────────────────────
         SequentialAnimation {
             id: jumpAnim
-            loops: 3
+            loops: 1
             running: false
-            NumberAnimation {
-                target: robot
-                property: "y"
-                from: robot.jumpStartY
-                to: robot.jumpStartY - 80
-                duration: 300
-                easing.type: Easing.OutQuad
+
+            // Прыжок 1 — руки вправо
+            ParallelAnimation {
+                NumberAnimation { target: body; property: "y"; to: head.y + head.height + 10; duration: 100; easing.type: Easing.OutQuad }
+                NumberAnimation { target: leftArm;  property: "rotation"; to: 35; duration: 100 }
+                NumberAnimation { target: rightArm; property: "rotation"; to: 35; duration: 100 }
             }
-            NumberAnimation {
-                target: robot
-                property: "y"
-                from: robot.jumpStartY - 80
-                to: robot.jumpStartY
-                duration: 300
-                easing.type: Easing.InQuad
+            ParallelAnimation {
+                NumberAnimation { target: robot; property: "y"; from: robot.jumpStartY; to: robot.jumpStartY - 80; duration: 300; easing.type: Easing.OutQuad }
+                NumberAnimation { target: leftArm;  property: "rotation"; to: 130; duration: 300; easing.type: Easing.OutQuad }
+                NumberAnimation { target: rightArm; property: "rotation"; to: 130; duration: 300; easing.type: Easing.OutQuad }
+                NumberAnimation { target: leftLeg;  property: "rotation"; to: 25; duration: 300; easing.type: Easing.OutQuad }
+                NumberAnimation { target: rightLeg; property: "rotation"; to: -25; duration: 300; easing.type: Easing.OutQuad }
+                NumberAnimation { target: leftLeg;  property: "height"; to: 18; duration: 300 }
+                NumberAnimation { target: rightLeg; property: "height"; to: 18; duration: 300 }
+                NumberAnimation { target: body; property: "y"; to: head.y + head.height + 4; duration: 300 }
             }
+            ParallelAnimation {
+                NumberAnimation { target: robot; property: "y"; from: robot.jumpStartY - 80; to: robot.jumpStartY; duration: 300; easing.type: Easing.InQuad }
+                NumberAnimation { target: leftArm;  property: "rotation"; to: 0; duration: 300; easing.type: Easing.InQuad }
+                NumberAnimation { target: rightArm; property: "rotation"; to: 0; duration: 300; easing.type: Easing.InQuad }
+                NumberAnimation { target: leftLeg;  property: "rotation"; to: 0; duration: 300; easing.type: Easing.InQuad }
+                NumberAnimation { target: rightLeg; property: "rotation"; to: 0; duration: 300; easing.type: Easing.InQuad }
+                NumberAnimation { target: leftLeg;  property: "height"; to: 26; duration: 300 }
+                NumberAnimation { target: rightLeg; property: "height"; to: 26; duration: 300 }
+            }
+
+            // Прыжок 2 — руки влево
+            ParallelAnimation {
+                NumberAnimation { target: body; property: "y"; to: head.y + head.height + 10; duration: 100; easing.type: Easing.OutQuad }
+                NumberAnimation { target: leftArm;  property: "rotation"; to: -35; duration: 100 }
+                NumberAnimation { target: rightArm; property: "rotation"; to: -35; duration: 100 }
+            }
+            ParallelAnimation {
+                NumberAnimation { target: robot; property: "y"; from: robot.jumpStartY; to: robot.jumpStartY - 80; duration: 300; easing.type: Easing.OutQuad }
+                NumberAnimation { target: leftArm;  property: "rotation"; to: -130; duration: 300; easing.type: Easing.OutQuad }
+                NumberAnimation { target: rightArm; property: "rotation"; to: -130; duration: 300; easing.type: Easing.OutQuad }
+                NumberAnimation { target: leftLeg;  property: "rotation"; to: 25; duration: 300; easing.type: Easing.OutQuad }
+                NumberAnimation { target: rightLeg; property: "rotation"; to: -25; duration: 300; easing.type: Easing.OutQuad }
+                NumberAnimation { target: leftLeg;  property: "height"; to: 18; duration: 300 }
+                NumberAnimation { target: rightLeg; property: "height"; to: 18; duration: 300 }
+                NumberAnimation { target: body; property: "y"; to: head.y + head.height + 4; duration: 300 }
+            }
+            ParallelAnimation {
+                NumberAnimation { target: robot; property: "y"; from: robot.jumpStartY - 80; to: robot.jumpStartY; duration: 300; easing.type: Easing.InQuad }
+                NumberAnimation { target: leftArm;  property: "rotation"; to: 0; duration: 300; easing.type: Easing.InQuad }
+                NumberAnimation { target: rightArm; property: "rotation"; to: 0; duration: 300; easing.type: Easing.InQuad }
+                NumberAnimation { target: leftLeg;  property: "rotation"; to: 0; duration: 300; easing.type: Easing.InQuad }
+                NumberAnimation { target: rightLeg; property: "rotation"; to: 0; duration: 300; easing.type: Easing.InQuad }
+                NumberAnimation { target: leftLeg;  property: "height"; to: 26; duration: 300 }
+                NumberAnimation { target: rightLeg; property: "height"; to: 26; duration: 300 }
+            }
+
+            // Прыжок 3 — руки снова вправо
+            ParallelAnimation {
+                NumberAnimation { target: body; property: "y"; to: head.y + head.height + 10; duration: 100; easing.type: Easing.OutQuad }
+                NumberAnimation { target: leftArm;  property: "rotation"; to: 35; duration: 100 }
+                NumberAnimation { target: rightArm; property: "rotation"; to: 35; duration: 100 }
+            }
+            ParallelAnimation {
+                NumberAnimation { target: robot; property: "y"; from: robot.jumpStartY; to: robot.jumpStartY - 80; duration: 300; easing.type: Easing.OutQuad }
+                NumberAnimation { target: leftArm;  property: "rotation"; to: 130; duration: 300; easing.type: Easing.OutQuad }
+                NumberAnimation { target: rightArm; property: "rotation"; to: 130; duration: 300; easing.type: Easing.OutQuad }
+                NumberAnimation { target: leftLeg;  property: "rotation"; to: 25; duration: 300; easing.type: Easing.OutQuad }
+                NumberAnimation { target: rightLeg; property: "rotation"; to: -25; duration: 300; easing.type: Easing.OutQuad }
+                NumberAnimation { target: leftLeg;  property: "height"; to: 18; duration: 300 }
+                NumberAnimation { target: rightLeg; property: "height"; to: 18; duration: 300 }
+                NumberAnimation { target: body; property: "y"; to: head.y + head.height + 4; duration: 300 }
+            }
+            ParallelAnimation {
+                NumberAnimation { target: robot; property: "y"; from: robot.jumpStartY - 80; to: robot.jumpStartY; duration: 300; easing.type: Easing.InQuad }
+                NumberAnimation { target: leftArm;  property: "rotation"; to: 0; duration: 300; easing.type: Easing.InQuad }
+                NumberAnimation { target: rightArm; property: "rotation"; to: 0; duration: 300; easing.type: Easing.InQuad }
+                NumberAnimation { target: leftLeg;  property: "rotation"; to: 0; duration: 300; easing.type: Easing.InQuad }
+                NumberAnimation { target: rightLeg; property: "rotation"; to: 0; duration: 300; easing.type: Easing.InQuad }
+                NumberAnimation { target: leftLeg;  property: "height"; to: 26; duration: 300 }
+                NumberAnimation { target: rightLeg; property: "height"; to: 26; duration: 300 }
+            }
+
             onFinished: {
                 robot.y = room.floorY - robot.height
                 robot.state = "idle"
@@ -455,6 +568,7 @@ Item {
             chasing = false;
             userBallMode = false;
             robotKicks = 0;
+            ballWalking = false;
             ballCooldown.stop();
             stopMoveAnim();
             idleBob.stop();
@@ -466,6 +580,10 @@ Item {
             y = room.floorY - height;
             scale = 1.0;
             body.y = head.y + head.height + 4;
+            body.rotation = 0;
+            head.rotation = 0;
+            leftLeg.height = 26;
+            rightLeg.height = 26;
 
             switch (s) {
             case "idle":
@@ -473,11 +591,13 @@ Item {
                 idleBob.start();
                 break;
             case "walk":
+                strideMs = 340;
                 targetX = room.walkMinX + Math.random() * (room.walkMaxX - room.walkMinX);
                 vx = 1.2;
                 startMoveAnim();
                 break;
             case "run":
+                strideMs = 240;
                 targetX = (x < room.width / 2) ? room.walkMaxX : room.walkMinX;
                 vx = 3.0;
                 startMoveAnim();
@@ -546,12 +666,8 @@ Item {
                     ball.vy = -7 - Math.random() * 3;
                     kickLunge.start();
 
-                    // Считаем удары робота с момента последнего касания мяча пользователем.
-                    // ballCooldown НЕ перезапускаем — иначе робот сам продлевает «игру».
                     robot.robotKicks++;
 
-                    // Пользователь уже не играет (кулдаун истёк) и робот ударил >= 2 раз —
-                    // смена активности.
                     if (!robot.userBallMode && robot.robotKicks >= 2) {
                         robot.robotKicks = 0;
                         robot.enterState("idle");
@@ -567,16 +683,18 @@ Item {
         }
 
         // ─── Пинки мяча (автоматический режим «ball») ─────────────
+        // Играем чуть дольше: 6 пинков с интервалом 1500 мс (~9 секунд).
         Timer {
             id: kickTimer
-            interval: 1200
+            interval: 1500
             repeat: true
             running: room.active
             onTriggered: {
                 if (!room.active) return;
-                if (robot.kickCount >= 4) {
+                if (robot.kickCount >= 6) {
                     kickTimer.stop();
                     robot.state = "idle";
+                    robot.ballWalking = false;
                     robot.stopMoveAnim();
                     idleBob.start();
                     return;
@@ -603,6 +721,7 @@ Item {
 
                 if (!ballReachable || !closeEnough) {
                     robot.state = "idle";
+                    robot.ballWalking = false;
                     robot.stopMoveAnim();
                     idleBob.start();
                     return;
@@ -616,22 +735,42 @@ Item {
 
         // ─── Движение к цели ──────────────────────────────────────
         Timer {
+            id: locomotionTimer
             interval: 16
             repeat: true
             running: room.active && (robot.state === "walk" || robot.state === "run" || robot.state === "ball")
+
             onTriggered: {
                 if (!room.active) return;
+
                 var dx = robot.targetX - robot.x;
-                if (Math.abs(dx) < 2) {
+                var atTarget = Math.abs(dx) < 2;
+
+                if (atTarget) {
                     robot.vx = 0;
+                    if (robot.state === "ball" && robot.ballWalking) {
+                        robot.ballWalking = false;
+                    }
                     return;
                 }
+
                 robot.x += Math.sign(dx) * Math.min(Math.abs(dx), robot.vx);
+
+                if (robot.state === "ball" && !robot.ballWalking) {
+                    robot.ballWalking = true;
+                    robot.strideMs = 300;
+                }
+            }
+
+            onRunningChanged: {
+                if (!running) {
+                    if (robot.ballWalking) robot.ballWalking = false;
+                }
             }
         }
     }
 
-    // ─── Подпись (без эмодзи — Android их не отображает) ─────────
+    // ─── Подпись ─────────────────────────────────────────────────
     Rectangle {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter

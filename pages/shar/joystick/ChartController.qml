@@ -26,7 +26,12 @@ Item {
     readonly property color btnZoomColor:   "#7fa8d8"
     readonly property color btnClearColor:  "#e0a08f"
     readonly property color btnFollowColor: "#8fc98f"
+    readonly property color btnScaleColor:  "#b9a6d8"
     readonly property color btnTextColor:   "#1f2d3d"
+
+    // Ширина кнопок +/− — зависит от ширины экрана.
+    // На узких экранах ~8% ширины (минимум 28 px), на широких — до 48 px.
+    readonly property real zoomBtnWidth: Math.max(28, Math.min(48, root.width * 0.08))
 
     ColumnLayout {
         anchors.fill: parent
@@ -185,16 +190,18 @@ Item {
             StyledButton {
                 text: "+"
                 baseColor: root.btnZoomColor
-                Layout.minimumWidth: 30
-                Layout.preferredWidth: 44
+                Layout.preferredWidth: root.zoomBtnWidth
+                Layout.minimumWidth: root.zoomBtnWidth
+                Layout.maximumWidth: root.zoomBtnWidth
                 Layout.fillWidth: false
                 onClicked: { chartController.notifyUserInteraction(); chartController.zoomBoth(0.8) }
             }
             StyledButton {
                 text: "−"
                 baseColor: root.btnZoomColor
-                Layout.minimumWidth: 30
-                Layout.preferredWidth: 44
+                Layout.preferredWidth: root.zoomBtnWidth
+                Layout.minimumWidth: root.zoomBtnWidth
+                Layout.maximumWidth: root.zoomBtnWidth
                 Layout.fillWidth: false
                 onClicked: { chartController.notifyUserInteraction(); chartController.zoomBoth(1.25) }
             }
@@ -204,6 +211,14 @@ Item {
                 Layout.fillWidth: true
                 Layout.minimumWidth: 40
                 onClicked: chartController.clear()
+            }
+            StyledButton {
+                text: "Авто"
+                baseColor: root.btnScaleColor
+                Layout.minimumWidth: 36
+                Layout.preferredWidth: 44
+                Layout.fillWidth: false
+                onClicked: chartController.autoScaleAll()
             }
             CheckBox {
                 id: followCheck
