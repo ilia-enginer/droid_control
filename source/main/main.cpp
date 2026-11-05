@@ -58,6 +58,11 @@
 #include <QSurfaceFormat>
 #include <QQuickWindow>
 #include <cstdio>
+#include <QCoreApplication>
+#include <QFile>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QDir>
 
 #include "source/communication/device/device.h"
 #include "source/main/mainmodel.h"
@@ -119,6 +124,29 @@ void myMessageHandler(QtMsgType type,
                  func);
 }
 
+#ifndef APP_VERSION_NAME
+#  define APP_VERSION_NAME "unknown"
+#endif
+#ifndef APP_TARGET_SDK
+#  define APP_TARGET_SDK 0
+#endif
+#ifndef VERSIONAPK
+#  define VERSIONAPK 0
+#endif
+static void writeVersionJson()
+{
+    QJsonObject obj;
+    obj["versionAPK"]  = static_cast<qint64>(VERSIONAPK);
+    obj["versionName"] = QStringLiteral(APP_VERSION_NAME);
+    obj["targetSdk"]   = APP_TARGET_SDK;
+
+    const QString path = QCoreApplication::applicationDirPath() + "/version_info.json";
+    QFile f(path);
+    if (f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        f.write(QJsonDocument(obj).toJson(QJsonDocument::Indented));
+        f.close();
+    }
+}
 
 int main(int argc, char *argv[])
 {
@@ -293,6 +321,7 @@ int main(int argc, char *argv[])
     #if defined(Q_OS_WINDOWS)    
         AppVersion *AppVer = new AppVersion();
         AppVer->appVersionVisible();
+        writeVersionJson();
     #endif
 
     QQmlApplicationEngine engine;

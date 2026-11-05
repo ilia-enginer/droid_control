@@ -42,14 +42,15 @@ AppVersion::appVersionVisible()
     msgBox.setWindowModality(Qt::WindowModal);
     msgBox.setWindowTitle("Версия приложения.");
     msgBox.setIcon(QMessageBox::Information);
-    msgBox.setText(QString("%1\n\n%2.%3.%4.%5.%6.%7")
+    msgBox.setText(QString("%1\n%2.%3.%4.%5.%6.%7\n файл 'version_info.json' создан")
                    .arg(ver)                                         //версия полным числом
                    .arg(ver >> 28, 1, 10)                            // версия
                    .arg((ver >> 20) & 0x0FF, 2, 10, QChar('0'))      // год
                    .arg((ver >> 16) & 0x0F, 2, 10, QChar('0'))       // месяц
                    .arg((ver >> 11) & 0x1F, 2, 10, QChar('0'))       // день
                    .arg((ver >> 6) & 0x01F, 2, 10, QChar('0'))       // час
-                   .arg(ver & 0x3F, 2, 10, QChar('0')));             // минуты
+                   .arg(ver & 0x3F, 2, 10, QChar('0'))               // минуты
+                   );
 
     msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Ok );
 

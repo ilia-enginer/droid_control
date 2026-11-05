@@ -4,19 +4,20 @@ TARGET = droid_stick
 CONFIG += qml_debug
 
 ANDROID_VERSION_NAME = "1.1.5"      #версия в apk
+ANDROID_TARGET_SDK_VERSION = 31
 #DEFINES += VERSION=\\\"$$ANDROID_VERSION_NAME\\\"   #версия в windows так не работает
-DEFINES += QT_MESSAGELOGCONTEXT INSERT_VERSION_NAME=\\\"$$ANDROID_VERSION_NAME\\\"   #версия на главном экране
 #DEFINES += INSERT_VERSION_CODE = 2 ??? хз как присвоить. требуется для плей маркета
+DEFINES += QT_MESSAGELOGCONTEXT \
+           INSERT_VERSION_NAME=\\\"$$ANDROID_VERSION_NAME\\\" \
+           APP_VERSION_NAME=\\\"$$ANDROID_VERSION_NAME\\\" \
+           APP_TARGET_SDK=$$ANDROID_TARGET_SDK_VERSION
 
 QT += quick charts qml quickcontrols2 bluetooth core positioning widgets core-private network gui concurrent serialport quick3d #androidextras
-
 
 win32 {
     RC_FILE += file.rc
     OTHER_FILES += file.rc
 }
-
-ANDROID_TARGET_SDK_VERSION = 31
 
 SOURCES += \
     source/Pylt/communication/rx_commandsPylt.cpp \
