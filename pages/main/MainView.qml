@@ -44,8 +44,10 @@ Page {
                 source: "../../images/play_store_512.png"
 
                 Key {
-                    id: keyPage
-                    anchors.fill: parent
+                   id: keyPage
+                   width: parent.width * 1.0
+                   height: parent.height * 0.55
+                   anchors.centerIn: parent
                 }
             }
 

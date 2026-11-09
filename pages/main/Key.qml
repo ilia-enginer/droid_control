@@ -8,10 +8,6 @@ import QtQuick.Controls.Material
 
 Page {
     id: pageKey
-    width: parent.width / 2
-    height: parent.height / 3
-    anchors.centerIn: parent
-    anchors.verticalCenterOffset: -(parent.height * 0.08)
     opacity: 0.0
     property string key : "159"
     property string inputKey : ""
@@ -28,46 +24,6 @@ Page {
         }
     }
 
-    Shortcut{
-        sequence: "1"
-        onActivated: addNumber("1")
-    }
-    Shortcut{
-        sequence: "2"
-        onActivated: addNumber("2")
-    }
-    Shortcut{
-        sequence: "3"
-        onActivated: addNumber("3")
-    }
-    Shortcut{
-        sequence: "4"
-        onActivated: addNumber("4")
-    }
-    Shortcut{
-        sequence: "5"
-        onActivated: addNumber("5")
-    }
-    Shortcut{
-        sequence: "6"
-        onActivated: addNumber("6")
-    }
-    Shortcut{
-        sequence: "7"
-        onActivated: addNumber("7")
-    }
-    Shortcut{
-        sequence: "8"
-        onActivated: addNumber("8")
-    }
-    Shortcut{
-        sequence: "9"
-        onActivated: addNumber("9")
-    }
-    Shortcut{
-        sequence: "enter"
-        onActivated: checkKey()
-    }
     //1 строка
     //1
     MouseArea {
@@ -76,7 +32,12 @@ Page {
         height: pageKey.height * 0.3
         anchors.left: parent.left
         anchors.top: parent.top
-       hoverEnabled: true
+        hoverEnabled: true
+
+        Rectangle{
+            anchors.fill: parent
+            color: "green"
+        }
 
         onPressed: { addNumber("1") }
         onPressAndHold: { checkKey() }
@@ -84,11 +45,16 @@ Page {
     //2
     MouseArea {
         id: zone2
+        anchors.top: parent.top
         width: pageKey.width * 0.3
         height: pageKey.height * 0.3
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
         hoverEnabled: true
+
+        Rectangle{
+            anchors.fill: parent
+            color: "green"
+        }
 
         onPressed: { addNumber("2") }
         onPressAndHold: { checkKey() }
@@ -101,6 +67,11 @@ Page {
         anchors.right: parent.right
         anchors.top: parent.top
         hoverEnabled: true
+
+        Rectangle{
+            anchors.fill: parent
+            color: "green"
+        }
 
         onPressed: { addNumber("3") }
         onPressAndHold: { checkKey() }
@@ -115,6 +86,11 @@ Page {
         anchors.verticalCenter: parent.verticalCenter
         hoverEnabled: true
 
+        Rectangle{
+            anchors.fill: parent
+            color: "green"
+        }
+
         onPressed: { addNumber("4") }
         onPressAndHold: { checkKey() }
     }
@@ -127,6 +103,11 @@ Page {
         anchors.verticalCenter: parent.verticalCenter
         hoverEnabled: true
 
+        Rectangle{
+            anchors.fill: parent
+            color: "green"
+        }
+
         onPressed: { addNumber("5") }
         onPressAndHold: { checkKey() }
     }
@@ -138,6 +119,11 @@ Page {
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
         hoverEnabled: true
+
+        Rectangle{
+            anchors.fill: parent
+            color: "green"
+        }
 
         onPressed: { addNumber("6") }
         onPressAndHold: { checkKey() }
@@ -152,6 +138,11 @@ Page {
         anchors.bottom: parent.bottom
         hoverEnabled: true
 
+        Rectangle{
+            anchors.fill: parent
+            color: "green"
+        }
+
         onPressed: { addNumber("7") }
         onPressAndHold: { checkKey() }
     }
@@ -164,6 +155,11 @@ Page {
         anchors.bottom: parent.bottom
         hoverEnabled: true
 
+        Rectangle{
+            anchors.fill: parent
+            color: "green"
+        }
+
         onPressed: { addNumber("8") }
         onPressAndHold: { checkKey() }
     }
@@ -175,6 +171,11 @@ Page {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         hoverEnabled: true
+
+        Rectangle{
+            anchors.fill: parent
+            color: "green"
+        }
 
         onPressed: { addNumber("9") }
         onPressAndHold: { checkKey() }
