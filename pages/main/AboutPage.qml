@@ -336,5 +336,9 @@ Dialog {
             color: cTextSoft
             padding: 4
         }
+        Button {
+            text: "Сообщить о проблеме"
+            onClicked: feedbackHelper.openFeedbackScreen()
+        }
     }
 }
