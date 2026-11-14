@@ -35,7 +35,7 @@ public class FeedbackActivity extends Activity {
             Intent intent = new Intent(Intent.ACTION_SENDTO);
             intent.setData(Uri.parse("mailto:"));
             intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"Ilia.zhuc@yandex.ru"}); // 👈 ваша почта
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Отзыв из приложения");
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Сообщение из приложения");
             intent.putExtra(Intent.EXTRA_TEXT, fullBody);
 
             startActivity(Intent.createChooser(intent, "Отправить отзыв..."));
