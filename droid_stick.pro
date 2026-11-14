@@ -33,6 +33,7 @@ SOURCES += \
     source/Shar/display_working/commun_display.cpp \
     source/Shar/info/info.cpp \
     source/main/appmanager.cpp \
+    source/main/feedbackhelper.cpp \
     source/main/notificationclient.cpp \
     source/main/settings.cpp \
     source/communication/serialComPort/mainSerialPort.cpp \
@@ -119,6 +120,8 @@ DISTFILES += \
     android/res/drawable/splashscreen.xml \
     android/res/drawable/splashscreen_land.xml \
     android/res/drawable/splashscreen_port.xml \
+    android/res/layout/activity_feedback.xml \
+    android/src/org/qtproject/example/FeedbackActivity.java \
     file.rc \
     file.rc \
     android/src/org/qtproject/example/NotificationClient.java \
@@ -175,6 +178,7 @@ HEADERS += \
     source/Shar/display_working/commun_display.h \
     source/Shar/info/info.h \
     source/main/appmanager.h \
+    source/main/feedbackhelper.h \
     source/main/notificationclient.h \
     source/main/settings.h \
     source/communication/serialComPort/mainSerialPort.h \
@@ -199,9 +203,11 @@ contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
     $$PWD/android/res/drawable/splashscreen.xml
     $$PWD/android/res/drawable/splashscreen_land.xml
     $$PWD/android/res/drawable/splashscreen_port.xml
+    $$PWD/android/res/layout/activity_feedback.xml
     $$PWD/android/src/org/qtproject/example/QtAndroidService.java
     $$PWD/android/src/org/qtproject/example/NotificationClient.java
     $$PWD/android/src/org/qtproject/example/KeepAliveService.java
+    $$PWD/android/src/org/qtproject/example/FeedbackActivity.java
 
     ANDROID_PACKAGE_SOURCE_DIR = \
         $$PWD/android

@@ -86,6 +86,8 @@
 #include "source/Pylt/communication/rx_commandsPylt.h"
 #include "source/Pylt/communication/tx_commandsPylt.h"
 #include "source/Pylt/pylt_settings.h"
+#include "source/main/feedbackhelper.h"
+
 
 // ---------------------------------------------------------------------------
 // Обработчик сообщений Qt.
@@ -249,6 +251,7 @@ int main(int argc, char *argv[])
     ChartController     * chartController       = new ChartController();
     ClipboardHelper     * clipboardHelper       = new ClipboardHelper();
     Pylt_settings       * pylt_settings         = new Pylt_settings();
+    FeedbackHelper      * feedbackHelper        = new FeedbackHelper();
 
     packing->setCrc(crc);
     packing->setCommun_display(commun_display);
@@ -343,6 +346,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("mainSerialPort", mainSerialPort);
     engine.rootContext()->setContextProperty("tx_commandsPylt", tx_commandsPylt);
     engine.rootContext()->setContextProperty("pylt_settings", pylt_settings);
+    engine.rootContext()->setContextProperty("feedbackHelper", feedbackHelper);
 
     engine.setInitialProperties({{ "builtInStyles", builtInStyles }});
     engine.load(QUrl("qrc:/pages/main/Main.qml"));
