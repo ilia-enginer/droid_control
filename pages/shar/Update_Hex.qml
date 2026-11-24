@@ -3,7 +3,6 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import Qt.labs.settings
 
-
 Dialog {
     id: updateHex
     modal: true
@@ -12,6 +11,10 @@ Dialog {
     y: (window.height - updateHex.height) / 4
     height: parent.height / 4
     width: window.width * 0.8
+
+    // сигнал наружу: "открой страницу обновления прошивки"
+    signal goToFirmwareUpdate()
+
     header: Label{
         text: "Доступно обновление прошивки шара.\nОб обновлении: повышена стабильность работы."
         wrapMode: Label.Wrap
@@ -27,13 +30,22 @@ Dialog {
         height: parent.height
         spacing: 20
 
-        Label {
+//        Label {
+//            width: parent.width
+//            text: "Можете установить, перейдя во вкладку 'Обновление прошивки'."
+//            wrapMode: Label.Wrap
+//            font.pixelSize: 14
+//            font.family: "Courier New"
+//            color: "#ad4d1d"
+//        }
+
+        Button {
             width: parent.width
-            text: "Можете установить, перейдя во вкладку 'Обновление прошивки'."
-            wrapMode: Label.Wrap
-            font.pixelSize: 14
-            font.family: "Courier New"
-            color: "#ad4d1d"
+            text: "Перейти к обновлению прошивки"
+            onClicked: {
+                updateHex.close()
+                updateHex.goToFirmwareUpdate()
+            }
         }
     }
 }

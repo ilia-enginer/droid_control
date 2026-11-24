@@ -59,7 +59,7 @@ Dialog {
         Label {
             horizontalAlignment: Qt.AlignHCenter
             width: parent.width
-            text: " Наличие обновлений проверяется автоматически. Если по каким-либо причинам процесс обновления завершился с ошибкой, вы можете слелать это вручную.\nОткройте ссылку в браузере и нажмите 'Raw' или 'Download'. После скачивания, установочный файл будет в папке 'Загрузки'."
+            text: " Наличие обновлений проверяется автоматически. Если по каким-либо причинам процесс обновления завершился с ошибкой, вы можете слелать это вручную.\nОткройте ссылку в браузере и нажмите на 'droid_stick.apk'. После скачивания, установочный файл будет в папке 'Загрузки'."
             wrapMode: Label.Wrap
             font.pixelSize: 14
             font.family: "Courier New"
@@ -72,7 +72,7 @@ Dialog {
             wrapMode: Text.Wrap
             font.pixelSize: 14
             color: "#25820c"
-            text: 'Ссылка <a href="https://github.com/ilia-enginer/droid_stick/blob/main/droid_stick.apk">github.com</a>'
+            text: 'Ссылка <a href="https://github.com/ilia-enginer/droid_stick/releases/latest">github.com</a>'
             onLinkActivated: Qt.openUrlExternally(link)
         }
 

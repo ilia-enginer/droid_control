@@ -260,6 +260,10 @@ ApplicationWindow {
         id: updateHex
         Component.onCompleted: { commun_display.onWindowloadHexOpen.connect(onWindowloadHexOpen) }
         function onWindowloadHexOpen(){ updateHex.open(); }
+        onGoToFirmwareUpdate: {
+                // путь ОТНОСИТЕЛЬНО Main.qml
+                stackView.push(Qt.resolvedUrl("../shar/Firmware_update.qml"))
+            }
     }
     UpdateAppPage {
         id: updateAppWindow
