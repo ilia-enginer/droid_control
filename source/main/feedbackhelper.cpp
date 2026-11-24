@@ -1,4 +1,9 @@
 #include "feedbackhelper.h"
+#include "source/update/updateapp.h"
+#include "settings.h"
+#include "../update/updatehex.h"
+
+#include <QDebug>
 
 #if defined(Q_OS_ANDROID)
 #include <QCoreApplication>
@@ -13,6 +18,28 @@ static QString getDeviceInfo()
 {
     QString info;
     QJniEnvironment env;
+
+    AppVersion *AppVer = new AppVersion();
+    qint64 ver = AppVer->getAppVersion();
+    delete AppVer;
+
+    // --- Название и версия приложения ---
+    info += QString("Приложение apk: %1\n").arg(QCoreApplication::applicationName());
+    info += "Версия: " + QString::number(ver) + "\n";
+
+    // --- Версия шара ---
+    Settings *Sett = new Settings();
+    UpdateHex *UpdHex = new UpdateHex();
+    if(Sett->getIdDevice() == Settings::SHAR)
+    {
+        qint32 verHex = UpdHex->getVersExt();
+        qint32 verApkHex = UpdHex->getVersInt();
+        delete UpdHex;
+
+        info += "Устройство: Шар\n";
+        info += "Версия HexApk: " + QString::number(verApkHex) + "\n";
+        info += "Версия Hex: " + QString::number(verHex) + "\n";
+    }
 
     qDebug() << "getDeviceInfo: start";
 

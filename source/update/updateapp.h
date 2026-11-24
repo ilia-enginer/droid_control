@@ -31,7 +31,6 @@ class UpdateApp : public QObject
     public:
         static const QString kVersionUrl;
         static const QString kUpdateUrl;
-        static const QString versionHeading;
         static const QString fileName;
         static const QString downloadFolderAdress;
 
@@ -60,7 +59,7 @@ class UpdateApp : public QObject
 
         void setUpdateText(QString text);
 
-        void checkVersion(QString inVersion);
+        void checkVersion(qint64 inVersion);
         void startRequest(QUrl inUrl);
 
         void timerStart(void);

@@ -3,17 +3,18 @@
 #include <QStandardPaths>
 #include <QDir>
 #include <QTimer>
+#include <QNetworkProxy>
+
 
 //------------------------------------------------------------------------------
 const QString UpdateApp::kVersionUrl =
-    "https://github.com/ilia-enginer/droid_stick/blob/main/version.txt";
+       // "https://cdn.jsdelivr.net/gh/ilia-enginer/droid_stick@main/version_info.json";
+        "https://github.com/ilia-enginer/droid_stick/releases/latest/download/version_info.json";
+
 
 const QString UpdateApp::kUpdateUrl =
-    //"https://raw.githubusercontent.com/ilia-enginer/droid_stick/blob/main/droid_stick.apk";     //1 вариант
-    "https://github.com/ilia-enginer/droid_stick/blob/main/droid_stick.apk?raw=true";   //2 вариант
-
-const QString UpdateApp::versionHeading =
-    "4294967295";                           //0xFFFFFFFF
+    // "https://github.com/ilia-enginer/droid_stick/blob/main/droid_stick.apk?raw=true";
+        "https://github.com/ilia-enginer/droid_stick/releases/latest/download/droid_stick.apk";
 
 const QString UpdateApp::fileName =
         "droid_stick.apk";
@@ -35,6 +36,7 @@ UpdateApp::UpdateApp(QObject *parent) :
     QObject(parent)
 {
     mNamChecker = new QNetworkAccessManager(this);
+    mNamChecker->setProxy(QNetworkProxy(QNetworkProxy::NoProxy));   // <-- добавить
 
     connect(
         mNamChecker,
@@ -68,16 +70,17 @@ UpdateApp::setCommun_display(Commun_display *newCommun_display)
 void
 UpdateApp::checkForUpdates(void)
 {
-    #if defined (Q_OS_WIN) && !defined (QT_DEBUG)
+#if defined (Q_OS_WIN) && !defined (QT_DEBUG)
       return;
     #endif
 
     AppVersion *AppVer = new AppVersion();
-    qint32 ver = AppVer->getAppVersion();
+    qint64 ver = AppVer->getAppVersion();
+    delete AppVer;
 
-    if(ver == 0)    return;
+    if (ver == 0)    return;
     _verAppIn = ver;
-//    qDebug() << _verAppIn;
+
     QUrl tUrl(kVersionUrl);
     mNamChecker->get(QNetworkRequest(tUrl));
 }
@@ -85,19 +88,16 @@ UpdateApp::checkForUpdates(void)
 //------------------------------------------------------------------------------
 
 void
-UpdateApp::checkVersion(QString inVersion)
+UpdateApp::checkVersion(qint64 inVersion)   // было QString
 {
-//    qDebug() << inVersion.toInt();
-//    qDebug() << inVersion;
-
-    if ((inVersion.toInt() != 0) && (_verAppIn != 0))
+    if (inVersion != 0 && _verAppIn != 0)
     {
-        if (inVersion.toInt() > _verAppIn)
+        if (inVersion > _verAppIn)
         {
-            //открыть всплывающее окно с предложением обновиться
             _commun_display->statusUpdateApp(_commun_display->updApp::windowloadOpenStat);
-
-            setUpdateText("Доступно обновление программы.\nОб обновлении: повышена стабильность работы.\n Обновить сейчас?");
+            setUpdateText("Доступно обновление программы.\n"
+                          "Об обновлении: повышена стабильность работы.\n"
+                          "Обновить сейчас?");
         }
     }
 }
@@ -244,6 +244,7 @@ void
 UpdateApp::startRequest(QUrl inUrl)
 {
     mNamDownloader = new QNetworkAccessManager(this);
+    mNamDownloader->setProxy(QNetworkProxy(QNetworkProxy::NoProxy));   // <-- добавить
 
     mDownloaderReply = mNamDownloader->get(QNetworkRequest(inUrl));
 
@@ -474,20 +475,38 @@ UpdateApp::on_NetworkReply(QNetworkReply *inReply)
         {
             if (inReply->isReadable())
             {
-                //читаю построчно
-                //ищу в каждой строке место где записана версия
-                //с помощью "лейбла"
-                QString tReplyString;
-                QString temp;
-                while(!inReply->atEnd()) {
-                    temp = inReply->readLine();
-                    if (temp.contains(UpdateApp::versionHeading)) {
-                        tReplyString = temp.mid(temp.indexOf(UpdateApp::versionHeading) + UpdateApp::versionHeading.size() + 1, 9);
+                const QByteArray data = inReply->readAll();
 
-                 //       qDebug() << temp;
-                    }
+                QJsonParseError err;
+                const QJsonDocument doc = QJsonDocument::fromJson(data, &err);
+
+                if (err.error != QJsonParseError::NoError || !doc.isObject())
+                {
+                    qDebug() << "version_info.json parse error:" << err.errorString();
+                    inReply->deleteLater();
+                    return;
                 }
-                checkVersion(tReplyString);
+
+                const QJsonObject obj = doc.object();
+                const QJsonValue vApk = obj.value("versionAPK");
+
+                // возможно пригодится
+                //const QString versionName = obj.value("versionName").toString();
+                //const int     targetSdk   = obj.value("targetSdk").toInt();
+
+                if (!vApk.isDouble())
+                {
+                    qDebug() << "version_info.json: no versionAPK";
+                    inReply->deleteLater();
+                    return;
+                }
+
+                // QJsonValue::toDouble() теряет точность выше 2^53,
+                // но 4294967295 < 2^53 — безопасно.
+                const qint64 remoteVer = static_cast<qint64>(vApk.toDouble());
+                qDebug() << remoteVer << "remoteVer";
+
+                checkVersion(remoteVer);
             }
         }
         else if (tHttpStatusCode >= 300 && tHttpStatusCode < 400)

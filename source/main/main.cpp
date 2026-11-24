@@ -63,6 +63,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QDir>
+#include <QDateTime>
 
 #include "source/communication/device/device.h"
 #include "source/main/mainmodel.h"
@@ -141,6 +142,7 @@ static void writeVersionJson()
     obj["versionAPK"]  = static_cast<qint64>(VERSIONAPK);
     obj["versionName"] = QStringLiteral(APP_VERSION_NAME);
     obj["targetSdk"]   = APP_TARGET_SDK;
+    obj["buildDate"]   = QDateTime::currentDateTimeUtc().toString(Qt::ISODate);  // "2026-11-24T12:34:56Z"
 
     const QString path = QCoreApplication::applicationDirPath() + "/version_info.json";
     QFile f(path);
