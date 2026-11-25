@@ -24,8 +24,10 @@ static QString getDeviceInfo()
     delete AppVer;
 
     // --- Название и версия приложения ---
-    info += QString("Приложение apk: %1\n").arg(QCoreApplication::applicationName());
+    info += "Приложение:\n";
+    info += QString("apk: %1\n").arg(QCoreApplication::applicationName());
     info += "Версия: " + QString::number(ver) + "\n";
+    info += QString("VERSION NAME: %1\n").arg(APP_VERSION_NAME);
 
     // --- Версия шара ---
     Settings *Sett = new Settings();
@@ -40,10 +42,12 @@ static QString getDeviceInfo()
         info += "Версия HexApk: " + QString::number(verApkHex) + "\n";
         info += "Версия Hex: " + QString::number(verHex) + "\n";
     }
+    delete Sett;
 
     qDebug() << "getDeviceInfo: start";
 
     // --- Модель ---
+    info += "Телефон:\n";
     QJniObject model = QJniObject::getStaticObjectField(
         "android/os/Build", "MODEL", "Ljava/lang/String;");
     if (env.checkAndClearExceptions()) {

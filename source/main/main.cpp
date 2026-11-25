@@ -97,7 +97,7 @@
 // Печатает категорию, текст, файл и строку источника — это позволяет
 // найти, откуда именно пришло предупреждение.
 // ---------------------------------------------------------------------------
-void myMessageHandler(QtMsgType type,
+[[maybe_unused]] static void myMessageHandler(QtMsgType type,
                              const QMessageLogContext &ctx,
                              const QString &msg)
 {
@@ -136,7 +136,7 @@ void myMessageHandler(QtMsgType type,
 #ifndef VERSIONAPK
 #  define VERSIONAPK 0
 #endif
-static void writeVersionJson()
+[[maybe_unused]] static void writeVersionJson()
 {
     QJsonObject obj;
     obj["versionAPK"]  = static_cast<qint64>(VERSIONAPK);
@@ -178,8 +178,8 @@ int main(int argc, char *argv[])
 
     QSurfaceFormat::setDefaultFormat(fmt);
 
-    QApplication::setApplicationName("Gallery");
-    QApplication::setOrganizationName("QtProject");
+    QApplication::setApplicationName(APP_NAME);
+    QApplication::setOrganizationName("Enginer");
     QApplication app(argc, argv);
 
     #if defined(Q_OS_WINDOWS)
